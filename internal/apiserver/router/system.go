@@ -28,4 +28,12 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("admins/:name", adminController.Get)       // 获取管理员详情
 	v1.PUT("admins/:name", adminController.Update)    // 更新管理员信息
 	v1.DELETE("admins/:name", adminController.Delete) // 删除管理员
+
+	// Role
+	roleController := system.NewRoleController(store.S, authz)
+	v1.GET("roles", roleController.List)
+	v1.POST("roles", roleController.Create)
+	v1.GET("roles/:id", roleController.Get)
+	v1.PUT("roles/:id", roleController.Update)
+	v1.DELETE("roles/:id", roleController.Delete)
 }

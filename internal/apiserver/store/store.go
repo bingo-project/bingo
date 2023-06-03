@@ -20,6 +20,7 @@ type IStore interface {
 	DB() *gorm.DB
 	Users() UserStore
 	Admins() system.AdminStore
+	Roles() system.RoleStore
 }
 
 // datastore 是 IStore 的一个具体实现.
@@ -49,6 +50,11 @@ func (ds *datastore) DB() *gorm.DB {
 func (ds *datastore) Users() UserStore {
 	return newUsers(ds.db)
 }
+
 func (ds *datastore) Admins() system.AdminStore {
 	return system.NewAdmins(ds.db)
+}
+
+func (ds *datastore) Roles() system.RoleStore {
+	return system.NewRoles(ds.db)
 }

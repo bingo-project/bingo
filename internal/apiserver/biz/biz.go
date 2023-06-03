@@ -12,6 +12,7 @@ import (
 type IBiz interface {
 	Users() user.UserBiz
 	Admins() system.AdminBiz
+	Roles() system.RoleBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -35,4 +36,9 @@ func (b *biz) Users() user.UserBiz {
 // Admins 管理员.
 func (b *biz) Admins() system.AdminBiz {
 	return system.NewAdmin(b.ds)
+}
+
+// Roles 角色管理.
+func (b *biz) Roles() system.RoleBiz {
+	return system.NewRole(b.ds)
 }
