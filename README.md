@@ -1,2 +1,1 @@
-# Bingo Project
-
+# Bingo

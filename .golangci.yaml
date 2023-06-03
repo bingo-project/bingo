@@ -121,7 +121,7 @@ linters-settings:
     max-blank-identifiers: 2
   dupl:
     # tokens count to trigger issue, 150 by default
-    threshold: 200
+    threshold: 100
   errcheck:
     # report about not checking of errors in type assertions: `a := b.(MyStruct)`;
     # default is false: such cases aren't reported by default.
@@ -196,7 +196,7 @@ linters-settings:
     sections:
       - standard # Standard section: captures all standard packages.
       - default # Default section: contains all imports that could not be matched to another section type.
-      - prefix(github.com/bingo-project/bingo) # Custom section: groups all imports with the specified Prefix.
+      - prefix(bingo) # Custom section: groups all imports with the specified Prefix.
       - blank # Blank section: contains all blank imports. This section is not present unless explicitly enabled.
       - dot # Dot section: contains all dot imports. This section is not present unless explicitly enabled.
     # Skip generated files.
@@ -389,7 +389,6 @@ linters-settings:
       # Default: []
       modules:
         - gorm.io/gorm
-        - gorm.io/gen
         - gorm.io/driver/mysql
         - k8s.io/klog
         # - gopkg.in/yaml.v2
@@ -757,7 +756,7 @@ linters:
     - cyclop
     - depguard
     - dogsled
-    # - dupl
+    - dupl
     - durationcheck
     - errcheck
     - errorlint
@@ -795,7 +794,7 @@ linters:
     # - nolintlint
     - paralleltest
     - prealloc
-    # - predeclared
+    - predeclared
     - promlinter
     - revive
     - staticcheck

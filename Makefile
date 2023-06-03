@@ -10,7 +10,7 @@ all: tidy format lint build
 # Build options
 
 # 定义包名
-ROOT_PACKAGE=github.com/bingo-project/bingo
+ROOT_PACKAGE=bingo
 
 # 指定应用使用的 version 包，会通过 `-ldflags -X` 向该包中指定的变量注入值
 VERSION_PACKAGE=github.com/bingo-project/component-base/version
@@ -34,7 +34,7 @@ define USAGE_OPTIONS
 Options:
   BINS             The binaries to build. Default is all of cmd.
                    This option is available when using: make build/build.multiarch
-                   Example: make build BINS="bingoctlctl test"
+                   Example: make build BINS="bingoctl test"
   VERSION          The version information compiled into binaries.
                    The default is obtained from gsemver or git.
   V                Set to 1 enable verbose build. Default is 0.

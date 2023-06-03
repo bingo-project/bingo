@@ -1,14 +1,14 @@
 version: v1
 
-root-package: your-pkg-name
+root-package: bingo
 
 directory:
   cmd: internal/bingoctl/cmd
   model: internal/pkg/model
   store: internal/apiserver/store
-  request: pkg/api/v1
+  request: pkg/api/bingo/v1
   biz: internal/apiserver/biz
-  controller: internal/apiserver/controller
+  controller: internal/apiserver/controller/v1
   middleware: internal/pkg/middleware
 
 mysql:
