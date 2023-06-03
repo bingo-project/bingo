@@ -42,6 +42,7 @@ log:
   level: debug # 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。
   days: 7 # 日志文件保留天数
   format: console # 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。
+  console: true
   max-size: 100 # 日志文件大小限制（M）
   compress: true # 是否使用 gz 压缩历史日志文件
   path: _output/logs/apiserver.log # 日志文件位置
