@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver"
+	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/migrate"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/pkg/log"
@@ -37,6 +38,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Basic Commands:",
 			Commands: []*cobra.Command{
 				migrate.NewCmdMigrate(),
+				db.NewCmdDb(),
 			},
 		},
 		{

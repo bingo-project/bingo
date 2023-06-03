@@ -20,17 +20,6 @@ func MapApiRouters(g *gin.Engine) {
 	// v1 group
 	v1 := g.Group("/v1")
 
-	/**
-	|--------------------------------------------------------------------------
-	| Auth
-	|--------------------------------------------------------------------------
-	|
-	| Here is where you can register API routes for your application. These
-	| routes are loaded by the RouteServiceProvider within a group which
-	| is assigned the "api" middleware group. Enjoy building your API!
-	|
-	*/
-
 	// Authz
 	authz, _ := auth.NewAuthz(store.S.DB())
 	userController := user.NewUserController(store.S, authz)

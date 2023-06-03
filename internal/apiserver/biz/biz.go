@@ -3,6 +3,7 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/apiserver/biz IBiz
 
 import (
+	"bingo/internal/apiserver/biz/system"
 	"bingo/internal/apiserver/biz/user"
 	"bingo/internal/apiserver/store"
 )
@@ -10,6 +11,7 @@ import (
 // IBiz 定义了 Biz 层需要实现的方法.
 type IBiz interface {
 	Users() user.UserBiz
+	Admins() system.AdminBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -28,4 +30,9 @@ func NewBiz(ds store.IStore) *biz {
 // Users 返回一个实现了 UserBiz 接口的实例.
 func (b *biz) Users() user.UserBiz {
 	return user.New(b.ds)
+}
+
+// Admins 管理员.
+func (b *biz) Admins() system.AdminBiz {
+	return system.NewAdmin(b.ds)
 }

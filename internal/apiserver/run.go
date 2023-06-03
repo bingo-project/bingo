@@ -47,6 +47,9 @@ func run() error {
 	// Api
 	router.MapApiRouters(g)
 
+	// System
+	router.MapSystemRouters(g)
+
 	// 创建并运行 HTTP 服务器
 	return startInsecureServer(g)
 }

@@ -35,7 +35,7 @@ const (
 	AdminStatusDisabled AdminStatus = 2
 )
 
-func (u *AdminM) BeforeCreated(tx *gorm.DB) (err error) {
+func (u *AdminM) BeforeCreate(tx *gorm.DB) (err error) {
 	u.Password, err = auth.Encrypt(u.Password)
 	if err != nil {
 		return

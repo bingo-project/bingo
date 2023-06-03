@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/util/helper"
 )
 
 // UserStore 定义了 user 模块在 store 层所实现的方法.
@@ -49,7 +50,7 @@ func (u *users) Update(ctx context.Context, user *model.UserM) error {
 
 // List 根据 offset 和 limit 返回 user 列表.
 func (u *users) List(ctx context.Context, offset, limit int) (count int64, ret []*model.UserM, err error) {
-	err = u.db.Offset(offset).Limit(defaultLimit(limit)).Order("id desc").Find(&ret).
+	err = u.db.Offset(offset).Limit(helper.DefaultLimit(limit)).Order("id desc").Find(&ret).
 		Offset(-1).
 		Limit(-1).
 		Count(&count).

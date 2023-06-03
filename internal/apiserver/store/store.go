@@ -4,6 +4,8 @@ import (
 	"sync"
 
 	"gorm.io/gorm"
+
+	"bingo/internal/apiserver/store/system"
 )
 
 //go:generate mockgen -destination mock_store.go -package store bingo/internal/apiserver/store IStore
@@ -17,6 +19,7 @@ var (
 type IStore interface {
 	DB() *gorm.DB
 	Users() UserStore
+	Admins() system.AdminStore
 }
 
 // datastore 是 IStore 的一个具体实现.
@@ -45,4 +48,7 @@ func (ds *datastore) DB() *gorm.DB {
 // Users 返回一个实现了 UserStore 接口的实例.
 func (ds *datastore) Users() UserStore {
 	return newUsers(ds.db)
+}
+func (ds *datastore) Admins() system.AdminStore {
+	return system.NewAdmins(ds.db)
 }
