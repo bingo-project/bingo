@@ -1,0 +1,18 @@
+version: v1
+
+root-package: your-pkg-name
+
+directory:
+  cmd: internal/bingoctl/cmd
+  model: internal/pkg/model
+  store: internal/apiserver/store
+  request: pkg/api/v1
+  biz: internal/apiserver/biz
+  controller: internal/apiserver/controller
+  middleware: internal/pkg/middleware
+
+mysql:
+  host: 127.0.0.1:3306
+  username: root
+  password:
+  database: bingo
