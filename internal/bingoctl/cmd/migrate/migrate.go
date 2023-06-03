@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/model/system"
 )
 
 const (
@@ -62,7 +63,12 @@ func (o *MigrateOptions) Complete(cmd *cobra.Command, args []string) error {
 
 // Run executes a new sub command using the specified options.
 func (o *MigrateOptions) Run(args []string) error {
-	err := store.S.DB().AutoMigrate()
+	err := store.S.DB().AutoMigrate(
+		&system.AdminM{},
+		&system.RoleM{},
+		&system.AdminRoleM{},
+		&system.PermissionM{},
+	)
 	console.ExitIf(err)
 
 	return nil
