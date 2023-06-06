@@ -13,9 +13,9 @@ import (
 type RoleStore interface {
 	List(ctx context.Context, offset, limit int) (int64, []*system.RoleM, error)
 	Create(ctx context.Context, role *system.RoleM) error
-	Get(ctx context.Context, ID uint) (*system.RoleM, error)
+	Get(ctx context.Context, roleName string) (*system.RoleM, error)
 	Update(ctx context.Context, role *system.RoleM) error
-	Delete(ctx context.Context, ID uint) error
+	Delete(ctx context.Context, roleName string) error
 }
 
 type roles struct {
@@ -33,8 +33,8 @@ func (u *roles) Create(ctx context.Context, role *system.RoleM) error {
 	return u.db.Create(&role).Error
 }
 
-func (u *roles) Get(ctx context.Context, ID uint) (role *system.RoleM, err error) {
-	err = u.db.Where("id = ?", ID).First(&role).Error
+func (u *roles) Get(ctx context.Context, roleName string) (role *system.RoleM, err error) {
+	err = u.db.Where("name = ?", roleName).First(&role).Error
 
 	return
 }
@@ -53,8 +53,8 @@ func (u *roles) List(ctx context.Context, offset, limit int) (count int64, ret [
 	return
 }
 
-func (u *roles) Delete(ctx context.Context, ID uint) error {
-	err := u.db.Where("id = ?", ID).Delete(&system.RoleM{}).Error
+func (u *roles) Delete(ctx context.Context, roleName string) error {
+	err := u.db.Where("name = ?", roleName).Delete(&system.RoleM{}).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}

@@ -17,11 +17,11 @@ type AdminM struct {
 	Phone    string      `gorm:"type:varchar(255);unique"`
 	Avatar   string      `gorm:"type:varchar(255);not null;default:''"`
 	Status   AdminStatus `gorm:"type:tinyint;index;default:1;comment:状态：1正常，2冻结"`
-	RoleSlug string      `gorm:"type:varchar(255);index;not null;default:'';comment:当前角色标识"`
+	RoleName string      `gorm:"type:varchar(255);index;not null;default:'';comment:当前角色"`
 
 	// Relation
-	Role  RoleM   `gorm:"foreignKey:role_slug;references:slug"`
-	Roles []RoleM `gorm:"many2many:sys_auth_admin_role;foreignKey:username;joinForeignKey:username;References:slug;joinReferences:role_slug"`
+	Role  RoleM   `gorm:"foreignKey:role_name;references:name"`
+	Roles []RoleM `gorm:"many2many:sys_auth_admin_role;foreignKey:username;joinForeignKey:username;References:name;joinReferences:role_name"`
 }
 
 func (u *AdminM) TableName() string {

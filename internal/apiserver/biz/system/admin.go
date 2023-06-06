@@ -109,9 +109,9 @@ func (b *adminBiz) Update(ctx context.Context, username string, request *v1.Upda
 		adminM.Avatar = *request.Avatar
 	}
 
-	// Update roles & current role slug
-	if len(request.RoleSlugs) > 0 {
-		adminM.RoleSlug = request.RoleSlugs[0]
+	// Update roles & current role
+	if len(request.RoleNames) > 0 {
+		adminM.RoleName = request.RoleNames[0]
 	}
 
 	if err := b.ds.Admins().Update(ctx, adminM); err != nil {

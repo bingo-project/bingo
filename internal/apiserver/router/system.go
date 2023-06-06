@@ -33,9 +33,9 @@ func MapSystemRouters(g *gin.Engine) {
 	roleController := system.NewRoleController(store.S, authz)
 	v1.GET("roles", roleController.List)
 	v1.POST("roles", roleController.Create)
-	v1.GET("roles/:id", roleController.Get)
-	v1.PUT("roles/:id", roleController.Update)
-	v1.DELETE("roles/:id", roleController.Delete)
+	v1.GET("roles/:name", roleController.Get)
+	v1.PUT("roles/:name", roleController.Update)
+	v1.DELETE("roles/:name", roleController.Delete)
 
 	// Permission
 	permissionController := system.NewPermissionController(store.S, authz)

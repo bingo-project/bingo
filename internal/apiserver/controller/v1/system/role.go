@@ -3,7 +3,6 @@ package system
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/apiserver/store"
@@ -104,16 +103,16 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
-// @Param      id	     path	    string            		 true  "ID"
+// @Param      name	     path	    string     true  "Role name"
 // @Success	   200		{object}	v1.GetRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{id} [GET]
+// @Router    /system/roles/{name} [GET]
 func (ctrl *RoleController) Get(c *gin.Context) {
 	log.C(c).Infow("Get role function called")
 
-	ID := cast.ToUint(c.Param("id"))
-	role, err := ctrl.b.Roles().Get(c, ID)
+	roleName := c.Param("name")
+	role, err := ctrl.b.Roles().Get(c, roleName)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -130,12 +129,12 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
-// @Param      id	     path	    string            		 true  "ID"
-// @Param      request	 body	    v1.UpdateRoleRequest	 true  "Param"
+// @Param      name	     path	    string                  true  "Role name"
+// @Param      request	 body	    v1.UpdateRoleRequest	true  "Param"
 // @Success	   200		{object}	v1.GetRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{id} [PUT]
+// @Router    /system/roles/{name} [PUT]
 func (ctrl *RoleController) Update(c *gin.Context) {
 	log.C(c).Infow("Update role function called")
 
@@ -152,8 +151,8 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 		return
 	}
 
-	ID := cast.ToUint(c.Param("id"))
-	resp, err := ctrl.b.Roles().Update(c, ID, &r)
+	roleName := c.Param("name")
+	resp, err := ctrl.b.Roles().Update(c, roleName, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -170,16 +169,16 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
-// @Param      id	    path	    string            true  "ID"
+// @Param      name	     path	    string     true  "Role name"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{id} [DELETE]
+// @Router    /system/roles/{name} [DELETE]
 func (ctrl *RoleController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete role function called")
 
-	ID := cast.ToUint(c.Param("id"))
-	if err := ctrl.b.Roles().Delete(c, ID); err != nil {
+	roleName := c.Param("name")
+	if err := ctrl.b.Roles().Delete(c, roleName); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

@@ -5,12 +5,11 @@ import (
 )
 
 type RoleInfo struct {
-	ID        uint      `json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 
-	Slug string `json:"slug"`
-	Name string `json:"name"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 type ListRoleRequest struct {
@@ -24,13 +23,13 @@ type ListRoleResponse struct {
 }
 
 type CreateRoleRequest struct {
-	Slug string `json:"slug" valid:"required,alphanum,stringlength(1|20)"`
-	Name string `json:"name" valid:"required,stringlength(1|255)"`
+	Name        string `json:"name" valid:"required,alphanum,stringlength(1|20)"`
+	Description string `json:"description" valid:"required,stringlength(1|255)"`
 }
 
 type GetRoleResponse RoleInfo
 
 type UpdateRoleRequest struct {
-	Slug *string `json:"slug" valid:"alphanum,stringlength(1|20)"`
-	Name *string `json:"name" valid:"stringlength(1|255)"`
+	Name        *string `json:"name" valid:"alphanum,stringlength(1|20)"`
+	Description *string `json:"description" valid:"stringlength(1|255)"`
 }

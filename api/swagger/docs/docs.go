@@ -689,7 +689,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/roles/{id}": {
+        "/system/roles/{name}": {
             "get": {
                 "security": [
                     {
@@ -709,8 +709,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "id",
+                        "description": "Role name",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     }
@@ -755,8 +755,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "id",
+                        "description": "Role name",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     },
@@ -810,8 +810,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "ID",
-                        "name": "id",
+                        "description": "Role name",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     }
@@ -1220,7 +1220,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "roleSlug": {
+                "roleName": {
                     "type": "string"
                 },
                 "status": {
@@ -1263,7 +1263,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "roleSlugs": {
+                "roleNames": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -1294,10 +1294,10 @@ const docTemplate = `{
         "v1.CreateRoleRequest": {
             "type": "object",
             "properties": {
-                "name": {
+                "description": {
                     "type": "string"
                 },
-                "slug": {
+                "name": {
                     "type": "string"
                 }
             }
@@ -1340,7 +1340,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "roleSlug": {
+                "roleName": {
                     "type": "string"
                 },
                 "status": {
@@ -1386,13 +1386,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
+                "description": {
                     "type": "string"
                 },
-                "slug": {
+                "name": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1538,13 +1535,10 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
+                "description": {
                     "type": "string"
                 },
-                "slug": {
+                "name": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -1567,7 +1561,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "roleSlugs": {
+                "roleNames": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -1598,10 +1592,10 @@ const docTemplate = `{
         "v1.UpdateRoleRequest": {
             "type": "object",
             "properties": {
-                "name": {
+                "description": {
                     "type": "string"
                 },
-                "slug": {
+                "name": {
                     "type": "string"
                 }
             }

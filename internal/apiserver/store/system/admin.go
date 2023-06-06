@@ -19,7 +19,7 @@ type AdminStore interface {
 
 	InitData(ctx context.Context) error
 	CheckExist(ctx context.Context, admin *system.AdminM) (exist bool, err error)
-	HasRole(ctx context.Context, admin *system.AdminM, roleSlug string) bool
+	HasRole(ctx context.Context, admin *system.AdminM, roleName string) bool
 }
 
 type admins struct {
@@ -76,7 +76,7 @@ func (u *admins) InitData(ctx context.Context) error {
 		Nickname: "Root",
 		Email:    "root@root.com",
 		Phone:    "18800000000",
-		RoleSlug: "root",
+		RoleName: "root",
 	}
 
 	// Check exist
@@ -114,8 +114,8 @@ func (u *admins) CheckExist(ctx context.Context, admin *system.AdminM) (exist bo
 	return id > 0, nil
 }
 
-func (u *admins) HasRole(ctx context.Context, admin *system.AdminM, roleSlug string) bool {
-	count := u.db.Model(&admin).Where("role_slug = ?", roleSlug).Association("Roles").Count()
+func (u *admins) HasRole(ctx context.Context, admin *system.AdminM, roleName string) bool {
+	count := u.db.Model(&admin).Where("role_name = ?", roleName).Association("Roles").Count()
 
 	return count > 0
 }

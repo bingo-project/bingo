@@ -14,7 +14,7 @@ type AdminInfo struct {
 	Phone    string `json:"phone"`
 	Avatar   string `json:"avatar"`
 	Status   int    `json:"status"`
-	RoleSlug string `json:"roleSlug"`
+	RoleName string `json:"roleName"`
 }
 
 type ListAdminRequest struct {
@@ -34,7 +34,7 @@ type CreateAdminRequest struct {
 	Email     *string  `json:"email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
-	RoleSlugs []string `json:"roleSlugs" valid:"required"`
+	RoleNames []string `json:"roleNames" valid:"required"`
 }
 
 type GetAdminResponse AdminInfo
@@ -45,13 +45,13 @@ type UpdateAdminRequest struct {
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	Status    *int     `json:"status"`
-	RoleSlugs []string `json:"roleSlugs" valid:"required"`
+	RoleNames []string `json:"roleNames" valid:"required"`
 }
 
 type SetRolesRequest struct {
-	RoleSlugs []string `json:"roleSlugs" valid:"required"`
+	RoleNames []string `json:"roleNames" valid:"required"`
 }
 
 type SwitchRoleRequest struct {
-	RoleSlug string `json:"roleSlug" valid:"required"`
+	RoleName string `json:"roleName" valid:"required"`
 }

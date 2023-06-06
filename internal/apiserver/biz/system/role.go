@@ -16,9 +16,9 @@ import (
 type RoleBiz interface {
 	List(ctx context.Context, offset, limit int) (*v1.ListRoleResponse, error)
 	Create(ctx context.Context, r *v1.CreateRoleRequest) (*v1.GetRoleResponse, error)
-	Get(ctx context.Context, ID uint) (*v1.GetRoleResponse, error)
-	Update(ctx context.Context, ID uint, r *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error)
-	Delete(ctx context.Context, ID uint) error
+	Get(ctx context.Context, roleName string) (*v1.GetRoleResponse, error)
+	Update(ctx context.Context, roleName string, r *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error)
+	Delete(ctx context.Context, roleName string) error
 }
 
 type roleBiz struct {
@@ -73,8 +73,8 @@ func (b *roleBiz) Create(ctx context.Context, request *v1.CreateRoleRequest) (*v
 	return &resp, nil
 }
 
-func (b *roleBiz) Get(ctx context.Context, ID uint) (*v1.GetRoleResponse, error) {
-	role, err := b.ds.Roles().Get(ctx, ID)
+func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.GetRoleResponse, error) {
+	role, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
 		return nil, errno.ErrRoleNotFound
 	}
@@ -85,14 +85,14 @@ func (b *roleBiz) Get(ctx context.Context, ID uint) (*v1.GetRoleResponse, error)
 	return &resp, nil
 }
 
-func (b *roleBiz) Update(ctx context.Context, ID uint, request *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error) {
-	roleM, err := b.ds.Roles().Get(ctx, ID)
+func (b *roleBiz) Update(ctx context.Context, roleName string, request *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error) {
+	roleM, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
 		return nil, errno.ErrRoleNotFound
 	}
 
-	if request.Name != nil {
-		roleM.Name = *request.Name
+	if request.Description != nil {
+		roleM.Description = *request.Description
 	}
 
 	if err := b.ds.Roles().Update(ctx, roleM); err != nil {
@@ -105,6 +105,6 @@ func (b *roleBiz) Update(ctx context.Context, ID uint, request *v1.UpdateRoleReq
 	return &resp, nil
 }
 
-func (b *roleBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Roles().Delete(ctx, ID)
+func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
+	return b.ds.Roles().Delete(ctx, roleName)
 }
