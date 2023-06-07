@@ -57,6 +57,30 @@ func (ctrl *PermissionController) List(c *gin.Context) {
 	core.WriteResponse(c, nil, resp)
 }
 
+// All
+//
+// @Summary    All permissions
+// @Security   Bearer
+// @Tags       Permission
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	[]v1.PermissionInfo
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/permissions/all [GET]
+func (ctrl *PermissionController) All(c *gin.Context) {
+	log.C(c).Infow("All permission function called")
+
+	resp, err := ctrl.b.Permissions().All(c)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}
+
 // Create
 //
 // @Summary    Create a permission

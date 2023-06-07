@@ -16,6 +16,10 @@ type PermissionStore interface {
 	Get(ctx context.Context, ID uint) (*system.PermissionM, error)
 	Update(ctx context.Context, permission *system.PermissionM) error
 	Delete(ctx context.Context, ID uint) error
+
+	All(ctx context.Context) ([]*system.PermissionM, error)
+	GetByIDs(ctx context.Context, IDs []uint) (ret []*system.PermissionM, err error)
+	GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) (ret []uint, err error)
 }
 
 type permissions struct {
@@ -60,4 +64,26 @@ func (u *permissions) Delete(ctx context.Context, ID uint) error {
 	}
 
 	return nil
+}
+
+func (u *permissions) All(ctx context.Context) (ret []*system.PermissionM, err error) {
+	err = u.db.Find(&ret).Error
+
+	return
+}
+
+func (u *permissions) GetByIDs(ctx context.Context, IDs []uint) (ret []*system.PermissionM, err error) {
+	err = u.db.Where("id IN ?", IDs).Find(&ret).Error
+
+	return
+}
+
+func (u *permissions) GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) (ret []uint, err error) {
+	err = u.db.Model(&system.PermissionM{}).
+		Select("id").
+		Where("(path, method) IN ?", pathAndMethod).
+		Find(&ret).
+		Error
+
+	return
 }

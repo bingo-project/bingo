@@ -15,6 +15,9 @@ type AdminInfo struct {
 	Avatar   string `json:"avatar"`
 	Status   int    `json:"status"`
 	RoleName string `json:"roleName"`
+
+	Role  *RoleInfo  `json:"role,omitempty"`
+	Roles []RoleInfo `json:"roles,omitempty"`
 }
 
 type ListAdminRequest struct {

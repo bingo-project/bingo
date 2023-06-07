@@ -19,6 +19,7 @@ type PermissionBiz interface {
 	Get(ctx context.Context, ID uint) (*v1.GetPermissionResponse, error)
 	Update(ctx context.Context, ID uint, r *v1.UpdatePermissionRequest) (*v1.GetPermissionResponse, error)
 	Delete(ctx context.Context, ID uint) error
+	All(ctx context.Context) ([]*v1.PermissionInfo, error)
 }
 
 type permissionBiz struct {
@@ -119,4 +120,25 @@ func (b *permissionBiz) Update(ctx context.Context, ID uint, request *v1.UpdateP
 
 func (b *permissionBiz) Delete(ctx context.Context, ID uint) error {
 	return b.ds.Permissions().Delete(ctx, ID)
+}
+
+func (b *permissionBiz) All(ctx context.Context) ([]*v1.PermissionInfo, error) {
+	list, err := b.ds.Permissions().All(ctx)
+	if err != nil {
+		log.C(ctx).Errorw("Failed to list permissions from storage", "err", err)
+
+		return nil, err
+	}
+
+	permissions := make([]*v1.PermissionInfo, 0, len(list))
+	for _, item := range list {
+		var permission v1.PermissionInfo
+		_ = copier.Copy(&permission, item)
+
+		permissions = append(permissions, &permission)
+	}
+
+	log.C(ctx).Debugw("Get permissions from backend storage", "count", len(permissions))
+
+	return permissions, nil
 }

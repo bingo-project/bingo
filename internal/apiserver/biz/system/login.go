@@ -30,3 +30,23 @@ func (b *adminBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResp
 
 	return &v1.LoginResponse{Token: t}, nil
 }
+
+func (b *adminBiz) ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error {
+	userM, err := b.ds.Admins().Get(ctx, username)
+	if err != nil {
+		return errno.ErrAdminNotFound
+	}
+
+	// Check password
+	if err := auth.Compare(userM.Password, r.OldPassword); err != nil {
+		return errno.ErrPasswordIncorrect
+	}
+
+	// Update password
+	userM.Password, _ = auth.Encrypt(r.NewPassword)
+	if err := b.ds.Admins().Update(ctx, userM); err != nil {
+		return err
+	}
+
+	return nil
+}

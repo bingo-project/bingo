@@ -186,3 +186,83 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 
 	core.WriteResponse(c, nil, nil)
 }
+
+// SetRoles
+//
+// @Summary    Set admin roles
+// @Security   Bearer
+// @Tags       System.Admin
+// @Accept     application/json
+// @Produce    json
+// @Param      name      path       string  true  "Query params"
+// @Param      request	 body	    v1.SetRolesRequest	 true  "Param"
+// @Success	   200		{object}	v1.GetAdminResponse
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/admins/{name}/roles [PUT]
+func (ctrl *AdminController) SetRoles(c *gin.Context) {
+	log.C(c).Infow("SetRoles function called")
+
+	var r v1.SetRolesRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+
+		return
+	}
+
+	if _, err := govalidator.ValidateStruct(r); err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+
+		return
+	}
+
+	username := c.Param("name")
+	resp, err := ctrl.b.Admins().SetRoles(c, username, &r)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}
+
+// SwitchRole
+//
+// @Summary    Switch role
+// @Security   Bearer
+// @Tags       System.Admin
+// @Accept     application/json
+// @Produce    json
+// @Param      name      path       string  true  "Query params"
+// @Param      request	 body	    v1.SwitchRoleRequest	 true  "Param"
+// @Success	   200		{object}	v1.GetAdminResponse
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/admins/{name}/switch-role [PUT]
+func (ctrl *AdminController) SwitchRole(c *gin.Context) {
+	log.C(c).Infow("SwitchRole function called")
+
+	var r v1.SwitchRoleRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+
+		return
+	}
+
+	if _, err := govalidator.ValidateStruct(r); err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+
+		return
+	}
+
+	username := c.Param("name")
+	resp, err := ctrl.b.Admins().SwitchRole(c, username, &r)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

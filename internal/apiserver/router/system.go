@@ -23,11 +23,14 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.Use(middleware.Authn(), middleware.Authz(authz))
 
 	// Admin
-	v1.GET("admins", adminController.List)            // 管理员列表
-	v1.POST("admins", adminController.Create)         // 创建管理员
-	v1.GET("admins/:name", adminController.Get)       // 获取管理员详情
-	v1.PUT("admins/:name", adminController.Update)    // 更新管理员信息
-	v1.DELETE("admins/:name", adminController.Delete) // 删除管理员
+	v1.GET("admins", adminController.List)                                 // 管理员列表
+	v1.POST("admins", adminController.Create)                              // 创建管理员
+	v1.GET("admins/:name", adminController.Get)                            // 获取管理员详情
+	v1.PUT("admins/:name", adminController.Update)                         // 更新管理员信息
+	v1.DELETE("admins/:name", adminController.Delete)                      // 删除管理员
+	v1.PUT("admins/:name/change-password", adminController.ChangePassword) // 修改密码
+	v1.PUT("admins/:name/roles", adminController.SetRoles)                 // 设置角色组
+	v1.PUT("admins/:name/switch-role", adminController.SwitchRole)         // 切换角色
 
 	// Role
 	roleController := system.NewRoleController(store.S, authz)
@@ -40,6 +43,7 @@ func MapSystemRouters(g *gin.Engine) {
 	// Permission
 	permissionController := system.NewPermissionController(store.S, authz)
 	v1.GET("permissions", permissionController.List)
+	v1.GET("permissions/all", permissionController.All)
 	v1.POST("permissions", permissionController.Create)
 	v1.GET("permissions/:id", permissionController.Get)
 	v1.PUT("permissions/:id", permissionController.Update)

@@ -20,6 +20,7 @@ type AdminStore interface {
 	InitData(ctx context.Context) error
 	CheckExist(ctx context.Context, admin *system.AdminM) (exist bool, err error)
 	HasRole(ctx context.Context, admin *system.AdminM, roleName string) bool
+	GetUserInfo(ctx context.Context, username string) (admin *system.AdminM, err error)
 }
 
 type admins struct {
@@ -44,6 +45,13 @@ func (u *admins) Get(ctx context.Context, username string) (admin *system.AdminM
 }
 
 func (u *admins) Update(ctx context.Context, admin *system.AdminM) error {
+	if len(admin.Roles) > 0 {
+		err := u.db.Model(&admin).Association("Roles").Replace(admin.Roles)
+		if err != nil {
+			return err
+		}
+	}
+
 	return u.db.Save(&admin).Error
 }
 
@@ -118,4 +126,14 @@ func (u *admins) HasRole(ctx context.Context, admin *system.AdminM, roleName str
 	count := u.db.Model(&admin).Where("role_name = ?", roleName).Association("Roles").Count()
 
 	return count > 0
+}
+
+func (u *admins) GetUserInfo(ctx context.Context, username string) (admin *system.AdminM, err error) {
+	err = u.db.Preload("Role").
+		Preload("Roles").
+		Where("username = ?", username).
+		First(&admin).
+		Error
+
+	return
 }

@@ -20,7 +20,7 @@ type AdminM struct {
 	RoleName string      `gorm:"type:varchar(255);index;not null;default:'';comment:当前角色"`
 
 	// Relation
-	Role  RoleM   `gorm:"foreignKey:role_name;references:name"`
+	Role  *RoleM  `gorm:"foreignKey:role_name;references:name"`
 	Roles []RoleM `gorm:"many2many:sys_auth_admin_role;foreignKey:username;joinForeignKey:username;References:name;joinReferences:role_name"`
 }
 

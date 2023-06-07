@@ -15,12 +15,16 @@ import (
 
 type AdminBiz interface {
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
+	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
 
 	List(ctx context.Context, offset, limit int) (*v1.ListAdminResponse, error)
 	Create(ctx context.Context, r *v1.CreateAdminRequest) (*v1.GetAdminResponse, error)
 	Get(ctx context.Context, username string) (*v1.GetAdminResponse, error)
 	Update(ctx context.Context, username string, r *v1.UpdateAdminRequest) (*v1.GetAdminResponse, error)
 	Delete(ctx context.Context, username string) error
+
+	SetRoles(ctx context.Context, username string, request *v1.SetRolesRequest) (*v1.GetAdminResponse, error)
+	SwitchRole(ctx context.Context, username string, admin *v1.SwitchRoleRequest) (*v1.GetAdminResponse, error)
 }
 
 type adminBiz struct {
@@ -76,7 +80,7 @@ func (b *adminBiz) Create(ctx context.Context, request *v1.CreateAdminRequest) (
 }
 
 func (b *adminBiz) Get(ctx context.Context, username string) (*v1.GetAdminResponse, error) {
-	admin, err := b.ds.Admins().Get(ctx, username)
+	admin, err := b.ds.Admins().GetUserInfo(ctx, username)
 	if err != nil {
 		return nil, errno.ErrAdminNotFound
 	}
@@ -126,4 +130,50 @@ func (b *adminBiz) Update(ctx context.Context, username string, request *v1.Upda
 
 func (b *adminBiz) Delete(ctx context.Context, username string) error {
 	return b.ds.Admins().Delete(ctx, username)
+}
+
+func (b *adminBiz) SetRoles(ctx context.Context, username string, request *v1.SetRolesRequest) (*v1.GetAdminResponse, error) {
+	adminM, err := b.ds.Admins().Get(ctx, username)
+	if err != nil {
+		return nil, errno.ErrAdminNotFound
+	}
+
+	// Update roles & current role
+	adminM.RoleName = request.RoleNames[0]
+	adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, request.RoleNames)
+
+	err = b.ds.Admins().Update(ctx, adminM)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp v1.GetAdminResponse
+	_ = copier.Copy(&resp, adminM)
+
+	return &resp, err
+}
+
+func (b *adminBiz) SwitchRole(ctx context.Context, username string, request *v1.SwitchRoleRequest) (*v1.GetAdminResponse, error) {
+	adminM, err := b.ds.Admins().Get(ctx, username)
+	if err != nil {
+		return nil, errno.ErrAdminNotFound
+	}
+
+	// Check if the user has the role
+	hasRole := b.ds.Admins().HasRole(ctx, adminM, request.RoleName)
+	if !hasRole {
+		return nil, errno.ErrRoleNotFound
+	}
+
+	// Update roles & current role
+	adminM.RoleName = request.RoleName
+	err = b.ds.Admins().Update(ctx, adminM)
+	if err != nil {
+		return nil, err
+	}
+
+	var resp v1.GetAdminResponse
+	_ = copier.Copy(&resp, adminM)
+
+	return &resp, err
 }

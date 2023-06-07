@@ -16,6 +16,8 @@ type RoleStore interface {
 	Get(ctx context.Context, roleName string) (*system.RoleM, error)
 	Update(ctx context.Context, role *system.RoleM) error
 	Delete(ctx context.Context, roleName string) error
+
+	GetByNames(ctx context.Context, names []string) ([]system.RoleM, error)
 }
 
 type roles struct {
@@ -60,4 +62,10 @@ func (u *roles) Delete(ctx context.Context, roleName string) error {
 	}
 
 	return nil
+}
+
+func (u *roles) GetByNames(ctx context.Context, names []string) (ret []system.RoleM, err error) {
+	err = u.db.Where("name IN ?", names).Find(&ret).Error
+
+	return
 }
