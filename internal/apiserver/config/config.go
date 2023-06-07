@@ -24,10 +24,8 @@ type Server struct {
 }
 
 type JWT struct {
-	RealM      string `mapstructure:"realm" json:"realm" yaml:"realm"`
-	Key        string `mapstructure:"key" json:"key" yaml:"key"`
-	Timeout    string `mapstructure:"timeout" json:"timeout" yaml:"timeout"`
-	MaxRefresh string `mapstructure:"max-refresh" json:"max_refresh" yaml:"max-refresh"`
+	SecretKey string `mapstructure:"secretKey" json:"secretKey" yaml:"secretKey"`
+	TTL       uint   `mapstructure:"ttl" json:"ttl" yaml:"ttl"`
 }
 
 type Feature struct {

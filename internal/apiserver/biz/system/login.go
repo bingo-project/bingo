@@ -3,10 +3,11 @@ package system
 import (
 	"context"
 
+	"github.com/bingo-project/component-base/web/token"
+
 	"bingo/internal/pkg/errno"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
-	"bingo/pkg/token"
 )
 
 func (b *adminBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
@@ -23,12 +24,12 @@ func (b *adminBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResp
 	}
 
 	// Generate token
-	t, err := token.Sign(user.Username)
+	t, err := token.Sign(user.Username, nil)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t}, nil
+	return &v1.LoginResponse{Token: t.AccessToken}, nil
 }
 
 func (b *adminBiz) ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error {

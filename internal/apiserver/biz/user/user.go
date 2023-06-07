@@ -5,6 +5,7 @@ import (
 	"errors"
 	"regexp"
 
+	"github.com/bingo-project/component-base/web/token"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
@@ -14,7 +15,6 @@ import (
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
-	"bingo/pkg/token"
 )
 
 // UserBiz 定义了 user 模块在 biz 层所实现的方法.
@@ -77,12 +77,12 @@ func (b *userBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginRespo
 	}
 
 	// Generate token
-	t, err := token.Sign(user.Username)
+	t, err := token.Sign(user.Username, nil)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t}, nil
+	return &v1.LoginResponse{Token: t.AccessToken}, nil
 }
 
 // Create 是 UserBiz 接口中 `Create` 方法的实现.

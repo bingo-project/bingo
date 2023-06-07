@@ -33,10 +33,8 @@ redis:
 
 # JWT 配置
 jwt:
-  realm: JWT # jwt 标识
-  key: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
-  timeout: 24h # token 过期时间(小时)
-  max-refresh: 24h # token 更新时间(小时)
+  secretKey: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
+  ttl: 1440 # token 过期时间(分钟)，默认 1 天
 
 log:
   level: debug # 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。

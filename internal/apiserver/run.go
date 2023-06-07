@@ -1,13 +1,12 @@
 package apiserver
 
 import (
+	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/config"
 	"bingo/internal/apiserver/router"
-	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/middleware"
-	"bingo/pkg/token"
 )
 
 // run 函数是实际的业务代码入口函数.
@@ -23,7 +22,7 @@ func run() error {
 	}
 
 	// 设置 token 包的签发密钥，用于 token 包 token 的签发和解析
-	token.Init(config.Cfg.JWT.Key, known.XUsernameKey)
+	token.Init(config.Cfg.JWT.SecretKey, config.Cfg.JWT.TTL)
 
 	// 设置 Gin 模式
 	gin.SetMode(config.Cfg.Server.Mode)
