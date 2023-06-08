@@ -54,7 +54,7 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admin/{name}/change-password [PUT].
+// @Router    /system/admins/{name}/change-password [PUT].
 func (ctrl *AdminController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change admin password function called")
 
@@ -72,7 +72,7 @@ func (ctrl *AdminController) ChangePassword(c *gin.Context) {
 	}
 
 	username := c.Param("name")
-	err := ctrl.b.Users().ChangePassword(c, username, &r)
+	err := ctrl.b.Admins().ChangePassword(c, username, &r)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

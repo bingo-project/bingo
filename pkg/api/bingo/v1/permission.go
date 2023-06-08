@@ -40,3 +40,5 @@ type UpdatePermissionRequest struct {
 	Group       *string `json:"group" valid:"stringlength(1|255)"`
 	Description *string `json:"description" valid:"stringlength(1|255)"`
 }
+
+type GetPermissionIDsResponse []uint

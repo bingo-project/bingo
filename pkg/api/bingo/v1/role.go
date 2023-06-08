@@ -33,3 +33,7 @@ type UpdateRoleRequest struct {
 	Name        *string `json:"name" valid:"alphanum,stringlength(1|20)"`
 	Description *string `json:"description" valid:"stringlength(1|255)"`
 }
+
+type SetPermissionsRequest struct {
+	PermissionIDs []uint `json:"permissionIDs" valid:"required"`
+}

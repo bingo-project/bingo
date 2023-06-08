@@ -186,3 +186,65 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 
 	core.WriteResponse(c, nil, nil)
 }
+
+// SetPermissions
+//
+// @Summary    Set permissions
+// @Security   Bearer
+// @Tags       System.Role
+// @Accept     application/json
+// @Produce    json
+// @Param      name	     path	    string     true  "Role name"
+// @Param      request	 body	    v1.SetPermissionsRequest	 true  "Param"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/roles/{name}/permissions [PUT]
+func (ctrl *RoleController) SetPermissions(c *gin.Context) {
+	var r v1.SetPermissionsRequest
+	if err := c.ShouldBind(&r); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+
+		return
+	}
+
+	if _, err := govalidator.ValidateStruct(r); err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+
+		return
+	}
+
+	name := c.Param("name")
+	err := ctrl.b.Roles().SetPermissions(c, ctrl.a, name, r.PermissionIDs)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, nil)
+}
+
+// GetPermissionIDs
+//
+// @Summary    Get permissions
+// @Security   Bearer
+// @Tags       System.Role
+// @Accept     application/json
+// @Produce    json
+// @Param      name      path      string           true  "Role name"
+// @Success	   200		{object}	v1.GetPermissionIDsResponse
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/roles/{name}/permissions [GET]
+func (ctrl *RoleController) GetPermissionIDs(c *gin.Context) {
+	name := c.Param("name")
+	resp, err := ctrl.b.Roles().GetPermissionIDs(c, ctrl.a, name)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}
