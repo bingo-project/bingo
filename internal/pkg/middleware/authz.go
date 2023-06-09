@@ -5,8 +5,8 @@ import (
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
+	"bingo/pkg/auth"
 )
 
 // Author 用来定义授权接口实现.
@@ -18,7 +18,7 @@ type Author interface {
 // Authz 是 Gin 中间件，用来进行请求授权.
 func Authz(a Author) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		sub := c.GetString(known.XUsernameKey)
+		sub := c.GetString(auth.XUsernameKey)
 		obj := c.Request.URL.Path
 		act := c.Request.Method
 

@@ -8,7 +8,7 @@ import (
 	"github.com/goer-project/goer-core/logger"
 	"go.uber.org/zap"
 
-	"bingo/internal/pkg/known"
+	"bingo/pkg/auth"
 )
 
 // Logger 定义了 miniblog 项目的日志接口. 该接口只包含了支持的日志记录方法.
@@ -138,12 +138,12 @@ func C(ctx context.Context) *zapLogger {
 func (l *zapLogger) C(ctx context.Context) *zapLogger {
 	lc := l.clone()
 
-	if requestID := ctx.Value(known.XRequestIDKey); requestID != nil {
-		lc.z = lc.z.With(zap.Any(known.XRequestIDKey, requestID))
+	if requestID := ctx.Value(auth.XRequestIDKey); requestID != nil {
+		lc.z = lc.z.With(zap.Any(auth.XRequestIDKey, requestID))
 	}
 
-	if userID := ctx.Value(known.XUsernameKey); userID != nil {
-		lc.z = lc.z.With(zap.Any(known.XUsernameKey, userID))
+	if userID := ctx.Value(auth.XUsernameKey); userID != nil {
+		lc.z = lc.z.With(zap.Any(auth.XUsernameKey, userID))
 	}
 
 	return lc

@@ -6,8 +6,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
+)
 
-	"bingo/internal/pkg/known"
+var (
+	XRequestIDKey = "X-Request-ID"
+	XUsernameKey  = "X-Username"
+	XUserInfoKey  = "X-UserInfo"
 )
 
 // Encrypt string by bcrypt.
@@ -23,7 +27,7 @@ func Compare(hashedPassword, password string) error {
 }
 
 func ID(c *gin.Context) interface{} {
-	info, exists := c.Get(known.XUsernameKey)
+	info, exists := c.Get(XUsernameKey)
 	if !exists {
 		return nil
 	}
@@ -32,7 +36,7 @@ func ID(c *gin.Context) interface{} {
 }
 
 func User(c *gin.Context, user interface{}) error {
-	info, exists := c.Get(known.XUserInfoKey)
+	info, exists := c.Get(XUserInfoKey)
 	if !exists {
 		return errors.New("not exists")
 	}

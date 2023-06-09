@@ -8,7 +8,7 @@ import (
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/known"
+	"bingo/pkg/auth"
 )
 
 func Authn() gin.HandlerFunc {
@@ -32,7 +32,7 @@ func Authn() gin.HandlerFunc {
 				return
 			}
 
-			c.Set(known.XUserInfoKey, userInfo)
+			c.Set(auth.XUserInfoKey, userInfo)
 		}
 
 		// User
@@ -45,10 +45,10 @@ func Authn() gin.HandlerFunc {
 				return
 			}
 
-			c.Set(known.XUserInfoKey, userInfo)
+			c.Set(auth.XUserInfoKey, userInfo)
 		}
 
-		c.Set(known.XUsernameKey, payload.Subject)
+		c.Set(auth.XUsernameKey, payload.Subject)
 		c.Next()
 	}
 }
