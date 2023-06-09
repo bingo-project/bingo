@@ -26,6 +26,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("admins", adminController.List)                                 // 管理员列表
 	v1.POST("admins", adminController.Create)                              // 创建管理员
 	v1.GET("admins/:name", adminController.Get)                            // 获取管理员详情
+	v1.GET("admins/self", adminController.Self)                            // 获取登录账号信息
 	v1.PUT("admins/:name", adminController.Update)                         // 更新管理员信息
 	v1.DELETE("admins/:name", adminController.Delete)                      // 删除管理员
 	v1.PUT("admins/:name/change-password", adminController.ChangePassword) // 修改密码

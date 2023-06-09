@@ -3,11 +3,13 @@ package system
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
@@ -94,6 +96,31 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 	}
 
 	core.WriteResponse(c, nil, resp)
+}
+
+// Self
+//
+// @Summary    Get self info
+// @Security   Bearer
+// @Tags       System.Admin
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	v1.GetAdminResponse
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /system/admins/self [GET]
+func (ctrl *AdminController) Self(c *gin.Context) {
+	log.C(c).Infow("Self function called")
+
+	username, _ := c.Get(known.XUsernameKey)
+	admin, err := ctrl.b.Admins().Get(c, cast.ToString(username))
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, admin)
 }
 
 // Get
