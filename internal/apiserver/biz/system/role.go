@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"bingo/internal/apiserver/global"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
@@ -127,7 +128,7 @@ func (b *roleBiz) SetPermissions(ctx context.Context, a *auth.Authz, name string
 	}
 
 	// Remove policy
-	_, err = a.RemoveFilteredPolicy(0, system.RolePrefix+role.Name)
+	_, err = a.RemoveFilteredPolicy(0, global.RolePrefix+role.Name)
 	if err != nil {
 		return err
 	}
@@ -135,7 +136,7 @@ func (b *roleBiz) SetPermissions(ctx context.Context, a *auth.Authz, name string
 	// Add casbin rule
 	var rules [][]string
 	for _, permission := range permissions {
-		rules = append(rules, []string{system.RolePrefix + role.Name, permission.Path, permission.Method})
+		rules = append(rules, []string{global.RolePrefix + role.Name, permission.Path, permission.Method})
 	}
 
 	_, err = a.AddPolicies(rules)
@@ -153,7 +154,7 @@ func (b *roleBiz) GetPermissionIDs(ctx context.Context, a *auth.Authz, name stri
 		return nil, err
 	}
 
-	list := a.GetFilteredPolicy(0, system.RolePrefix+role.Name)
+	list := a.GetFilteredPolicy(0, global.RolePrefix+role.Name)
 
 	var pathAndMethod [][]string
 	for _, v := range list {

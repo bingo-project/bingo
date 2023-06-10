@@ -48,6 +48,7 @@ func Authn() gin.HandlerFunc {
 			c.Set(auth.XUserInfoKey, userInfo)
 		}
 
+		c.Set(auth.XGuard, payload.Info)
 		c.Set(auth.XUsernameKey, payload.Subject)
 		c.Next()
 	}

@@ -14,7 +14,3 @@ type RoleM struct {
 func (u *RoleM) TableName() string {
 	return "sys_auth_role"
 }
-
-const (
-	RolePrefix = "role::"
-)

@@ -10,6 +10,7 @@ import (
 
 var (
 	XRequestIDKey = "X-Request-ID"
+	XGuard        = "X-Guard"
 	XUsernameKey  = "X-Username"
 	XUserInfoKey  = "X-UserInfo"
 )

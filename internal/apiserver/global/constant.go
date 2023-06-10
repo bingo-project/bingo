@@ -1,5 +1,6 @@
 package global
 
 const (
-	AuthAdmin = "system"
+	RolePrefix = "role::" // Role prefix, only for casbin rule.
+	AuthAdmin  = "system" // Auth guard: system admin.
 )
