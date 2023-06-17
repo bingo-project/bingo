@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -25,7 +26,7 @@ var (
 )
 
 // LoadConfig reads in config file and ENV variables if set.
-func LoadConfig(cfg string, defaultName string, data interface{}) {
+func LoadConfig(cfg string, defaultName string, data interface{}, onChange func()) {
 	if cfg != "" {
 		viper.SetConfigFile(cfg)
 	} else {
@@ -57,4 +58,17 @@ func LoadConfig(cfg string, defaultName string, data interface{}) {
 
 	// Print using config file.
 	log.Debugw("Using config file", "file", viper.ConfigFileUsed())
+
+	// Watch config file
+	viper.WatchConfig()
+	viper.OnConfigChange(func(e fsnotify.Event) {
+		log.Infow("config file changed")
+		if err := viper.Unmarshal(data); err != nil {
+			log.Errorw("config unmarshal err", "err", err)
+
+			return
+		}
+
+		onChange()
+	})
 }

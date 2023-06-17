@@ -14,5 +14,5 @@ const (
 
 // InitConfig reads in config file and ENV variables if set.
 func InitConfig() {
-	genericapiserver.LoadConfig(CfgFile, DefaultConfigName, &config.Cfg)
+	genericapiserver.LoadConfig(CfgFile, DefaultConfigName, &config.Cfg, Boot)
 }

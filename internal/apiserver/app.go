@@ -37,7 +37,7 @@ func NewAppCommand() *cobra.Command {
 	}
 
 	// 以下设置，使得 InitConfig 函数在每个命令运行时都会被调用以读取配置
-	cobra.OnInitialize(bootstrap.Boot)
+	cobra.OnInitialize(bootstrap.InitConfig)
 
 	// 在这里您将定义标志和配置设置。
 
