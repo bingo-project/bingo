@@ -6,17 +6,11 @@ import (
 	"syscall"
 	"time"
 
-	"bingo/internal/apiserver"
 	"bingo/internal/pkg/log"
 )
 
 // run 函数是实际的业务代码入口函数.
 func run() error {
-	// 初始化 store 层
-	if err := apiserver.InitStore(); err != nil {
-		return err
-	}
-
 	cron := newWatchJob().addWatchers()
 	cron.Start()
 

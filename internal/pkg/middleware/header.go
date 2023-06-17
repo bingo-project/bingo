@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
@@ -20,14 +21,16 @@ func NoCache(c *gin.Context) {
 func Cors(c *gin.Context) {
 	if c.Request.Method != "OPTIONS" {
 		c.Next()
-	} else {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
-		c.Header("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
-		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
-		c.Header("Content-Type", "application/json")
-		c.AbortWithStatus(http.StatusOK)
+
+		return
 	}
+
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+	c.Header("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
+	c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
+	c.Header("Content-Type", "application/json")
+	c.AbortWithStatus(http.StatusOK)
 }
 
 // Secure is a middleware function that appends security
@@ -41,4 +44,14 @@ func Secure(c *gin.Context) {
 	if c.Request.TLS != nil {
 		c.Header("Strict-Transport-Security", "max-age=31536000")
 	}
+}
+
+func ForceUserAgent(c *gin.Context) {
+	if len(c.Request.Header["User-Agent"]) > 0 {
+		c.Next()
+
+		return
+	}
+
+	_ = c.AbortWithError(http.StatusBadRequest, errors.New("User-Agent not found"))
 }
