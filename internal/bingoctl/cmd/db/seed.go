@@ -1,14 +1,10 @@
 package db
 
 import (
-	"context"
 	"fmt"
 
-	"github.com/bingo-project/component-base/cli/console"
 	cmdutil "github.com/bingo-project/component-base/cli/util"
 	"github.com/spf13/cobra"
-
-	"bingo/internal/apiserver/store"
 )
 
 const (
@@ -64,8 +60,6 @@ func (o *SeedOptions) Complete(cmd *cobra.Command, args []string) error {
 // Run executes a new sub command using the specified options.
 func (o *SeedOptions) Run(args []string) error {
 	// Init data
-	err := store.S.Admins().InitData(context.Background())
-	console.ExitIf(err)
 
 	return nil
 }

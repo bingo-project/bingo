@@ -35,11 +35,16 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 
 	groups := templates.CommandGroups{
 		{
-			Message: "Basic Commands:",
+			Message: "Tool Commands:",
 			Commands: []*cobra.Command{
-				migrate.NewCmdMigrate(),
-				db.NewCmdDb(),
 				key.NewCmdKey(),
+			},
+		},
+		{
+			Message: "Database Commands:",
+			Commands: []*cobra.Command{
+				db.NewCmdDb(),
+				migrate.NewCmdMigrate(),
 			},
 		},
 		{
