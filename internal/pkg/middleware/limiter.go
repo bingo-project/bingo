@@ -36,7 +36,7 @@ func LimitPath(limit string) gin.HandlerFunc {
 	}
 }
 
-func LimitMethod(limit string) gin.HandlerFunc {
+func LimitWrite(limit string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Skip GET
 		method := c.Request.Method
