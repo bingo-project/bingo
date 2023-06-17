@@ -5,17 +5,19 @@ import (
 
 	"github.com/goer-project/goer-core/cache"
 	"github.com/goer-project/goer-core/redis"
+
+	"bingo/internal/apiserver/facade"
 )
 
 var (
 	once   sync.Once
-	C      *cache.CacheService
 	prefix = "cache:"
 )
 
 func NewCache(rds *redis.RedisClient) {
 	once.Do(func() {
-		C = cache.NewService(&cache.RedisStore{
+		facade.Redis = rds.Client
+		facade.Cache = cache.NewService(&cache.RedisStore{
 			RedisClient: rds,
 			KeyPrefix:   prefix,
 		})

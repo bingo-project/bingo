@@ -1,10 +1,10 @@
 package bootstrap
 
 import (
-	"bingo/internal/apiserver/config"
+	"bingo/internal/apiserver/facade"
 	"bingo/internal/pkg/log"
 )
 
 func InitLog() {
-	log.Init(config.Cfg.Log)
+	log.Init(facade.Config.Log)
 }

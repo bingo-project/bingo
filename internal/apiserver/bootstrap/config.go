@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"bingo/internal/apiserver/config"
+	"bingo/internal/apiserver/facade"
 	genericapiserver "bingo/internal/pkg/server"
 )
 
@@ -14,5 +14,5 @@ const (
 
 // InitConfig reads in config file and ENV variables if set.
 func InitConfig() {
-	genericapiserver.LoadConfig(CfgFile, DefaultConfigName, &config.Cfg, Boot)
+	genericapiserver.LoadConfig(CfgFile, DefaultConfigName, &facade.Config, Boot)
 }

@@ -9,7 +9,7 @@ import (
 	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	"github.com/robfig/cron/v3"
 
-	"bingo/internal/apiserver/config"
+	"bingo/internal/apiserver/facade"
 	"bingo/internal/pkg/log"
 	"bingo/internal/watcher/watcher"
 
@@ -24,8 +24,8 @@ type watchJob struct {
 
 func newWatchJob() *watchJob {
 	client := goredislib.NewClient(&goredislib.Options{
-		Addr:     config.Cfg.Redis.Host,
-		Password: config.Cfg.Redis.Password,
+		Addr:     facade.Config.Redis.Host,
+		Password: facade.Config.Redis.Password,
 	})
 
 	rs := redsync.New(goredis.NewPool(client))

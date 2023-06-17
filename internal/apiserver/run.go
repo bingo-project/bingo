@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/bootstrap"
-	"bingo/internal/apiserver/config"
+	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/router"
 	"bingo/internal/pkg/middleware"
 )
@@ -20,7 +20,7 @@ func run() error {
 }
 
 func initRouter() *gin.Engine {
-	gin.SetMode(config.Cfg.Server.Mode)
+	gin.SetMode(facade.Config.Server.Mode)
 
 	g := gin.New()
 
@@ -28,7 +28,7 @@ func initRouter() *gin.Engine {
 	registerGlobalMiddleWare(g)
 
 	// Swagger
-	if config.Cfg.Feature.ApiDoc {
+	if facade.Config.Feature.ApiDoc {
 		router.MapSwagRouters(g)
 	}
 

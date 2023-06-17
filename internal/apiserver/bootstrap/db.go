@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"bingo/internal/apiserver/config"
+	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/log"
 	"bingo/pkg/db"
@@ -9,7 +9,7 @@ import (
 
 // InitStore 读取 db 配置，创建 gorm.DB 实例，并初始化 store 层.
 func InitStore() {
-	ins, err := db.NewMySQL(config.Cfg.Mysql)
+	ins, err := db.NewMySQL(facade.Config.Mysql)
 	if err != nil {
 		log.Errorw("init store failed", "err", err)
 

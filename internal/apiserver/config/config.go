@@ -5,10 +5,6 @@ import (
 	"bingo/pkg/db"
 )
 
-var (
-	Cfg *Config
-)
-
 type Config struct {
 	Server  *Server          `mapstructure:"server" json:"server" yaml:"server"`
 	JWT     *JWT             `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
