@@ -14,6 +14,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-redsync/redsync/v4 v4.8.1
+	github.com/goer-project/goer v0.4.10
 	github.com/goer-project/goer-core v0.3.0
 	github.com/google/uuid v1.3.0
 	github.com/gosuri/uitable v0.0.4
@@ -29,6 +30,7 @@ require (
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.8.12
+	github.com/ulule/limiter/v3 v3.11.2
 	go.uber.org/zap v1.23.0
 	golang.org/x/crypto v0.9.0
 	golang.org/x/time v0.1.0
@@ -97,6 +99,7 @@ require (
 	github.com/onsi/gomega v1.25.0 // indirect
 	github.com/patrickmn/go-cache v2.1.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/redis/go-redis/v9 v9.0.4 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
