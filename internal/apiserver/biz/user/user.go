@@ -5,13 +5,13 @@ import (
 	"errors"
 	"regexp"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"

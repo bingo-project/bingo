@@ -1,9 +1,10 @@
 package bootstrap
 
 import (
+	"github.com/bingo-project/component-base/log"
+
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/store"
-	"bingo/internal/pkg/log"
 	"bingo/pkg/db"
 )
 

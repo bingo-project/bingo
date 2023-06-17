@@ -2,13 +2,13 @@ package system
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
 )
@@ -35,7 +35,7 @@ func NewAdminController(ds store.IStore, a *auth.Authz) *AdminController {
 // @Success	   200		{object}	v1.ListAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins [GET]
+// @Router    /system/admins [GET].
 func (ctrl *AdminController) List(c *gin.Context) {
 	log.C(c).Infow("List admin function called")
 
@@ -67,7 +67,7 @@ func (ctrl *AdminController) List(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins [POST]
+// @Router    /system/admins [POST].
 func (ctrl *AdminController) Create(c *gin.Context) {
 	log.C(c).Infow("Create admin function called")
 
@@ -106,7 +106,7 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/self [GET]
+// @Router    /system/admins/self [GET].
 func (ctrl *AdminController) Self(c *gin.Context) {
 	log.C(c).Infow("Self function called")
 
@@ -132,7 +132,7 @@ func (ctrl *AdminController) Self(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name} [GET]
+// @Router    /system/admins/{name} [GET].
 func (ctrl *AdminController) Get(c *gin.Context) {
 	log.C(c).Infow("Get admin function called")
 
@@ -159,7 +159,7 @@ func (ctrl *AdminController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name} [PUT]
+// @Router    /system/admins/{name} [PUT].
 func (ctrl *AdminController) Update(c *gin.Context) {
 	log.C(c).Infow("Update admin function called")
 
@@ -198,7 +198,7 @@ func (ctrl *AdminController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name} [DELETE]
+// @Router    /system/admins/{name} [DELETE].
 func (ctrl *AdminController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete admin function called")
 
@@ -224,7 +224,7 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name}/roles [PUT]
+// @Router    /system/admins/{name}/roles [PUT].
 func (ctrl *AdminController) SetRoles(c *gin.Context) {
 	log.C(c).Infow("SetRoles function called")
 
@@ -264,7 +264,7 @@ func (ctrl *AdminController) SetRoles(c *gin.Context) {
 // @Success	   200		{object}	v1.GetAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name}/switch-role [PUT]
+// @Router    /system/admins/{name}/switch-role [PUT].
 func (ctrl *AdminController) SwitchRole(c *gin.Context) {
 	log.C(c).Infow("SwitchRole function called")
 

@@ -2,6 +2,7 @@ package system
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
@@ -9,7 +10,6 @@ import (
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
 )
@@ -36,7 +36,7 @@ func NewRoleController(ds store.IStore, a *auth.Authz) *RoleController {
 // @Success	   200		{object}	v1.ListRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles [GET]
+// @Router    /system/roles [GET].
 func (ctrl *RoleController) List(c *gin.Context) {
 	log.C(c).Infow("List role function called")
 
@@ -68,7 +68,7 @@ func (ctrl *RoleController) List(c *gin.Context) {
 // @Success	   200		{object}	v1.GetRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles [POST]
+// @Router    /system/roles [POST].
 func (ctrl *RoleController) Create(c *gin.Context) {
 	log.C(c).Infow("Create role function called")
 
@@ -108,7 +108,7 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.GetRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{name} [GET]
+// @Router    /system/roles/{name} [GET].
 func (ctrl *RoleController) Get(c *gin.Context) {
 	log.C(c).Infow("Get role function called")
 
@@ -135,7 +135,7 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.GetRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{name} [PUT]
+// @Router    /system/roles/{name} [PUT].
 func (ctrl *RoleController) Update(c *gin.Context) {
 	log.C(c).Infow("Update role function called")
 
@@ -174,7 +174,7 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{name} [DELETE]
+// @Router    /system/roles/{name} [DELETE].
 func (ctrl *RoleController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete role function called")
 
@@ -200,7 +200,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{name}/permissions [PUT]
+// @Router    /system/roles/{name}/permissions [PUT].
 func (ctrl *RoleController) SetPermissions(c *gin.Context) {
 	var r v1.SetPermissionsRequest
 	if err := c.ShouldBind(&r); err != nil {
@@ -243,7 +243,7 @@ func (ctrl *RoleController) SetPermissions(c *gin.Context) {
 // @Success	   200		{object}	v1.GetPermissionIDsResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/roles/{name}/permissions [GET]
+// @Router    /system/roles/{name}/permissions [GET].
 func (ctrl *RoleController) GetPermissionIDs(c *gin.Context) {
 	name := c.Param("name")
 	resp, err := ctrl.b.Roles().GetPermissionIDs(c, ctrl.a, name)

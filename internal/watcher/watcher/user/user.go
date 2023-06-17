@@ -5,8 +5,9 @@ import (
 
 	"github.com/go-redsync/redsync/v4"
 
+	"github.com/bingo-project/component-base/log"
+
 	"bingo/internal/apiserver/store"
-	"bingo/internal/pkg/log"
 )
 
 type UserWatcher struct {

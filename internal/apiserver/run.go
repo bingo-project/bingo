@@ -44,7 +44,7 @@ func initRouter() *gin.Engine {
 	return g
 }
 
-// Register global middlewares
+// Register global middlewares.
 func registerGlobalMiddleWare(g *gin.Engine) {
 	g.Use(
 		gin.Recovery(),

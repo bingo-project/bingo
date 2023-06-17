@@ -4,11 +4,11 @@ import (
 	"context"
 	"regexp"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model/system"
 	v1 "bingo/pkg/api/bingo/v1"
 )

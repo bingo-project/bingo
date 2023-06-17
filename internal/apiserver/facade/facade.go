@@ -1,8 +1,8 @@
 package facade
 
 import (
-	"github.com/go-redis/redis/v8"
-	"github.com/goer-project/goer-core/cache"
+	"github.com/bingo-project/component-base/cache"
+	"github.com/redis/go-redis/v9"
 
 	"bingo/internal/apiserver/config"
 )

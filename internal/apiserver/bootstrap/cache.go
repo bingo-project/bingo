@@ -1,11 +1,11 @@
 package bootstrap
 
 import (
+	"github.com/bingo-project/component-base/log"
+	"github.com/bingo-project/component-base/redis"
+
 	"bingo/internal/apiserver/cache"
 	"bingo/internal/apiserver/facade"
-	"bingo/internal/pkg/log"
-
-	"github.com/goer-project/goer-core/redis"
 )
 
 func InitCache() {

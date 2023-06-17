@@ -3,17 +3,14 @@ package middleware
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"log"
 	"net/http"
 
-	"goer/global"
-	"goer/global/errno"
-
 	"github.com/gin-gonic/gin"
-	"github.com/goer-project/goer/response"
 	"github.com/spf13/cast"
 	"github.com/ulule/limiter/v3"
 	redisStore "github.com/ulule/limiter/v3/drivers/store/redis"
+
+	"bingo/internal/apiserver/facade"
 )
 
 func LimitIP(limit string) gin.HandlerFunc {
@@ -27,7 +24,7 @@ func LimitIP(limit string) gin.HandlerFunc {
 	}
 }
 
-// LimitPath Limit ip and url
+// LimitPath Limit ip and url.
 func LimitPath(limit string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := resolveRequestSignature(c.FullPath() + "|" + c.ClientIP())
@@ -68,8 +65,6 @@ func resolveRequestSignature(key string) string {
 func handleLimit(c *gin.Context, key string, limit string) bool {
 	rate, err := GetLimiterContext(c, key, limit)
 	if err != nil {
-		log.Println(err)
-		response.Fail(c, errno.InternalServerError)
 		return false
 	}
 
@@ -99,8 +94,8 @@ func GetLimiterContext(c *gin.Context, key string, formatted string) (limiter.Co
 	}
 
 	// Create a store with the redis client.
-	store, err := redisStore.NewStoreWithOptions(global.Redis.Client, limiter.StoreOptions{
-		Prefix: global.Config.App.Name + ":limiter",
+	store, err := redisStore.NewStoreWithOptions(facade.Redis, limiter.StoreOptions{
+		Prefix: facade.Config.Server.Name + ":limiter",
 	})
 	if err != nil {
 		return context, err

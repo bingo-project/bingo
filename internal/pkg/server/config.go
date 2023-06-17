@@ -5,11 +5,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"bingo/internal/pkg/log"
 )
 
 const (

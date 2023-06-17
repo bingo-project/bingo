@@ -3,11 +3,11 @@ package watcher
 import (
 	"fmt"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/bootstrap"
-	"bingo/internal/pkg/log"
 )
 
 // NewWatcherCommand creates an App object with default parameters.

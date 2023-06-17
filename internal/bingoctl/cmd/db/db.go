@@ -11,7 +11,6 @@ const (
 
 // NewCmdDb returns new initialized instance of 'db' sub command.
 func NewCmdDb() *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:                   dbUsageStr,
 		DisableFlagsInUseLine: true,

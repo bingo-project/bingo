@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	goredislib "github.com/go-redis/redis/v8"
+	"github.com/bingo-project/component-base/log"
 	"github.com/go-redsync/redsync/v4"
-	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v9"
+	goredislib "github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 
 	"bingo/internal/apiserver/facade"
-	"bingo/internal/pkg/log"
 	"bingo/internal/watcher/watcher"
 
 	// trigger init functions in `internal/watcher/watcher/`.

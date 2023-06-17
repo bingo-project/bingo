@@ -6,9 +6,8 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/gosuri/uitable"
-
-	"bingo/internal/pkg/log"
 )
 
 var (

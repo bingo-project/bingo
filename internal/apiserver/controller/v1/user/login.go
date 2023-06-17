@@ -3,9 +3,10 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/bingo-project/component-base/log"
+
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/api/bingo/v1"
 )
 
