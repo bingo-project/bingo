@@ -7,6 +7,7 @@ type Server struct {
 	Mode     string `mapstructure:"mode" json:"mode" yaml:"mode"`
 	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
 	Timezone string `mapstructure:"timezone" json:"timezone" yaml:"timezone"`
+	Key      string `mapstructure:"key" json:"key"`
 }
 
 func (a Server) SetTimezone() {

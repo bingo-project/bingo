@@ -6,4 +6,5 @@ func Boot() {
 	InitStore()
 	InitCache()
 	InitTimezone()
+	InitAES()
 }
