@@ -11,6 +11,7 @@ import (
 
 	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/bingoctl/cmd/db"
+	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/migrate"
 	"bingo/internal/bingoctl/cmd/user"
 )
@@ -38,6 +39,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Commands: []*cobra.Command{
 				migrate.NewCmdMigrate(),
 				db.NewCmdDb(),
+				key.NewCmdKey(),
 			},
 		},
 		{
