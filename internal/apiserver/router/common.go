@@ -4,12 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/controller/v1/common"
+	"bingo/internal/pkg/core"
+	"bingo/internal/pkg/errno"
 )
 
-func MapCommonRouters(r *gin.Engine) {
-	// controllers
-	commonController := common.NewCommonController()
+func MapCommonRouters(g *gin.Engine) {
+	// 注册 404 Handler.
+	g.NoRoute(func(c *gin.Context) {
+		core.WriteResponse(c, errno.ErrPageNotFound, nil)
+	})
 
-	// 注册 /healthz handler.
-	r.GET("/healthz", commonController.Healthz)
+	// Healthz
+	commonController := common.NewCommonController()
+	g.GET("/healthz", commonController.Healthz)
 }

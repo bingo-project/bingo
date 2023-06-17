@@ -5,18 +5,11 @@ import (
 
 	"bingo/internal/apiserver/controller/v1/user"
 	"bingo/internal/apiserver/store"
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/middleware"
 	"bingo/pkg/auth"
 )
 
 func MapApiRouters(g *gin.Engine) {
-	// 注册 404 Handler.
-	g.NoRoute(func(c *gin.Context) {
-		core.WriteResponse(c, errno.ErrPageNotFound, nil)
-	})
-
 	// v1 group
 	v1 := g.Group("/v1")
 
