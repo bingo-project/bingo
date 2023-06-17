@@ -2,8 +2,10 @@
 
 # RESTful Server
 server:
+  name: bingo
   mode: debug # server mode: release, debug, test，默认 release
   addr: :8080
+  timezone: UTC
 
 # MySQL
 mysql:
@@ -11,25 +13,16 @@ mysql:
   username: root # MySQL 用户名(建议授权最小权限集)
   password: root # MySQL 用户密码
   database: bingo # 系统所用的数据库名
-  max-idle-connections: 100 # MySQL 最大空闲连接数，默认 100
-  max-open-connections: 100 # MySQL 最大打开的连接数，默认 100
-  max-connection-life-time: 10s # 空闲连接最大存活时间，默认 10s
-  log-level: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
+  maxIdleConnections: 100 # MySQL 最大空闲连接数，默认 100
+  maxOpenConnections: 100 # MySQL 最大打开的连接数，默认 100
+  maxConnectionLifeTime: 10s # 空闲连接最大存活时间，默认 10s
+  logLevel: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
 
 # Redis
 redis:
   host: 127.0.0.1:6379 # redis 地址，默认 127.0.0.1:6379
   password:  # redis 密码
-  #addrs:
-  #master-name: # redis 集群 master 名称
-  #username: # redis 登录用户名
   database: 1 # redis 数据库
-  #optimisation-max-idle:  # redis 连接池中的最大空闲连接数
-  #optimisation-max-active: # 最大活跃连接数
-  #timeout: # 连接 redis 时的超时时间
-  #enable-cluster: # 是否开启集群模式
-  #use-ssl: # 是否启用 TLS
-  #ssl-insecure-skip-verify: # 当连接 redis 时允许使用自签名证书
 
 # JWT 配置
 jwt:
@@ -41,9 +34,9 @@ log:
   days: 7 # 日志文件保留天数
   format: console # 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。
   console: true
-  max-size: 100 # 日志文件大小限制（M）
+  maxSize: 100 # 日志文件大小限制（M）
   compress: true # 是否使用 gz 压缩历史日志文件
   path: _output/logs/apiserver.log # 日志文件位置
 
 feature:
-  api-doc: true # 是否开启 swagger api docs
+  apiDoc: true # 是否开启 swagger api docs

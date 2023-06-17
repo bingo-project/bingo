@@ -23,17 +23,20 @@ type watchJob struct {
 }
 
 func newWatchJob() *watchJob {
+	location, _ := time.LoadLocation(facade.Config.Server.Timezone)
+
+	cronjob := cron.New(
+		cron.WithSeconds(),
+		cron.WithChain(cron.SkipIfStillRunning(cron.DefaultLogger), cron.Recover(cron.DefaultLogger)),
+		cron.WithLocation(location),
+	)
+
+	// Go redis
 	client := goredislib.NewClient(&goredislib.Options{
 		Addr:     facade.Config.Redis.Host,
 		Password: facade.Config.Redis.Password,
 	})
-
 	rs := redsync.New(goredis.NewPool(client))
-
-	cronjob := cron.New(
-		cron.WithSeconds(),
-		cron.WithChain(cron.SkipIfStillRunning(nil), cron.Recover(nil)),
-	)
 
 	return &watchJob{
 		Cron: cronjob,

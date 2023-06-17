@@ -15,10 +15,10 @@ type MySQLOptions struct {
 	Username              string        `mapstructure:"username" json:"username" yaml:"username"`
 	Password              string        `mapstructure:"password" json:"-" yaml:"password"`
 	Database              string        `mapstructure:"database" json:"database" yaml:"database"`
-	MaxIdleConnections    int           `mapstructure:"max-idle-connections" json:"max_idle_connections" yaml:"max-idle-connections"`
-	MaxOpenConnections    int           `mapstructure:"max-open-connections" json:"max_open_connections" yaml:"max-open-connections"`
-	MaxConnectionLifeTime time.Duration `mapstructure:"max-connection-life-time" json:"max_connection_life_time" yaml:"max-connection-life-time"`
-	LogLevel              int           `mapstructure:"log-level" json:"log_level" yaml:"log-level"`
+	MaxIdleConnections    int           `mapstructure:"maxIdleConnections" json:"maxIdleConnections" yaml:"maxIdleConnections"`
+	MaxOpenConnections    int           `mapstructure:"maxOpenConnections" json:"maxOpenConnections" yaml:"maxOpenConnections"`
+	MaxConnectionLifeTime time.Duration `mapstructure:"maxConnectionLifeTime" json:"maxConnectionLifeTime" yaml:"maxConnectionLifeTime"`
+	LogLevel              int           `mapstructure:"logLevel" json:"logLevel" yaml:"logLevel"`
 }
 
 // DSN returns mysql dsn.

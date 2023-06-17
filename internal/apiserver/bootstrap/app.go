@@ -5,4 +5,5 @@ func Boot() {
 	InitJwt()
 	InitStore()
 	InitCache()
+	InitTimezone()
 }

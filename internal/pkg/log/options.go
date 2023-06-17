@@ -10,7 +10,7 @@ type Options struct {
 	Days     int    `mapstructure:"days" json:"days" yaml:"days"`
 	Console  bool   `mapstructure:"console" json:"console" yaml:"console"`
 	Format   string `mapstructure:"format" json:"format" yaml:"format"`       // 指定日志显示格式，可选值：console, json
-	MaxSize  int    `mapstructure:"max-size" json:"max_size" yaml:"max-size"` // 日志文件大小限制，M
+	MaxSize  int    `mapstructure:"maxSize" json:"maxSize" yaml:"maxSize"`    // 日志文件大小限制，M
 	Compress bool   `mapstructure:"compress" json:"compress" yaml:"compress"` // 是否使用 gz 压缩历史日志文件
 	Path     string `mapstructure:"path" json:"path" yaml:"path"`             // 日志文件位置
 }
