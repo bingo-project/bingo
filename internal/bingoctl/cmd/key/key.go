@@ -19,6 +19,7 @@ func NewCmdKey() *cobra.Command {
 		Run:                   cmdutil.DefaultSubCommandRun(),
 	}
 
+	cmd.AddCommand(NewCmdRandom())
 	cmd.AddCommand(NewCmdGenerate())
 	cmd.AddCommand(NewCmdEncrypt())
 	cmd.AddCommand(NewCmdDecrypt())
