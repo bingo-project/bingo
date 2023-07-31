@@ -1,12 +1,14 @@
 package key
 
 import (
-	"fmt"
+	"os"
+	"strings"
 
 	"github.com/bingo-project/component-base/cli/console"
 	cmdutil "github.com/bingo-project/component-base/cli/util"
 	"github.com/bingo-project/component-base/util"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"bingo/internal/apiserver/facade"
 )
@@ -60,14 +62,31 @@ func (o *GenerateOptions) Complete(cmd *cobra.Command, args []string) error {
 // Run executes a new sub command using the specified options.
 func (o *GenerateOptions) Run(args []string) error {
 	// Generate
-	data := util.RandomString(int(o.Length))
-	fmt.Println("key:", data)
+	key := util.RandomString(int(o.Length))
+	err := o.writeNewEnvironmentFileWith(key)
+	if err != nil {
+		console.ExitIf(err)
+	}
 
-	// Encrypt
-	encrypt, err := facade.AES.EncryptString(data)
-	console.ExitIf(err)
+	console.Info("key set successfully")
 
-	fmt.Println("encrypt:", encrypt)
+	return nil
+}
+
+// writeNewEnvironmentFileWith Write a new environment file with the given key.
+func (o *GenerateOptions) writeNewEnvironmentFileWith(key string) error {
+	path := viper.ConfigFileUsed()
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return err
+	}
+
+	newContent := strings.Replace(string(content), "key: "+facade.Config.Server.Key, "key: "+key, 1)
+
+	err = os.WriteFile(path, []byte(newContent), 0644)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
