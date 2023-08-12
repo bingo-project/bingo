@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"errors"
 
 	"gorm.io/gorm"
 
@@ -61,10 +60,5 @@ func (u *users) Update(ctx context.Context, user *model.UserM, fields ...string)
 
 // Delete 根据 username 删除数据库 user 记录.
 func (u *users) Delete(ctx context.Context, username string) error {
-	err := u.db.Where("username = ?", username).Delete(&model.UserM{}).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	return nil
+	return u.db.Where("username = ?", username).Delete(&model.UserM{}).Error
 }
