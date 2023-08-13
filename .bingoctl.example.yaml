@@ -1,6 +1,6 @@
 version: v1
 
-root-package: bingo
+rootPackage: bingo
 
 directory:
   cmd: internal/bingoctl/cmd
