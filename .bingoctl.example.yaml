@@ -10,6 +10,16 @@ directory:
   biz: internal/apiserver/biz
   controller: internal/apiserver/controller/v1
   middleware: internal/pkg/middleware
+  job: internal/watcher/watcher
+
+registries:
+  router: internal/apiserver/router/api.go
+  store:
+    filePath: internal/apiserver/store/store.go
+    interface: "IStore"
+  biz:
+    filePath: internal/apiserver/biz/biz.go
+    interface: "IBiz"
 
 mysql:
   host: 127.0.0.1:3306

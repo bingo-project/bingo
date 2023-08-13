@@ -10,6 +10,12 @@ var (
 	// ErrPageNotFound 表示路由不匹配错误.
 	ErrPageNotFound = &Errno{HTTP: 404, Code: "ResourceNotFound.PageNotFound", Message: "Page not found."}
 
+	// ErrResourceNotFound 表示资源不存在.
+	ErrResourceNotFound = &Errno{HTTP: 404, Code: "ResourceNotFound", Message: "Resource not found."}
+
+	// ErrResourceAlreadyExists 表示资源已存在.
+	ErrResourceAlreadyExists = &Errno{HTTP: 400, Code: "ResourceAlreadyExists", Message: "Resource already exists."}
+
 	// ErrBind 表示参数绑定错误.
 	ErrBind = &Errno{HTTP: 400, Code: "InvalidParameter.BindError", Message: "Error occurred while binding the request body to the struct."}
 

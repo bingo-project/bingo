@@ -58,8 +58,8 @@ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:W
 github.com/benbjohnson/clock v1.1.0 h1:Q92kusRqC1XV2MjkWETPvjJVqKetz1OzxZB7mHJLju8=
 github.com/bingo-project/bingoctl v1.0.5 h1:5Mm6ul5IQY49jucjhQhff0RyVh3cLc3zf3AZT5yiHXs=
 github.com/bingo-project/bingoctl v1.0.5/go.mod h1:gHWRFJ5odlVTwH7TS0DnTEeb1A671iMwW+1o4x3Ofjs=
-github.com/bingo-project/component-base v0.1.7 h1:MinovjKNVAIaV+4YxDUoOOm1YzPoX+JkWjjET071kjQ=
-github.com/bingo-project/component-base v0.1.7/go.mod h1:rHmCO9FwILMrhG6ihakvXWZ7xCX3jtu7a5Xv6oRLK5s=
+github.com/bingo-project/component-base v0.1.8 h1:lBchdbnmVAT2RA7MUYjQ8a/nXwyvywjwV8fIl7UnLO4=
+github.com/bingo-project/component-base v0.1.8/go.mod h1:rHmCO9FwILMrhG6ihakvXWZ7xCX3jtu7a5Xv6oRLK5s=
 github.com/bsm/ginkgo/v2 v2.5.0/go.mod h1:AiKlXPm7ItEHNc/2+OkrNG4E0ITzojb9/xWzvQ9XZ9w=
 github.com/bsm/ginkgo/v2 v2.7.0 h1:ItPMPH90RbmZJt5GtkcNvIRuGEdwlBItdNVoyzaNQao=
 github.com/bsm/gomega v1.20.0/go.mod h1:JifAceMQ4crZIWYUKrlGcmbN3bqHogVTADMD2ATsbwk=

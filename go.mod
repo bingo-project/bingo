@@ -6,7 +6,7 @@ require (
 	github.com/AlekSi/pointer v1.1.0
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/bingo-project/bingoctl v1.0.5
-	github.com/bingo-project/component-base v0.1.7
+	github.com/bingo-project/component-base v0.1.8
 	github.com/casbin/casbin/v2 v2.73.0
 	github.com/casbin/gorm-adapter/v3 v3.18.0
 	github.com/fsnotify/fsnotify v1.6.0
