@@ -50,7 +50,57 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins": {
+        "/v1/login": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/system/admins": {
             "get": {
                 "security": [
                     {
@@ -149,7 +199,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins/self": {
+        "/v1/system/admins/self": {
             "get": {
                 "security": [
                     {
@@ -188,7 +238,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins/{name}": {
+        "/v1/system/admins/{name}": {
             "get": {
                 "security": [
                     {
@@ -334,7 +384,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins/{name}/change-password": {
+        "/v1/system/admins/{name}/change-password": {
             "put": {
                 "security": [
                     {
@@ -388,7 +438,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins/{name}/roles": {
+        "/v1/system/admins/{name}/roles": {
             "put": {
                 "security": [
                     {
@@ -445,7 +495,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admins/{name}/switch-role": {
+        "/v1/system/admins/{name}/switch-role": {
             "put": {
                 "security": [
                     {
@@ -502,7 +552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/login": {
+        "/v1/system/login": {
             "post": {
                 "security": [
                     {
@@ -552,7 +602,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/permissions": {
+        "/v1/system/permissions": {
             "get": {
                 "security": [
                     {
@@ -651,7 +701,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/permissions/all": {
+        "/v1/system/permissions/all": {
             "get": {
                 "security": [
                     {
@@ -693,7 +743,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/permissions/{id}": {
+        "/v1/system/permissions/{id}": {
             "get": {
                 "security": [
                     {
@@ -839,7 +889,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/roles": {
+        "/v1/system/roles": {
             "get": {
                 "security": [
                     {
@@ -938,7 +988,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/roles/{name}": {
+        "/v1/system/roles/{name}": {
             "get": {
                 "security": [
                     {
@@ -1084,7 +1134,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/roles/{name}/permissions": {
+        "/v1/system/roles/{name}/permissions": {
             "get": {
                 "security": [
                     {
@@ -1171,56 +1221,6 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/login": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.LoginResponse"
-                        }
                     },
                     "400": {
                         "description": "Bad Request",

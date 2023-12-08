@@ -36,7 +36,7 @@ func NewPermissionController(ds store.IStore, a *auth.Authz) *PermissionControll
 // @Success	   200		{object}	v1.ListPermissionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions [GET].
+// @Router    /v1/system/permissions [GET].
 func (ctrl *PermissionController) List(c *gin.Context) {
 	log.C(c).Infow("List permission function called")
 
@@ -67,7 +67,7 @@ func (ctrl *PermissionController) List(c *gin.Context) {
 // @Success	   200		{object}	[]v1.PermissionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions/all [GET].
+// @Router    /v1/system/permissions/all [GET].
 func (ctrl *PermissionController) All(c *gin.Context) {
 	log.C(c).Infow("All permission function called")
 
@@ -92,7 +92,7 @@ func (ctrl *PermissionController) All(c *gin.Context) {
 // @Success	   200		{object}	v1.GetPermissionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions [POST].
+// @Router    /v1/system/permissions [POST].
 func (ctrl *PermissionController) Create(c *gin.Context) {
 	log.C(c).Infow("Create permission function called")
 
@@ -132,7 +132,7 @@ func (ctrl *PermissionController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.GetPermissionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions/{id} [GET].
+// @Router    /v1/system/permissions/{id} [GET].
 func (ctrl *PermissionController) Get(c *gin.Context) {
 	log.C(c).Infow("Get permission function called")
 
@@ -159,7 +159,7 @@ func (ctrl *PermissionController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.GetPermissionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions/{id} [PUT].
+// @Router    /v1/system/permissions/{id} [PUT].
 func (ctrl *PermissionController) Update(c *gin.Context) {
 	log.C(c).Infow("Update permission function called")
 
@@ -198,7 +198,7 @@ func (ctrl *PermissionController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/permissions/{id} [DELETE].
+// @Router    /v1/system/permissions/{id} [DELETE].
 func (ctrl *PermissionController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete permission function called")
 

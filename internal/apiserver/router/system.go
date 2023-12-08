@@ -11,7 +11,7 @@ import (
 
 func MapSystemRouters(g *gin.Engine) {
 	// v1 group
-	v1 := g.Group("/system")
+	v1 := g.Group("/v1/system")
 
 	// Authz
 	authz, _ := auth.NewAuthz(store.S.DB())

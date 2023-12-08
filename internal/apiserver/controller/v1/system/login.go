@@ -22,7 +22,7 @@ import (
 // @Success	    200		{object}	v1.LoginResponse
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
-// @Router		/system/login [POST].
+// @Router		/v1/system/login [POST].
 func (ctrl *AdminController) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 
@@ -55,7 +55,7 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /system/admins/{name}/change-password [PUT].
+// @Router    /v1/system/admins/{name}/change-password [PUT].
 func (ctrl *AdminController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change admin password function called")
 
