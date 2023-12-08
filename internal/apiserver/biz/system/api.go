@@ -34,7 +34,7 @@ func NewApi(ds store.IStore) *apiBiz {
 }
 
 func (b *apiBiz) List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListResponse, error) {
-	count, list, err := b.ds.Api().List(ctx, req)
+	count, list, err := b.ds.Apis().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apis", "err", err)
 
@@ -56,7 +56,7 @@ func (b *apiBiz) Create(ctx context.Context, req *v1.CreateApiRequest) (*v1.ApiI
 	var apiM model.ApiM
 	_ = copier.Copy(&apiM, req)
 
-	err := b.ds.Api().Create(ctx, &apiM)
+	err := b.ds.Apis().Create(ctx, &apiM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -73,7 +73,7 @@ func (b *apiBiz) Create(ctx context.Context, req *v1.CreateApiRequest) (*v1.ApiI
 }
 
 func (b *apiBiz) Get(ctx context.Context, ID uint) (*v1.ApiInfo, error) {
-	api, err := b.ds.Api().Get(ctx, ID)
+	api, err := b.ds.Apis().Get(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -85,7 +85,7 @@ func (b *apiBiz) Get(ctx context.Context, ID uint) (*v1.ApiInfo, error) {
 }
 
 func (b *apiBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) (*v1.ApiInfo, error) {
-	apiM, err := b.ds.Api().Get(ctx, ID)
+	apiM, err := b.ds.Apis().Get(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -106,7 +106,7 @@ func (b *apiBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) 
 		apiM.Description = *req.Description
 	}
 
-	if err := b.ds.Api().Update(ctx, apiM); err != nil {
+	if err := b.ds.Apis().Update(ctx, apiM); err != nil {
 		return nil, err
 	}
 
@@ -117,11 +117,11 @@ func (b *apiBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) 
 }
 
 func (b *apiBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Api().Delete(ctx, ID)
+	return b.ds.Apis().Delete(ctx, ID)
 }
 
 func (b *apiBiz) All(ctx context.Context) ([]*v1.ApiInfo, error) {
-	list, err := b.ds.Api().All(ctx)
+	list, err := b.ds.Apis().All(ctx)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apis from storage", "err", err)
 

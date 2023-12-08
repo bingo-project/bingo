@@ -34,7 +34,7 @@ func InitAPI(g *gin.Engine) {
 	for _, item := range data {
 		// Create API.
 		where := &model.ApiM{Method: item.Method, Path: item.Path}
-		err := store.S.Api().FirstOrCreate(context.Background(), where, &item)
+		err := store.S.Apis().FirstOrCreate(context.Background(), where, &item)
 		if err != nil {
 			log.Debugw("InitAPI error", "err", err)
 

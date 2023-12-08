@@ -113,7 +113,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error {
 	// 1. Get apis by ids
-	apis, err := b.ds.Api().GetByIDs(ctx, apiIDs)
+	apis, err := b.ds.Apis().GetByIDs(ctx, apiIDs)
 	if err != nil {
 		return err
 	}
@@ -158,7 +158,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1
 		pathAndMethod = append(pathAndMethod, []string{v[1], v[2]})
 	}
 
-	resp, err := b.ds.Api().GetIDsByPathAndMethod(ctx, pathAndMethod)
+	resp, err := b.ds.Apis().GetIDsByPathAndMethod(ctx, pathAndMethod)
 
 	return resp, nil
 }
