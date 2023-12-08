@@ -18,8 +18,8 @@ type ListRoleRequest struct {
 }
 
 type ListRoleResponse struct {
-	TotalCount int64       `json:"totalCount"`
-	Data       []*RoleInfo `json:"data"`
+	Total int64       `json:"total"`
+	Data  []*RoleInfo `json:"data"`
 }
 
 type CreateRoleRequest struct {

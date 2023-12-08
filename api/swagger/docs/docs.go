@@ -1807,7 +1807,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/v1.AdminInfo"
                     }
                 },
-                "totalCount": {
+                "total": {
                     "type": "integer"
                 }
             }
@@ -1821,7 +1821,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/v1.PermissionInfo"
                     }
                 },
-                "totalCount": {
+                "total": {
                     "type": "integer"
                 }
             }
@@ -1835,7 +1835,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/v1.RoleInfo"
                     }
                 },
-                "totalCount": {
+                "total": {
                     "type": "integer"
                 }
             }
@@ -1849,7 +1849,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/v1.UserInfo"
                     }
                 },
-                "totalCount": {
+                "total": {
                     "type": "integer"
                 }
             }

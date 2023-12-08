@@ -51,7 +51,7 @@ func (b *permissionBiz) List(ctx context.Context, offset, limit int) (*v1.ListPe
 
 	log.C(ctx).Debugw("Get permissions from backend storage", "count", len(permissions))
 
-	return &v1.ListPermissionResponse{TotalCount: count, Data: permissions}, nil
+	return &v1.ListPermissionResponse{Total: count, Data: permissions}, nil
 }
 
 func (b *permissionBiz) Create(ctx context.Context, request *v1.CreatePermissionRequest) (*v1.GetPermissionResponse, error) {

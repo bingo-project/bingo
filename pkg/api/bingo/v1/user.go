@@ -49,8 +49,8 @@ type ListUserRequest struct {
 
 // ListUserResponse 指定了 `GET /v1/users` 接口的返回参数.
 type ListUserResponse struct {
-	TotalCount int64       `json:"totalCount"`
-	Data       []*UserInfo `json:"data"`
+	Total int64       `json:"total"`
+	Data  []*UserInfo `json:"data"`
 }
 
 // UpdateUserRequest 指定了 `PUT /v1/users/{name}` 接口的请求参数.

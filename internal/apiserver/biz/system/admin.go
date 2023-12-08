@@ -56,7 +56,7 @@ func (b *adminBiz) List(ctx context.Context, offset, limit int) (*v1.ListAdminRe
 
 	log.C(ctx).Debugw("Get admins from backend storage", "count", len(admins))
 
-	return &v1.ListAdminResponse{TotalCount: count, Data: admins}, nil
+	return &v1.ListAdminResponse{Total: count, Data: admins}, nil
 }
 
 func (b *adminBiz) Create(ctx context.Context, request *v1.CreateAdminRequest) (*v1.GetAdminResponse, error) {

@@ -26,8 +26,8 @@ type ListAdminRequest struct {
 }
 
 type ListAdminResponse struct {
-	TotalCount int64        `json:"totalCount"`
-	Data       []*AdminInfo `json:"data"`
+	Total int64        `json:"total"`
+	Data  []*AdminInfo `json:"data"`
 }
 
 type CreateAdminRequest struct {

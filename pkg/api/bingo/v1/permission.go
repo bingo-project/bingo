@@ -21,8 +21,8 @@ type ListPermissionRequest struct {
 }
 
 type ListPermissionResponse struct {
-	TotalCount int64             `json:"totalCount"`
-	Data       []*PermissionInfo `json:"data"`
+	Total int64             `json:"total"`
+	Data  []*PermissionInfo `json:"data"`
 }
 
 type CreatePermissionRequest struct {

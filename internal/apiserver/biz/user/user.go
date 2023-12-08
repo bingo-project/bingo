@@ -139,7 +139,7 @@ func (b *userBiz) List(ctx context.Context, offset, limit int) (*v1.ListUserResp
 
 	log.C(ctx).Debugw("Get users from backend storage", "count", len(users))
 
-	return &v1.ListUserResponse{TotalCount: count, Data: users}, nil
+	return &v1.ListUserResponse{Total: count, Data: users}, nil
 }
 
 // Update 是 UserBiz 接口中 `Update` 方法的实现.

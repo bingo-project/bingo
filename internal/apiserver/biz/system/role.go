@@ -55,7 +55,7 @@ func (b *roleBiz) List(ctx context.Context, offset, limit int) (*v1.ListRoleResp
 
 	log.C(ctx).Debugw("Get roles from backend storage", "count", len(roles))
 
-	return &v1.ListRoleResponse{TotalCount: count, Data: roles}, nil
+	return &v1.ListRoleResponse{Total: count, Data: roles}, nil
 }
 
 func (b *roleBiz) Create(ctx context.Context, request *v1.CreateRoleRequest) (*v1.GetRoleResponse, error) {
