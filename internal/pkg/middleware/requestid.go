@@ -16,14 +16,14 @@ func RequestID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check for incoming header, use it if exists
 		rid := c.GetHeader(auth.XRequestIDKey)
-
 		if rid == "" {
 			rid = uuid.New().String()
-			c.Set(auth.XRequestIDKey, rid)
 		}
 
-		// Set known.XRequestIDKey header
+		// Set request id to gin context & response header.
+		c.Set(auth.XRequestIDKey, rid)
 		c.Writer.Header().Set(auth.XRequestIDKey, rid)
+
 		c.Next()
 	}
 }
