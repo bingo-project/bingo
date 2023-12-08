@@ -9,16 +9,17 @@ import (
 
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/model/system"
+	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
 )
 
 type PermissionBiz interface {
-	List(ctx context.Context, offset, limit int) (*v1.ListPermissionResponse, error)
-	Create(ctx context.Context, r *v1.CreatePermissionRequest) (*v1.GetPermissionResponse, error)
-	Get(ctx context.Context, ID uint) (*v1.GetPermissionResponse, error)
-	Update(ctx context.Context, ID uint, r *v1.UpdatePermissionRequest) (*v1.GetPermissionResponse, error)
+	List(ctx context.Context, req *v1.ListPermissionRequest) (*v1.ListResponse, error)
+	Create(ctx context.Context, req *v1.CreatePermissionRequest) (*v1.PermissionInfo, error)
+	Get(ctx context.Context, ID uint) (*v1.PermissionInfo, error)
+	Update(ctx context.Context, ID uint, req *v1.UpdatePermissionRequest) (*v1.PermissionInfo, error)
 	Delete(ctx context.Context, ID uint) error
+
 	All(ctx context.Context) ([]*v1.PermissionInfo, error)
 }
 
@@ -26,94 +27,91 @@ type permissionBiz struct {
 	ds store.IStore
 }
 
-// 确保 permissionBiz 实现了 PermissionBiz 接口.
 var _ PermissionBiz = (*permissionBiz)(nil)
 
 func NewPermission(ds store.IStore) *permissionBiz {
 	return &permissionBiz{ds: ds}
 }
 
-func (b *permissionBiz) List(ctx context.Context, offset, limit int) (*v1.ListPermissionResponse, error) {
-	count, list, err := b.ds.Permissions().List(ctx, offset, limit)
+func (b *permissionBiz) List(ctx context.Context, req *v1.ListPermissionRequest) (*v1.ListResponse, error) {
+	count, list, err := b.ds.Permissions().List(ctx, req)
 	if err != nil {
-		log.C(ctx).Errorw("Failed to list permissions from storage", "err", err)
+		log.C(ctx).Errorw("Failed to list permissions", "err", err)
 
 		return nil, err
 	}
 
-	permissions := make([]*v1.PermissionInfo, 0, len(list))
+	data := make([]*v1.PermissionInfo, 0, len(list))
 	for _, item := range list {
 		var permission v1.PermissionInfo
 		_ = copier.Copy(&permission, item)
 
-		permissions = append(permissions, &permission)
+		data = append(data, &permission)
 	}
 
-	log.C(ctx).Debugw("Get permissions from backend storage", "count", len(permissions))
-
-	return &v1.ListPermissionResponse{Total: count, Data: permissions}, nil
+	return &v1.ListResponse{Total: count, Data: data}, nil
 }
 
-func (b *permissionBiz) Create(ctx context.Context, request *v1.CreatePermissionRequest) (*v1.GetPermissionResponse, error) {
-	var permissionM system.PermissionM
-	_ = copier.Copy(&permissionM, request)
+func (b *permissionBiz) Create(ctx context.Context, req *v1.CreatePermissionRequest) (*v1.PermissionInfo, error) {
+	var permissionM model.PermissionM
+	_ = copier.Copy(&permissionM, req)
 
 	err := b.ds.Permissions().Create(ctx, &permissionM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
-			return nil, errno.ErrPermissionAlreadyExist
+			return nil, errno.ErrResourceAlreadyExists
 		}
 
 		return nil, err
 	}
 
-	var resp v1.GetPermissionResponse
+	var resp v1.PermissionInfo
 	_ = copier.Copy(&resp, permissionM)
 
 	return &resp, nil
 }
 
-func (b *permissionBiz) Get(ctx context.Context, ID uint) (*v1.GetPermissionResponse, error) {
+func (b *permissionBiz) Get(ctx context.Context, ID uint) (*v1.PermissionInfo, error) {
 	permission, err := b.ds.Permissions().Get(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrPermissionNotFound
+		return nil, errno.ErrResourceNotFound
 	}
 
-	var resp v1.GetPermissionResponse
+	var resp v1.PermissionInfo
 	_ = copier.Copy(&resp, permission)
 
 	return &resp, nil
 }
 
-func (b *permissionBiz) Update(ctx context.Context, ID uint, request *v1.UpdatePermissionRequest) (*v1.GetPermissionResponse, error) {
+func (b *permissionBiz) Update(ctx context.Context, ID uint, req *v1.UpdatePermissionRequest) (*v1.PermissionInfo, error) {
 	permissionM, err := b.ds.Permissions().Get(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrPermissionNotFound
+		return nil, errno.ErrResourceNotFound
 	}
 
-	if request.Method != nil {
-		permissionM.Method = *request.Method
+	if req.Method != nil {
+		permissionM.Method = *req.Method
 	}
 
-	if request.Path != nil {
-		permissionM.Path = *request.Path
+	if req.Path != nil {
+		permissionM.Path = *req.Path
 	}
 
-	if request.Group != nil {
-		permissionM.Group = *request.Group
+	if req.Group != nil {
+		permissionM.Group = *req.Group
 	}
 
-	if request.Description != nil {
-		permissionM.Description = *request.Description
+	if req.Description != nil {
+		permissionM.Description = *req.Description
 	}
 
 	if err := b.ds.Permissions().Update(ctx, permissionM); err != nil {
 		return nil, err
 	}
 
-	var resp v1.GetPermissionResponse
-	_ = copier.Copy(&resp, request)
+	var resp v1.PermissionInfo
+	_ = copier.Copy(&resp, req)
 
 	return &resp, nil
 }
@@ -137,8 +135,6 @@ func (b *permissionBiz) All(ctx context.Context) ([]*v1.PermissionInfo, error) {
 
 		permissions = append(permissions, &permission)
 	}
-
-	log.C(ctx).Debugw("Get permissions from backend storage", "count", len(permissions))
 
 	return permissions, nil
 }

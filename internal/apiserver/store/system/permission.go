@@ -2,23 +2,23 @@ package system
 
 import (
 	"context"
-	"errors"
 
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model/system"
+	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/util/helper"
+	v1 "bingo/pkg/api/bingo/v1"
 )
 
 type PermissionStore interface {
-	List(ctx context.Context, offset, limit int) (int64, []*system.PermissionM, error)
-	Create(ctx context.Context, permission *system.PermissionM) error
-	Get(ctx context.Context, ID uint) (*system.PermissionM, error)
-	Update(ctx context.Context, permission *system.PermissionM) error
+	List(ctx context.Context, req *v1.ListPermissionRequest) (int64, []*model.PermissionM, error)
+	Create(ctx context.Context, permission *model.PermissionM) error
+	Get(ctx context.Context, ID uint) (*model.PermissionM, error)
+	Update(ctx context.Context, permission *model.PermissionM, fields ...string) error
 	Delete(ctx context.Context, ID uint) error
 
-	All(ctx context.Context) ([]*system.PermissionM, error)
-	GetByIDs(ctx context.Context, IDs []uint) (ret []*system.PermissionM, err error)
+	All(ctx context.Context) ([]*model.PermissionM, error)
+	GetByIDs(ctx context.Context, IDs []uint) (ret []*model.PermissionM, err error)
 	GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) (ret []uint, err error)
 }
 
@@ -26,29 +26,27 @@ type permissions struct {
 	db *gorm.DB
 }
 
-// 确保 permissions 实现了 PermissionStore 接口.
 var _ PermissionStore = (*permissions)(nil)
 
 func NewPermissions(db *gorm.DB) *permissions {
 	return &permissions{db: db}
 }
 
-func (u *permissions) Create(ctx context.Context, permission *system.PermissionM) error {
-	return u.db.Create(&permission).Error
-}
+func (u *permissions) List(ctx context.Context, req *v1.ListPermissionRequest) (count int64, ret []*model.PermissionM, err error) {
+	// Order
+	if req.Order == "" {
+		req.Order = "id"
+	}
 
-func (u *permissions) Get(ctx context.Context, ID uint) (permission *system.PermissionM, err error) {
-	err = u.db.Where("id = ?", ID).First(&permission).Error
+	// Sort
+	if req.Sort == "" {
+		req.Sort = "desc"
+	}
 
-	return
-}
-
-func (u *permissions) Update(ctx context.Context, permission *system.PermissionM) error {
-	return u.db.Save(&permission).Error
-}
-
-func (u *permissions) List(ctx context.Context, offset, limit int) (count int64, ret []*system.PermissionM, err error) {
-	err = u.db.Offset(offset).Limit(helper.DefaultLimit(limit)).Order("id desc").Find(&ret).
+	err = u.db.Offset(req.Offset).
+		Limit(helper.DefaultLimit(req.Limit)).
+		Order(req.Order + " " + req.Sort).
+		Find(&ret).
 		Offset(-1).
 		Limit(-1).
 		Count(&count).
@@ -57,29 +55,38 @@ func (u *permissions) List(ctx context.Context, offset, limit int) (count int64,
 	return
 }
 
-func (u *permissions) Delete(ctx context.Context, ID uint) error {
-	err := u.db.Where("id = ?", ID).Delete(&system.PermissionM{}).Error
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	return nil
+func (u *permissions) Create(ctx context.Context, permission *model.PermissionM) error {
+	return u.db.Create(&permission).Error
 }
 
-func (u *permissions) All(ctx context.Context) (ret []*system.PermissionM, err error) {
+func (u *permissions) Get(ctx context.Context, ID uint) (permission *model.PermissionM, err error) {
+	err = u.db.Where("id = ?", ID).First(&permission).Error
+
+	return
+}
+
+func (u *permissions) Update(ctx context.Context, permission *model.PermissionM, fields ...string) error {
+	return u.db.Select(fields).Save(&permission).Error
+}
+
+func (u *permissions) Delete(ctx context.Context, ID uint) error {
+	return u.db.Where("id = ?", ID).Delete(&model.PermissionM{}).Error
+}
+
+func (u *permissions) All(ctx context.Context) (ret []*model.PermissionM, err error) {
 	err = u.db.Find(&ret).Error
 
 	return
 }
 
-func (u *permissions) GetByIDs(ctx context.Context, IDs []uint) (ret []*system.PermissionM, err error) {
+func (u *permissions) GetByIDs(ctx context.Context, IDs []uint) (ret []*model.PermissionM, err error) {
 	err = u.db.Where("id IN ?", IDs).Find(&ret).Error
 
 	return
 }
 
 func (u *permissions) GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) (ret []uint, err error) {
-	err = u.db.Model(&system.PermissionM{}).
+	err = u.db.Model(&model.PermissionM{}).
 		Select("id").
 		Where("(path, method) IN ?", pathAndMethod).
 		Find(&ret).

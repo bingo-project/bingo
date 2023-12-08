@@ -16,13 +16,7 @@ type PermissionInfo struct {
 }
 
 type ListPermissionRequest struct {
-	Offset int `form:"offset"`
-	Limit  int `form:"limit"`
-}
-
-type ListPermissionResponse struct {
-	Total int64             `json:"total"`
-	Data  []*PermissionInfo `json:"data"`
+	ListRequest
 }
 
 type CreatePermissionRequest struct {
@@ -31,8 +25,6 @@ type CreatePermissionRequest struct {
 	Group       string `json:"group" valid:"required,stringlength(1|255)"`
 	Description string `json:"description" valid:"required,stringlength(1|255)"`
 }
-
-type GetPermissionResponse PermissionInfo
 
 type UpdatePermissionRequest struct {
 	Method      *string `json:"method" valid:"alphanum,stringlength(1|255)"`

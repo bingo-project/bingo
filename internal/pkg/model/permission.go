@@ -1,9 +1,7 @@
-package system
-
-import "bingo/internal/pkg/model"
+package model
 
 type PermissionM struct {
-	model.Base
+	Base
 
 	Method      string `gorm:"type:varchar(255);not null;default:''"`
 	Path        string `gorm:"type:varchar(255);not null;default:''"`

@@ -7,7 +7,7 @@ import (
 	"bingo/internal/apiserver/global"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/model/system"
+	"bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 )
 
@@ -28,10 +28,10 @@ func Authz(a Author) gin.HandlerFunc {
 		// System admin
 		guard := c.GetString(auth.XGuard)
 		if guard == global.AuthAdmin {
-			var admin system.AdminM
+			var admin model.AdminM
 			err := auth.User(c, &admin)
 			if err != nil {
-				core.WriteResponse(c, errno.ErrAdminNotFound, nil)
+				core.WriteResponse(c, errno.ErrUnauthorized, nil)
 
 				return
 			}

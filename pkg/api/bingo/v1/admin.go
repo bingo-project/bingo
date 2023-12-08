@@ -21,13 +21,7 @@ type AdminInfo struct {
 }
 
 type ListAdminRequest struct {
-	Offset int `form:"offset"`
-	Limit  int `form:"limit"`
-}
-
-type ListAdminResponse struct {
-	Total int64        `json:"total"`
-	Data  []*AdminInfo `json:"data"`
+	ListRequest
 }
 
 type CreateAdminRequest struct {
@@ -39,8 +33,6 @@ type CreateAdminRequest struct {
 	Avatar    *string  `json:"avatar"`
 	RoleNames []string `json:"roleNames" valid:"required"`
 }
-
-type GetAdminResponse AdminInfo
 
 type UpdateAdminRequest struct {
 	Nickname  *string  `json:"nickname" valid:"required,alphanum,stringlength(1|20)"`

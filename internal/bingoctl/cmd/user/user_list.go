@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"time"
 
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
@@ -11,6 +12,7 @@ import (
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/apiserver/store"
+	v1 "bingo/pkg/api/bingo/v1"
 )
 
 const (
@@ -87,20 +89,22 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list sub command using the specified options.
 func (o *ListOptions) Run(args []string) error {
-	resp, err := o.b.Users().List(context.Background(), o.Offset, o.Limit)
+	req := &v1.ListUserRequest{ListRequest: v1.ListRequest{Offset: o.Offset, Limit: o.Limit}}
+	resp, err := o.b.Users().List(context.Background(), req)
 	if err != nil {
 		return err
 	}
 
 	data := make([][]string, 0, 1)
-	for _, user := range resp.Data {
+	users := resp.Data.([]*v1.UserInfo)
+	for _, user := range users {
 		data = append(data, []string{
 			user.Username,
 			user.Nickname,
 			user.Email,
 			user.Phone,
-			user.CreatedAt.Format("2006-01-02 15:04:05"),
-			user.UpdatedAt.Format("2006-01-02 15:04:05"),
+			user.CreatedAt.Format(time.DateTime),
+			user.UpdatedAt.Format(time.DateTime),
 		})
 	}
 

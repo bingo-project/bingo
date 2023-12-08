@@ -12,7 +12,6 @@ import (
 )
 
 // Login returns a JWT token.
-//
 // @Summary	    Login
 // @Security	Bearer
 // @Tags		System.Auth
@@ -26,14 +25,14 @@ import (
 func (ctrl *AdminController) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 
-	var r v1.LoginRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
+	var req v1.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 
 		return
 	}
 
-	resp, err := ctrl.b.Admins().Login(c, &r)
+	resp, err := ctrl.b.Admins().Login(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -44,7 +43,6 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 }
 
 // ChangePassword
-//
 // @Summary    Change password
 // @Security   Bearer
 // @Tags       System.Admin
@@ -59,21 +57,21 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 func (ctrl *AdminController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change admin password function called")
 
-	var r v1.ChangePasswordRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
+	var req v1.ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 
 		return
 	}
 
-	if _, err := govalidator.ValidateStruct(r); err != nil {
+	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
 	username := c.Param("name")
-	err := ctrl.b.Admins().ChangePassword(c, username, &r)
+	err := ctrl.b.Admins().ChangePassword(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

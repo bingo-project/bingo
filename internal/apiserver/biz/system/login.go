@@ -11,15 +11,15 @@ import (
 	"bingo/pkg/auth"
 )
 
-func (b *adminBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
+func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// Get user
-	user, err := b.ds.Admins().Get(ctx, r.Username)
+	user, err := b.ds.Admins().Get(ctx, req.Username)
 	if err != nil {
-		return nil, errno.ErrAdminNotFound
+		return nil, errno.ErrResourceNotFound
 	}
 
 	// Check password
-	err = auth.Compare(user.Password, r.Password)
+	err = auth.Compare(user.Password, req.Password)
 	if err != nil {
 		return nil, errno.ErrPasswordIncorrect
 	}
@@ -33,19 +33,19 @@ func (b *adminBiz) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResp
 	return &v1.LoginResponse{Token: t.AccessToken}, nil
 }
 
-func (b *adminBiz) ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error {
+func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {
 	userM, err := b.ds.Admins().Get(ctx, username)
 	if err != nil {
-		return errno.ErrAdminNotFound
+		return errno.ErrResourceNotFound
 	}
 
 	// Check password
-	if err := auth.Compare(userM.Password, r.OldPassword); err != nil {
+	if err := auth.Compare(userM.Password, req.OldPassword); err != nil {
 		return errno.ErrPasswordIncorrect
 	}
 
 	// Update password
-	userM.Password, _ = auth.Encrypt(r.NewPassword)
+	userM.Password, _ = auth.Encrypt(req.NewPassword)
 	if err := b.ds.Admins().Update(ctx, userM); err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package system
+package model
 
 type AdminRoleM struct {
 	Username string `gorm:"type:varchar(255);uniqueIndex:uk_user_role;not null;default:''"`

@@ -1,14 +1,13 @@
-package system
+package model
 
 import (
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 )
 
 type AdminM struct {
-	model.Base
+	Base
 
 	Username string      `gorm:"type:varchar(255);unique;not null"`
 	Password string      `gorm:"type:varchar(255);not null;default:''"`

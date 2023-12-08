@@ -120,12 +120,26 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "Offset",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field.",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort: asc or desc.",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -133,7 +147,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListAdminResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.ListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.AdminInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -181,7 +210,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -220,7 +249,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -268,7 +297,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -323,7 +352,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -477,7 +506,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -534,7 +563,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetAdminResponse"
+                            "$ref": "#/definitions/v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -616,18 +645,32 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "List permissions",
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "Offset",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field.",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort: asc or desc.",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -635,7 +678,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListPermissionResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.ListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.PermissionInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -665,7 +723,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "Create a permission",
                 "parameters": [
@@ -683,7 +741,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetPermissionResponse"
+                            "$ref": "#/definitions/v1.PermissionInfo"
                         }
                     },
                     "400": {
@@ -715,7 +773,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "All permissions",
                 "responses": {
@@ -757,7 +815,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "Get permission info",
                 "parameters": [
@@ -773,7 +831,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetPermissionResponse"
+                            "$ref": "#/definitions/v1.PermissionInfo"
                         }
                     },
                     "400": {
@@ -803,7 +861,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "Update permission info",
                 "parameters": [
@@ -828,7 +886,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetPermissionResponse"
+                            "$ref": "#/definitions/v1.PermissionInfo"
                         }
                     },
                     "400": {
@@ -858,7 +916,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Permission"
+                    "System.Permission"
                 ],
                 "summary": "Delete a permission",
                 "parameters": [
@@ -909,12 +967,26 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "Offset",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field.",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort: asc or desc.",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -922,7 +994,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListRoleResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.ListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.RoleInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -970,7 +1057,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetRoleResponse"
+                            "$ref": "#/definitions/v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1018,7 +1105,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetRoleResponse"
+                            "$ref": "#/definitions/v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1073,7 +1160,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetRoleResponse"
+                            "$ref": "#/definitions/v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1257,12 +1344,26 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Limit",
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "description": "Offset",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Order by field.",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort: asc or desc.",
+                        "name": "sort",
                         "in": "query"
                     }
                 ],
@@ -1270,7 +1371,22 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListUserResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.ListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/v1.UserInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -1318,7 +1434,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetUserResponse"
+                            "$ref": "#/definitions/v1.UserInfo"
                         }
                     },
                     "400": {
@@ -1366,7 +1482,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListUserResponse"
+                            "$ref": "#/definitions/v1.UserInfo"
                         }
                     },
                     "400": {
@@ -1683,113 +1799,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GetAdminResponse": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/v1.RoleInfo"
-                },
-                "roleName": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.RoleInfo"
-                    }
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.GetPermissionResponse": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "group": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "method": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.GetRoleResponse": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.GetUserResponse": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.HealthzResponse": {
             "type": "object",
             "properties": {
@@ -1798,57 +1807,10 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ListAdminResponse": {
+        "v1.ListResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.AdminInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.ListPermissionResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.PermissionInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.ListRoleResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.RoleInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "v1.ListUserResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/v1.UserInfo"
-                    }
-                },
+                "data": {},
                 "total": {
                     "type": "integer"
                 }

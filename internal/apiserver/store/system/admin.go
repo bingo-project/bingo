@@ -6,45 +6,68 @@ import (
 
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model/system"
+	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/util/helper"
+	v1 "bingo/pkg/api/bingo/v1"
 )
 
 type AdminStore interface {
-	List(ctx context.Context, offset, limit int) (int64, []*system.AdminM, error)
-	Create(ctx context.Context, admin *system.AdminM) error
-	Get(ctx context.Context, username string) (*system.AdminM, error)
-	Update(ctx context.Context, admin *system.AdminM) error
+	List(ctx context.Context, req *v1.ListAdminRequest) (int64, []*model.AdminM, error)
+	Create(ctx context.Context, admin *model.AdminM) error
+	Get(ctx context.Context, username string) (*model.AdminM, error)
+	Update(ctx context.Context, admin *model.AdminM) error
 	Delete(ctx context.Context, username string) error
 
 	InitData(ctx context.Context) error
-	CheckExist(ctx context.Context, admin *system.AdminM) (exist bool, err error)
-	HasRole(ctx context.Context, admin *system.AdminM, roleName string) bool
-	GetUserInfo(ctx context.Context, username string) (admin *system.AdminM, err error)
+	CheckExist(ctx context.Context, admin *model.AdminM) (exist bool, err error)
+	HasRole(ctx context.Context, admin *model.AdminM, roleName string) bool
+	GetUserInfo(ctx context.Context, username string) (admin *model.AdminM, err error)
 }
 
 type admins struct {
 	db *gorm.DB
 }
 
-// 确保 admins 实现了 AdminStore 接口.
 var _ AdminStore = (*admins)(nil)
 
 func NewAdmins(db *gorm.DB) *admins {
 	return &admins{db: db}
 }
 
-func (u *admins) Create(ctx context.Context, admin *system.AdminM) error {
+func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.AdminM, err error) {
+	// Order
+	if req.Order == "" {
+		req.Order = "id"
+	}
+
+	// Sort
+	if req.Sort == "" {
+		req.Sort = "desc"
+	}
+
+	err = u.db.Offset(req.Offset).
+		Limit(helper.DefaultLimit(req.Limit)).
+		Order(req.Order + " " + req.Sort).
+		Find(&ret).
+		Offset(-1).
+		Limit(-1).
+		Count(&count).
+		Error
+
+	return
+}
+
+func (u *admins) Create(ctx context.Context, admin *model.AdminM) error {
 	return u.db.Create(&admin).Error
 }
 
-func (u *admins) Get(ctx context.Context, username string) (admin *system.AdminM, err error) {
+func (u *admins) Get(ctx context.Context, username string) (admin *model.AdminM, err error) {
 	err = u.db.Where("username = ?", username).First(&admin).Error
 
 	return
 }
 
-func (u *admins) Update(ctx context.Context, admin *system.AdminM) error {
+func (u *admins) Update(ctx context.Context, admin *model.AdminM) error {
 	if len(admin.Roles) > 0 {
 		err := u.db.Model(&admin).Association("Roles").Replace(admin.Roles)
 		if err != nil {
@@ -55,21 +78,8 @@ func (u *admins) Update(ctx context.Context, admin *system.AdminM) error {
 	return u.db.Save(&admin).Error
 }
 
-func (u *admins) List(ctx context.Context, offset, limit int) (count int64, ret []*system.AdminM, err error) {
-	err = u.db.Offset(offset).
-		Limit(helper.DefaultLimit(limit)).
-		Order("id desc").
-		Find(&ret).
-		Offset(-1).
-		Limit(-1).
-		Count(&count).
-		Error
-
-	return
-}
-
 func (u *admins) Delete(ctx context.Context, username string) error {
-	err := u.db.Where("username = ?", username).Delete(&system.AdminM{}).Error
+	err := u.db.Where("username = ?", username).Delete(&model.AdminM{}).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -78,7 +88,7 @@ func (u *admins) Delete(ctx context.Context, username string) error {
 }
 
 func (u *admins) InitData(ctx context.Context) error {
-	admin := system.AdminM{
+	admin := model.AdminM{
 		Username: "root",
 		Password: "123456",
 		Nickname: "Root",
@@ -100,7 +110,7 @@ func (u *admins) InitData(ctx context.Context) error {
 	return u.db.Create(&admin).Error
 }
 
-func (u *admins) CheckExist(ctx context.Context, admin *system.AdminM) (exist bool, err error) {
+func (u *admins) CheckExist(ctx context.Context, admin *model.AdminM) (exist bool, err error) {
 	var id uint
 
 	if admin.Username != "" {
@@ -122,13 +132,13 @@ func (u *admins) CheckExist(ctx context.Context, admin *system.AdminM) (exist bo
 	return id > 0, nil
 }
 
-func (u *admins) HasRole(ctx context.Context, admin *system.AdminM, roleName string) bool {
+func (u *admins) HasRole(ctx context.Context, admin *model.AdminM, roleName string) bool {
 	count := u.db.Model(&admin).Where("role_name = ?", roleName).Association("Roles").Count()
 
 	return count > 0
 }
 
-func (u *admins) GetUserInfo(ctx context.Context, username string) (admin *system.AdminM, err error) {
+func (u *admins) GetUserInfo(ctx context.Context, username string) (admin *model.AdminM, err error) {
 	err = u.db.Preload("Role").
 		Preload("Roles").
 		Where("username = ?", username).

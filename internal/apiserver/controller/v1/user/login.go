@@ -11,7 +11,6 @@ import (
 )
 
 // Login returns a JWT token.
-//
 // @Summary	    Login
 // @Security	Bearer
 // @Tags		Auth
@@ -25,14 +24,14 @@ import (
 func (ctrl *UserController) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 
-	var r v1.LoginRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
+	var req v1.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 
 		return
 	}
 
-	resp, err := ctrl.b.Users().Login(c, &r)
+	resp, err := ctrl.b.Users().Login(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

@@ -10,16 +10,16 @@ import (
 	"bingo/internal/apiserver/global"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/model/system"
+	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
 )
 
 type RoleBiz interface {
-	List(ctx context.Context, offset, limit int) (*v1.ListRoleResponse, error)
-	Create(ctx context.Context, r *v1.CreateRoleRequest) (*v1.GetRoleResponse, error)
-	Get(ctx context.Context, roleName string) (*v1.GetRoleResponse, error)
-	Update(ctx context.Context, roleName string, r *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error)
+	List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListResponse, error)
+	Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.RoleInfo, error)
+	Get(ctx context.Context, roleName string) (*v1.RoleInfo, error)
+	Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error)
 	Delete(ctx context.Context, roleName string) error
 
 	SetPermissions(ctx context.Context, a *auth.Authz, name string, permissionIDs []uint) error
@@ -30,82 +30,79 @@ type roleBiz struct {
 	ds store.IStore
 }
 
-// 确保 roleBiz 实现了 RoleBiz 接口.
 var _ RoleBiz = (*roleBiz)(nil)
 
 func NewRole(ds store.IStore) *roleBiz {
 	return &roleBiz{ds: ds}
 }
 
-func (b *roleBiz) List(ctx context.Context, offset, limit int) (*v1.ListRoleResponse, error) {
-	count, list, err := b.ds.Roles().List(ctx, offset, limit)
+func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListResponse, error) {
+	count, list, err := b.ds.Roles().List(ctx, req)
 	if err != nil {
-		log.C(ctx).Errorw("Failed to list roles from storage", "err", err)
+		log.C(ctx).Errorw("Failed to list roles", "err", err)
 
 		return nil, err
 	}
 
-	roles := make([]*v1.RoleInfo, 0, len(list))
+	data := make([]*v1.RoleInfo, 0, len(list))
 	for _, item := range list {
 		var role v1.RoleInfo
 		_ = copier.Copy(&role, item)
 
-		roles = append(roles, &role)
+		data = append(data, &role)
 	}
 
-	log.C(ctx).Debugw("Get roles from backend storage", "count", len(roles))
-
-	return &v1.ListRoleResponse{Total: count, Data: roles}, nil
+	return &v1.ListResponse{Total: count, Data: data}, nil
 }
 
-func (b *roleBiz) Create(ctx context.Context, request *v1.CreateRoleRequest) (*v1.GetRoleResponse, error) {
-	var roleM system.RoleM
-	_ = copier.Copy(&roleM, request)
+func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.RoleInfo, error) {
+	var roleM model.RoleM
+	_ = copier.Copy(&roleM, req)
 
 	err := b.ds.Roles().Create(ctx, &roleM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
-			return nil, errno.ErrRoleAlreadyExist
+			return nil, errno.ErrResourceAlreadyExists
 		}
 
 		return nil, err
 	}
 
-	var resp v1.GetRoleResponse
+	var resp v1.RoleInfo
 	_ = copier.Copy(&resp, roleM)
 
 	return &resp, nil
 }
 
-func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.GetRoleResponse, error) {
+func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.RoleInfo, error) {
 	role, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
-		return nil, errno.ErrRoleNotFound
+		return nil, errno.ErrResourceNotFound
 	}
 
-	var resp v1.GetRoleResponse
+	var resp v1.RoleInfo
 	_ = copier.Copy(&resp, role)
 
 	return &resp, nil
 }
 
-func (b *roleBiz) Update(ctx context.Context, roleName string, request *v1.UpdateRoleRequest) (*v1.GetRoleResponse, error) {
+func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error) {
 	roleM, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
-		return nil, errno.ErrRoleNotFound
+		return nil, errno.ErrResourceNotFound
 	}
 
-	if request.Description != nil {
-		roleM.Description = *request.Description
+	if req.Description != nil {
+		roleM.Description = *req.Description
 	}
 
 	if err := b.ds.Roles().Update(ctx, roleM); err != nil {
 		return nil, err
 	}
 
-	var resp v1.GetRoleResponse
-	_ = copier.Copy(&resp, request)
+	var resp v1.RoleInfo
+	_ = copier.Copy(&resp, req)
 
 	return &resp, nil
 }

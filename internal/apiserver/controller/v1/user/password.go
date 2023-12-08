@@ -11,7 +11,6 @@ import (
 )
 
 // ChangePassword 修改指定用户的密码.
-//
 // @Summary    Change password
 // @Security   Bearer
 // @Tags       User
@@ -26,21 +25,21 @@ import (
 func (ctrl *UserController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change password function called")
 
-	var r v1.ChangePasswordRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
+	var req v1.ChangePasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 
 		return
 	}
 
-	if _, err := govalidator.ValidateStruct(r); err != nil {
+	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
 	username := c.Param("name")
-	err := ctrl.b.Users().ChangePassword(c, username, &r)
+	err := ctrl.b.Users().ChangePassword(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

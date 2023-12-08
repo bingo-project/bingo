@@ -13,21 +13,13 @@ type RoleInfo struct {
 }
 
 type ListRoleRequest struct {
-	Offset int `form:"offset"`
-	Limit  int `form:"limit"`
-}
-
-type ListRoleResponse struct {
-	Total int64       `json:"total"`
-	Data  []*RoleInfo `json:"data"`
+	ListRequest
 }
 
 type CreateRoleRequest struct {
 	Name        string `json:"name" valid:"required,alphanum,stringlength(1|20)"`
 	Description string `json:"description" valid:"required,stringlength(1|255)"`
 }
-
-type GetRoleResponse RoleInfo
 
 type UpdateRoleRequest struct {
 	Name        *string `json:"name" valid:"alphanum,stringlength(1|20)"`
