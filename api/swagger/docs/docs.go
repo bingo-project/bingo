@@ -581,57 +581,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/login": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "System.Auth"
-                ],
-                "summary": "Login",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.LoginRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/v1.LoginResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/system/permissions": {
+        "/v1/system/apis": {
             "get": {
                 "security": [
                     {
@@ -645,9 +595,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "List permissions",
+                "summary": "List apis",
                 "parameters": [
                     {
                         "type": "integer",
@@ -688,7 +638,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.PermissionInfo"
+                                                "$ref": "#/definitions/v1.ApiInfo"
                                             }
                                         }
                                     }
@@ -723,9 +673,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "Create a permission",
+                "summary": "Create a api",
                 "parameters": [
                     {
                         "description": "Param",
@@ -733,7 +683,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreatePermissionRequest"
+                            "$ref": "#/definitions/v1.CreateApiRequest"
                         }
                     }
                 ],
@@ -741,7 +691,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PermissionInfo"
+                            "$ref": "#/definitions/v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -759,7 +709,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/permissions/all": {
+        "/v1/system/apis/all": {
             "get": {
                 "security": [
                     {
@@ -773,16 +723,16 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "All permissions",
+                "summary": "All apis",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v1.PermissionInfo"
+                                "$ref": "#/definitions/v1.ApiInfo"
                             }
                         }
                     },
@@ -801,7 +751,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/permissions/{id}": {
+        "/v1/system/apis/{id}": {
             "get": {
                 "security": [
                     {
@@ -815,9 +765,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "Get permission info",
+                "summary": "Get api info",
                 "parameters": [
                     {
                         "type": "string",
@@ -831,7 +781,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PermissionInfo"
+                            "$ref": "#/definitions/v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -861,9 +811,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "Update permission info",
+                "summary": "Update api info",
                 "parameters": [
                     {
                         "type": "string",
@@ -878,7 +828,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdatePermissionRequest"
+                            "$ref": "#/definitions/v1.UpdateApiRequest"
                         }
                     }
                 ],
@@ -886,7 +836,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.PermissionInfo"
+                            "$ref": "#/definitions/v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -916,9 +866,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Permission"
+                    "System.Api"
                 ],
-                "summary": "Delete a permission",
+                "summary": "Delete api",
                 "parameters": [
                     {
                         "type": "string",
@@ -931,6 +881,56 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/system/login": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System.Auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginResponse"
+                        }
                     },
                     "400": {
                         "description": "Bad Request",
@@ -1221,7 +1221,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles/{name}/permissions": {
+        "/v1/system/roles/{name}/apis": {
             "get": {
                 "security": [
                     {
@@ -1237,7 +1237,7 @@ const docTemplate = `{
                 "tags": [
                     "System.Role"
                 ],
-                "summary": "Get permissions",
+                "summary": "Get apis",
                 "parameters": [
                     {
                         "type": "string",
@@ -1286,7 +1286,7 @@ const docTemplate = `{
                 "tags": [
                     "System.Role"
                 ],
-                "summary": "Set permissions",
+                "summary": "Set apis",
                 "parameters": [
                     {
                         "type": "string",
@@ -1301,7 +1301,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SetPermissionsRequest"
+                            "$ref": "#/definitions/v1.SetApisRequest"
                         }
                     }
                 ],
@@ -1711,6 +1711,32 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ApiInfo": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "group": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.ChangePasswordRequest": {
             "type": "object",
             "properties": {
@@ -1751,7 +1777,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreatePermissionRequest": {
+        "v1.CreateApiRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -1835,32 +1861,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.PermissionInfo": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "group": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "method": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
         "v1.RoleInfo": {
             "type": "object",
             "properties": {
@@ -1878,10 +1878,10 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.SetPermissionsRequest": {
+        "v1.SetApisRequest": {
             "type": "object",
             "properties": {
-                "permissionIDs": {
+                "apiIDs": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -1934,7 +1934,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdatePermissionRequest": {
+        "v1.UpdateApiRequest": {
             "type": "object",
             "properties": {
                 "description": {

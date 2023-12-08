@@ -40,15 +40,15 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("roles/:name", roleController.Get)
 	v1.PUT("roles/:name", roleController.Update)
 	v1.DELETE("roles/:name", roleController.Delete)
-	v1.PUT("roles/:name/permissions", roleController.SetPermissions)   // 设置权限（casbin)
-	v1.GET("roles/:name/permissions", roleController.GetPermissionIDs) // 获取权限ID（casbin）
+	v1.PUT("roles/:name/apis", roleController.SetApis)   // 设置权限（casbin)
+	v1.GET("roles/:name/apis", roleController.GetApiIDs) // 获取权限ID（casbin）
 
-	// Permission
-	permissionController := system.NewPermissionController(store.S, authz)
-	v1.GET("permissions", permissionController.List)
-	v1.GET("permissions/all", permissionController.All)
-	v1.POST("permissions", permissionController.Create)
-	v1.GET("permissions/:id", permissionController.Get)
-	v1.PUT("permissions/:id", permissionController.Update)
-	v1.DELETE("permissions/:id", permissionController.Delete)
+	// API
+	apiController := system.NewApiController(store.S, authz)
+	v1.GET("apis", apiController.List)
+	v1.GET("apis/all", apiController.All)
+	v1.POST("apis", apiController.Create)
+	v1.GET("apis/:id", apiController.Get)
+	v1.PUT("apis/:id", apiController.Update)
+	v1.DELETE("apis/:id", apiController.Delete)
 }

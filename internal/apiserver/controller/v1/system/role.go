@@ -181,20 +181,20 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 	core.WriteResponse(c, nil, nil)
 }
 
-// SetPermissions
-// @Summary    Set permissions
+// SetApis
+// @Summary    Set apis
 // @Security   Bearer
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Role name"
-// @Param      request	 body	    v1.SetPermissionsRequest	 true  "Param"
+// @Param      request	 body	    v1.SetApisRequest	 true  "Param"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/permissions [PUT].
-func (ctrl *RoleController) SetPermissions(c *gin.Context) {
-	var req v1.SetPermissionsRequest
+// @Router    /v1/system/roles/{name}/apis [PUT].
+func (ctrl *RoleController) SetApis(c *gin.Context) {
+	var req v1.SetApisRequest
 	if err := c.ShouldBind(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
 
@@ -214,7 +214,7 @@ func (ctrl *RoleController) SetPermissions(c *gin.Context) {
 		return
 	}
 
-	err := ctrl.b.Roles().SetPermissions(c, ctrl.a, name, req.PermissionIDs)
+	err := ctrl.b.Roles().SetApis(c, ctrl.a, name, req.ApiIDs)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -224,20 +224,20 @@ func (ctrl *RoleController) SetPermissions(c *gin.Context) {
 	core.WriteResponse(c, nil, nil)
 }
 
-// GetPermissionIDs
-// @Summary    Get permissions
+// GetApiIDs
+// @Summary    Get apis
 // @Security   Bearer
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name      path      string           true  "Role name"
-// @Success	   200		{object}	v1.GetPermissionIDsResponse
+// @Success	   200		{object}	v1.GetApiIDsResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/permissions [GET].
-func (ctrl *RoleController) GetPermissionIDs(c *gin.Context) {
+// @Router    /v1/system/roles/{name}/apis [GET].
+func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 	name := c.Param("name")
-	resp, err := ctrl.b.Roles().GetPermissionIDs(c, ctrl.a, name)
+	resp, err := ctrl.b.Roles().GetApiIDs(c, ctrl.a, name)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

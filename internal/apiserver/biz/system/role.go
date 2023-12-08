@@ -22,8 +22,8 @@ type RoleBiz interface {
 	Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error)
 	Delete(ctx context.Context, roleName string) error
 
-	SetPermissions(ctx context.Context, a *auth.Authz, name string, permissionIDs []uint) error
-	GetPermissionIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetPermissionIDsResponse, error)
+	SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error
+	GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetApiIDsResponse, error)
 }
 
 type roleBiz struct {
@@ -111,9 +111,9 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 	return b.ds.Roles().Delete(ctx, roleName)
 }
 
-func (b *roleBiz) SetPermissions(ctx context.Context, a *auth.Authz, name string, permissionIDs []uint) error {
-	// 1. Get permissions by ids
-	permissions, err := b.ds.Permissions().GetByIDs(ctx, permissionIDs)
+func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error {
+	// 1. Get apis by ids
+	apis, err := b.ds.Api().GetByIDs(ctx, apiIDs)
 	if err != nil {
 		return err
 	}
@@ -132,8 +132,8 @@ func (b *roleBiz) SetPermissions(ctx context.Context, a *auth.Authz, name string
 
 	// Add casbin rule
 	var rules [][]string
-	for _, permission := range permissions {
-		rules = append(rules, []string{global.RolePrefix + role.Name, permission.Path, permission.Method})
+	for _, api := range apis {
+		rules = append(rules, []string{global.RolePrefix + role.Name, api.Path, api.Method})
 	}
 
 	_, err = a.AddPolicies(rules)
@@ -144,7 +144,7 @@ func (b *roleBiz) SetPermissions(ctx context.Context, a *auth.Authz, name string
 	return nil
 }
 
-func (b *roleBiz) GetPermissionIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetPermissionIDsResponse, error) {
+func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetApiIDsResponse, error) {
 	// Get role
 	role, err := b.ds.Roles().Get(ctx, name)
 	if err != nil {
@@ -158,7 +158,7 @@ func (b *roleBiz) GetPermissionIDs(ctx context.Context, a *auth.Authz, name stri
 		pathAndMethod = append(pathAndMethod, []string{v[1], v[2]})
 	}
 
-	resp, err := b.ds.Permissions().GetIDsByPathAndMethod(ctx, pathAndMethod)
+	resp, err := b.ds.Api().GetIDsByPathAndMethod(ctx, pathAndMethod)
 
 	return resp, nil
 }

@@ -1,6 +1,6 @@
 package model
 
-type PermissionM struct {
+type ApiM struct {
 	Base
 
 	Method      string `gorm:"type:varchar(255);not null;default:''"`
@@ -9,6 +9,6 @@ type PermissionM struct {
 	Description string `gorm:"type:varchar(255);not null;default:''"`
 }
 
-func (u *PermissionM) TableName() string {
-	return "sys_auth_permission"
+func (u *ApiM) TableName() string {
+	return "sys_auth_api"
 }

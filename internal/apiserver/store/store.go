@@ -21,7 +21,7 @@ type IStore interface {
 	Users() UserStore
 	Admins() system.AdminStore
 	Roles() system.RoleStore
-	Permissions() system.PermissionStore
+	Api() system.ApiStore
 }
 
 // datastore 是 IStore 的一个具体实现.
@@ -60,6 +60,6 @@ func (ds *datastore) Roles() system.RoleStore {
 	return system.NewRoles(ds.db)
 }
 
-func (ds *datastore) Permissions() system.PermissionStore {
-	return system.NewPermissions(ds.db)
+func (ds *datastore) Api() system.ApiStore {
+	return system.NewApis(ds.db)
 }

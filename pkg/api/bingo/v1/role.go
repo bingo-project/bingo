@@ -26,6 +26,6 @@ type UpdateRoleRequest struct {
 	Description *string `json:"description" valid:"stringlength(1|255)"`
 }
 
-type SetPermissionsRequest struct {
-	PermissionIDs []uint `json:"permissionIDs" valid:"required"`
+type SetApisRequest struct {
+	ApiIDs []uint `json:"apiIDs" valid:"required"`
 }
