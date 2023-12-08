@@ -12,3 +12,17 @@ type ApiM struct {
 func (u *ApiM) TableName() string {
 	return "sys_auth_api"
 }
+
+type Apis []ApiM
+
+func (arr Apis) Len() int {
+	return len(arr)
+}
+
+func (arr Apis) Less(i, j int) bool {
+	return arr[i].Path < arr[j].Path
+}
+
+func (arr Apis) Swap(i, j int) {
+	arr[i], arr[j] = arr[j], arr[i]
+}
