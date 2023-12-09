@@ -10,11 +10,11 @@ import (
 type UserM struct {
 	Base
 
-	Username string `gorm:"column:username;not null"`
-	Password string `gorm:"column:password;not null"`
-	Nickname string `gorm:"column:nickname"`
-	Email    string `gorm:"column:email"`
-	Phone    string `gorm:"column:phone"`
+	Username string `gorm:"uniqueIndex:uk_username;type:varchar(255);;not null"`
+	Password string `gorm:"type:varchar(255);not null;default:''"`
+	Nickname string `gorm:"type:varchar(255);default:''"`
+	Email    string `gorm:"uniqueIndex:uk_email;type:varchar(255)"`
+	Phone    string `gorm:"uniqueIndex:uk_phone;type:varchar(255)"`
 }
 
 func (u *UserM) TableName() string {
