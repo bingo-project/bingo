@@ -3,7 +3,7 @@ package model
 type RoleM struct {
 	Base
 
-	Name        string `gorm:"type:varchar(255);unique;not null;default:'';comment:名称"`
+	Name        string `gorm:"uniqueIndex:uk_name;type:varchar(255);not null;default:'';comment:名称"`
 	Description string `gorm:"type:varchar(255);not null;default:'';comment:描述"`
 }
 
