@@ -68,6 +68,7 @@ func (o *MigrateOptions) Run(args []string) error {
 		&model.AdminM{},
 		&model.ApiM{},
 		&model.RoleM{},
+		&model.MenuM{},
 	)
 	console.ExitIf(err)
 

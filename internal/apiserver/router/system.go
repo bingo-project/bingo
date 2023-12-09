@@ -51,4 +51,12 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("apis/:id", apiController.Get)
 	v1.PUT("apis/:id", apiController.Update)
 	v1.DELETE("apis/:id", apiController.Delete)
+
+	// Menu
+	menuController := system.NewMenuController(store.S, authz)
+	v1.GET("menus", menuController.List)
+	v1.POST("menus", menuController.Create)
+	v1.GET("menus/:id", menuController.Get)
+	v1.PUT("menus/:id", menuController.Update)
+	v1.DELETE("menus/:id", menuController.Delete)
 }

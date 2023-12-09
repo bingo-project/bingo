@@ -14,6 +14,7 @@ type IBiz interface {
 	Admins() system.AdminBiz
 	Roles() system.RoleBiz
 	Apis() system.ApiBiz
+	Menus() system.MenuBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -46,4 +47,8 @@ func (b *biz) Roles() system.RoleBiz {
 
 func (b *biz) Apis() system.ApiBiz {
 	return system.NewApi(b.ds)
+}
+
+func (b *biz) Menus() system.MenuBiz {
+	return system.NewMenu(b.ds)
 }
