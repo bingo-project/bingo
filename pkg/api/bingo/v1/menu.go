@@ -24,7 +24,7 @@ type ListMenuRequest struct {
 }
 
 type CreateMenuRequest struct {
-	ParentID  int    `json:"parentID" valid:"alphanum,stringlength(1|255)"`
+	ParentID  int    `json:"parentID" valid:"int"`
 	Title     string `json:"title" valid:"stringlength(1|255)"`
 	Name      string `json:"name" `
 	Path      string `json:"path" valid:"required,stringlength(1|255)"`
@@ -35,7 +35,7 @@ type CreateMenuRequest struct {
 }
 
 type UpdateMenuRequest struct {
-	ParentID  *int    `json:"parentID" valid:"int,stringlength(1|255)"`
+	ParentID  *int    `json:"parentID" valid:"int"`
 	Title     *string `json:"title" valid:"stringlength(1|255)"`
 	Name      *string `json:"name"`
 	Path      *string `json:"path" valid:"stringlength(1|255)"`
