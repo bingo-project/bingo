@@ -21,6 +21,7 @@ type MenuBiz interface {
 	Delete(ctx context.Context, ID uint) error
 
 	All(ctx context.Context) ([]*v1.MenuInfo, error)
+	Tree(ctx context.Context) ([]*v1.MenuInfo, error)
 }
 
 type menuBiz struct {
@@ -137,7 +138,7 @@ func (b *menuBiz) Delete(ctx context.Context, ID uint) error {
 }
 
 func (b *menuBiz) All(ctx context.Context) ([]*v1.MenuInfo, error) {
-	list, err := b.ds.Apis().All(ctx)
+	list, err := b.ds.Menus().All(ctx)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list menus", "err", err)
 
@@ -146,6 +147,28 @@ func (b *menuBiz) All(ctx context.Context) ([]*v1.MenuInfo, error) {
 
 	data := make([]*v1.MenuInfo, 0, len(list))
 	for _, item := range list {
+		var menu v1.MenuInfo
+		_ = copier.Copy(&menu, item)
+
+		data = append(data, &menu)
+	}
+
+	return data, nil
+}
+
+func (b *menuBiz) Tree(ctx context.Context) (ret []*v1.MenuInfo, err error) {
+	all, err := b.ds.Menus().All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	tree, err := b.ds.Menus().Tree(ctx, all)
+	if err != nil {
+		return
+	}
+
+	data := make([]*v1.MenuInfo, 0, len(tree))
+	for _, item := range tree {
 		var menu v1.MenuInfo
 		_ = copier.Copy(&menu, item)
 

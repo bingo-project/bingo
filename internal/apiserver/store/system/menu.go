@@ -26,6 +26,11 @@ type MenuStore interface {
 
 	All(ctx context.Context) (ret []*model.MenuM, err error)
 	GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error)
+	GetByParentID(ctx context.Context, parentID uint) (ret []*model.MenuM, err error)
+
+	FilterByParentID(ctx context.Context, all []*model.MenuM, parentID uint) (ret []*model.MenuM, err error)
+	GetChildren(ctx context.Context, all []*model.MenuM, menuM *model.MenuM) error
+	Tree(ctx context.Context, all []*model.MenuM) (ret []*model.MenuM, err error)
 }
 
 type menus struct {
@@ -115,6 +120,67 @@ func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
 
 func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error) {
 	err = s.db.Where("id IN ?", ids).Find(&ret).Error
+
+	return
+}
+
+func (s *menus) GetByParentID(ctx context.Context, parentID uint) (ret []*model.MenuM, err error) {
+	err = s.db.Where(&model.MenuM{ParentID: parentID}).Find(&ret).Error
+
+	return
+}
+
+func (s *menus) FilterByParentID(ctx context.Context, all []*model.MenuM, parentID uint) (ret []*model.MenuM, err error) {
+	for _, item := range all {
+		if item.ParentID != parentID {
+			continue
+		}
+
+		ret = append(ret, item)
+	}
+
+	return
+}
+
+func (s *menus) GetChildren(ctx context.Context, all []*model.MenuM, menuM *model.MenuM) error {
+	children, err := s.FilterByParentID(ctx, all, menuM.ID)
+	if err != nil {
+		return err
+	}
+
+	if len(children) == 0 {
+		return nil
+	}
+
+	menuM.Children = children
+	for key := range menuM.Children {
+		item := menuM.Children[key]
+		err := s.GetChildren(ctx, all, item)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *menus) Tree(ctx context.Context, all []*model.MenuM) (ret []*model.MenuM, err error) {
+	ret, err = s.FilterByParentID(ctx, all, 0)
+	if err != nil {
+		return
+	}
+
+	if len(ret) == 0 {
+		return
+	}
+
+	for key := range ret {
+		item := ret[key]
+		err := s.GetChildren(ctx, all, item)
+		if err != nil {
+			return ret, err
+		}
+	}
 
 	return
 }

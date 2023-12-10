@@ -61,4 +61,5 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("menus/:id", menuController.Get)
 	v1.PUT("menus/:id", menuController.Update)
 	v1.DELETE("menus/:id", menuController.Delete)
+	v1.GET("menus/tree", menuController.Tree)
 }

@@ -17,6 +17,8 @@ type MenuInfo struct {
 	Sort      int    `json:"sort"`
 	Icon      string `json:"icon"`
 	Component string `json:"component"`
+
+	Children []MenuInfo `json:"children,omitempty"`
 }
 
 type ListMenuRequest struct {
@@ -35,7 +37,7 @@ type CreateMenuRequest struct {
 }
 
 type UpdateMenuRequest struct {
-	ParentID  *int    `json:"parentID" valid:"int"`
+	ParentID  *uint   `json:"parentID" valid:"int"`
 	Title     *string `json:"title" valid:"stringlength(1|255)"`
 	Name      *string `json:"name"`
 	Path      *string `json:"path" valid:"stringlength(1|255)"`

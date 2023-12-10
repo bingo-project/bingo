@@ -180,3 +180,26 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 
 	core.WriteResponse(c, nil, nil)
 }
+
+// Tree
+// @Summary    Get menu tree
+// @Security   Bearer
+// @Tags       System.Menu
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	v1.ListResponse{data=[]v1.MenuInfo}
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/system/menus/tree [GET]
+func (ctrl *MenuController) Tree(c *gin.Context) {
+	log.C(c).Infow("Tree menu function called")
+
+	resp, err := ctrl.b.Menus().Tree(c)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}
