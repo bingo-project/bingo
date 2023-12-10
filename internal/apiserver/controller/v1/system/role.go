@@ -246,3 +246,26 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 
 	core.WriteResponse(c, nil, resp)
 }
+
+// GetMenuIDs
+// @Summary    Get menuIDs of role
+// @Security   Bearer
+// @Tags       System.Role
+// @Accept     application/json
+// @Produce    json
+// @Param      name      path      string           true  "Role name"
+// @Success	   200		{object}	v1.GetApiIDsResponse
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/system/roles/{name}/menus [GET].
+func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
+	roleName := c.Param("name")
+	resp, err := ctrl.b.Roles().GetMenuIDs(c, roleName)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

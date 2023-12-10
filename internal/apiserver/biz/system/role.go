@@ -24,6 +24,7 @@ type RoleBiz interface {
 
 	SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error
 	GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetApiIDsResponse, error)
+	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
 }
 
 type roleBiz struct {
@@ -161,4 +162,8 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1
 	resp, err := b.ds.Apis().GetIDsByPathAndMethod(ctx, pathAndMethod)
 
 	return resp, nil
+}
+
+func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {
+	return b.ds.RoleMenus().GetMenuIDsByRoleName(ctx, roleName)
 }

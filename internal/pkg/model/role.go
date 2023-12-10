@@ -5,6 +5,9 @@ type RoleM struct {
 
 	Name        string `gorm:"uniqueIndex:uk_name;type:varchar(255);not null;default:'';comment:名称"`
 	Description string `gorm:"type:varchar(255);not null;default:'';comment:描述"`
+
+	// Relation
+	Menus []MenuM `gorm:"many2many:sys_auth_role_menu;foreignKey:name;joinForeignKey:role_name"`
 }
 
 func (u *RoleM) TableName() string {
