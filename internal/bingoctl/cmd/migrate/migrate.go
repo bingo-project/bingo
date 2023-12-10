@@ -66,9 +66,11 @@ func (o *MigrateOptions) Run(args []string) error {
 	err := store.S.DB().AutoMigrate(
 		// Migrate models here
 		&model.AdminM{},
-		&model.ApiM{},
 		&model.RoleM{},
+		&model.AdminRoleM{},
+		&model.ApiM{},
 		&model.MenuM{},
+		&model.RoleMenuM{},
 	)
 	console.ExitIf(err)
 
