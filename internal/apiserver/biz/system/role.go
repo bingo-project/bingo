@@ -22,8 +22,9 @@ type RoleBiz interface {
 	Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error)
 	Delete(ctx context.Context, roleName string) error
 
-	SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error
-	GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetApiIDsResponse, error)
+	SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error
+	GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (v1.GetApiIDsResponse, error)
+	SetMenus(ctx context.Context, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
 }
 
@@ -112,7 +113,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 	return b.ds.Roles().Delete(ctx, roleName)
 }
 
-func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, name string, apiIDs []uint) error {
+func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
 	// 1. Get apis by ids
 	apis, err := b.ds.Apis().GetByIDs(ctx, apiIDs)
 	if err != nil {
@@ -120,7 +121,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, name string, apiID
 	}
 
 	// Get role
-	role, err := b.ds.Roles().Get(ctx, name)
+	role, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
 		return err
 	}
@@ -145,9 +146,9 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, name string, apiID
 	return nil
 }
 
-func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1.GetApiIDsResponse, error) {
+func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (v1.GetApiIDsResponse, error) {
 	// Get role
-	role, err := b.ds.Roles().Get(ctx, name)
+	role, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
 		return nil, err
 	}
@@ -166,4 +167,21 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, name string) (v1
 
 func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {
 	return b.ds.RoleMenus().GetMenuIDsByRoleName(ctx, roleName)
+}
+
+func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
+	roleM, err := b.ds.Roles().Get(ctx, roleName)
+	if err != nil {
+		return errno.ErrResourceNotFound
+	}
+
+	// Update menus
+	roleM.Menus, _ = b.ds.Menus().GetByIDs(ctx, menuIDs)
+
+	err = b.ds.Roles().Update(ctx, roleM)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

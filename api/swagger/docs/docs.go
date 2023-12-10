@@ -1647,6 +1647,58 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System.Role"
+                ],
+                "summary": "Set menus",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Role name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SetMenusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
             }
         },
         "/v1/users": {
@@ -2274,6 +2326,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "apiIDs": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "v1.SetMenusRequest": {
+            "type": "object",
+            "properties": {
+                "menuIDs": {
                     "type": "array",
                     "items": {
                         "type": "integer"

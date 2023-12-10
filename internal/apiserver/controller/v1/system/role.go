@@ -247,6 +247,43 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 	core.WriteResponse(c, nil, resp)
 }
 
+// SetMenus
+// @Summary    Set menus
+// @Security   Bearer
+// @Tags       System.Role
+// @Accept     application/json
+// @Produce    json
+// @Param      name	     path	    string     true  "Role name"
+// @Param      request	 body	    v1.SetMenusRequest	 true  "Param"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/system/roles/{name}/menus [PUT].
+func (ctrl *RoleController) SetMenus(c *gin.Context) {
+	var req v1.SetMenusRequest
+	if err := c.ShouldBind(&req); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+
+		return
+	}
+
+	if _, err := govalidator.ValidateStruct(req); err != nil {
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+
+		return
+	}
+
+	roleName := c.Param("name")
+	err := ctrl.b.Roles().SetMenus(c, roleName, req.MenuIDs)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, nil)
+}
+
 // GetMenuIDs
 // @Summary    Get menuIDs of role
 // @Security   Bearer

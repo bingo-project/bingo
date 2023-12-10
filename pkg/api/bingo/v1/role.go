@@ -29,3 +29,7 @@ type UpdateRoleRequest struct {
 type SetApisRequest struct {
 	ApiIDs []uint `json:"apiIDs" valid:"required"`
 }
+
+type SetMenusRequest struct {
+	MenuIDs []uint `json:"menuIDs" valid:"required"`
+}

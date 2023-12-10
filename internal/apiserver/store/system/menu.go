@@ -25,6 +25,7 @@ type MenuStore interface {
 	UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM) error
 
 	All(ctx context.Context) (ret []*model.MenuM, err error)
+	GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error)
 }
 
 type menus struct {
@@ -108,6 +109,12 @@ func (s *menus) UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM
 
 func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
 	err = s.db.Find(&ret).Error
+
+	return
+}
+
+func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error) {
+	err = s.db.Where("id IN ?", ids).Find(&ret).Error
 
 	return
 }

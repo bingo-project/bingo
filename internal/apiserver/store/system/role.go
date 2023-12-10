@@ -64,6 +64,13 @@ func (u *roles) Get(ctx context.Context, roleName string) (role *model.RoleM, er
 }
 
 func (u *roles) Update(ctx context.Context, role *model.RoleM, fields ...string) error {
+	if len(role.Menus) > 0 {
+		err := u.db.Model(&role).Association("Menus").Replace(role.Menus)
+		if err != nil {
+			return err
+		}
+	}
+
 	return u.db.Select(fields).Save(&role).Error
 }
 
