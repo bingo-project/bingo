@@ -4,7 +4,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/bingo-project/bingoctl/pkg/cmd/version"
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
 	"github.com/spf13/cobra"
@@ -14,6 +13,7 @@ import (
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/migrate"
 	"bingo/internal/bingoctl/cmd/user"
+	"bingo/internal/bingoctl/cmd/version"
 )
 
 func NewDefaultBingoCtlCommand() *cobra.Command {
@@ -63,7 +63,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmds.PersistentFlags().StringVarP(&bootstrap.CfgFile, "config", "c", "", "The path to the configuration file. Empty string for no configuration file.")
 
 	// Add commands
-	cmds.AddCommand(version.NewCmdVersion())
+	cmds.AddCommand(version.NewCmdVersion(ioStreams))
 
 	return cmds
 }
