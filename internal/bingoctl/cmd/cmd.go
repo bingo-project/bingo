@@ -63,7 +63,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	cmds.PersistentFlags().StringVarP(&bootstrap.CfgFile, "config", "c", "", "The path to the configuration file. Empty string for no configuration file.")
 
 	// Add commands
-	cmds.AddCommand(version.NewCmdVersion(ioStreams))
+	cmds.AddCommand(version.NewCmdVersion())
 
 	return cmds
 }

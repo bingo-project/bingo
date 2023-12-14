@@ -49,10 +49,12 @@ func LoadConfig(cfg string, defaultName string, data interface{}, onChange func(
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
 		log.Errorw("Failed to read viper configuration file", "err", err)
+		os.Exit(1)
 	}
 
 	if err := viper.Unmarshal(data); err != nil {
 		log.Errorw("config unmarshal err", "err", err)
+		os.Exit(1)
 	}
 
 	// Print using config file.

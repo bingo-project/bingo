@@ -8,7 +8,7 @@ import (
 	"bingo/internal/apiserver/config"
 )
 
-var Config *config.Config
+var Config config.Config
 var AES *crypt.AES
 var Redis *redis.Client
 var Cache *cache.CacheService
