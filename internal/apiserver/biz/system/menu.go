@@ -108,7 +108,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Hidden != nil {
-		menuM.Hidden = *req.Hidden
+		menuM.Meta.Hidden = *req.Hidden
 	}
 
 	if req.Sort != nil {

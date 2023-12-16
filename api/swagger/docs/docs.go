@@ -2430,9 +2430,6 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "hidden": {
-                    "type": "integer"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -2448,6 +2445,9 @@ const docTemplate = `{
                 "path": {
                     "type": "string"
                 },
+                "redirect": {
+                    "type": "string"
+                },
                 "sort": {
                     "type": "integer"
                 },
@@ -2459,6 +2459,9 @@ const docTemplate = `{
         "v1.Meta": {
             "type": "object",
             "properties": {
+                "hideMenu": {
+                    "type": "boolean"
+                },
                 "icon": {
                     "type": "string"
                 },
@@ -2575,7 +2578,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hidden": {
-                    "type": "integer"
+                    "type": "boolean"
                 },
                 "icon": {
                     "type": "string"
