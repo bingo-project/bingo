@@ -193,6 +193,10 @@ func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.M
 		return nil, errno.ErrResourceNotFound
 	}
 
+	if roleName == global.RoleRoot && len(roleM.Menus) == 0 {
+		roleM.Menus, _ = b.ds.Menus().All(ctx)
+	}
+
 	// Get menus
 	tree, _ := b.ds.Menus().Tree(ctx, roleM.Menus)
 	if err != nil {
