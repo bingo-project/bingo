@@ -180,30 +180,6 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 	core.WriteResponse(c, nil, nil)
 }
 
-// Self
-// @Summary    Get self info
-// @Security   Bearer
-// @Tags       System.Admin
-// @Accept     application/json
-// @Produce    json
-// @Success	   200		{object}	v1.AdminInfo
-// @Failure	   400		{object}	core.ErrResponse
-// @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/self [GET].
-func (ctrl *AdminController) Self(c *gin.Context) {
-	log.C(c).Infow("Self function called")
-
-	var admin v1.AdminInfo
-	err := auth.User(c, &admin)
-	if err != nil {
-		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
-
-		return
-	}
-
-	core.WriteResponse(c, nil, admin)
-}
-
 // SetRoles
 // @Summary    Set admin roles
 // @Security   Bearer
@@ -234,45 +210,6 @@ func (ctrl *AdminController) SetRoles(c *gin.Context) {
 
 	username := c.Param("name")
 	resp, err := ctrl.b.Admins().SetRoles(c, username, &req)
-	if err != nil {
-		core.WriteResponse(c, err, nil)
-
-		return
-	}
-
-	core.WriteResponse(c, nil, resp)
-}
-
-// SwitchRole
-// @Summary    Switch role
-// @Security   Bearer
-// @Tags       System.Admin
-// @Accept     application/json
-// @Produce    json
-// @Param      name      path       string  true  "Query params"
-// @Param      request	 body	    v1.SwitchRoleRequest	 true  "Param"
-// @Success	   200		{object}	v1.AdminInfo
-// @Failure	   400		{object}	core.ErrResponse
-// @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/{name}/switch-role [PUT].
-func (ctrl *AdminController) SwitchRole(c *gin.Context) {
-	log.C(c).Infow("SwitchRole function called")
-
-	var req v1.SwitchRoleRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
-
-		return
-	}
-
-	username := c.Param("name")
-	resp, err := ctrl.b.Admins().SwitchRole(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

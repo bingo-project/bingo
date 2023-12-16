@@ -26,6 +26,7 @@ type RoleBiz interface {
 	GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (v1.GetApiIDsResponse, error)
 	SetMenus(ctx context.Context, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
+	GetMenuTree(ctx context.Context, roleName string) ([]*v1.MenuInfo, error)
 }
 
 type roleBiz struct {
@@ -165,10 +166,6 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 	return resp, nil
 }
 
-func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {
-	return b.ds.RoleMenus().GetMenuIDsByRoleName(ctx, roleName)
-}
-
 func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
 	roleM, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
@@ -184,4 +181,31 @@ func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint)
 	}
 
 	return nil
+}
+
+func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {
+	return b.ds.RoleMenus().GetMenuIDsByRoleName(ctx, roleName)
+}
+
+func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
+	roleM, err := b.ds.Roles().GetWithMenus(ctx, roleName)
+	if err != nil {
+		return nil, errno.ErrResourceNotFound
+	}
+
+	// Get menus
+	tree, _ := b.ds.Menus().Tree(ctx, roleM.Menus)
+	if err != nil {
+		return nil, err
+	}
+
+	data := make([]*v1.MenuInfo, 0, len(tree))
+	for _, item := range tree {
+		var menu v1.MenuInfo
+		_ = copier.Copy(&menu, item)
+
+		data = append(data, &menu)
+	}
+
+	return data, nil
 }

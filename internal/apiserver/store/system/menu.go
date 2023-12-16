@@ -25,7 +25,7 @@ type MenuStore interface {
 	UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM) error
 
 	All(ctx context.Context) (ret []*model.MenuM, err error)
-	GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error)
+	GetByIDs(ctx context.Context, ids []uint) (ret []*model.MenuM, err error)
 	GetByParentID(ctx context.Context, parentID uint) (ret []*model.MenuM, err error)
 
 	FilterByParentID(ctx context.Context, all []*model.MenuM, parentID uint) (ret []*model.MenuM, err error)
@@ -118,7 +118,7 @@ func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
 	return
 }
 
-func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []model.MenuM, err error) {
+func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []*model.MenuM, err error) {
 	err = s.db.Where("id IN ?", ids).Find(&ret).Error
 
 	return

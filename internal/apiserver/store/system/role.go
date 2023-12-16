@@ -18,6 +18,7 @@ type RoleStore interface {
 	Delete(ctx context.Context, roleName string) error
 
 	GetByNames(ctx context.Context, names []string) ([]model.RoleM, error)
+	GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error)
 }
 
 type roles struct {
@@ -80,6 +81,15 @@ func (u *roles) Delete(ctx context.Context, roleName string) error {
 
 func (u *roles) GetByNames(ctx context.Context, names []string) (ret []model.RoleM, err error) {
 	err = u.db.Where("name IN ?", names).Find(&ret).Error
+
+	return
+}
+
+func (u *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error) {
+	err = u.db.Preload("Menus").
+		Where("name = ?", roleName).
+		First(&role).
+		Error
 
 	return
 }
