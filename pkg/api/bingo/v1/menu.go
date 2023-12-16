@@ -10,15 +10,19 @@ type MenuInfo struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 
 	ParentID  int    `json:"parentID"`
-	Title     string `json:"title"`
 	Name      string `json:"name"`
 	Path      string `json:"path"`
 	Hidden    int    `json:"hidden"`
 	Sort      int    `json:"sort"`
-	Icon      string `json:"icon"`
 	Component string `json:"component"`
+	Meta      Meta   `json:"meta"`
 
 	Children []MenuInfo `json:"children,omitempty"`
+}
+
+type Meta struct {
+	Title string `json:"title"`
+	Icon  string `json:"icon"`
 }
 
 type ListMenuRequest struct {

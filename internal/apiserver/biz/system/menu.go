@@ -96,7 +96,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Title != nil {
-		menuM.Title = *req.Title
+		menuM.Meta.Title = *req.Title
 	}
 
 	if req.Name != nil {
@@ -116,7 +116,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Icon != nil {
-		menuM.Icon = *req.Icon
+		menuM.Meta.Icon = *req.Icon
 	}
 
 	if req.Component != nil {
