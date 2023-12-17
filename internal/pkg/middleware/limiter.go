@@ -40,7 +40,7 @@ func LimitWrite(limit string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Skip GET
 		method := c.Request.Method
-		if method == http.MethodGet {
+		if method == http.MethodGet || method == http.MethodOptions {
 			c.Next()
 			return
 		}
