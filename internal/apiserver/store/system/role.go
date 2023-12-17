@@ -86,7 +86,10 @@ func (u *roles) GetByNames(ctx context.Context, names []string) (ret []model.Rol
 }
 
 func (u *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error) {
-	err = u.db.Preload("Menus").
+	err = u.db.Preload("Menus",
+		func(db *gorm.DB) *gorm.DB {
+			return db.Order("sort asc")
+		}).
 		Where("name = ?", roleName).
 		First(&role).
 		Error

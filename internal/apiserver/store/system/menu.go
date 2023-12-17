@@ -113,7 +113,7 @@ func (s *menus) UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM
 }
 
 func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
-	err = s.db.Find(&ret).Error
+	err = s.db.Order("sort asc").Find(&ret).Error
 
 	return
 }
