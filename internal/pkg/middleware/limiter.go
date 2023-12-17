@@ -45,7 +45,7 @@ func LimitWrite(limit string) gin.HandlerFunc {
 			return
 		}
 
-		key := resolveRequestSignature(c.ClientIP())
+		key := resolveRequestSignature(c.ClientIP()) + ":write"
 		if ok := handleLimit(c, key, limit); !ok {
 			return
 		}
