@@ -57,6 +57,10 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 	var menuM model.MenuM
 	_ = copier.Copy(&menuM, req)
 
+	menuM.Meta.Title = req.Title
+	menuM.Meta.Icon = req.Icon
+	menuM.Meta.Hidden = req.Hidden == "1"
+
 	err := b.ds.Menus().Create(ctx, &menuM)
 	if err != nil {
 		// Check exists
@@ -108,7 +112,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Hidden != nil {
-		menuM.Meta.Hidden = *req.Hidden
+		menuM.Meta.Hidden = *req.Hidden == "1"
 	}
 
 	if req.Sort != nil {
@@ -122,6 +126,8 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	if req.Component != nil {
 		menuM.Component = *req.Component
 	}
+
+	menuM.Redirect = req.Redirect
 
 	if err := b.ds.Menus().Update(ctx, menuM); err != nil {
 		return nil, err

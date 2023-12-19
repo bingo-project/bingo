@@ -2326,7 +2326,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hidden": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "icon": {
                     "type": "string"
@@ -2578,7 +2578,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hidden": {
-                    "type": "boolean"
+                    "type": "string"
                 },
                 "icon": {
                     "type": "string"
@@ -2590,6 +2590,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "path": {
+                    "type": "string"
+                },
+                "redirect": {
                     "type": "string"
                 },
                 "sort": {
