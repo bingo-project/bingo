@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
 	"bingo/internal/apiserver/global"
 	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/util/helper"
 	v1 "bingo/pkg/api/bingo/v1"
 )
 
@@ -44,24 +44,7 @@ func NewMenus(db *gorm.DB) *menus {
 }
 
 func (s *menus) List(ctx context.Context, req *v1.ListMenuRequest) (count int64, ret []*model.MenuM, err error) {
-	// Order
-	if req.Order == "" {
-		req.Order = "id"
-	}
-
-	// Sort
-	if req.Sort == "" {
-		req.Sort = "desc"
-	}
-
-	err = s.db.Offset(req.Offset).
-		Limit(helper.DefaultLimit(req.Limit)).
-		Order(req.Order + " " + req.Sort).
-		Find(&ret).
-		Offset(-1).
-		Limit(-1).
-		Count(&count).
-		Error
+	count, err = gormutil.Paginate(s.db, &req.ListOptions, &ret)
 
 	return
 }

@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
 	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/util/helper"
 	v1 "bingo/pkg/api/bingo/v1"
 )
 
@@ -35,24 +35,7 @@ func NewAdmins(db *gorm.DB) *admins {
 }
 
 func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.AdminM, err error) {
-	// Order
-	if req.Order == "" {
-		req.Order = "id"
-	}
-
-	// Sort
-	if req.Sort == "" {
-		req.Sort = "desc"
-	}
-
-	err = u.db.Offset(req.Offset).
-		Limit(helper.DefaultLimit(req.Limit)).
-		Order(req.Order + " " + req.Sort).
-		Find(&ret).
-		Offset(-1).
-		Limit(-1).
-		Count(&count).
-		Error
+	count, err = gormutil.Paginate(u.db, &req.ListOptions, &ret)
 
 	return
 }

@@ -2,6 +2,8 @@ package v1
 
 import (
 	"time"
+
+	"github.com/bingo-project/component-base/util/gormutil"
 )
 
 type AdminInfo struct {
@@ -21,7 +23,7 @@ type AdminInfo struct {
 }
 
 type ListAdminRequest struct {
-	ListRequest
+	gormutil.ListOptions
 }
 
 type CreateAdminRequest struct {

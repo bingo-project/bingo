@@ -2,6 +2,8 @@ package v1
 
 import (
 	"time"
+
+	"github.com/bingo-project/component-base/util/gormutil"
 )
 
 type MenuInfo struct {
@@ -27,7 +29,7 @@ type Meta struct {
 }
 
 type ListMenuRequest struct {
-	ListRequest
+	gormutil.ListOptions
 }
 
 type CreateMenuRequest struct {

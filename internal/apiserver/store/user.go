@@ -3,10 +3,10 @@ package store
 import (
 	"context"
 
+	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
 	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/util/helper"
 	v1 "bingo/pkg/api/bingo/v1"
 )
 
@@ -29,24 +29,7 @@ func newUsers(db *gorm.DB) *users {
 }
 
 func (u *users) List(ctx context.Context, req *v1.ListUserRequest) (count int64, ret []*model.UserM, err error) {
-	// Order
-	if req.Order == "" {
-		req.Order = "id"
-	}
-
-	// Sort
-	if req.Sort == "" {
-		req.Sort = "desc"
-	}
-
-	err = u.db.Offset(req.Offset).
-		Limit(helper.DefaultLimit(req.Limit)).
-		Order(req.Order + " " + req.Sort).
-		Find(&ret).
-		Offset(-1).
-		Limit(-1).
-		Count(&count).
-		Error
+	count, err = gormutil.Paginate(u.db, &req.ListOptions, &ret)
 
 	return
 }

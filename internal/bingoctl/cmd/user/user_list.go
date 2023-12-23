@@ -7,6 +7,7 @@ import (
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
 	cmdutil "github.com/bingo-project/component-base/cli/util"
+	"github.com/bingo-project/component-base/util/gormutil"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
@@ -89,7 +90,7 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list sub command using the specified options.
 func (o *ListOptions) Run(args []string) error {
-	req := &v1.ListUserRequest{ListRequest: v1.ListRequest{Offset: o.Offset, Limit: o.Limit}}
+	req := &v1.ListUserRequest{ListOptions: gormutil.ListOptions{Offset: o.Offset, Limit: o.Limit}}
 	resp, err := o.b.Users().List(context.Background(), req)
 	if err != nil {
 		return err

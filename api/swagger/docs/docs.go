@@ -32,19 +32,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.HealthzResponse"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.HealthzResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -74,7 +74,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.LoginRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginRequest"
                         }
                     }
                 ],
@@ -82,19 +82,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.LoginResponse"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -132,13 +132,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order by field.",
+                        "description": "Order asc or desc.",
                         "name": "order",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Sort: asc or desc.",
+                        "description": "Sort field.",
                         "name": "sort",
                         "in": "query"
                     }
@@ -149,7 +155,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -157,7 +163,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.AdminInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                                             }
                                         }
                                     }
@@ -168,13 +174,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -202,7 +208,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateAdminRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateAdminRequest"
                         }
                     }
                 ],
@@ -210,19 +216,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -258,19 +264,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -305,7 +311,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateAdminRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateAdminRequest"
                         }
                     }
                 ],
@@ -313,19 +319,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -362,13 +368,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -405,7 +411,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -416,13 +422,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -459,7 +465,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SetRolesRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetRolesRequest"
                         }
                     }
                 ],
@@ -467,19 +473,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -517,13 +523,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order by field.",
+                        "description": "Order asc or desc.",
                         "name": "order",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Sort: asc or desc.",
+                        "description": "Sort field.",
                         "name": "sort",
                         "in": "query"
                     }
@@ -534,7 +546,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -542,7 +554,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.ApiInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
                                             }
                                         }
                                     }
@@ -553,13 +565,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -587,7 +599,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateApiRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateApiRequest"
                         }
                     }
                 ],
@@ -595,19 +607,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -636,20 +648,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v1.ApiInfo"
+                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -685,19 +697,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -732,7 +744,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateApiRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateApiRequest"
                         }
                     }
                 ],
@@ -740,19 +752,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -789,13 +801,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -825,7 +837,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -836,13 +848,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -872,7 +884,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.LoginRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginRequest"
                         }
                     }
                 ],
@@ -880,19 +892,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.LoginResponse"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -921,7 +933,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -929,7 +941,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.MenuInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                                             }
                                         }
                                     }
@@ -940,13 +952,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -976,7 +988,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SwitchRoleRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SwitchRoleRequest"
                         }
                     }
                 ],
@@ -984,19 +996,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1023,19 +1035,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1073,13 +1085,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order by field.",
+                        "description": "Order asc or desc.",
                         "name": "order",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Sort: asc or desc.",
+                        "description": "Sort field.",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1090,7 +1108,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1098,7 +1116,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.MenuInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                                             }
                                         }
                                     }
@@ -1109,13 +1127,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1143,7 +1161,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateMenuRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateMenuRequest"
                         }
                     }
                 ],
@@ -1151,19 +1169,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1192,7 +1210,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1200,7 +1218,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.MenuInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                                             }
                                         }
                                     }
@@ -1211,13 +1229,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1253,19 +1271,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1300,7 +1318,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateMenuRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateMenuRequest"
                         }
                     }
                 ],
@@ -1308,19 +1326,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1357,13 +1375,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1401,13 +1419,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order by field.",
+                        "description": "Order asc or desc.",
                         "name": "order",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Sort: asc or desc.",
+                        "description": "Sort field.",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1418,7 +1442,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1426,7 +1450,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.RoleInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                                             }
                                         }
                                     }
@@ -1437,13 +1461,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1471,7 +1495,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateRoleRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateRoleRequest"
                         }
                     }
                 ],
@@ -1479,19 +1503,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1527,19 +1551,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1574,7 +1598,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateRoleRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateRoleRequest"
                         }
                     }
                 ],
@@ -1582,19 +1606,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1631,13 +1655,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1682,13 +1706,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1723,7 +1747,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SetApisRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetApisRequest"
                         }
                     }
                 ],
@@ -1734,13 +1758,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1785,13 +1809,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1826,7 +1850,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.SetMenusRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetMenusRequest"
                         }
                     }
                 ],
@@ -1837,13 +1861,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1881,13 +1905,19 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Order by field.",
+                        "description": "Order asc or desc.",
                         "name": "order",
                         "in": "query"
                     },
                     {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
-                        "description": "Sort: asc or desc.",
+                        "description": "Sort field.",
                         "name": "sort",
                         "in": "query"
                     }
@@ -1898,7 +1928,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/v1.ListResponse"
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
                                 },
                                 {
                                     "type": "object",
@@ -1906,7 +1936,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/v1.UserInfo"
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
                                             }
                                         }
                                     }
@@ -1917,13 +1947,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -1951,7 +1981,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateUserRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateUserRequest"
                         }
                     }
                 ],
@@ -1959,19 +1989,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.UserInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -2007,19 +2037,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.UserInfo"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -2071,13 +2101,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -2114,13 +2144,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -2157,7 +2187,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -2168,13 +2198,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
                         }
                     }
                 }
@@ -2182,7 +2212,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "core.ErrResponse": {
+        "bingo_internal_pkg_core.ErrResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -2195,7 +2225,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.AdminInfo": {
+        "bingo_pkg_api_bingo_v1.AdminInfo": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2214,7 +2244,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/v1.RoleInfo"
+                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                 },
                 "roleName": {
                     "type": "string"
@@ -2222,7 +2252,7 @@ const docTemplate = `{
                 "roles": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.RoleInfo"
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
                     }
                 },
                 "status": {
@@ -2236,7 +2266,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ApiInfo": {
+        "bingo_pkg_api_bingo_v1.ApiInfo": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2262,7 +2292,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ChangePasswordRequest": {
+        "bingo_pkg_api_bingo_v1.ChangePasswordRequest": {
             "type": "object",
             "properties": {
                 "passwordNew": {
@@ -2273,7 +2303,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateAdminRequest": {
+        "bingo_pkg_api_bingo_v1.CreateAdminRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2302,7 +2332,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateApiRequest": {
+        "bingo_pkg_api_bingo_v1.CreateApiRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2319,7 +2349,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateMenuRequest": {
+        "bingo_pkg_api_bingo_v1.CreateMenuRequest": {
             "type": "object",
             "properties": {
                 "component": {
@@ -2348,7 +2378,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateRoleRequest": {
+        "bingo_pkg_api_bingo_v1.CreateRoleRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2359,7 +2389,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateUserRequest": {
+        "bingo_pkg_api_bingo_v1.CreateUserRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -2379,7 +2409,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.HealthzResponse": {
+        "bingo_pkg_api_bingo_v1.HealthzResponse": {
             "type": "object",
             "properties": {
                 "status": {
@@ -2387,7 +2417,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ListResponse": {
+        "bingo_pkg_api_bingo_v1.ListResponse": {
             "type": "object",
             "properties": {
                 "data": {},
@@ -2396,7 +2426,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.LoginRequest": {
+        "bingo_pkg_api_bingo_v1.LoginRequest": {
             "type": "object",
             "properties": {
                 "password": {
@@ -2407,7 +2437,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.LoginResponse": {
+        "bingo_pkg_api_bingo_v1.LoginResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -2415,13 +2445,13 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.MenuInfo": {
+        "bingo_pkg_api_bingo_v1.MenuInfo": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.MenuInfo"
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
                     }
                 },
                 "component": {
@@ -2434,7 +2464,7 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "meta": {
-                    "$ref": "#/definitions/v1.Meta"
+                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.Meta"
                 },
                 "name": {
                     "type": "string"
@@ -2456,7 +2486,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.Meta": {
+        "bingo_pkg_api_bingo_v1.Meta": {
             "type": "object",
             "properties": {
                 "hideMenu": {
@@ -2470,7 +2500,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.RoleInfo": {
+        "bingo_pkg_api_bingo_v1.RoleInfo": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2487,7 +2517,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.SetApisRequest": {
+        "bingo_pkg_api_bingo_v1.SetApisRequest": {
             "type": "object",
             "properties": {
                 "apiIDs": {
@@ -2498,7 +2528,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.SetMenusRequest": {
+        "bingo_pkg_api_bingo_v1.SetMenusRequest": {
             "type": "object",
             "properties": {
                 "menuIDs": {
@@ -2509,7 +2539,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.SetRolesRequest": {
+        "bingo_pkg_api_bingo_v1.SetRolesRequest": {
             "type": "object",
             "properties": {
                 "roleNames": {
@@ -2520,7 +2550,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.SwitchRoleRequest": {
+        "bingo_pkg_api_bingo_v1.SwitchRoleRequest": {
             "type": "object",
             "properties": {
                 "roleName": {
@@ -2528,7 +2558,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdateAdminRequest": {
+        "bingo_pkg_api_bingo_v1.UpdateAdminRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2554,7 +2584,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdateApiRequest": {
+        "bingo_pkg_api_bingo_v1.UpdateApiRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2571,7 +2601,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdateMenuRequest": {
+        "bingo_pkg_api_bingo_v1.UpdateMenuRequest": {
             "type": "object",
             "properties": {
                 "component": {
@@ -2603,7 +2633,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdateRoleRequest": {
+        "bingo_pkg_api_bingo_v1.UpdateRoleRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2614,7 +2644,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UserInfo": {
+        "bingo_pkg_api_bingo_v1.UserInfo": {
             "type": "object",
             "properties": {
                 "createdAt": {

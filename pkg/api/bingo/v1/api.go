@@ -2,6 +2,8 @@ package v1
 
 import (
 	"time"
+
+	"github.com/bingo-project/component-base/util/gormutil"
 )
 
 type ApiInfo struct {
@@ -16,7 +18,7 @@ type ApiInfo struct {
 }
 
 type ListApiRequest struct {
-	ListRequest
+	gormutil.ListOptions
 }
 
 type CreateApiRequest struct {
