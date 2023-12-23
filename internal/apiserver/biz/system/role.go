@@ -99,6 +99,9 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 	if req.Description != nil {
 		roleM.Description = *req.Description
 	}
+	if req.Remark != nil {
+		roleM.Remark = *req.Remark
+	}
 
 	if err := b.ds.Roles().Update(ctx, roleM); err != nil {
 		return nil, err

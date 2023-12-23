@@ -1412,6 +1412,11 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Offset",
                         "name": "offset",
@@ -2386,6 +2391,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "remark": {
+                    "type": "string"
                 }
             }
         },
@@ -2509,7 +2517,13 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "remark": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2639,7 +2653,7 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "name": {
+                "remark": {
                     "type": "string"
                 }
             }

@@ -31,8 +31,19 @@ func NewRoles(db *gorm.DB) *roles {
 	return &roles{db: db}
 }
 
+func SearchRole(req *v1.ListRoleRequest) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if req.Name != "" {
+			db.Where("name = ?", req.Name)
+		}
+
+		return db
+	}
+}
+
 func (u *roles) List(ctx context.Context, req *v1.ListRoleRequest) (count int64, ret []*model.RoleM, err error) {
-	count, err = gormutil.Paginate(u.db, &req.ListOptions, &ret)
+	db := u.db.Scopes(SearchRole(req))
+	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
