@@ -9,4 +9,7 @@ var (
 
 	// ErrPasswordIncorrect 表示密码不正确.
 	ErrPasswordIncorrect = &Errno{HTTP: 401, Code: "InvalidParameter.PasswordIncorrect", Message: "Password was incorrect."}
+
+	// ErrPasswordOldIncorrect 旧密码不正确
+	ErrPasswordOldIncorrect = &Errno{HTTP: 400, Code: "InvalidParameter.PasswordIncorrect", Message: "Old password was incorrect."}
 )

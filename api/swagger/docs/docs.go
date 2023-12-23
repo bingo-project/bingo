@@ -2265,10 +2265,10 @@ const docTemplate = `{
         "v1.ChangePasswordRequest": {
             "type": "object",
             "properties": {
-                "newPassword": {
+                "passwordNew": {
                     "type": "string"
                 },
-                "oldPassword": {
+                "passwordOld": {
                     "type": "string"
                 }
             }

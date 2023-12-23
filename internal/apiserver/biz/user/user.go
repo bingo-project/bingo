@@ -127,12 +127,12 @@ func (b *userBiz) ChangePassword(ctx context.Context, username string, req *v1.C
 	}
 
 	// Check password
-	if err := auth.Compare(userM.Password, req.OldPassword); err != nil {
+	if err := auth.Compare(userM.Password, req.PasswordOld); err != nil {
 		return errno.ErrPasswordIncorrect
 	}
 
 	// Update password
-	userM.Password, _ = auth.Encrypt(req.NewPassword)
+	userM.Password, _ = auth.Encrypt(req.PasswordNew)
 	if err := b.ds.Users().Update(ctx, userM); err != nil {
 		return err
 	}

@@ -10,6 +10,6 @@ type LoginResponse struct {
 }
 
 type ChangePasswordRequest struct {
-	OldPassword string `json:"oldPassword" valid:"required,stringlength(6|18)"`
-	NewPassword string `json:"newPassword" valid:"required,stringlength(6|18)"`
+	PasswordOld string `json:"passwordOld" valid:"required,stringlength(6|18)"`
+	PasswordNew string `json:"passwordNew" valid:"required,stringlength(6|18)"`
 }

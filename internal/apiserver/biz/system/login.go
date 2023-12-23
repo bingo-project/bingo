@@ -40,12 +40,12 @@ func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.
 	}
 
 	// Check password
-	if err := auth.Compare(userM.Password, req.OldPassword); err != nil {
-		return errno.ErrPasswordIncorrect
+	if err := auth.Compare(userM.Password, req.PasswordOld); err != nil {
+		return errno.ErrPasswordOldIncorrect
 	}
 
 	// Update password
-	userM.Password, _ = auth.Encrypt(req.NewPassword)
+	userM.Password, _ = auth.Encrypt(req.PasswordNew)
 	if err := b.ds.Admins().Update(ctx, userM); err != nil {
 		return err
 	}
