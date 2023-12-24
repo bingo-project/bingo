@@ -19,6 +19,10 @@ type ApiInfo struct {
 
 type ListApiRequest struct {
 	gormutil.ListOptions
+
+	Method string `form:"method"`
+	Path   string `form:"path"`
+	Group  string `form:"group"`
 }
 
 type CreateApiRequest struct {

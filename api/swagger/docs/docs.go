@@ -510,9 +510,19 @@ const docTemplate = `{
                 "summary": "List apis",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "group",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "method",
                         "in": "query"
                     },
                     {
@@ -531,6 +541,11 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Page",
                         "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "path",
                         "in": "query"
                     },
                     {

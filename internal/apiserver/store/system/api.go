@@ -39,8 +39,25 @@ func NewApis(db *gorm.DB) *apis {
 	return &apis{db: db}
 }
 
+func SearchApi(req *v1.ListApiRequest) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if req.Method != "" {
+			db.Where("method = ?", req.Method)
+		}
+		if req.Path != "" {
+			db.Where("path like ?", "%"+req.Path+"%")
+		}
+		if req.Group != "" {
+			db.Where("group = ?", req.Group)
+		}
+
+		return db
+	}
+}
+
 func (s *apis) List(ctx context.Context, req *v1.ListApiRequest) (count int64, ret []*model.ApiM, err error) {
-	count, err = gormutil.Paginate(s.db, &req.ListOptions, &ret)
+	db := s.db.Scopes(SearchApi(req))
+	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
