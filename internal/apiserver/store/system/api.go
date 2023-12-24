@@ -48,7 +48,7 @@ func SearchApi(req *v1.ListApiRequest) func(db *gorm.DB) *gorm.DB {
 			db.Where("path like ?", "%"+req.Path+"%")
 		}
 		if req.Group != "" {
-			db.Where("group = ?", req.Group)
+			db.Where("`group` = ?", req.Group)
 		}
 
 		return db
