@@ -114,6 +114,10 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 }
 
 func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
+	if roleName == global.RoleRoot {
+		return errno.ErrForbidden
+	}
+
 	return b.ds.Roles().Delete(ctx, roleName)
 }
 
