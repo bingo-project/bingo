@@ -57,10 +57,6 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 	var menuM model.MenuM
 	_ = copier.Copy(&menuM, req)
 
-	menuM.Meta.Title = req.Title
-	menuM.Meta.Icon = req.Icon
-	menuM.Meta.Hidden = req.Hidden == "1"
-
 	err := b.ds.Menus().Create(ctx, &menuM)
 	if err != nil {
 		// Check exists
@@ -95,12 +91,11 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 		return nil, errno.ErrResourceNotFound
 	}
 
-	if req.ParentID != nil {
-		menuM.ParentID = *req.ParentID
-	}
+	menuM.ParentID = req.ParentID
+	menuM.Redirect = req.Redirect
 
 	if req.Title != nil {
-		menuM.Meta.Title = *req.Title
+		menuM.Title = *req.Title
 	}
 
 	if req.Name != nil {
@@ -112,7 +107,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Hidden != nil {
-		menuM.Meta.Hidden = *req.Hidden == "1"
+		menuM.Hidden = *req.Hidden
 	}
 
 	if req.Sort != nil {
@@ -120,14 +115,12 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	if req.Icon != nil {
-		menuM.Meta.Icon = *req.Icon
+		menuM.Icon = *req.Icon
 	}
 
 	if req.Component != nil {
 		menuM.Component = *req.Component
 	}
-
-	menuM.Redirect = req.Redirect
 
 	if err := b.ds.Menus().Update(ctx, menuM); err != nil {
 		return nil, err

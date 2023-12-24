@@ -2361,7 +2361,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hidden": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "icon": {
                     "type": "string"
@@ -2468,11 +2468,14 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "hidden": {
+                    "type": "boolean"
+                },
+                "icon": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
-                },
-                "meta": {
-                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.Meta"
                 },
                 "name": {
                     "type": "string"
@@ -2489,21 +2492,10 @@ const docTemplate = `{
                 "sort": {
                     "type": "integer"
                 },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "bingo_pkg_api_bingo_v1.Meta": {
-            "type": "object",
-            "properties": {
-                "hideMenu": {
-                    "type": "boolean"
-                },
-                "icon": {
-                    "type": "string"
-                },
                 "title": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -2622,7 +2614,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hidden": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "icon": {
                     "type": "string"
