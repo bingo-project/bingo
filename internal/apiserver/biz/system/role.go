@@ -140,6 +140,11 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 		return err
 	}
 
+	// Empty
+	if len(apis) == 0 {
+		return nil
+	}
+
 	// Add casbin rule
 	var rules [][]string
 	for _, api := range apis {

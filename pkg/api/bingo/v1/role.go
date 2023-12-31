@@ -34,9 +34,9 @@ type UpdateRoleRequest struct {
 }
 
 type SetApisRequest struct {
-	ApiIDs []uint `json:"apiIDs" valid:"required"`
+	ApiIDs []uint `json:"apiIDs"`
 }
 
 type SetMenusRequest struct {
-	MenuIDs []uint `json:"menuIDs" valid:"required"`
+	MenuIDs []uint `json:"menuIDs"`
 }
