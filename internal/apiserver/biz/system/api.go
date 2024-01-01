@@ -155,7 +155,10 @@ func (b *apiBiz) Tree(ctx context.Context) ([]*v1.GroupApiResponse, error) {
 			return apiM.Group
 		}, func(apiM *model.ApiM) *model.ApiM {
 			return apiM
-		})
+		}).
+		OrderByT(func(group linq.Group) interface{} {
+			return group.Key
+		}).Query
 
 	data := make([]*v1.GroupApiResponse, 0, len(query.Results()))
 	for _, item := range query.Results() {
