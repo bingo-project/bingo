@@ -30,7 +30,7 @@ type CreateAdminRequest struct {
 	Username  string   `json:"username" valid:"required,alphanum,stringlength(1|255)"`
 	Password  string   `json:"password" valid:"required,stringlength(6|20)"`
 	Nickname  string   `json:"nickname" valid:"required,alphanum,stringlength(1|20)"`
-	Email     *string  `json:"email"`
+	Email     *string  `json:"email" valid:"email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	RoleNames []string `json:"roleNames" valid:"required"`
