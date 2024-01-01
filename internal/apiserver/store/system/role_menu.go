@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 
+	"github.com/ahmetb/go-linq/v3"
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
@@ -22,6 +23,7 @@ type RoleMenuStore interface {
 	FirstOrCreate(ctx context.Context, where any, roleMenu *model.RoleMenuM) error
 
 	GetMenuIDsByRoleName(ctx context.Context, roleName string) ([]uint, error)
+	GetMenuIDsByRoleNameWithParent(ctx context.Context, roleName string) (ret []uint, err error)
 }
 
 type roleMenus struct {
@@ -75,6 +77,29 @@ func (s *roleMenus) GetMenuIDsByRoleName(ctx context.Context, roleName string) (
 		Where(&model.RoleMenuM{RoleName: roleName}).
 		Find(&ret).
 		Error
+
+	return
+}
+
+func (s *roleMenus) GetMenuIDsByRoleNameWithParent(ctx context.Context, roleName string) (ret []uint, err error) {
+	var menuIDs []uint
+	err = s.db.Model(&model.RoleMenuM{}).
+		Select("menu_id").
+		Where(&model.RoleMenuM{RoleName: roleName}).
+		Find(&menuIDs).
+		Error
+
+	var parentIDs []uint
+	err = s.db.Model(&model.MenuM{}).
+		Where("id IN (?)", menuIDs).
+		Select("parent_id").
+		Find(&parentIDs).
+		Error
+
+	// Union menuIDs & parentIDs
+	linq.From(menuIDs).
+		Union(linq.From(parentIDs)).
+		ToSlice(&ret)
 
 	return
 }
