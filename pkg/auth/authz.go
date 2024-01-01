@@ -24,7 +24,7 @@ g = _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = g(r.sub, p.sub) && r.sub == p.sub && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act)`
+m = g(r.sub, p.sub) && r.sub == p.sub && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)`
 )
 
 // Authz 定义了一个授权器，提供授权功能.
