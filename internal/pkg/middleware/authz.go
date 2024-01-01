@@ -41,7 +41,7 @@ func Authz(a Author) gin.HandlerFunc {
 
 		log.C(c).Debugw("Build authorize context", "sub", sub, "obj", obj, "act", act)
 		if allowed, _ := a.Authorize(sub, obj, act); !allowed {
-			core.WriteResponse(c, errno.ErrUnauthorized, nil)
+			core.WriteResponse(c, errno.ErrForbidden, nil)
 			c.Abort()
 
 			return
