@@ -203,3 +203,26 @@ func (ctrl *ApiController) All(c *gin.Context) {
 
 	core.WriteResponse(c, nil, resp)
 }
+
+// Tree
+// @Summary    API Tree
+// @Security   Bearer
+// @Tags       System.Api
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	[]v1.ApiInfo
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/system/apis/tree [GET].
+func (ctrl *ApiController) Tree(c *gin.Context) {
+	log.C(c).Infow("Tree api function called")
+
+	resp, err := ctrl.b.Apis().Tree(c)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

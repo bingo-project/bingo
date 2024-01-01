@@ -40,3 +40,8 @@ type UpdateApiRequest struct {
 }
 
 type GetApiIDsResponse []uint
+
+type GroupApiResponse struct {
+	Key   string    `json:"key"`
+	Group []ApiInfo `json:"children"`
+}

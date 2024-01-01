@@ -13,6 +13,11 @@ func (u *ApiM) TableName() string {
 	return "sys_auth_api"
 }
 
+type ApiGroup struct {
+	Key   string
+	Group []ApiM
+}
+
 type Apis []ApiM
 
 func (arr Apis) Len() int {

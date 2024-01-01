@@ -58,6 +58,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("apis/:id", apiController.Get)
 	v1.PUT("apis/:id", apiController.Update)
 	v1.DELETE("apis/:id", apiController.Delete)
+	v1.GET("apis/tree", apiController.Tree)
 
 	// Menu
 	menuController := system.NewMenuController(store.S, authz)

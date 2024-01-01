@@ -4,8 +4,10 @@ import (
 	"context"
 	"regexp"
 
+	"github.com/ahmetb/go-linq/v3"
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
+	"github.com/mitchellh/mapstructure"
 
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
@@ -21,6 +23,7 @@ type ApiBiz interface {
 	Delete(ctx context.Context, ID uint) error
 
 	All(ctx context.Context) ([]*v1.ApiInfo, error)
+	Tree(ctx context.Context) ([]*v1.GroupApiResponse, error)
 }
 
 type apiBiz struct {
@@ -134,6 +137,35 @@ func (b *apiBiz) All(ctx context.Context) ([]*v1.ApiInfo, error) {
 		_ = copier.Copy(&api, item)
 
 		data = append(data, &api)
+	}
+
+	return data, nil
+}
+
+func (b *apiBiz) Tree(ctx context.Context) ([]*v1.GroupApiResponse, error) {
+	list, err := b.ds.Apis().All(ctx)
+	if err != nil {
+		log.C(ctx).Errorw("Failed to list apis from storage", "err", err)
+
+		return nil, err
+	}
+
+	query := linq.From(list).
+		GroupByT(func(apiM *model.ApiM) string {
+			return apiM.Group
+		}, func(apiM *model.ApiM) *model.ApiM {
+			return apiM
+		})
+
+	data := make([]*v1.GroupApiResponse, 0, len(query.Results()))
+	for _, item := range query.Results() {
+		var apiGroup model.ApiGroup
+		_ = mapstructure.Decode(item, &apiGroup)
+
+		var apiResp v1.GroupApiResponse
+		_ = copier.Copy(&apiResp, apiGroup)
+
+		data = append(data, &apiResp)
 	}
 
 	return data, nil
