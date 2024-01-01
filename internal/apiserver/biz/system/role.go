@@ -122,6 +122,10 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 }
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
+	if roleName == global.RoleRoot {
+		return errno.ErrForbidden
+	}
+
 	// 1. Get apis by ids
 	apis, err := b.ds.Apis().GetByIDs(ctx, apiIDs)
 	if err != nil {
@@ -179,6 +183,10 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 }
 
 func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
+	if roleName == global.RoleRoot {
+		return errno.ErrForbidden
+	}
+
 	roleM, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
 		return errno.ErrResourceNotFound

@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
-	"bingo/internal/apiserver/global"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
@@ -208,12 +207,6 @@ func (ctrl *RoleController) SetApis(c *gin.Context) {
 	}
 
 	name := c.Param("name")
-	if name == global.RoleRoot {
-		core.WriteResponse(c, errno.ErrForbidden, nil)
-
-		return
-	}
-
 	err := ctrl.b.Roles().SetApis(c, ctrl.a, name, req.ApiIDs)
 	if err != nil {
 		core.WriteResponse(c, err, nil)

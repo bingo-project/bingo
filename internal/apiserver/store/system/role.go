@@ -6,6 +6,7 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
+	"bingo/internal/apiserver/global"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
 )
@@ -42,7 +43,9 @@ func SearchRole(req *v1.ListRoleRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (u *roles) List(ctx context.Context, req *v1.ListRoleRequest) (count int64, ret []*model.RoleM, err error) {
-	db := u.db.Scopes(SearchRole(req))
+	db := u.db.Scopes(SearchRole(req)).
+		Where("name != ?", global.RoleRoot)
+
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
