@@ -35,7 +35,9 @@ func NewAdmins(db *gorm.DB) *admins {
 }
 
 func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.AdminM, err error) {
-	count, err = gormutil.Paginate(u.db, &req.ListOptions, &ret)
+	db := u.db.Preload("Role").Preload("Roles")
+
+	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }

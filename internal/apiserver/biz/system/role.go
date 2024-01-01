@@ -27,6 +27,8 @@ type RoleBiz interface {
 	SetMenus(ctx context.Context, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
 	GetMenuTree(ctx context.Context, roleName string) ([]*v1.MenuInfo, error)
+
+	All(ctx context.Context) ([]*v1.RoleInfo, error)
 }
 
 type roleBiz struct {
@@ -236,4 +238,23 @@ func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.M
 	}
 
 	return data, nil
+}
+
+func (b *roleBiz) All(ctx context.Context) ([]*v1.RoleInfo, error) {
+	list, err := b.ds.Roles().All(ctx)
+	if err != nil {
+		log.C(ctx).Errorw("Failed to list roles", "err", err)
+
+		return nil, err
+	}
+
+	data := make([]*v1.RoleInfo, 0, len(list))
+	for _, item := range list {
+		var role v1.RoleInfo
+		_ = copier.Copy(&role, item)
+
+		data = append(data, &role)
+	}
+
+	return data, err
 }

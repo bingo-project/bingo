@@ -299,3 +299,26 @@ func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 
 	core.WriteResponse(c, nil, resp)
 }
+
+// All
+// @Summary    All roles
+// @Security   Bearer
+// @Tags       System.Role
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	v1.ListResponse{data=[]v1.RoleInfo}
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/system/roles/all [GET].
+func (ctrl *RoleController) All(c *gin.Context) {
+	log.C(c).Infow("All role function called")
+
+	resp, err := ctrl.b.Roles().All(c)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

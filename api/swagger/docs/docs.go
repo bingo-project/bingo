@@ -1583,6 +1583,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/system/roles/all": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "System.Role"
+                ],
+                "summary": "All roles",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/system/roles/{name}": {
             "get": {
                 "security": [

@@ -37,12 +37,12 @@ type CreateAdminRequest struct {
 }
 
 type UpdateAdminRequest struct {
-	Nickname  *string  `json:"nickname" valid:"required,alphanum,stringlength(1|20)"`
-	Email     *string  `json:"email"`
+	Nickname  *string  `json:"nickname" valid:"stringlength(1|20)"`
+	Email     *string  `json:"email" valid:"email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	Status    *int     `json:"status"`
-	RoleNames []string `json:"roleNames" valid:"required"`
+	RoleNames []string `json:"roleNames"`
 }
 
 type SetRolesRequest struct {

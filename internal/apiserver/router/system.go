@@ -49,6 +49,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("roles/:name/apis", roleController.GetApiIDs)   // 获取权限 ID 集合（casbin）
 	v1.PUT("roles/:name/menus", roleController.SetMenus)   // 设置菜单权限
 	v1.GET("roles/:name/menus", roleController.GetMenuIDs) // 获取菜单 ID 集合
+	v1.GET("roles/all", roleController.All)
 
 	// API
 	apiController := system.NewApiController(store.S, authz)

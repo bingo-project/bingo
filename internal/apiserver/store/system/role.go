@@ -20,6 +20,8 @@ type RoleStore interface {
 
 	GetByNames(ctx context.Context, names []string) ([]model.RoleM, error)
 	GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error)
+
+	All(ctx context.Context) (ret []*model.RoleM, err error)
 }
 
 type roles struct {
@@ -88,6 +90,12 @@ func (u *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.
 		Where("name = ?", roleName).
 		First(&role).
 		Error
+
+	return
+}
+
+func (u *roles) All(ctx context.Context) (ret []*model.RoleM, err error) {
+	err = u.db.Find(&ret).Error
 
 	return
 }
