@@ -102,7 +102,10 @@ func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
 }
 
 func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []*model.MenuM, err error) {
-	err = s.db.Where("id IN ?", ids).Find(&ret).Error
+	err = s.db.Where("id IN ?", ids).
+		Order("sort asc").
+		Find(&ret).
+		Error
 
 	return
 }
