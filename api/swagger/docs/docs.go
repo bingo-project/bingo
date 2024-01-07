@@ -119,9 +119,19 @@ const docTemplate = `{
                 "summary": "List admins",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "nickname",
                         "in": "query"
                     },
                     {
@@ -144,8 +154,28 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "roleName",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "Sort field.",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "username",
                         "in": "query"
                     }
                 ],

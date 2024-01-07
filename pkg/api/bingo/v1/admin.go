@@ -24,6 +24,13 @@ type AdminInfo struct {
 
 type ListAdminRequest struct {
 	gormutil.ListOptions
+
+	Username string `form:"username"`
+	Nickname string `form:"nickname"`
+	Status   *int   `form:"status"`
+	RoleName string `form:"roleName"`
+	Email    string `form:"email"`
+	Phone    string `form:"phone"`
 }
 
 type CreateAdminRequest struct {

@@ -34,8 +34,35 @@ func NewAdmins(db *gorm.DB) *admins {
 	return &admins{db: db}
 }
 
+func SearchAdmin(req *v1.ListAdminRequest) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		if req.Username != "" {
+			db.Where("username = ?", req.Username)
+		}
+		if req.Nickname != "" {
+			db.Where("nickname like ?", "%"+req.Nickname+"%")
+		}
+		if req.Status != nil {
+			db.Where("status = ?", req.Status)
+		}
+		if req.RoleName != "" {
+			db.Where("role_name = ?", req.RoleName)
+		}
+		if req.Email != "" {
+			db.Where("email = ?", req.Email)
+		}
+		if req.Phone != "" {
+			db.Where("phone = ?", req.Phone)
+		}
+
+		return db
+	}
+}
+
 func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.AdminM, err error) {
-	db := u.db.Preload("Role").Preload("Roles")
+	db := u.db.Preload("Role").
+		Preload("Roles").
+		Scopes(SearchAdmin(req))
 
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
