@@ -33,7 +33,7 @@ type CreateAdminRequest struct {
 	Email     *string  `json:"email" valid:"email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
-	RoleNames []string `json:"roleNames" valid:"required"`
+	RoleNames []string `json:"roleNames"`
 }
 
 type UpdateAdminRequest struct {

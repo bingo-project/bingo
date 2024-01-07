@@ -53,11 +53,9 @@ func (u *admins) Get(ctx context.Context, username string) (admin *model.AdminM,
 }
 
 func (u *admins) Update(ctx context.Context, admin *model.AdminM) error {
-	if len(admin.Roles) > 0 {
-		err := u.db.Model(&admin).Association("Roles").Replace(admin.Roles)
-		if err != nil {
-			return err
-		}
+	err := u.db.Model(&admin).Association("Roles").Replace(admin.Roles)
+	if err != nil {
+		return err
 	}
 
 	return u.db.Save(&admin).Error
