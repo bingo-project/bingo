@@ -2717,6 +2717,9 @@ const docTemplate = `{
                 "nickname": {
                     "type": "string"
                 },
+                "password": {
+                    "type": "string"
+                },
                 "phone": {
                     "type": "string"
                 },

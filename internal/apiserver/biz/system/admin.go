@@ -11,6 +11,7 @@ import (
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/bingo/v1"
+	"bingo/pkg/auth"
 )
 
 type AdminBiz interface {
@@ -129,6 +130,11 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 		if len(adminM.Roles) > 0 {
 			adminM.RoleName = adminM.Roles[0].Name
 		}
+	}
+
+	// Update password
+	if req.Password != nil {
+		adminM.Password, _ = auth.Encrypt(*req.Password)
 	}
 
 	if err := b.ds.Admins().Update(ctx, adminM); err != nil {

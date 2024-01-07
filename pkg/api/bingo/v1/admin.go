@@ -45,6 +45,7 @@ type CreateAdminRequest struct {
 
 type UpdateAdminRequest struct {
 	Nickname  *string  `json:"nickname" valid:"stringlength(1|20)"`
+	Password  *string  `json:"password" valid:"stringlength(6|20)"`
 	Email     *string  `json:"email" valid:"email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
