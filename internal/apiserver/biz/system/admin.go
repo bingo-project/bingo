@@ -60,6 +60,13 @@ func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.
 	var adminM model.AdminM
 	_ = copier.Copy(&adminM, req)
 
+	// Create roles & current role
+	if len(req.RoleNames) > 0 {
+		adminM.RoleName = req.RoleNames[0]
+
+		adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
+	}
+
 	err := b.ds.Admins().Create(ctx, &adminM)
 	if err != nil {
 		// Check exists
@@ -117,6 +124,8 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	// Update roles & current role
 	if len(req.RoleNames) > 0 {
 		adminM.RoleName = req.RoleNames[0]
+
+		adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
 	}
 
 	if err := b.ds.Admins().Update(ctx, adminM); err != nil {
