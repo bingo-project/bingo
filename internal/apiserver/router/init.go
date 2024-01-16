@@ -2,10 +2,10 @@ package router
 
 import (
 	"context"
-	"sort"
 	"strings"
 
 	"github.com/bingo-project/component-base/log"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/store"
@@ -17,7 +17,7 @@ func InitSystemAPI(g *gin.Engine) {
 	routes := g.Routes()
 
 	// Init api
-	var data model.Apis
+	var data []model.ApiM
 	for _, route := range routes {
 		// Only system api
 		if !strings.Contains(route.Path, "/v1/system") {
@@ -34,7 +34,7 @@ func InitSystemAPI(g *gin.Engine) {
 	}
 
 	// Sort by path
-	sort.Sort(data)
+	_ = slice.SortByField(data, "Path")
 
 	for _, item := range data {
 		// Create API.
