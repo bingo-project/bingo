@@ -4,10 +4,9 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/ahmetb/go-linq/v3"
 	"github.com/bingo-project/component-base/log"
+	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
-	"github.com/mitchellh/mapstructure"
 
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
@@ -23,7 +22,7 @@ type ApiBiz interface {
 	Delete(ctx context.Context, ID uint) error
 
 	All(ctx context.Context) ([]*v1.ApiInfo, error)
-	Tree(ctx context.Context) ([]*v1.GroupApiResponse, error)
+	Tree(ctx context.Context) ([]v1.GroupApiResponse, error)
 }
 
 type apiBiz struct {
@@ -142,34 +141,28 @@ func (b *apiBiz) All(ctx context.Context) ([]*v1.ApiInfo, error) {
 	return data, nil
 }
 
-func (b *apiBiz) Tree(ctx context.Context) ([]*v1.GroupApiResponse, error) {
+func (b *apiBiz) Tree(ctx context.Context) (ret []v1.GroupApiResponse, err error) {
 	list, err := b.ds.Apis().All(ctx)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apis from storage", "err", err)
 
-		return nil, err
+		return
 	}
 
-	query := linq.From(list).
-		GroupByT(func(apiM *model.ApiM) string {
-			return apiM.Group
-		}, func(apiM *model.ApiM) *model.ApiM {
-			return apiM
-		}).
-		OrderByT(func(group linq.Group) interface{} {
-			return group.Key
-		}).Query
+	// Group
+	group := slice.GroupWith(list, func(item *model.ApiM) string {
+		return item.Group
+	})
 
-	data := make([]*v1.GroupApiResponse, 0, len(query.Results()))
-	for _, item := range query.Results() {
-		var apiGroup model.ApiGroup
-		_ = mapstructure.Decode(item, &apiGroup)
+	for key, item := range group {
+		apiResp := v1.GroupApiResponse{Key: key}
+		_ = copier.Copy(&apiResp.Group, item)
 
-		var apiResp v1.GroupApiResponse
-		_ = copier.Copy(&apiResp, apiGroup)
-
-		data = append(data, &apiResp)
+		ret = append(ret, apiResp)
 	}
 
-	return data, nil
+	// Sort result by Group
+	err = slice.SortByField(ret, "Key")
+
+	return
 }
