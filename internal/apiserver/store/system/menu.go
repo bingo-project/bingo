@@ -91,7 +91,7 @@ func (s *menus) UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM
 
 		menu.ID = exist.ID
 
-		return tx.Save(&menu).Error
+		return tx.Omit("CreatedAt").Save(&menu).Error
 	})
 }
 

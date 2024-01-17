@@ -21,8 +21,10 @@ type ApiStore interface {
 	Delete(ctx context.Context, ID uint) error
 
 	CreateInBatch(ctx context.Context, apis []*model.ApiM) error
+	CreateIfNotExist(ctx context.Context, api *model.ApiM) error
 	FirstOrCreate(ctx context.Context, where any, api *model.ApiM) error
 	UpdateOrCreate(ctx context.Context, where any, api *model.ApiM) error
+	Upsert(ctx context.Context, api *model.ApiM) error
 
 	All(ctx context.Context) ([]*model.ApiM, error)
 	GetByIDs(ctx context.Context, IDs []uint) (ret []*model.ApiM, err error)
@@ -84,6 +86,12 @@ func (s *apis) CreateInBatch(ctx context.Context, apis []*model.ApiM) error {
 	return s.db.CreateInBatches(&apis, global.CreateBatchSize).Error
 }
 
+func (s *apis) CreateIfNotExist(ctx context.Context, api *model.ApiM) error {
+	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+		Create(&api).
+		Error
+}
+
 func (s *apis) FirstOrCreate(ctx context.Context, where any, api *model.ApiM) error {
 	return s.db.Where(where).
 		Attrs(&api).
@@ -104,8 +112,14 @@ func (s *apis) UpdateOrCreate(ctx context.Context, where any, api *model.ApiM) e
 
 		api.ID = exist.ID
 
-		return tx.Save(&api).Error
+		return tx.Omit("CreatedAt").Save(&api).Error
 	})
+}
+
+func (s *apis) Upsert(ctx context.Context, api *model.ApiM) error {
+	return s.db.Clauses(clause.OnConflict{UpdateAll: true}).
+		Create(&api).
+		Error
 }
 
 func (s *apis) All(ctx context.Context) (ret []*model.ApiM, err error) {
