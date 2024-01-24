@@ -22,6 +22,11 @@ type ListRoleRequest struct {
 	Name string `form:"name"`
 }
 
+type ListRoleResponse struct {
+	Total int64      `json:"total"`
+	Data  []RoleInfo `json:"data"`
+}
+
 type CreateRoleRequest struct {
 	Name        string `json:"name" valid:"required,alphanum,stringlength(1|20)"`
 	Description string `json:"description" valid:"required,stringlength(1|255)"`

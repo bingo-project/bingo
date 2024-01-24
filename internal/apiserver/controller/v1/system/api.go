@@ -30,7 +30,7 @@ func NewApiController(ds store.IStore, a *auth.Authz) *ApiController {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListApiRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.ApiInfo}
+// @Success	   200		{object}	v1.ListApiResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/apis [GET].

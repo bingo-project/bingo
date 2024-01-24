@@ -16,7 +16,7 @@ import (
 )
 
 type RoleBiz interface {
-	List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListResponse, error)
+	List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListRoleResponse, error)
 	Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.RoleInfo, error)
 	Get(ctx context.Context, roleName string) (*v1.RoleInfo, error)
 	Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error)
@@ -41,7 +41,7 @@ func NewRole(ds store.IStore) *roleBiz {
 	return &roleBiz{ds: ds}
 }
 
-func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListResponse, error) {
+func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListRoleResponse, error) {
 	count, list, err := b.ds.Roles().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list roles", "err", err)
@@ -49,15 +49,15 @@ func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListRe
 		return nil, err
 	}
 
-	data := make([]*v1.RoleInfo, 0, len(list))
+	data := make([]v1.RoleInfo, 0)
 	for _, item := range list {
 		var role v1.RoleInfo
 		_ = copier.Copy(&role, item)
 
-		data = append(data, &role)
+		data = append(data, role)
 	}
 
-	return &v1.ListResponse{Total: count, Data: data}, nil
+	return &v1.ListRoleResponse{Total: count, Data: data}, nil
 }
 
 func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.RoleInfo, error) {

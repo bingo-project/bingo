@@ -29,7 +29,7 @@ func NewAdminController(ds store.IStore, a *auth.Authz) *AdminController {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAdminRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.AdminInfo}
+// @Success	   200		{object}	v1.ListAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/admins [GET].

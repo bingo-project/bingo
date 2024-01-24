@@ -25,6 +25,11 @@ type ListApiRequest struct {
 	Group  string `form:"group"`
 }
 
+type ListApiResponse struct {
+	Total int64     `json:"total"`
+	Data  []ApiInfo `json:"data"`
+}
+
 type CreateApiRequest struct {
 	Method      string `json:"method" valid:"required,alphanum,stringlength(1|255)"`
 	Path        string `json:"path" valid:"required,stringlength(1|255)"`

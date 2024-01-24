@@ -33,6 +33,11 @@ type ListAdminRequest struct {
 	Phone    string `form:"phone"`
 }
 
+type ListAdminResponse struct {
+	Total int64       `json:"total"`
+	Data  []AdminInfo `json:"data"`
+}
+
 type CreateAdminRequest struct {
 	Username  string   `json:"username" valid:"required,alphanum,stringlength(1|255)"`
 	Password  string   `json:"password" valid:"required,stringlength(6|20)"`

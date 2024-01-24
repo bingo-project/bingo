@@ -14,7 +14,7 @@ import (
 )
 
 type MenuBiz interface {
-	List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListResponse, error)
+	List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListMenuResponse, error)
 	Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.MenuInfo, error)
 	Get(ctx context.Context, ID uint) (*v1.MenuInfo, error)
 	Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest) (*v1.MenuInfo, error)
@@ -34,7 +34,7 @@ func NewMenu(ds store.IStore) *menuBiz {
 	return &menuBiz{ds: ds}
 }
 
-func (b *menuBiz) List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListResponse, error) {
+func (b *menuBiz) List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListMenuResponse, error) {
 	count, list, err := b.ds.Menus().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list menus", "err", err)
@@ -42,15 +42,15 @@ func (b *menuBiz) List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListRe
 		return nil, err
 	}
 
-	data := make([]*v1.MenuInfo, 0, len(list))
+	data := make([]v1.MenuInfo, 0, len(list))
 	for _, item := range list {
 		var menu v1.MenuInfo
 		_ = copier.Copy(&menu, item)
 
-		data = append(data, &menu)
+		data = append(data, menu)
 	}
 
-	return &v1.ListResponse{Total: count, Data: data}, nil
+	return &v1.ListMenuResponse{Total: count, Data: data}, nil
 }
 
 func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.MenuInfo, error) {

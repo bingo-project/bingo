@@ -183,22 +183,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListAdminResponse"
                         }
                     },
                     "400": {
@@ -589,22 +574,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListApiResponse"
                         }
                     },
                     "400": {
@@ -1018,22 +988,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1193,22 +1148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1295,22 +1235,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1532,22 +1457,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListRoleResponse"
                         }
                     },
                     "400": {
@@ -1634,22 +1544,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListRoleResponse"
                         }
                     },
                     "400": {
@@ -2072,22 +1967,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListUserResponse"
                         }
                     },
                     "400": {
@@ -2566,10 +2446,71 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListResponse": {
+        "bingo_pkg_api_bingo_v1.ListAdminResponse": {
             "type": "object",
             "properties": {
-                "data": {},
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bingo_pkg_api_bingo_v1.ListApiResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bingo_pkg_api_bingo_v1.ListMenuResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bingo_pkg_api_bingo_v1.ListRoleResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                    }
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "bingo_pkg_api_bingo_v1.ListUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
+                    }
+                },
                 "total": {
                     "type": "integer"
                 }

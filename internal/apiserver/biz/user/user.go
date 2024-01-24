@@ -19,7 +19,7 @@ import (
 
 // UserBiz 定义了 user 模块在 biz 层所实现的方法.
 type UserBiz interface {
-	List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListResponse, error)
+	List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserResponse, error)
 	Create(ctx context.Context, req *v1.CreateUserRequest) error
 	Get(ctx context.Context, username string) (*v1.UserInfo, error)
 	Update(ctx context.Context, username string, req *v1.UpdateUserRequest) error
@@ -39,7 +39,7 @@ func New(ds store.IStore) *userBiz {
 	return &userBiz{ds: ds}
 }
 
-func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListResponse, error) {
+func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserResponse, error) {
 	count, list, err := b.ds.Users().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list users", "err", err)
@@ -47,15 +47,15 @@ func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListRe
 		return nil, err
 	}
 
-	data := make([]*v1.UserInfo, 0, len(list))
+	data := make([]v1.UserInfo, 0, len(list))
 	for _, item := range list {
 		var user v1.UserInfo
 		_ = copier.Copy(&user, item)
 
-		data = append(data, &user)
+		data = append(data, user)
 	}
 
-	return &v1.ListResponse{Total: count, Data: data}, nil
+	return &v1.ListUserResponse{Total: count, Data: data}, nil
 }
 
 func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (err error) {

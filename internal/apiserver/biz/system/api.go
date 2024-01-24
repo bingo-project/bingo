@@ -15,7 +15,7 @@ import (
 )
 
 type ApiBiz interface {
-	List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListResponse, error)
+	List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListApiResponse, error)
 	Create(ctx context.Context, req *v1.CreateApiRequest) (*v1.ApiInfo, error)
 	Get(ctx context.Context, ID uint) (*v1.ApiInfo, error)
 	Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) (*v1.ApiInfo, error)
@@ -35,7 +35,7 @@ func NewApi(ds store.IStore) *apiBiz {
 	return &apiBiz{ds: ds}
 }
 
-func (b *apiBiz) List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListResponse, error) {
+func (b *apiBiz) List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListApiResponse, error) {
 	count, list, err := b.ds.Apis().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apis", "err", err)
@@ -43,15 +43,15 @@ func (b *apiBiz) List(ctx context.Context, req *v1.ListApiRequest) (*v1.ListResp
 		return nil, err
 	}
 
-	data := make([]*v1.ApiInfo, 0, len(list))
+	data := make([]v1.ApiInfo, 0, len(list))
 	for _, item := range list {
 		var api v1.ApiInfo
 		_ = copier.Copy(&api, item)
 
-		data = append(data, &api)
+		data = append(data, api)
 	}
 
-	return &v1.ListResponse{Total: count, Data: data}, nil
+	return &v1.ListApiResponse{Total: count, Data: data}, nil
 }
 
 func (b *apiBiz) Create(ctx context.Context, req *v1.CreateApiRequest) (*v1.ApiInfo, error) {

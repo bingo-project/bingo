@@ -29,7 +29,7 @@ func NewRoleController(ds store.IStore, a *auth.Authz) *RoleController {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListRoleRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.RoleInfo}
+// @Success	   200		{object}	v1.ListRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/roles [GET].
@@ -306,7 +306,7 @@ func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 // @Tags       System.Role
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.RoleInfo}
+// @Success	   200		{object}	v1.ListRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/roles/all [GET].

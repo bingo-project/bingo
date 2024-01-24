@@ -18,7 +18,7 @@ type AdminBiz interface {
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
 	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
 
-	List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListResponse, error)
+	List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListAdminResponse, error)
 	Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.AdminInfo, error)
 	Get(ctx context.Context, username string) (*v1.AdminInfo, error)
 	Update(ctx context.Context, username string, req *v1.UpdateAdminRequest) (*v1.AdminInfo, error)
@@ -38,7 +38,7 @@ func NewAdmin(ds store.IStore) *adminBiz {
 	return &adminBiz{ds: ds}
 }
 
-func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListResponse, error) {
+func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListAdminResponse, error) {
 	count, list, err := b.ds.Admins().List(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list admins", "err", err)
@@ -46,15 +46,15 @@ func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.List
 		return nil, err
 	}
 
-	data := make([]*v1.AdminInfo, 0, len(list))
+	data := make([]v1.AdminInfo, 0)
 	for _, item := range list {
 		var admin v1.AdminInfo
 		_ = copier.Copy(&admin, item)
 
-		data = append(data, &admin)
+		data = append(data, admin)
 	}
 
-	return &v1.ListResponse{Total: count, Data: data}, nil
+	return &v1.ListAdminResponse{Total: count, Data: data}, nil
 }
 
 func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.AdminInfo, error) {

@@ -28,6 +28,11 @@ type ListMenuRequest struct {
 	gormutil.ListOptions
 }
 
+type ListMenuResponse struct {
+	Total int64      `json:"total"`
+	Data  []MenuInfo `json:"data"`
+}
+
 type CreateMenuRequest struct {
 	ParentID  int    `json:"parentID" valid:"int"`
 	Title     string `json:"title" valid:"stringlength(1|255)"`

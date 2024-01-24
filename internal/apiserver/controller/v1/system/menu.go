@@ -30,7 +30,7 @@ func NewMenuController(ds store.IStore, a *auth.Authz) *MenuController {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListMenuRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.MenuInfo}
+// @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/menus [GET]
@@ -187,7 +187,7 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 // @Tags       System.Menu
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.MenuInfo}
+// @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/menus/tree [GET]

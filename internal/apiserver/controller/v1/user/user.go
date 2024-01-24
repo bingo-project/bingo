@@ -34,7 +34,7 @@ func NewUserController(ds store.IStore, a *auth.Authz) *UserController {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListUserRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.UserInfo}
+// @Success	   200		{object}	v1.ListUserResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users [GET].

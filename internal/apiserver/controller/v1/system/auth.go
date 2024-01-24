@@ -53,7 +53,7 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 // @Tags       System.Auth
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	v1.ListResponse{data=[]v1.MenuInfo}
+// @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/auth/menus [GET]

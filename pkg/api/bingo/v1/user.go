@@ -19,6 +19,11 @@ type ListUserRequest struct {
 	gormutil.ListOptions
 }
 
+type ListUserResponse struct {
+	Total int64      `json:"total"`
+	Data  []UserInfo `json:"data"`
+}
+
 type CreateUserRequest struct {
 	Username string `json:"username" valid:"alphanum,required,stringlength(1|255)"`
 	Password string `json:"password" valid:"required,stringlength(6|18)"`
