@@ -24,7 +24,7 @@ type ApiStore interface {
 	CreateIfNotExist(ctx context.Context, api *model.ApiM) error
 	FirstOrCreate(ctx context.Context, where any, api *model.ApiM) error
 	UpdateOrCreate(ctx context.Context, where any, api *model.ApiM) error
-	Upsert(ctx context.Context, api *model.ApiM) error
+	Upsert(ctx context.Context, api *model.ApiM, fields ...string) error
 
 	All(ctx context.Context) ([]*model.ApiM, error)
 	GetByIDs(ctx context.Context, IDs []uint) (ret []*model.ApiM, err error)
@@ -116,8 +116,14 @@ func (s *apis) UpdateOrCreate(ctx context.Context, where any, api *model.ApiM) e
 	})
 }
 
-func (s *apis) Upsert(ctx context.Context, api *model.ApiM) error {
-	return s.db.Clauses(clause.OnConflict{UpdateAll: true}).
+func (s *apis) Upsert(ctx context.Context, api *model.ApiM, fields ...string) error {
+	do := clause.OnConflict{UpdateAll: true}
+	if len(fields) > 0 {
+		do.UpdateAll = false
+		do.DoUpdates = clause.AssignmentColumns(fields)
+	}
+
+	return s.db.Clauses(do).
 		Create(&api).
 		Error
 }
