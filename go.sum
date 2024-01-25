@@ -28,8 +28,8 @@ github.com/ahmetb/go-linq/v3 v3.2.0 h1:BEuMfp+b59io8g5wYzNoFe9pWPalRklhlhbiU3hYZ
 github.com/ahmetb/go-linq/v3 v3.2.0/go.mod h1:haQ3JfOeWK8HpVxMtHHEMPVgBKiYyQ+f1/kLZh/cj9U=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
-github.com/bingo-project/component-base v0.3.3 h1:3+30CPgHEDa4PDGSymNA2NyFA9BBwqWAlZ/rxKH6t60=
-github.com/bingo-project/component-base v0.3.3/go.mod h1:cqH23Wn3p/d0lwHllkYsg6aeQ+qgY1E3tIeRbTfRrB0=
+github.com/bingo-project/component-base v0.3.4 h1:ZD0E4UTQwaiJadwAYHvOiBaMEH+MYVS5tqrR72zkpfA=
+github.com/bingo-project/component-base v0.3.4/go.mod h1:cqH23Wn3p/d0lwHllkYsg6aeQ+qgY1E3tIeRbTfRrB0=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/gomega v1.27.10 h1:yeMWxP2pV2fG3FgAODIY8EiRE3dy0aeFYt4l7wh6yKA=
 github.com/bytedance/sonic v1.5.0/go.mod h1:ED5hyg4y6t3/9Ku1R6dU/4KyJ48DZ4jPhfY1O2AihPM=
