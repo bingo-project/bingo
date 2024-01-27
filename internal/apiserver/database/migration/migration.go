@@ -1,0 +1,3 @@
+package migration
+
+func Initialize() {}

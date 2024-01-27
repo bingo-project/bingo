@@ -4,14 +4,16 @@ import (
 	"io"
 	"os"
 
+	"github.com/bingo-project/bingoctl/pkg/cmd/migrate"
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/bootstrap"
+	"bingo/internal/apiserver/database/migration"
+	"bingo/internal/apiserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
-	"bingo/internal/bingoctl/cmd/migrate"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/bingoctl/cmd/version"
 )
@@ -29,7 +31,8 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 	}
 
 	// Load config
-	cobra.OnInitialize(initConfig)
+	// cobra.OnInitialize(initConfig)
+	initConfig()
 
 	ioStreams := genericclioptions.IOStreams{In: in, Out: out, ErrOut: err}
 
@@ -44,7 +47,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Database Commands:",
 			Commands: []*cobra.Command{
 				db.NewCmdDb(),
-				migrate.NewCmdMigrate(),
+				migrate.NewCmdMigrate(store.S.DB()),
 			},
 		},
 		{
@@ -72,6 +75,9 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 func initConfig() {
 	bootstrap.InitConfig()
 	bootstrap.Boot()
+
+	// Init migration
+	migration.Initialize()
 }
 
 func runHelp(cmd *cobra.Command, args []string) {
