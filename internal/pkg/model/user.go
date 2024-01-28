@@ -6,18 +6,30 @@ import (
 	"bingo/pkg/auth"
 )
 
-// UserM 是数据库中 user 记录 struct 格式的映射.
 type UserM struct {
 	Base
 
-	Username string `gorm:"uniqueIndex:uk_username;type:varchar(255);;not null"`
-	Password string `gorm:"type:varchar(255);not null;default:''"`
-	Nickname string `gorm:"type:varchar(255);default:''"`
-	Email    string `gorm:"uniqueIndex:uk_email;type:varchar(255)"`
-	Phone    string `gorm:"uniqueIndex:uk_phone;type:varchar(255)"`
+	UID          string  `gorm:"column:uid;type:varchar(255);uniqueIndex:uk_uid,priority:1" json:"uid"`
+	CountryCode  string  `gorm:"column:country_code;type:varchar(255);not null" json:"countryCode"`
+	Nickname     string  `gorm:"column:nickname;type:varchar(255);not null" json:"nickname"`
+	Username     string  `gorm:"column:username;type:varchar(255);uniqueIndex:uk_username,priority:1" json:"username"`
+	Email        string  `gorm:"column:email;type:varchar(255);uniqueIndex:uk_email,priority:1" json:"email"`
+	Phone        string  `gorm:"column:phone;type:varchar(255);uniqueIndex:uk_phone,priority:1" json:"phone"`
+	Status       int32   `gorm:"column:status;type:tinyint;not null;default:1;comment:Status, 1-enabled, 2-disabled" json:"status"`                          // Status, 1-enabled, 2-disabled
+	KycStatus    int32   `gorm:"column:kyc_status;type:tinyint;not null;comment:KYC status, 0-not verify, 1-pending, 2-verified, 3-failed" json:"kycStatus"` // KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
+	GoogleKey    string  `gorm:"column:google_key;type:varchar(255);not null" json:"googleKey"`
+	GoogleStatus *string `gorm:"column:google_status;type:enum('unbind','disabled','enabled');not null;default:unbind" json:"googleStatus"`
+	Pid          int64   `gorm:"column:pid;type:bigint;not null;index:idx_pid,priority:1" json:"pid"`
+	InviteCount  int64   `gorm:"column:invite_count;type:bigint;not null" json:"inviteCount"`
+	Depth        int64   `gorm:"column:depth;type:bigint;not null" json:"depth"`
+	Age          int32   `gorm:"column:age;type:tinyint;not null" json:"age"`
+	Gender       *string `gorm:"column:gender;type:enum('secret','male','female');not null;default:secret" json:"gender"`
+	Avatar       string  `gorm:"column:avatar;type:varchar(255);not null" json:"avatar"`
+	Password     string  `gorm:"column:password;type:varchar(255);not null" json:"password"`
+	PayPassword  string  `gorm:"column:pay_password;type:varchar(255);not null" json:"payPassword"`
 }
 
-func (u *UserM) TableName() string {
+func (*UserM) TableName() string {
 	return "user"
 }
 
