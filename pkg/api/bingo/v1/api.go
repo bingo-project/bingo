@@ -31,17 +31,17 @@ type ListApiResponse struct {
 }
 
 type CreateApiRequest struct {
-	Method      string `json:"method" valid:"required,alphanum,stringlength(1|255)"`
-	Path        string `json:"path" valid:"required,stringlength(1|255)"`
-	Group       string `json:"group" valid:"required,stringlength(1|255)"`
-	Description string `json:"description" valid:"required,stringlength(1|255)"`
+	Method      string `json:"method" binding:"required,alphanum,min=1,max=255"`
+	Path        string `json:"path" binding:"required,min=1,max=255"`
+	Group       string `json:"group" binding:"required,min=1,max=255"`
+	Description string `json:"description" binding:"required,min=1,max=255"`
 }
 
 type UpdateApiRequest struct {
-	Method      *string `json:"method" valid:"alphanum,stringlength(1|255)"`
-	Path        *string `json:"path" valid:"stringlength(1|255)"`
-	Group       *string `json:"group" valid:"stringlength(1|255)"`
-	Description *string `json:"description" valid:"stringlength(1|255)"`
+	Method      *string `json:"method" binding:"alphanum,min=1,max=255"`
+	Path        *string `json:"path" binding:"min=1,max=255"`
+	Group       *string `json:"group" binding:"min=1,max=255"`
+	Description *string `json:"description" binding:"min=1,max=255"`
 }
 
 type GetApiIDsResponse []uint

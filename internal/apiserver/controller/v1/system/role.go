@@ -1,7 +1,6 @@
 package system
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
@@ -69,13 +68,6 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 
 	var req v1.CreateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	// Validator
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -134,12 +126,6 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 
 	var req v1.UpdateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -194,13 +180,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 // @Router    /v1/system/roles/{name}/apis [PUT].
 func (ctrl *RoleController) SetApis(c *gin.Context) {
 	var req v1.SetApisRequest
-	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -254,13 +234,7 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 // @Router    /v1/system/roles/{name}/menus [PUT].
 func (ctrl *RoleController) SetMenus(c *gin.Context) {
 	var req v1.SetMenusRequest
-	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return

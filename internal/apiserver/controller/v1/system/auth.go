@@ -1,7 +1,6 @@
 package system
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
@@ -89,12 +88,6 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 
 	var req v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -127,12 +120,6 @@ func (ctrl *AuthController) SwitchRole(c *gin.Context) {
 
 	var req v1.SwitchRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return

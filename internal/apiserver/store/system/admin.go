@@ -102,8 +102,8 @@ func (u *admins) InitData(ctx context.Context) error {
 		Username: "root",
 		Password: "123456",
 		Nickname: "Root",
-		Email:    "root@root.com",
-		Phone:    "18800000000",
+		Email:    nil,
+		Phone:    nil,
 		RoleName: "root",
 	}
 
@@ -130,7 +130,7 @@ func (u *admins) CheckExist(ctx context.Context, admin *model.AdminM) (exist boo
 		}
 	}
 
-	if admin.Email != "" {
+	if admin.Email != nil {
 		u.db.Model(&admin).Where("email = ?", admin.Email).Select("id").First(&id)
 		if id > 0 {
 			return true, nil

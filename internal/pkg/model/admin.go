@@ -12,8 +12,8 @@ type AdminM struct {
 	Username string      `gorm:"uniqueIndex:uk_username;type:varchar(255);not null"`
 	Password string      `gorm:"type:varchar(255);not null;default:''"`
 	Nickname string      `gorm:"type:varchar(255);not null;default:''"`
-	Email    string      `gorm:"uniqueIndex:uk_email;type:varchar(255)"`
-	Phone    string      `gorm:"uniqueIndex:uk_phone;type:varchar(255)"`
+	Email    *string     `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
+	Phone    *string     `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
 	Avatar   string      `gorm:"type:varchar(255);not null;default:''"`
 	Status   AdminStatus `gorm:"type:tinyint;default:1;comment:状态：1正常，2冻结"`
 	RoleName string      `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`

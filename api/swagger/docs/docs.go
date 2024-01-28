@@ -2105,8 +2105,29 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "integer",
+                        "name": "age",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "avatar",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "male",
+                            "female",
+                            "secret"
+                        ],
+                        "type": "string",
+                        "description": "Gender, male female secret",
+                        "name": "gender",
                         "in": "query"
                     },
                     {
@@ -2117,6 +2138,12 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "phone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Status, 1-enabled, 2-disabled",
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -2320,17 +2347,30 @@ const docTemplate = `{
         },
         "bingo_pkg_api_bingo_v1.ChangePasswordRequest": {
             "type": "object",
+            "required": [
+                "passwordNew",
+                "passwordOld"
+            ],
             "properties": {
                 "passwordNew": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
                 },
                 "passwordOld": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.CreateAdminRequest": {
             "type": "object",
+            "required": [
+                "nickname",
+                "password",
+                "username"
+            ],
             "properties": {
                 "avatar": {
                     "type": "string"
@@ -2339,10 +2379,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 2
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
                 },
                 "phone": {
                     "type": "string"
@@ -2354,38 +2398,63 @@ const docTemplate = `{
                     }
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.CreateApiRequest": {
             "type": "object",
+            "required": [
+                "description",
+                "group",
+                "method",
+                "path"
+            ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "group": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "method": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "path": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.CreateMenuRequest": {
             "type": "object",
+            "required": [
+                "component",
+                "path",
+                "sort"
+            ],
             "properties": {
                 "component": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "hidden": {
                     "type": "boolean"
                 },
                 "icon": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "name": {
                     "type": "string"
@@ -2394,47 +2463,110 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "path": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "sort": {
                     "type": "integer"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.CreateRoleRequest": {
             "type": "object",
+            "required": [
+                "description",
+                "name",
+                "remark"
+            ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 2
                 },
                 "remark": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.CreateUserRequest": {
             "type": "object",
+            "required": [
+                "countryCode",
+                "nickname",
+                "password",
+                "username"
+            ],
             "properties": {
-                "email": {
+                "age": {
+                    "type": "integer",
+                    "maximum": 130,
+                    "minimum": 0,
+                    "example": 0
+                },
+                "avatar": {
                     "type": "string"
+                },
+                "countryCode": {
+                    "type": "string",
+                    "example": "us"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "peter@gmail.com"
+                },
+                "gender": {
+                    "description": "Gender, male female secret",
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "secret"
+                    ],
+                    "example": "male"
                 },
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Peter"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 6,
+                    "example": "123456"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "9999999999"
+                },
+                "pid": {
+                    "type": "string",
+                    "example": "88888888"
+                },
+                "status": {
+                    "description": "Status, 1-enabled, 2-disabled",
+                    "type": "integer",
+                    "default": 1,
+                    "enum": [
+                        1,
+                        2
+                    ]
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "peter"
                 }
             }
         },
@@ -2518,12 +2650,20 @@ const docTemplate = `{
         },
         "bingo_pkg_api_bingo_v1.LoginRequest": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
                 }
             }
         },
@@ -2629,6 +2769,9 @@ const docTemplate = `{
         },
         "bingo_pkg_api_bingo_v1.SetRolesRequest": {
             "type": "object",
+            "required": [
+                "roleNames"
+            ],
             "properties": {
                 "roleNames": {
                     "type": "array",
@@ -2640,6 +2783,9 @@ const docTemplate = `{
         },
         "bingo_pkg_api_bingo_v1.SwitchRoleRequest": {
             "type": "object",
+            "required": [
+                "roleName"
+            ],
             "properties": {
                 "roleName": {
                     "type": "string"
@@ -2656,10 +2802,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 2
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
                 },
                 "phone": {
                     "type": "string"
@@ -2679,16 +2829,24 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "group": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "method": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "path": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
@@ -2696,13 +2854,17 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "component": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "hidden": {
                     "type": "boolean"
                 },
                 "icon": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "name": {
                     "type": "string"
@@ -2711,16 +2873,22 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "path": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "redirect": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "sort": {
                     "type": "integer"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
@@ -2728,26 +2896,65 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "remark": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 }
             }
         },
         "bingo_pkg_api_bingo_v1.UserInfo": {
             "type": "object",
             "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "countryCode": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
                 "email": {
                     "type": "string"
                 },
+                "gender": {
+                    "type": "string"
+                },
+                "googleStatus": {
+                    "type": "string"
+                },
+                "inviteCount": {
+                    "type": "integer"
+                },
+                "kycStatus": {
+                    "description": "KYC status, 0-not verify, 1-pending, 2-verified, 3-failed",
+                    "type": "integer"
+                },
                 "nickname": {
                     "type": "string"
                 },
+                "payPassword": {
+                    "type": "boolean"
+                },
                 "phone": {
+                    "type": "string"
+                },
+                "pid": {
+                    "type": "integer"
+                },
+                "status": {
+                    "description": "Status, 1-enabled, 2-disabled",
+                    "type": "integer"
+                },
+                "uid": {
                     "type": "string"
                 },
                 "updatedAt": {

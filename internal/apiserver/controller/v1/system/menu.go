@@ -1,7 +1,6 @@
 package system
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
@@ -70,13 +69,6 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 
 	var req v1.CreateMenuRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	// Validator
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -135,12 +127,6 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 
 	var req v1.UpdateMenuRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return

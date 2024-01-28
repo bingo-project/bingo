@@ -26,7 +26,7 @@ func (ctrl *UserController) Login(c *gin.Context) {
 
 	var req v1.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}

@@ -7,12 +7,23 @@ import (
 )
 
 type UserInfo struct {
-	Username  string    `json:"username"`
-	Nickname  string    `json:"nickname"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	UID          string    `json:"uid"`
+	CountryCode  string    `json:"countryCode"`
+	Nickname     string    `json:"nickname"`
+	Username     string    `json:"username"`
+	Email        string    `json:"email"`
+	Phone        string    `json:"phone"`
+	Status       int32     `json:"status"`    // Status, 1-enabled, 2-disabled
+	KycStatus    int32     `json:"kycStatus"` // KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
+	GoogleStatus string    `json:"googleStatus"`
+	Pid          int64     `json:"pid"`
+	InviteCount  int64     `json:"inviteCount"`
+	Age          int32     `json:"age"`
+	Gender       string    `json:"gender"`
+	Avatar       string    `json:"avatar"`
+	PayPassword  bool      `json:"payPassword"`
 }
 
 type ListUserRequest struct {
@@ -25,15 +36,25 @@ type ListUserResponse struct {
 }
 
 type CreateUserRequest struct {
-	Username string `json:"username" valid:"alphanum,required,stringlength(1|255)"`
-	Password string `json:"password" valid:"required,stringlength(6|18)"`
-	Nickname string `json:"nickname" valid:"required,stringlength(1|255)"`
-	Email    string `json:"email" valid:"required,email"`
-	Phone    string `json:"phone" valid:"required,stringlength(11|11)"`
+	CountryCode string  `json:"countryCode" binding:"required" example:"us"`
+	Nickname    string  `json:"nickname" binding:"required,alphanumunicode" example:"Peter"`
+	Username    string  `json:"username" binding:"required,alphanum" example:"peter"`
+	Email       *string `json:"email" binding:"omitempty,email" example:"peter@gmail.com"`
+	Phone       *string `json:"phone" example:"9999999999"`
+	Status      int32   `json:"status" binding:"oneof=1 2" default:"1"` // Status, 1-enabled, 2-disabled
+	Pid         string  `json:"pid" example:"88888888"`
+	Age         int32   `json:"age" binding:"gte=0,lte=130" example:"0"`
+	Gender      string  `json:"gender" binding:"oneof=male female secret" example:"male"` // Gender, male female secret
+	Avatar      string  `json:"avatar"`
+	Password    string  `json:"password" binding:"required,min=6" example:"123456"`
 }
 
 type UpdateUserRequest struct {
-	Nickname *string `json:"nickname" valid:"stringlength(1|255)"`
-	Email    *string `json:"email" valid:"email"`
-	Phone    *string `json:"phone" valid:"stringlength(11|11)"`
+	Nickname *string `json:"nickname"`
+	Email    *string `json:"email"`
+	Phone    *string `json:"phone"`
+	Status   *int32  `json:"status"` // Status, 1-enabled, 2-disabled
+	Age      int32   `json:"age"`
+	Gender   string  `json:"gender" binding:"oneof=male female secret"` // Gender, male female secret
+	Avatar   string  `json:"avatar"`
 }

@@ -108,11 +108,11 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	}
 
 	if req.Email != nil {
-		adminM.Email = *req.Email
+		adminM.Email = req.Email
 	}
 
 	if req.Phone != nil {
-		adminM.Phone = *req.Phone
+		adminM.Phone = req.Phone
 	}
 
 	if req.Avatar != nil {

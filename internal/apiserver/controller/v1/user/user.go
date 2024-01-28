@@ -1,10 +1,8 @@
 package user
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/gin-gonic/gin"
-
 	"github.com/bingo-project/component-base/log"
+	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/apiserver/store"
@@ -74,13 +72,6 @@ func (ctrl *UserController) Create(c *gin.Context) {
 
 	var req v1.CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	// Validator
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
@@ -145,12 +136,6 @@ func (ctrl *UserController) Update(c *gin.Context) {
 	var req v1.UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}

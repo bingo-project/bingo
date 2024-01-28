@@ -28,14 +28,14 @@ type ListRoleResponse struct {
 }
 
 type CreateRoleRequest struct {
-	Name        string `json:"name" valid:"required,alphanum,stringlength(1|20)"`
-	Description string `json:"description" valid:"required,stringlength(1|255)"`
-	Remark      string `json:"remark" valid:"required,stringlength(1|255)"`
+	Name        string `json:"name" binding:"required,alphanum,min=2,max=20"`
+	Description string `json:"description" binding:"required,min=1,max=255"`
+	Remark      string `json:"remark" binding:"required,min=1,max=255"`
 }
 
 type UpdateRoleRequest struct {
-	Description *string `json:"description" valid:"stringlength(1|255)"`
-	Remark      *string `json:"remark" valid:"stringlength(1|255)"`
+	Description *string `json:"description" binding:"min=1,max=255"`
+	Remark      *string `json:"remark" binding:"min=1,max=255"`
 }
 
 type SetApisRequest struct {

@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/asaskevich/govalidator"
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
@@ -27,12 +26,6 @@ func (ctrl *UserController) ChangePassword(c *gin.Context) {
 
 	var req v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
-
-		return
-	}
-
-	if _, err := govalidator.ValidateStruct(req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return

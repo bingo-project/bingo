@@ -34,24 +34,24 @@ type ListMenuResponse struct {
 }
 
 type CreateMenuRequest struct {
-	ParentID  int    `json:"parentID" valid:"int"`
-	Title     string `json:"title" valid:"stringlength(1|255)"`
+	ParentID  int    `json:"parentID" binding:"int"`
+	Title     string `json:"title" binding:"min=1,max=255"`
 	Name      string `json:"name"`
-	Path      string `json:"path" valid:"required,stringlength(1|255)"`
+	Path      string `json:"path" binding:"required,min=1,max=255"`
 	Hidden    bool   `json:"hidden"`
-	Sort      int    `json:"sort" valid:"required,int"`
-	Icon      string `json:"icon" valid:"stringlength(1|255)"`
-	Component string `json:"component" valid:"required,stringlength(1|255)"`
+	Sort      int    `json:"sort" binding:"required,int"`
+	Icon      string `json:"icon" binding:"min=1,max=255"`
+	Component string `json:"component" binding:"required,min=1,max=255"`
 }
 
 type UpdateMenuRequest struct {
-	ParentID  uint    `json:"parentID" valid:"int"`
-	Title     *string `json:"title" valid:"stringlength(1|255)"`
+	ParentID  uint    `json:"parentID" binding:"int"`
+	Title     *string `json:"title" binding:"min=1,max=255"`
 	Name      *string `json:"name"`
-	Path      *string `json:"path" valid:"stringlength(1|255)"`
+	Path      *string `json:"path" binding:"min=1,max=255"`
 	Hidden    *bool   `json:"hidden"`
-	Sort      *int    `json:"sort" valid:"int"`
-	Icon      *string `json:"icon" valid:"stringlength(1|255)"`
-	Component *string `json:"component" valid:"stringlength(1|255)"`
-	Redirect  string  `json:"redirect" valid:"stringlength(1|255)"`
+	Sort      *int    `json:"sort" binding:"int"`
+	Icon      *string `json:"icon" binding:"min=1,max=255"`
+	Component *string `json:"component" binding:"min=1,max=255"`
+	Redirect  string  `json:"redirect" binding:"min=1,max=255"`
 }

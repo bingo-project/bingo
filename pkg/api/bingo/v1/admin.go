@@ -39,19 +39,19 @@ type ListAdminResponse struct {
 }
 
 type CreateAdminRequest struct {
-	Username  string   `json:"username" valid:"required,alphanum,stringlength(1|255)"`
-	Password  string   `json:"password" valid:"required,stringlength(6|20)"`
-	Nickname  string   `json:"nickname" valid:"required,alphanum,stringlength(1|20)"`
-	Email     *string  `json:"email" valid:"email"`
+	Username  string   `json:"username" binding:"required,alphanum,min=2,max=255"`
+	Password  string   `json:"password" binding:"required,min=6,max=18"`
+	Nickname  string   `json:"nickname" binding:"required,alphanum,min=2,max=20"`
+	Email     *string  `json:"email" binding:"omitempty,email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	RoleNames []string `json:"roleNames"`
 }
 
 type UpdateAdminRequest struct {
-	Nickname  *string  `json:"nickname" valid:"stringlength(1|20)"`
-	Password  *string  `json:"password" valid:"stringlength(6|20)"`
-	Email     *string  `json:"email" valid:"email"`
+	Nickname  *string  `json:"nickname" binding:"min=2,max=20"`
+	Password  *string  `json:"password" binding:"omitempty,min=6,max=18"`
+	Email     *string  `json:"email" binding:"omitempty,email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	Status    *int     `json:"status"`
@@ -59,9 +59,9 @@ type UpdateAdminRequest struct {
 }
 
 type SetRolesRequest struct {
-	RoleNames []string `json:"roleNames" valid:"required"`
+	RoleNames []string `json:"roleNames" binding:"required"`
 }
 
 type SwitchRoleRequest struct {
-	RoleName string `json:"roleName" valid:"required"`
+	RoleName string `json:"roleName" binding:"required"`
 }

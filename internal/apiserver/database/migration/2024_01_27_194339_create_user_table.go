@@ -21,11 +21,11 @@ type CreateUserTable struct {
 	KycStatus    int64  `gorm:"type:tinyint;not null;default:0;comment:KYC status, 0-not verify, 1-pending, 2-verified, 3-failed"`
 	GoogleKey    string `gorm:"type:varchar(255);not null;default:''"`
 	GoogleStatus string `gorm:"type:enum('unbind','disabled','enabled');not null;default:unbind"`
-	Pid          uint64 `gorm:"type:bigint;index:idx_pid;not null;default:0"`
+	Pid          string `gorm:"type:varchar(255);index:idx_pid;not null;default:''"`
 	InviteCount  uint64 `gorm:"type:int;not null;default:0"`
 	Depth        int64  `gorm:"type:int;not null;default:0"`
 	Age          int64  `gorm:"type:tinyint;not null;default:0"`
-	Gender       string `gorm:"type:enum('secret', 'male', 'female');not null;default:'secret'"`
+	Gender       string `gorm:"type:enum('secret', 'male', 'female');not null;default:'secret';comment:Gender, male female secret"`
 	Avatar       string `gorm:"type:varchar(255);not null;default:''"`
 	Password     string `gorm:"type:varchar(255);not null;default:''"`
 	PayPassword  string `gorm:"type:varchar(255);not null;default:''"`
