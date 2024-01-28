@@ -5,6 +5,8 @@ import (
 
 	cmdutil "github.com/bingo-project/component-base/cli/util"
 	"github.com/spf13/cobra"
+
+	"bingo/internal/apiserver/database/seeder"
 )
 
 const (
@@ -60,6 +62,5 @@ func (o *SeedOptions) Complete(cmd *cobra.Command, args []string) error {
 // Run executes a new sub command using the specified options.
 func (o *SeedOptions) Run(args []string) error {
 	// Init data
-
-	return nil
+	return seeder.DatabaseSeeder{}.Run()
 }

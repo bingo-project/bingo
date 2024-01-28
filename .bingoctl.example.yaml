@@ -12,6 +12,7 @@ directory:
   middleware: internal/pkg/middleware
   job: internal/watcher/watcher
   migration: internal/apiserver/database/migration
+  seeder: internal/apiserver/database/seeder
 
 registries:
   router: internal/apiserver/router/api.go
