@@ -1,5 +1,9 @@
 package seeder
 
+import (
+	"github.com/gookit/color"
+)
+
 type DatabaseSeeder struct {
 }
 
@@ -11,6 +15,10 @@ func (DatabaseSeeder) Signature() string {
 // Run seed the application's database.
 func (DatabaseSeeder) Run() error {
 	// Call other seeders.
+	err := AdminSeeder{}.Run()
+	if err != nil {
+		color.Redf("%s failed: %s", AdminSeeder{}.Signature(), err.Error())
+	}
 
 	return nil
 }
