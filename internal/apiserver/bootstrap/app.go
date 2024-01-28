@@ -7,4 +7,5 @@ func Boot() {
 	InitCache()
 	InitTimezone()
 	InitAES()
+	InitSnowflake()
 }

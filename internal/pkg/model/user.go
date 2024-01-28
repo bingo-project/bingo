@@ -3,6 +3,7 @@ package model
 import (
 	"gorm.io/gorm"
 
+	"bingo/internal/apiserver/facade"
 	"bingo/pkg/auth"
 )
 
@@ -35,10 +36,17 @@ func (*UserM) TableName() string {
 
 // BeforeCreate 在创建数据库记录之前加密明文密码.
 func (u *UserM) BeforeCreate(tx *gorm.DB) (err error) {
+	// Generate UID
+	if u.UID == "" {
+		u.UID = facade.Snowflake.Generate().String()
+	}
+
 	// Encrypt the user password.
-	u.Password, err = auth.Encrypt(u.Password)
-	if err != nil {
-		return err
+	if u.Password != "" {
+		u.Password, err = auth.Encrypt(u.Password)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

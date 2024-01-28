@@ -7,6 +7,7 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/bingo-project/bingoctl v1.2.3
 	github.com/bingo-project/component-base v0.3.4
+	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.79.0
 	github.com/casbin/gorm-adapter/v3 v3.20.0
 	github.com/duke-git/lancet/v2 v2.2.8
