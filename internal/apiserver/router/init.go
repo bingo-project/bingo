@@ -8,8 +8,8 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gin-gonic/gin"
 
+	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
-	"bingo/internal/pkg/model"
 )
 
 func InitSystemAPI(g *gin.Engine) {

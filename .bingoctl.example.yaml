@@ -4,12 +4,12 @@ rootPackage: bingo
 
 directory:
   cmd: internal/bingoctl/cmd
-  model: internal/pkg/model
+  model: internal/apiserver/model
   store: internal/apiserver/store
-  request: pkg/api/bingo/v1
   biz: internal/apiserver/biz
-  controller: internal/apiserver/controller/v1
-  middleware: internal/pkg/middleware
+  controller: internal/apiserver/http/controller/v1
+  middleware: internal/apiserver/http/middleware
+  request: internal/apiserver/http/request/v1
   job: internal/watcher/watcher
   migration: internal/apiserver/database/migration
   seeder: internal/apiserver/database/seeder

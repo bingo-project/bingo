@@ -6,8 +6,8 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model"
-	v1 "bingo/pkg/api/bingo/v1"
+	v1 "bingo/internal/apiserver/http/request/v1"
+	"bingo/internal/apiserver/model"
 )
 
 type UserStore interface {

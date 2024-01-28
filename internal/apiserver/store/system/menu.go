@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm/clause"
 
 	"bingo/internal/apiserver/global"
-	"bingo/internal/pkg/model"
-	v1 "bingo/pkg/api/bingo/v1"
+	v1 "bingo/internal/apiserver/http/request/v1"
+	"bingo/internal/apiserver/model"
 )
 
 type MenuStore interface {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/bingo-project/bingoctl/pkg/migrate"
 
-	"bingo/internal/pkg/model"
+	"bingo/internal/apiserver/model"
 )
 
 type CreateUserTable struct {

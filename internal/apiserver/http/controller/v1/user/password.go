@@ -4,9 +4,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
+	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	v1 "bingo/pkg/api/bingo/v1"
 )
 
 // ChangePassword 修改指定用户的密码.

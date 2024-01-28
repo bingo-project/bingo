@@ -32,7 +32,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.HealthzResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.HealthzResponse"
                         }
                     },
                     "400": {
@@ -74,7 +74,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginRequest"
                         }
                     }
                 ],
@@ -82,7 +82,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
                         }
                     },
                     "400": {
@@ -183,7 +183,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListAdminResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListAdminResponse"
                         }
                     },
                     "400": {
@@ -223,7 +223,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateAdminRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.CreateAdminRequest"
                         }
                     }
                 ],
@@ -231,7 +231,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -279,7 +279,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -326,7 +326,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateAdminRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UpdateAdminRequest"
                         }
                     }
                 ],
@@ -334,7 +334,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -426,7 +426,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -480,7 +480,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetRolesRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.SetRolesRequest"
                         }
                     }
                 ],
@@ -488,7 +488,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -574,7 +574,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListApiResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListApiResponse"
                         }
                     },
                     "400": {
@@ -614,7 +614,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateApiRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.CreateApiRequest"
                         }
                     }
                 ],
@@ -622,7 +622,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -663,7 +663,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                                "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                             }
                         }
                     },
@@ -705,7 +705,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                                "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                             }
                         }
                     },
@@ -754,7 +754,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -801,7 +801,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateApiRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UpdateApiRequest"
                         }
                     }
                 ],
@@ -809,7 +809,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                         }
                     },
                     "400": {
@@ -894,7 +894,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -941,7 +941,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginRequest"
                         }
                     }
                 ],
@@ -949,7 +949,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.LoginResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
                         }
                     },
                     "400": {
@@ -988,7 +988,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1030,7 +1030,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SwitchRoleRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.SwitchRoleRequest"
                         }
                     }
                 ],
@@ -1038,7 +1038,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -1077,7 +1077,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                         }
                     },
                     "400": {
@@ -1148,7 +1148,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1188,7 +1188,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateMenuRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.CreateMenuRequest"
                         }
                     }
                 ],
@@ -1196,7 +1196,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.MenuInfo"
                         }
                     },
                     "400": {
@@ -1235,7 +1235,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListMenuResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListMenuResponse"
                         }
                     },
                     "400": {
@@ -1283,7 +1283,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.MenuInfo"
                         }
                     },
                     "400": {
@@ -1330,7 +1330,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateMenuRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UpdateMenuRequest"
                         }
                     }
                 ],
@@ -1338,7 +1338,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.MenuInfo"
                         }
                     },
                     "400": {
@@ -1457,7 +1457,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListRoleResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListRoleResponse"
                         }
                     },
                     "400": {
@@ -1497,7 +1497,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateRoleRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.CreateRoleRequest"
                         }
                     }
                 ],
@@ -1505,7 +1505,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1544,7 +1544,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListRoleResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListRoleResponse"
                         }
                     },
                     "400": {
@@ -1592,7 +1592,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1639,7 +1639,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UpdateRoleRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UpdateRoleRequest"
                         }
                     }
                 ],
@@ -1647,7 +1647,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                         }
                     },
                     "400": {
@@ -1788,7 +1788,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetApisRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.SetApisRequest"
                         }
                     }
                 ],
@@ -1891,7 +1891,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.SetMenusRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.SetMenusRequest"
                         }
                     }
                 ],
@@ -1967,7 +1967,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ListUserResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ListUserResponse"
                         }
                     },
                     "400": {
@@ -2007,7 +2007,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.CreateUserRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.CreateUserRequest"
                         }
                     }
                 ],
@@ -2015,7 +2015,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UserInfo"
                         }
                     },
                     "400": {
@@ -2063,7 +2063,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UserInfo"
                         }
                     },
                     "400": {
@@ -2240,7 +2240,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -2265,20 +2265,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "bingo_internal_pkg_core.ErrResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "description": "Code defines the business error code.",
-                    "type": "string"
-                },
-                "message": {
-                    "description": "Message contains the detail of this message.\nThis message is suitable to be exposed to external",
-                    "type": "string"
-                }
-            }
-        },
-        "bingo_pkg_api_bingo_v1.AdminInfo": {
+        "bingo_internal_apiserver_http_request_v1.AdminInfo": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2297,7 +2284,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "role": {
-                    "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                    "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                 },
                 "roleName": {
                     "type": "string"
@@ -2305,7 +2292,7 @@ const docTemplate = `{
                 "roles": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                     }
                 },
                 "status": {
@@ -2319,7 +2306,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ApiInfo": {
+        "bingo_internal_apiserver_http_request_v1.ApiInfo": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2345,7 +2332,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ChangePasswordRequest": {
+        "bingo_internal_apiserver_http_request_v1.ChangePasswordRequest": {
             "type": "object",
             "required": [
                 "passwordNew",
@@ -2364,7 +2351,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.CreateAdminRequest": {
+        "bingo_internal_apiserver_http_request_v1.CreateAdminRequest": {
             "type": "object",
             "required": [
                 "nickname",
@@ -2404,7 +2391,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.CreateApiRequest": {
+        "bingo_internal_apiserver_http_request_v1.CreateApiRequest": {
             "type": "object",
             "required": [
                 "description",
@@ -2435,7 +2422,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.CreateMenuRequest": {
+        "bingo_internal_apiserver_http_request_v1.CreateMenuRequest": {
             "type": "object",
             "required": [
                 "component",
@@ -2477,7 +2464,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.CreateRoleRequest": {
+        "bingo_internal_apiserver_http_request_v1.CreateRoleRequest": {
             "type": "object",
             "required": [
                 "description",
@@ -2502,7 +2489,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.CreateUserRequest": {
+        "bingo_internal_apiserver_http_request_v1.CreateUserRequest": {
             "type": "object",
             "required": [
                 "countryCode",
@@ -2570,7 +2557,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.HealthzResponse": {
+        "bingo_internal_apiserver_http_request_v1.HealthzResponse": {
             "type": "object",
             "properties": {
                 "status": {
@@ -2578,13 +2565,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListAdminResponse": {
+        "bingo_internal_apiserver_http_request_v1.ListAdminResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.AdminInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AdminInfo"
                     }
                 },
                 "total": {
@@ -2592,13 +2579,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListApiResponse": {
+        "bingo_internal_apiserver_http_request_v1.ListApiResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.ApiInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.ApiInfo"
                     }
                 },
                 "total": {
@@ -2606,13 +2593,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListMenuResponse": {
+        "bingo_internal_apiserver_http_request_v1.ListMenuResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.MenuInfo"
                     }
                 },
                 "total": {
@@ -2620,13 +2607,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListRoleResponse": {
+        "bingo_internal_apiserver_http_request_v1.ListRoleResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.RoleInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RoleInfo"
                     }
                 },
                 "total": {
@@ -2634,13 +2621,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.ListUserResponse": {
+        "bingo_internal_apiserver_http_request_v1.ListUserResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.UserInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.UserInfo"
                     }
                 },
                 "total": {
@@ -2648,7 +2635,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.LoginRequest": {
+        "bingo_internal_apiserver_http_request_v1.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -2667,7 +2654,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.LoginResponse": {
+        "bingo_internal_apiserver_http_request_v1.LoginResponse": {
             "type": "object",
             "properties": {
                 "token": {
@@ -2675,13 +2662,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.MenuInfo": {
+        "bingo_internal_apiserver_http_request_v1.MenuInfo": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_pkg_api_bingo_v1.MenuInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.MenuInfo"
                     }
                 },
                 "component": {
@@ -2722,7 +2709,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.RoleInfo": {
+        "bingo_internal_apiserver_http_request_v1.RoleInfo": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -2745,7 +2732,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.SetApisRequest": {
+        "bingo_internal_apiserver_http_request_v1.SetApisRequest": {
             "type": "object",
             "properties": {
                 "apiIDs": {
@@ -2756,7 +2743,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.SetMenusRequest": {
+        "bingo_internal_apiserver_http_request_v1.SetMenusRequest": {
             "type": "object",
             "properties": {
                 "menuIDs": {
@@ -2767,7 +2754,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.SetRolesRequest": {
+        "bingo_internal_apiserver_http_request_v1.SetRolesRequest": {
             "type": "object",
             "required": [
                 "roleNames"
@@ -2781,7 +2768,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.SwitchRoleRequest": {
+        "bingo_internal_apiserver_http_request_v1.SwitchRoleRequest": {
             "type": "object",
             "required": [
                 "roleName"
@@ -2792,7 +2779,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.UpdateAdminRequest": {
+        "bingo_internal_apiserver_http_request_v1.UpdateAdminRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -2825,7 +2812,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.UpdateApiRequest": {
+        "bingo_internal_apiserver_http_request_v1.UpdateApiRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2850,7 +2837,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.UpdateMenuRequest": {
+        "bingo_internal_apiserver_http_request_v1.UpdateMenuRequest": {
             "type": "object",
             "properties": {
                 "component": {
@@ -2892,7 +2879,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.UpdateRoleRequest": {
+        "bingo_internal_apiserver_http_request_v1.UpdateRoleRequest": {
             "type": "object",
             "properties": {
                 "description": {
@@ -2907,7 +2894,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_pkg_api_bingo_v1.UserInfo": {
+        "bingo_internal_apiserver_http_request_v1.UserInfo": {
             "type": "object",
             "properties": {
                 "age": {
@@ -2961,6 +2948,19 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "bingo_internal_pkg_core.ErrResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code defines the business error code.",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "Message contains the detail of this message.\nThis message is suitable to be exposed to external",
                     "type": "string"
                 }
             }

@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cast"
 
 	"bingo/internal/apiserver/biz"
+	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	v1 "bingo/pkg/api/bingo/v1"
 	"bingo/pkg/auth"
 )
 

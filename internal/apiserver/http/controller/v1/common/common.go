@@ -4,8 +4,8 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
+	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/core"
-	v1 "bingo/pkg/api/bingo/v1"
 )
 
 type CommonController struct{}

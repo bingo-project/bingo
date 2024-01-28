@@ -5,8 +5,8 @@ import (
 
 	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/apiserver/facade"
+	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/router"
-	"bingo/internal/pkg/middleware"
 )
 
 // run 函数是实际的业务代码入口函数.
