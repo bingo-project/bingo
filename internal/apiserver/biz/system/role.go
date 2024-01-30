@@ -152,7 +152,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	}
 
 	// Add casbin rule
-	var rules [][]string
+	rules := make([][]string, 0)
 	for _, api := range apis {
 		rules = append(rules, []string{global.RolePrefix + role.Name, api.Path, api.Method})
 	}
@@ -165,21 +165,24 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	return nil
 }
 
-func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (v1.GetApiIDsResponse, error) {
+func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (ret v1.GetApiIDsResponse, err error) {
 	// Get role
 	role, err := b.ds.Roles().Get(ctx, roleName)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	list := a.GetFilteredPolicy(0, global.RolePrefix+role.Name)
 
-	var pathAndMethod [][]string
+	pathAndMethod := make([][]string, 0)
 	for _, v := range list {
 		pathAndMethod = append(pathAndMethod, []string{v[1], v[2]})
 	}
 
 	resp, err := b.ds.Apis().GetIDsByPathAndMethod(ctx, pathAndMethod)
+	if err != nil {
+		return
+	}
 
 	return resp, nil
 }

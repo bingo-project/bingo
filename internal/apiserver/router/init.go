@@ -17,7 +17,7 @@ func InitSystemAPI(g *gin.Engine) {
 	routes := g.Routes()
 
 	// Init api
-	var data []model.ApiM
+	data := make([]model.ApiM, 0)
 	for _, route := range routes {
 		// Only system api
 		if !strings.Contains(route.Path, "/v1/system") {

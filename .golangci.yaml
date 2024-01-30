@@ -121,7 +121,7 @@ linters-settings:
     max-blank-identifiers: 2
   dupl:
     # tokens count to trigger issue, 150 by default
-    threshold: 100
+    threshold: 300
   errcheck:
     # report about not checking of errors in type assertions: `a := b.(MyStruct)`;
     # default is false: such cases aren't reported by default.
@@ -472,13 +472,24 @@ linters-settings:
       - shadow
     disable-all: false
   depguard:
-    list-type: blacklist
-    include-go-root: false
-    packages:
-      - github.com/Sirupsen/logrus
-    packages-with-error-message:
-      # specify an error message to output when a blacklisted package is used
-      - github.com/Sirupsen/logrus: "logging is allowed only by logutils.Log"
+    rules:
+      # Name of a rule.
+      main:
+        # Used to determine the package matching priority.
+        # There are three different modes: `original`, `strict`, and `lax`.
+        # Default: "original"
+        list-mode: lax
+        # List of file globs that will match this list of settings to compare against.
+        # Default: $all
+        files:
+          - "!**/*_a _file.go"
+        # List of allowed packages.
+        # allow:
+        #   - github.com/OpenPeeDeeP
+        # Packages that are not allowed where the value is a suggestion.
+        deny:
+          - pkg: "github.com/pkg/errors"
+            desc: Should be replaced by standard lib errors package
 
   importas:
     # if set to `true`, force to use alias.

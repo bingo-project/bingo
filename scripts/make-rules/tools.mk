@@ -21,7 +21,7 @@ tools.verify.%:
 
 .PHONY: install.golangci-lint
 install.golangci-lint:
-	@$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
+	@$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
 	@golangci-lint completion bash > $(HOME)/.golangci-lint.bash
 	@if ! grep -q .golangci-lint.bash $(HOME)/.bashrc; then echo "source \$$HOME/.golangci-lint.bash" >> $(HOME)/.bashrc; fi
 	@golangci-lint completion zsh > $(HOME)/.golangci-lint.zsh

@@ -55,7 +55,7 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/auth/menus [GET]
+// @Router    /v1/system/auth/menus [GET].
 func (ctrl *AuthController) Menus(c *gin.Context) {
 	log.C(c).Infow("Menus function called")
 

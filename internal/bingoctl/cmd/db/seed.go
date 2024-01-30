@@ -1,8 +1,6 @@
 package db
 
 import (
-	"fmt"
-
 	cmdutil "github.com/bingo-project/component-base/cli/util"
 	"github.com/spf13/cobra"
 
@@ -11,13 +9,6 @@ import (
 
 const (
 	seedUsageStr = "seed"
-)
-
-var (
-	seedUsageErrStr = fmt.Sprintf(
-		"expected '%s'.\nNAME is a required argument for the seed command",
-		seedUsageStr,
-	)
 )
 
 // SeedOptions is an option struct to support 'seed' sub command.

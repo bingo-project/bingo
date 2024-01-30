@@ -88,6 +88,9 @@ func (s *roleMenus) GetMenuIDsByRoleNameWithParent(ctx context.Context, roleName
 		Where(&model2.RoleMenuM{RoleName: roleName}).
 		Find(&menuIDs).
 		Error
+	if err != nil {
+		return
+	}
 
 	var parentIDs []uint
 	err = s.db.Model(&model2.MenuM{}).

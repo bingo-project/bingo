@@ -15,13 +15,6 @@ const (
 	randomUsageStr = "random"
 )
 
-var (
-	randomUsageErrStr = fmt.Sprintf(
-		"expected '%s'.\nNAME is a required argument for the random command",
-		randomUsageStr,
-	)
-)
-
 // RandomOptions is an option struct to support 'random' sub command.
 type RandomOptions struct {
 	// Options

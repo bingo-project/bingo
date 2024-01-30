@@ -42,6 +42,7 @@ func LimitWrite(limit string) gin.HandlerFunc {
 		method := c.Request.Method
 		if method == http.MethodGet || method == http.MethodOptions {
 			c.Next()
+
 			return
 		}
 
@@ -54,6 +55,7 @@ func LimitWrite(limit string) gin.HandlerFunc {
 	}
 }
 
+// nolint:gosec
 func resolveRequestSignature(key string) string {
 	h := sha1.New()
 	h.Write([]byte(key))

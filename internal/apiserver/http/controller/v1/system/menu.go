@@ -32,7 +32,7 @@ func NewMenuController(ds store.IStore, a *auth.Authz) *MenuController {
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus [GET]
+// @Router    /v1/system/menus [GET].
 func (ctrl *MenuController) List(c *gin.Context) {
 	log.C(c).Infow("List menu function called")
 
@@ -63,7 +63,7 @@ func (ctrl *MenuController) List(c *gin.Context) {
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus [POST]
+// @Router    /v1/system/menus [POST].
 func (ctrl *MenuController) Create(c *gin.Context) {
 	log.C(c).Infow("Create menu function called")
 
@@ -95,7 +95,7 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [GET]
+// @Router    /v1/system/menus/{id} [GET].
 func (ctrl *MenuController) Get(c *gin.Context) {
 	log.C(c).Infow("Get menu function called")
 
@@ -121,7 +121,7 @@ func (ctrl *MenuController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [PUT]
+// @Router    /v1/system/menus/{id} [PUT].
 func (ctrl *MenuController) Update(c *gin.Context) {
 	log.C(c).Infow("Update menu function called")
 
@@ -153,7 +153,7 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [DELETE]
+// @Router    /v1/system/menus/{id} [DELETE].
 func (ctrl *MenuController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete menu function called")
 
@@ -176,7 +176,7 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/tree [GET]
+// @Router    /v1/system/menus/tree [GET].
 func (ctrl *MenuController) Tree(c *gin.Context) {
 	log.C(c).Infow("Tree menu function called")
 
