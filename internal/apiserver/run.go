@@ -27,6 +27,9 @@ func initRouter() *gin.Engine {
 	// Register global middlewares
 	registerGlobalMiddleWare(g)
 
+	// Register static file server
+	registerStaticFileServer(g)
+
 	// Swagger
 	if facade.Config.Feature.ApiDoc {
 		router.MapSwagRouters(g)
@@ -59,4 +62,16 @@ func registerGlobalMiddleWare(g *gin.Engine) {
 		middleware.LimitWrite("1-S"), // 限制写操作，每秒 1 次
 		middleware.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
 	)
+}
+
+// Register static file server.
+func registerStaticFileServer(g *gin.Engine) {
+	storage := g.Group("storage")
+
+	// Upload for user
+	storage.Static("upload", "./storage/public/upload")
+
+	// Authentication for secure file.
+	storage.Use(middleware.Authn())
+	storage.Static("log", "./storage/log")
 }

@@ -37,7 +37,7 @@ log:
   console: true
   maxSize: 100 # 日志文件大小限制（M）
   compress: true # 是否使用 gz 压缩历史日志文件
-  path: _output/logs/apiserver.log # 日志文件位置
+  path: storage/log/apiserver.log # 日志文件位置
 
 feature:
   apiDoc: true # 是否开启 swagger api docs
