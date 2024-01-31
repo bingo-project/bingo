@@ -3,6 +3,7 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/apiserver/biz IBiz
 
 import (
+	"bingo/internal/apiserver/biz/file"
 	"bingo/internal/apiserver/biz/system"
 	"bingo/internal/apiserver/biz/user"
 	"bingo/internal/apiserver/store"
@@ -15,6 +16,7 @@ type IBiz interface {
 	Roles() system.RoleBiz
 	Apis() system.ApiBiz
 	Menus() system.MenuBiz
+	Files() file.FileBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -51,4 +53,8 @@ func (b *biz) Apis() system.ApiBiz {
 
 func (b *biz) Menus() system.MenuBiz {
 	return system.NewMenu(b.ds)
+}
+
+func (b *biz) Files() file.FileBiz {
+	return file.NewFile(b.ds)
 }
