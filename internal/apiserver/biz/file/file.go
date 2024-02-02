@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -12,6 +13,7 @@ import (
 
 	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
+	imageutil "bingo/internal/pkg/util/image"
 )
 
 type FileBiz interface {
@@ -43,6 +45,8 @@ func (b *fileBiz) Upload(ctx *gin.Context, req *v1.UploadFileRequest) (path stri
 	validate := validator.New()
 	err = validate.Struct(image)
 	if err != nil {
+		log.C(ctx).Errorw("upload validator error", "err", err)
+
 		return
 	}
 
@@ -53,12 +57,56 @@ func (b *fileBiz) Upload(ctx *gin.Context, req *v1.UploadFileRequest) (path stri
 	path = filepath.Join("storage/public/upload", time.Now().Format("2006/01/02"), fileName)
 	err = ctx.SaveUploadedFile(req.File, path)
 	if err != nil {
+		log.C(ctx).Errorw("SaveUploadedFile error", "err", err)
+
 		return "", err
 	}
 
-	// TODO:: Resize image.
+	// Resize image
+	if fsutil.IsImageFile(path) {
+		err = imageutil.Resize(path, getResizeRatio(req.File.Size), true, true)
+		if err != nil {
+			log.C(ctx).Errorw("Resize image error", "err", err)
+
+			return
+		}
+	}
 
 	path = strings.Replace(path, "storage/public/", "storage/", 1)
 
 	return
+}
+
+func getResizeRatio(size int64) float64 {
+	// <= 300k
+	if size < 1024*100 {
+		return 1
+	}
+
+	// 300k - 500k
+	if size <= 1024*500 {
+		return 0.9
+	}
+
+	// 500k - 1M
+	if size <= 1024*1024 {
+		return 0.8
+	}
+
+	// 1M - 5M
+	if size <= 1024*1024*5 {
+		return 0.6
+	}
+
+	// 5M - 10M
+	if size <= 1024*1024*10 {
+		return 0.4
+	}
+
+	// 10M - 20M
+	if size <= 1024*1024*10 {
+		return 0.3
+	}
+
+	return 0.2
 }
