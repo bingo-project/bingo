@@ -43,6 +43,7 @@ feature:
   apiDoc: true # 是否开启 swagger api docs
   queueDash: true # 是否开启队列监控面板
 
+# 邮件服务
 mail:
   host: "smtp.bingo.com"
   port: 465
@@ -50,3 +51,9 @@ mail:
   password: ""
   fromAddr: "noreply@bingo.com"
   fromName: "Bingo"
+
+# 验证码
+code:
+  length: 6 # 长度
+  ttl: 5 # 有效期（分钟）
+  waiting: 1 # 重发等待时间（分钟）

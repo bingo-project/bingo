@@ -15,4 +15,5 @@ type Config struct {
 	Redis   *Redis           `mapstructure:"redis" json:"redis" yaml:"redis"`
 	Log     *log.Options     `mapstructure:"log" json:"log" yaml:"log"`
 	Mail    *mail.Options    `mapstructure:"mail" json:"mail" yaml:"mail"`
+	Code    Code             `mapstructure:"code" json:"code" yaml:"code"`
 }

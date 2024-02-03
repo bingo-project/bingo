@@ -6,4 +6,7 @@ const (
 	AuthAdmin  = "system" // Auth guard: system admin.
 
 	CreateBatchSize = 1000
+
+	CacheKeyVerifyCodeTtl     = "verify_code_ttl:"
+	CacheKeyVerifyCodeWaiting = "verify_code_waiting:"
 )
