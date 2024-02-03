@@ -35,6 +35,11 @@ func initRouter() *gin.Engine {
 		router.MapSwagRouters(g)
 	}
 
+	// Queue dashboard
+	if facade.Config.Feature.QueueDash {
+		router.MapQueueRouters(g)
+	}
+
 	// Common router
 	router.MapCommonRouters(g)
 

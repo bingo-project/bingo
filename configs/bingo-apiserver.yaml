@@ -41,3 +41,4 @@ log:
 
 feature:
   apiDoc: true # 是否开启 swagger api docs
+  queueDash: true # 是否开启队列监控面板
