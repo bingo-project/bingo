@@ -15,4 +15,5 @@ var AES *crypt.AES
 var Redis *redis.Client
 var Cache *cache.CacheService
 var Queue *asynq.Client
+var Worker *asynq.Server
 var Snowflake *snowflake.Node
