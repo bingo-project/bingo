@@ -8,12 +8,16 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"bingo/internal/apiserver/config"
+	"bingo/pkg/mail"
 )
 
-var Config config.Config
-var AES *crypt.AES
-var Redis *redis.Client
-var Cache *cache.CacheService
-var Queue *asynq.Client
-var Worker *asynq.Server
-var Snowflake *snowflake.Node
+var (
+	Config    config.Config
+	AES       *crypt.AES
+	Redis     *redis.Client
+	Cache     *cache.CacheService
+	Queue     *asynq.Client
+	Worker    *asynq.Server
+	Snowflake *snowflake.Node
+	Mail      *mail.Mailer
+)

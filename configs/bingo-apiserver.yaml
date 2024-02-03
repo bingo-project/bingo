@@ -42,3 +42,11 @@ log:
 feature:
   apiDoc: true # 是否开启 swagger api docs
   queueDash: true # 是否开启队列监控面板
+
+mail:
+  host: "smtp.bingo.com"
+  port: 465
+  username: "bingo"
+  password: ""
+  fromAddr: "noreply@bingo.com"
+  fromName: "Bingo"

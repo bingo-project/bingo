@@ -4,6 +4,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 
 	"bingo/pkg/db"
+	"bingo/pkg/mail"
 )
 
 type Config struct {
@@ -13,4 +14,5 @@ type Config struct {
 	Mysql   *db.MySQLOptions `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Redis   *Redis           `mapstructure:"redis" json:"redis" yaml:"redis"`
 	Log     *log.Options     `mapstructure:"log" json:"log" yaml:"log"`
+	Mail    *mail.Options    `mapstructure:"mail" json:"mail" yaml:"mail"`
 }

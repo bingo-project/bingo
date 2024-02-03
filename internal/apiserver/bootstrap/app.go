@@ -9,4 +9,5 @@ func Boot() {
 	InitTimezone()
 	InitAES()
 	InitSnowflake()
+	InitMail()
 }
