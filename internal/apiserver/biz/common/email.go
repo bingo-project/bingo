@@ -6,11 +6,14 @@ import (
 	"time"
 
 	"github.com/bingo-project/component-base/log"
+	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/random"
+	"github.com/hibiken/asynq"
 
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
+	"bingo/internal/apiserver/job"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 )
@@ -42,10 +45,18 @@ func (b *emailBiz) SendEmailVerifyCode(ctx context.Context, req *v1.SendEmailReq
 	subject := "Email Verification code " + code
 	msg := fmt.Sprintf("Your verification code is: %s, please note that it will expire in 5 minutes.", code)
 
-	// Send email
-	err := facade.Mail.Send(req.Email, subject, msg)
+	// Email task payload
+	payload := &job.EmailVerificationCodePayload{
+		To:      req.Email,
+		Subject: subject,
+		Content: msg,
+	}
+
+	// Enqueue email task
+	t := asynq.NewTask(job.EmailVerificationCode, []byte(convertor.ToString(payload)))
+	_, err := facade.Queue.Enqueue(t)
 	if err != nil {
-		log.C(ctx).Errorw("SendEmailVerifyCode failed", "err", err)
+		log.C(ctx).Errorw("enqueue failed", "err", err)
 
 		return err
 	}

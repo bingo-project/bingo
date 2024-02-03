@@ -23,7 +23,7 @@ func Logging(h asynq.Handler) asynq.Handler {
 			return err
 		}
 
-		log.C(ctx).Infow("Finished processing "+t.Type(), "cost", time.Since(start))
+		log.C(ctx).Infow("Finished processing "+t.Type(), "cost", time.Since(start), "payload", string(t.Payload()))
 
 		return nil
 	})
