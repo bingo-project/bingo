@@ -20,8 +20,13 @@ type ErrResponse struct {
 
 // WriteResponse write an error or the response data into http response body.
 func WriteResponse(c *gin.Context, err error, data interface{}) {
+	hcode, code, message := errno.Decode(err)
+
+	// Set errno to ctx
+	c.Set("code", code)
+	c.Set("message", message)
+
 	if err != nil {
-		hcode, code, message := errno.Decode(err)
 		c.JSON(hcode, ErrResponse{
 			Code:    code,
 			Message: message,
