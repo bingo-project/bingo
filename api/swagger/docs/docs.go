@@ -2357,6 +2357,40 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/version": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Common"
+                ],
+                "summary": "Get App Version",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/version.Info"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3068,6 +3102,32 @@ const docTemplate = `{
                 },
                 "message": {
                     "description": "Message contains the detail of this message.\nThis message is suitable to be exposed to external",
+                    "type": "string"
+                }
+            }
+        },
+        "version.Info": {
+            "type": "object",
+            "properties": {
+                "buildDate": {
+                    "type": "string"
+                },
+                "compiler": {
+                    "type": "string"
+                },
+                "gitCommit": {
+                    "type": "string"
+                },
+                "gitTreeState": {
+                    "type": "string"
+                },
+                "gitVersion": {
+                    "type": "string"
+                },
+                "goVersion": {
+                    "type": "string"
+                },
+                "platform": {
                     "type": "string"
                 }
             }

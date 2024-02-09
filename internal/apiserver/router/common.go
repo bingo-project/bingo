@@ -16,9 +16,10 @@ func MapCommonRouters(g *gin.Engine) {
 		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
 	})
 
-	// Healthz
+	// Common
 	commonController := common.NewCommonController()
 	g.GET("/healthz", commonController.Healthz)
+	g.GET("/version", commonController.Version)
 
 	// v1 group
 	v1 := g.Group("/v1")
