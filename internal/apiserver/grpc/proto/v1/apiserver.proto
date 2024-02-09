@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "bingo/internal/apiserver/grpc/proto/v1";
+
+service ApiServer {
+  rpc Healthz (HealthzRequest) returns (HealthzReply) {}
+  rpc Version (VersionRequest) returns (VersionReply) {}
+}
+
+message HealthzRequest {}
+
+message HealthzReply {
+  string status = 1;
+  string ip = 2;
+  google.protobuf.Timestamp ts = 3;
+}
+
+message VersionRequest {}
+
+message VersionReply {
+  string gitVersion = 1;
+  string gitCommit = 2;
+  string gitTreeState = 3;
+  string buildDate = 4;
+  string goVersion = 5;
+  string compiler = 6;
+  string platform = 7;
+}
