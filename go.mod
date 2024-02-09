@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/bingo-project/bingoctl v1.2.3
-	github.com/bingo-project/component-base v0.3.4
+	github.com/bingo-project/component-base v0.3.5
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.79.0
 	github.com/casbin/gorm-adapter/v3 v3.20.0

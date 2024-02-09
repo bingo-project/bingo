@@ -53,6 +53,7 @@ func registerGlobalMiddleWare(g *gin.Engine) {
 		middleware.Secure,
 		middleware.ForceUserAgent,
 		middleware.RequestID(),
+		middleware.Context(),
 		middleware.LimitWrite("1-S"), // 限制写操作，每秒 1 次
 		middleware.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
 	)

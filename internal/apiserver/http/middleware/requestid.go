@@ -21,6 +21,7 @@ func RequestID() gin.HandlerFunc {
 		}
 
 		// Set request id to gin context & response header.
+		c.Request.Header.Set(auth.XRequestIDKey, rid)
 		c.Set(auth.XRequestIDKey, rid)
 		c.Writer.Header().Set(auth.XRequestIDKey, rid)
 

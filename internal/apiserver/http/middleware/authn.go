@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
@@ -50,6 +51,7 @@ func Authn() gin.HandlerFunc {
 
 		c.Set(auth.XGuard, payload.Info)
 		c.Set(auth.XUsernameKey, payload.Subject)
+		c.Set(log.KeySubject, payload.Subject)
 		c.Next()
 	}
 }

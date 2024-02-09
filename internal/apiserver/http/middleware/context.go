@@ -1,22 +1,17 @@
 package middleware
 
 import (
+	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/pkg/auth"
 )
 
-// UsernameKey defines the key in gin context which represents the owner of the secret.
-const (
-	KeyRequestID string = "requestID"
-	KeyUsername  string = "username"
-)
-
 // Context is a middleware that injects common prefix fields to gin.Context.
 func Context() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set(KeyRequestID, c.GetString(auth.XRequestIDKey))
-		c.Set(KeyUsername, c.GetString(KeyUsername))
+		c.Set(log.KeyTrace, c.GetString(auth.XRequestIDKey))
+
 		c.Next()
 	}
 }
