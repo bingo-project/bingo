@@ -8,6 +8,10 @@ server:
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
 
+# gRPC Server
+grpc:
+  addr: :8081
+
 # MySQL
 mysql:
   host: 127.0.0.1 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306

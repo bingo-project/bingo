@@ -28,6 +28,10 @@ func run() error {
 	httpServer := NewHttp()
 	httpServer.Run()
 
+	// 启动 grpc 服务
+	grpcServer := NewGRPC()
+	grpcServer.Run()
+
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
@@ -36,6 +40,7 @@ func run() error {
 
 	// 停止服务
 	httpServer.Close()
+	grpcServer.Close()
 
 	return nil
 }
