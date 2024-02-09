@@ -49,7 +49,7 @@ func runJobs() {
 	mux := asynq.NewServeMux()
 	mux.Use(queue.Logging)
 
-	job.AddJobs(mux)
+	job.Register(mux)
 
 	err := facade.Worker.Run(mux)
 	if err != nil {

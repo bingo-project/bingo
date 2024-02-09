@@ -17,7 +17,7 @@ type EmailVerificationCodePayload struct {
 	Content string
 }
 
-func HandleWelcomeEmailTask(ctx context.Context, t *asynq.Task) error {
+func HandleEmailVerificationTask(ctx context.Context, t *asynq.Task) error {
 	var payload EmailVerificationCodePayload
 	err := json.Unmarshal(t.Payload(), &payload)
 	if err != nil {

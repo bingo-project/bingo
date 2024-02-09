@@ -2,7 +2,8 @@ package job
 
 import "github.com/hibiken/asynq"
 
-func AddJobs(mux *asynq.ServeMux) {
-	// Add jobs here
-	mux.HandleFunc(EmailVerificationCode, HandleWelcomeEmailTask) // Demo task
+// Register jobs here.
+func Register(mux *asynq.ServeMux) {
+	// Send email.
+	mux.HandleFunc(EmailVerificationCode, HandleEmailVerificationTask)
 }
