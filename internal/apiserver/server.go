@@ -30,13 +30,13 @@ func (s *httpAPIServer) Run() {
 	go func() {
 		// Initializing the server in a goroutine so that
 		// it won't block the graceful shutdown handling below
-		log.Infow("Start to listening the incoming requests on http address: " + s.insecureAddress)
+		log.Infow("Start http server on " + s.insecureAddress)
 
 		if err := s.insecureServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalw(err.Error())
+			log.Fatalw("Failed to listen: " + err.Error())
 		}
 
-		log.Infow(fmt.Sprintf("Server on %s stopped", s.insecureAddress))
+		log.Infow(fmt.Sprintf("HTTP server on %s stopped", s.insecureAddress))
 	}()
 }
 

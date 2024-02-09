@@ -49,5 +49,5 @@ func (s *grpcAPIServer) Run() {
 func (s *grpcAPIServer) Close() {
 	s.GracefulStop()
 
-	log.Infow(fmt.Sprintf("grpc server on %s stopped", s.address))
+	log.Infow(fmt.Sprintf("GRPC server on %s stopped", s.address))
 }
