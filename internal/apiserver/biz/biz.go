@@ -5,6 +5,7 @@ package biz
 import (
 	"bingo/internal/apiserver/biz/common"
 	"bingo/internal/apiserver/biz/file"
+	"bingo/internal/apiserver/biz/syscfg"
 	"bingo/internal/apiserver/biz/system"
 	"bingo/internal/apiserver/biz/user"
 	"bingo/internal/apiserver/store"
@@ -19,6 +20,8 @@ type IBiz interface {
 	Menus() system.MenuBiz
 	Files() file.FileBiz
 	Email() common.EmailBiz
+	Apps() syscfg.AppBiz
+	Configs() syscfg.ConfigBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -63,4 +66,12 @@ func (b *biz) Files() file.FileBiz {
 
 func (b *biz) Email() common.EmailBiz {
 	return common.NewEmail(b.ds)
+}
+
+func (b *biz) Apps() syscfg.AppBiz {
+	return syscfg.NewApp(b.ds)
+}
+
+func (b *biz) Configs() syscfg.ConfigBiz {
+	return syscfg.NewConfig(b.ds)
 }

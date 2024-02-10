@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/http/controller/v1/system"
+	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
 	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/store"
 	"bingo/pkg/auth"
@@ -69,4 +70,20 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.PUT("menus/:id", menuController.Update)
 	v1.DELETE("menus/:id", menuController.Delete)
 	v1.GET("menus/tree", menuController.Tree)
+
+	// App
+	appController := syscfg.NewAppController(store.S, authz)
+	v1.GET("cfg/apps", appController.List)
+	v1.POST("cfg/apps", appController.Create)
+	v1.GET("cfg/apps/:id", appController.Get)
+	v1.PUT("cfg/apps/:id", appController.Update)
+	v1.DELETE("cfg/apps/:id", appController.Delete)
+
+	// Sys config
+	configController := syscfg.NewConfigController(store.S, authz)
+	v1.GET("cfg/configs", configController.List)
+	v1.POST("cfg/configs", configController.Create)
+	v1.GET("cfg/configs/:id", configController.Get)
+	v1.PUT("cfg/configs/:id", configController.Update)
+	v1.DELETE("cfg/configs/:id", configController.Delete)
 }
