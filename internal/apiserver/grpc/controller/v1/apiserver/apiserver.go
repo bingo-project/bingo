@@ -56,5 +56,6 @@ func GetPeerAddr(ctx context.Context) string {
 			addr = pr.Addr.String()
 		}
 	}
+
 	return addr
 }

@@ -10,7 +10,7 @@ import (
 
 func Logging(h asynq.Handler) asynq.Handler {
 	return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) error {
-		ctx = context.WithValue(ctx, "task", t.Type())
+		ctx = context.WithValue(ctx, log.KeyTask, t.Type())
 		start := time.Now()
 
 		log.C(ctx).Infow("Start processing " + t.Type())
@@ -18,7 +18,7 @@ func Logging(h asynq.Handler) asynq.Handler {
 		// Process task
 		err := h.ProcessTask(ctx, t)
 		if err != nil {
-			log.C(ctx).Errorw("Failed processing "+t.Type(), "err", err)
+			log.C(ctx).Errorw("Failed processing "+t.Type(), log.KeyResult, err)
 
 			return err
 		}

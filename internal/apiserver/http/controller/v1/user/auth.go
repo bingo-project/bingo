@@ -31,7 +31,7 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/auth/code/email [POST]
+// @Router    /v1/auth/code/email [POST].
 func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 

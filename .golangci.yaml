@@ -551,7 +551,7 @@ linters-settings:
       - someword
   nakedret:
     # make an issue if func has more lines of code than this setting and it has naked returns; default is 30
-    max-func-lines: 30
+    max-func-lines: 50
 
   nestif:
     # minimal complexity of if statements to report, 5 by default
@@ -624,7 +624,7 @@ linters-settings:
         severity: warning
   staticcheck:
     # Select the Go version to target. The default is '1.13'.
-    go: "1.16"
+    go: "1.19"
     # https://staticcheck.io/docs/options#checks
     checks: [ "all" ]
 

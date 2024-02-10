@@ -3,8 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	system2 "bingo/internal/apiserver/http/controller/v1/system"
-	middleware2 "bingo/internal/apiserver/http/middleware"
+	"bingo/internal/apiserver/http/controller/v1/system"
+	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/store"
 	"bingo/pkg/auth"
 )
@@ -15,13 +15,13 @@ func MapSystemRouters(g *gin.Engine) {
 
 	// Authz
 	authz, _ := auth.NewAuthz(store.S.DB())
-	authController := system2.NewAuthController(store.S, authz)
-	adminController := system2.NewAdminController(store.S, authz)
+	authController := system.NewAuthController(store.S, authz)
+	adminController := system.NewAdminController(store.S, authz)
 
 	// Login
 	v1.POST("auth/login", adminController.Login)
 
-	v1.Use(middleware2.Authn(), middleware2.Authz(authz))
+	v1.Use(middleware.Authn(), middleware.Authz(authz))
 
 	// Auth
 	v1.GET("auth/user-info", authController.UserInfo)             // 获取登录账号信息
@@ -39,7 +39,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.PUT("admins/:name/roles", adminController.SetRoles)                 // 设置角色组
 
 	// Role
-	roleController := system2.NewRoleController(store.S, authz)
+	roleController := system.NewRoleController(store.S, authz)
 	v1.GET("roles", roleController.List)
 	v1.POST("roles", roleController.Create)
 	v1.GET("roles/:name", roleController.Get)
@@ -52,7 +52,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("roles/all", roleController.All)
 
 	// API
-	apiController := system2.NewApiController(store.S, authz)
+	apiController := system.NewApiController(store.S, authz)
 	v1.GET("apis", apiController.List)
 	v1.GET("apis/all", apiController.All)
 	v1.POST("apis", apiController.Create)
@@ -62,7 +62,7 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("apis/tree", apiController.Tree)
 
 	// Menu
-	menuController := system2.NewMenuController(store.S, authz)
+	menuController := system.NewMenuController(store.S, authz)
 	v1.GET("menus", menuController.List)
 	v1.POST("menus", menuController.Create)
 	v1.GET("menus/:id", menuController.Get)
