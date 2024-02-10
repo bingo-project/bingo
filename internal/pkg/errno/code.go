@@ -16,5 +16,6 @@ var (
 	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}                                      // 表示请求没有被授权.
 	ErrForbidden    = &Errno{HTTP: 403, Code: "Forbidden", Message: "Forbidden."}                                                        // 表示请求没有被授权.
 
-	InternalServerError = &Errno{HTTP: 500, Code: "InternalError", Message: "Internal server error."} // 表示所有未知的服务器端错误
+	InternalServerError        = &Errno{HTTP: 500, Code: "InternalError", Message: "Internal server error."}               // 表示所有未知的服务器端错误
+	ErrServiceUnderMaintenance = &Errno{HTTP: 503, Code: "ServiceUnderMaintenance", Message: "Service under maintenance."} // 系统维护中
 )

@@ -2,9 +2,11 @@ package syscfg
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/bingo-project/component-base/util/gormutil"
+	"github.com/duke-git/lancet/v2/convertor"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
@@ -26,6 +28,9 @@ type ConfigStore interface {
 	UpdateOrCreate(ctx context.Context, where any, config *model.Config) error
 	Upsert(ctx context.Context, config *model.Config, fields ...string) error
 	DeleteInBatch(ctx context.Context, ids []uint) error
+
+	GetObject(ctx context.Context, key model.CfgKey, resp any) error
+	GetServerConfig(ctx context.Context) (*model.ServerConfig, error)
 }
 
 type configs struct {
@@ -129,4 +134,34 @@ func (s *configs) DeleteInBatch(ctx context.Context, ids []uint) error {
 	return s.db.Where("id IN (?)", ids).
 		Delete(&model.Config{}).
 		Error
+}
+
+func (s *configs) GetObject(ctx context.Context, key model.CfgKey, resp any) error {
+	where := &model.Config{Key: key}
+	cfg := &model.Config{Key: key, Value: convertor.ToString(resp)}
+
+	err := s.FirstOrCreate(ctx, where, cfg)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal([]byte(cfg.Value), &resp)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *configs) GetServerConfig(ctx context.Context) (*model.ServerConfig, error) {
+	data := model.ServerConfig{
+		Status: model.ServerStatusOK,
+	}
+
+	err := s.GetObject(ctx, model.CfgKeyServer, &data)
+	if err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

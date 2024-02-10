@@ -12,6 +12,7 @@ import (
 func MapApiRouters(g *gin.Engine) {
 	// v1 group
 	v1 := g.Group("/v1")
+	v1.Use(middleware.Maintenance())
 
 	// Authz
 	authz, _ := auth.NewAuthz(store.S.DB())

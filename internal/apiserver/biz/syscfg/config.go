@@ -95,7 +95,7 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 		configM.Description = *req.Description
 	}
 	if req.Key != nil {
-		configM.Key = *req.Key
+		configM.Key = model.CfgKey(*req.Key)
 	}
 	if req.Value != nil {
 		configM.Value = *req.Value
