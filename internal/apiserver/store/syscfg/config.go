@@ -31,6 +31,7 @@ type ConfigStore interface {
 
 	GetObject(ctx context.Context, key model.CfgKey, resp any) error
 	GetServerConfig(ctx context.Context) (*model.ServerConfig, error)
+	UpdateServerConfig(ctx context.Context, data *model.ServerConfig) error
 }
 
 type configs struct {
@@ -164,4 +165,11 @@ func (s *configs) GetServerConfig(ctx context.Context) (*model.ServerConfig, err
 	}
 
 	return &data, nil
+}
+
+func (s *configs) UpdateServerConfig(ctx context.Context, data *model.ServerConfig) error {
+	return s.db.Model(&model.Config{}).
+		Where(&model.Config{Key: model.CfgKeyServer}).
+		Update("value", convertor.ToString(data)).
+		Error
 }

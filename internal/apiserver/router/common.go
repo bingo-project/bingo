@@ -16,12 +16,13 @@ func MapCommonRouters(g *gin.Engine) {
 		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
 	})
 
-	g.Use(middleware.Maintenance())
+	cm := g.Group("/")
+	cm.Use(middleware.Maintenance())
 
 	// Common
 	commonController := common.NewCommonController()
-	g.GET("/healthz", commonController.Healthz)
-	g.GET("/version", commonController.Version)
+	cm.GET("/healthz", commonController.Healthz)
+	cm.GET("/version", commonController.Version)
 
 	// v1 group
 	v1 := g.Group("/v1")

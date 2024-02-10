@@ -22,6 +22,7 @@ type IBiz interface {
 	Email() common.EmailBiz
 	Apps() syscfg.AppBiz
 	Configs() syscfg.ConfigBiz
+	Servers() syscfg.ServerBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -74,4 +75,8 @@ func (b *biz) Apps() syscfg.AppBiz {
 
 func (b *biz) Configs() syscfg.ConfigBiz {
 	return syscfg.NewConfig(b.ds)
+}
+
+func (b *biz) Servers() syscfg.ServerBiz {
+	return syscfg.NewServer(b.ds)
 }
