@@ -35,6 +35,7 @@ func run() error {
 	// 启动 Bot 服务
 	if facade.Config.Bot.Enabled {
 		go RunBotTelegram()
+		go RunBotDiscord()
 	}
 
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。
