@@ -10,10 +10,10 @@ import (
 	"bingo/internal/apiserver/router"
 )
 
-// RunBot run bot server.
-func RunBot() {
+// RunBotTelegram run bot server.
+func RunBotTelegram() {
 	pref := telebot.Settings{
-		Token:  facade.Config.Bot.Token,
+		Token:  facade.Config.Bot.Telegram,
 		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
 	}
 
@@ -24,7 +24,7 @@ func RunBot() {
 
 	router.RegisterBotRouters(b)
 
-	log.Infow("Bot server started")
+	log.Infow("Telegram Bot started")
 
 	b.Start()
 }

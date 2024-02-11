@@ -15,7 +15,7 @@ grpc:
 # bot Server
 bot:
   enabled: true # 是否开启 bot server
-  token: # bot token
+  telegram: # bot token
 
 # MySQL
 mysql:
