@@ -6,6 +6,7 @@ import (
 	"bingo/internal/apiserver/http/controller/v1/common"
 	"bingo/internal/apiserver/http/controller/v1/file"
 	"bingo/internal/apiserver/http/middleware"
+	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 )
@@ -20,7 +21,7 @@ func MapCommonRouters(g *gin.Engine) {
 	cm.Use(middleware.Maintenance())
 
 	// Common
-	commonController := common.NewCommonController()
+	commonController := common.NewCommonController(store.S)
 	cm.GET("/healthz", commonController.Healthz)
 	cm.GET("/version", commonController.Version)
 

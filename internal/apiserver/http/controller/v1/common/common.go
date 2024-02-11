@@ -5,15 +5,21 @@ import (
 	"github.com/bingo-project/component-base/version"
 	"github.com/gin-gonic/gin"
 
+	"bingo/internal/apiserver/biz"
 	v1 "bingo/internal/apiserver/http/request/v1"
+	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 )
 
-type CommonController struct{}
+type CommonController struct {
+	b biz.IBiz
+}
 
 // NewCommonController 创建一个 common controller.
-func NewCommonController() *CommonController {
-	return &CommonController{}
+func NewCommonController(ds store.IStore) *CommonController {
+	return &CommonController{
+		b: biz.NewBiz(ds),
+	}
 }
 
 // Healthz
@@ -28,7 +34,12 @@ func NewCommonController() *CommonController {
 func (ctrl *CommonController) Healthz(c *gin.Context) {
 	log.C(c).Infow("Healthz function called")
 
-	data := &v1.HealthzResponse{Status: "ok"}
+	status, err := ctrl.b.Servers().Status(c)
+	if err != nil {
+		return
+	}
+
+	data := &v1.HealthzResponse{Status: status}
 
 	core.WriteResponse(c, nil, data)
 }
