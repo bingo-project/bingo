@@ -1,11 +1,9 @@
 package syscfg
 
-import (
-	"gorm.io/gorm"
-)
+import "bingo/internal/apiserver/model"
 
 type Config struct {
-	gorm.Model
+	model.Base
 
 	Name        string `gorm:"column:name;type:varchar(255);not null" json:"name"`
 	Description string `gorm:"column:description;type:varchar(1024);not null" json:"description"`

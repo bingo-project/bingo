@@ -5,6 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"bingo/internal/apiserver/store/bot"
 	"bingo/internal/apiserver/store/syscfg"
 	"bingo/internal/apiserver/store/system"
 )
@@ -27,6 +28,8 @@ type IStore interface {
 	RoleMenus() system.RoleMenuStore
 	Apps() syscfg.AppStore
 	Configs() syscfg.ConfigStore
+	Bots() bot.BotStore
+	Channels() bot.ChannelStore
 }
 
 // datastore 是 IStore 的一个具体实现.
@@ -83,4 +86,12 @@ func (ds *datastore) Apps() syscfg.AppStore {
 
 func (ds *datastore) Configs() syscfg.ConfigStore {
 	return syscfg.NewConfigs(ds.db)
+}
+
+func (ds *datastore) Bots() bot.BotStore {
+	return bot.NewBots(ds.db)
+}
+
+func (ds *datastore) Channels() bot.ChannelStore {
+	return bot.NewChannels(ds.db)
 }
