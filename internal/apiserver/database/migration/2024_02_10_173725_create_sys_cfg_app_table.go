@@ -16,7 +16,7 @@ type CreateSysCfgAppTable struct {
 	Description string `gorm:"type:varchar(1000);not null"`
 	AboutUs     string `gorm:"type:varchar(2000);not null"`
 	Logo        string `gorm:"type:varchar(255);not null"`
-	Enabled     int32  `gorm:"type:tinyint;not null;comment:Is enabled"`
+	Enabled     int32  `gorm:"type:tinyint;not null;default:0;comment:Is enabled"`
 }
 
 func (CreateSysCfgAppTable) TableName() string {
