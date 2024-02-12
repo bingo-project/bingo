@@ -10,6 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"gopkg.in/telebot.v3"
 
+	"bingo/internal/apiserver/bot/telegram/middleware"
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/router"
 )
@@ -25,6 +26,9 @@ func RunBotTelegram() {
 	if err != nil {
 		log.Fatalw("Failed to start bot: " + err.Error())
 	}
+
+	// Global middleware
+	b.Use(middleware.Recover)
 
 	router.RegisterBotRouters(b)
 
