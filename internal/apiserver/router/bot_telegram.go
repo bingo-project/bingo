@@ -15,4 +15,6 @@ func RegisterBotRouters(b *telebot.Bot) {
 	b.Handle("/healthz", serverController.Healthz)
 	b.Handle("/version", serverController.Version)
 	b.Handle("/maintenance", serverController.ToggleMaintenance)
+	b.Handle("/subscribe", serverController.Subscribe)
+	b.Handle("/unsubscribe", serverController.UnSubscribe)
 }

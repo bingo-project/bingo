@@ -5,9 +5,13 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
+	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/spf13/cast"
 	"gopkg.in/telebot.v3"
 
 	"bingo/internal/apiserver/biz"
+	v1 "bingo/internal/apiserver/http/request/v1/bot"
+	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 )
 
@@ -53,4 +57,32 @@ func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
 	}
 
 	return c.Send("Operation success")
+}
+
+func (ctrl *ServerController) Subscribe(c telebot.Context) error {
+	log.Infow("Subscribe function called")
+
+	req := v1.CreateChannelRequest{
+		Source:    string(bot.SourceTelegram),
+		ChannelID: cast.ToString(c.Chat().ID),
+		Author:    convertor.ToString(c.Sender()),
+	}
+
+	_, err := ctrl.b.Channels().Create(context.Background(), &req)
+	if err != nil {
+		return c.Send(err.Error())
+	}
+
+	return c.Send("Successfully subscribe, enjoy it!")
+}
+
+func (ctrl *ServerController) UnSubscribe(c telebot.Context) error {
+	log.Infow("UnSubscribe function called")
+
+	err := ctrl.b.Channels().DeleteChannel(context.Background(), cast.ToString(c.Chat().ID))
+	if err != nil {
+		return c.Send(err.Error())
+	}
+
+	return c.Send("Successfully unsubscribe, thanks for your support!")
 }

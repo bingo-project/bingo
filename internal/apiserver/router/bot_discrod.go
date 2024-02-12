@@ -16,9 +16,25 @@ func RegisterBotDiscordRouters(s *discordgo.Session, m *discordgo.MessageCreate)
 	case "ping":
 		serverController.Pong(s, m)
 
-	// Status
+	// Healthz
 	case "healthz":
 		serverController.Healthz(s, m)
+
+	// Version
+	case "version":
+		serverController.Version(s, m)
+
+	// Maintenance
+	case "maintenance":
+		serverController.ToggleMaintenance(s, m)
+
+	// Subscribe
+	case "subscribe":
+		serverController.Subscribe(s, m)
+
+	// UnSubscribe
+	case "unsubscribe":
+		serverController.UnSubscribe(s, m)
 
 	default:
 	}

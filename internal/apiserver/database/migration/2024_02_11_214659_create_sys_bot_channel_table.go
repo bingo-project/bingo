@@ -13,7 +13,7 @@ type CreateSysBotChannelTable struct {
 
 	Source    string `gorm:"uniqueIndex:uk_source_channel;type:varchar(255);not null;default:''"`
 	ChannelID string `gorm:"uniqueIndex:uk_source_channel;type:varchar(255);not null;default:''"`
-	Author    string `gorm:"type:varchar(255);not null;default:''"`
+	Author    string `gorm:"type:json;not null"`
 }
 
 func (CreateSysBotChannelTable) TableName() string {

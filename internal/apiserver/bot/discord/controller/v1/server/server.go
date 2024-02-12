@@ -6,8 +6,11 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
 	"github.com/bwmarrin/discordgo"
+	"github.com/duke-git/lancet/v2/convertor"
 
 	"bingo/internal/apiserver/biz"
+	v1 "bingo/internal/apiserver/http/request/v1/bot"
+	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 )
 
@@ -25,11 +28,7 @@ func (ctrl *ServerController) Pong(s *discordgo.Session, m *discordgo.MessageCre
 	_, err := s.ChannelMessageSend(m.ChannelID, "pong")
 	if err != nil {
 		log.Errorw(err.Error())
-
-		return
 	}
-
-	return
 }
 
 func (ctrl *ServerController) Healthz(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -43,8 +42,6 @@ func (ctrl *ServerController) Healthz(s *discordgo.Session, m *discordgo.Message
 	_, err = s.ChannelMessageSend(m.ChannelID, status)
 	if err != nil {
 		log.Errorw("send message error", log.KeyResult, err.Error())
-
-		return
 	}
 }
 
@@ -56,8 +53,6 @@ func (ctrl *ServerController) Version(s *discordgo.Session, m *discordgo.Message
 	_, err := s.ChannelMessageSend(m.ChannelID, v)
 	if err != nil {
 		log.Errorw("send message error", log.KeyResult, err.Error())
-
-		return
 	}
 }
 
@@ -66,6 +61,60 @@ func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, m *discord
 
 	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
 	if err != nil {
-		// return c.Send("Operation failed:" + err.Error())
+		_, err := s.ChannelMessageSend(m.ChannelID, "Operation failed:"+err.Error())
+		if err != nil {
+			log.Errorw("send message error", log.KeyResult, err.Error())
+
+			return
+		}
+	}
+
+	_, err = s.ChannelMessageSend(m.ChannelID, "Operation success")
+	if err != nil {
+		log.Errorw("send message error", log.KeyResult, err.Error())
+	}
+}
+
+func (ctrl *ServerController) Subscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
+	log.Infow("Subscribe function called")
+
+	req := v1.CreateChannelRequest{
+		Source:    string(bot.SourceDiscord),
+		ChannelID: m.ChannelID,
+		Author:    convertor.ToString(m.Message.Author),
+	}
+
+	_, err := ctrl.b.Channels().Create(context.Background(), &req)
+	if err != nil {
+		_, err := s.ChannelMessageSend(m.ChannelID, err.Error())
+		if err != nil {
+			log.Errorw("send message error", log.KeyResult, err.Error())
+
+			return
+		}
+	}
+
+	_, err = s.ChannelMessageSend(m.ChannelID, "Successfully subscribe, enjoy it!")
+	if err != nil {
+		log.Errorw("send message error", log.KeyResult, err.Error())
+	}
+}
+
+func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
+	log.Infow("UnSubscribe function called")
+
+	err := ctrl.b.Channels().DeleteChannel(context.Background(), m.ChannelID)
+	if err != nil {
+		_, err := s.ChannelMessageSend(m.ChannelID, err.Error())
+		if err != nil {
+			log.Errorw("send message error", log.KeyResult, err.Error())
+
+			return
+		}
+	}
+
+	_, err = s.ChannelMessageSend(m.ChannelID, "Successfully unsubscribe, thanks for your support!")
+	if err != nil {
+		log.Errorw("send message error", log.KeyResult, err.Error())
 	}
 }
