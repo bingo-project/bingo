@@ -4,10 +4,13 @@ import (
 	"github.com/bwmarrin/discordgo"
 
 	"bingo/internal/apiserver/bot/discord/controller/v1/server"
+	"bingo/internal/apiserver/bot/discord/middleware"
 	"bingo/internal/apiserver/store"
 )
 
 func RegisterBotDiscordRouters(s *discordgo.Session, m *discordgo.MessageCreate) {
+	middleware.Context(s, m)
+
 	serverController := server.New(store.S)
 
 	switch m.Content {

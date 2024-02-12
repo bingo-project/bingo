@@ -9,6 +9,7 @@ import (
 	"github.com/duke-git/lancet/v2/convertor"
 
 	"bingo/internal/apiserver/biz"
+	mw "bingo/internal/apiserver/bot/discord/middleware"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
@@ -23,7 +24,7 @@ func New(ds store.IStore) *ServerController {
 }
 
 func (ctrl *ServerController) Pong(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("Pong function called")
+	log.C(mw.Ctx).Infow("Pong function called")
 
 	_, err := s.ChannelMessageSend(m.ChannelID, "pong")
 	if err != nil {
@@ -32,7 +33,7 @@ func (ctrl *ServerController) Pong(s *discordgo.Session, m *discordgo.MessageCre
 }
 
 func (ctrl *ServerController) Healthz(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("Healthz function called")
+	log.C(mw.Ctx).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(context.Background())
 	if err != nil {
@@ -46,7 +47,7 @@ func (ctrl *ServerController) Healthz(s *discordgo.Session, m *discordgo.Message
 }
 
 func (ctrl *ServerController) Version(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("Version function called")
+	log.C(mw.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
 
@@ -57,7 +58,7 @@ func (ctrl *ServerController) Version(s *discordgo.Session, m *discordgo.Message
 }
 
 func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("ToggleMaintenance function called")
+	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
 	if err != nil {
@@ -76,7 +77,7 @@ func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, m *discord
 }
 
 func (ctrl *ServerController) Subscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("Subscribe function called")
+	log.C(mw.Ctx).Infow("Subscribe function called")
 
 	req := v1.CreateChannelRequest{
 		Source:    string(bot.SourceDiscord),
@@ -101,7 +102,7 @@ func (ctrl *ServerController) Subscribe(s *discordgo.Session, m *discordgo.Messa
 }
 
 func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
-	log.Infow("UnSubscribe function called")
+	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
 	err := ctrl.b.Channels().DeleteChannel(context.Background(), m.ChannelID)
 	if err != nil {
