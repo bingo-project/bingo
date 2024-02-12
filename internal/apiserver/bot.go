@@ -28,6 +28,7 @@ func RunBotTelegram() {
 	}
 
 	// Global middleware
+	b.Use(middleware.Context)
 	b.Use(middleware.Recover)
 
 	router.RegisterBotRouters(b)

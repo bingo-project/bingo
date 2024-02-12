@@ -10,6 +10,7 @@ import (
 	"gopkg.in/telebot.v3"
 
 	"bingo/internal/apiserver/biz"
+	m "bingo/internal/apiserver/bot/telegram/middleware"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
@@ -24,13 +25,13 @@ func New(ds store.IStore) *ServerController {
 }
 
 func (ctrl *ServerController) Pong(c telebot.Context) error {
-	log.Infow("Pong function called")
+	log.C(m.Ctx).Infow("Pong function called")
 
 	return c.Send("pong")
 }
 
 func (ctrl *ServerController) Healthz(c telebot.Context) error {
-	log.Infow("Healthz function called")
+	log.C(m.Ctx).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(context.Background())
 	if err != nil {
@@ -41,7 +42,7 @@ func (ctrl *ServerController) Healthz(c telebot.Context) error {
 }
 
 func (ctrl *ServerController) Version(c telebot.Context) error {
-	log.Infow("Version function called")
+	log.C(m.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
 
@@ -49,7 +50,7 @@ func (ctrl *ServerController) Version(c telebot.Context) error {
 }
 
 func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
-	log.Infow("ToggleMaintenance function called")
+	log.C(m.Ctx).Infow("ToggleMaintenance function called", "msg", c.Message())
 
 	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
 	if err != nil {
@@ -60,7 +61,7 @@ func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
 }
 
 func (ctrl *ServerController) Subscribe(c telebot.Context) error {
-	log.Infow("Subscribe function called")
+	log.C(m.Ctx).Infow("Subscribe function called")
 
 	req := v1.CreateChannelRequest{
 		Source:    string(bot.SourceTelegram),
@@ -77,7 +78,7 @@ func (ctrl *ServerController) Subscribe(c telebot.Context) error {
 }
 
 func (ctrl *ServerController) UnSubscribe(c telebot.Context) error {
-	log.Infow("UnSubscribe function called")
+	log.C(m.Ctx).Infow("UnSubscribe function called")
 
 	err := ctrl.b.Channels().DeleteChannel(context.Background(), cast.ToString(c.Chat().ID))
 	if err != nil {
