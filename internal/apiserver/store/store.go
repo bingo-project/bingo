@@ -29,7 +29,8 @@ type IStore interface {
 	Apps() syscfg.AppStore
 	Configs() syscfg.ConfigStore
 	Bots() bot.BotStore
-	Channels() bot.ChannelStore
+	BotChannels() bot.ChannelStore
+	BotAdmins() bot.AdminStore
 }
 
 // datastore 是 IStore 的一个具体实现.
@@ -92,6 +93,10 @@ func (ds *datastore) Bots() bot.BotStore {
 	return bot.NewBots(ds.db)
 }
 
-func (ds *datastore) Channels() bot.ChannelStore {
+func (ds *datastore) BotChannels() bot.ChannelStore {
 	return bot.NewChannels(ds.db)
+}
+
+func (ds *datastore) BotAdmins() bot.AdminStore {
+	return bot.NewAdmins(ds.db)
 }

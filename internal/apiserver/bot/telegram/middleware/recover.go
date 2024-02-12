@@ -15,6 +15,6 @@ func Recover(next telebot.HandlerFunc) telebot.HandlerFunc {
 			}
 		}()
 
-		return next(c) // continue execution chain
+		return next(c)
 	}
 }

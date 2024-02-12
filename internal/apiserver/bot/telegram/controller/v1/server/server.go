@@ -50,7 +50,7 @@ func (ctrl *ServerController) Version(c telebot.Context) error {
 }
 
 func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
-	log.C(m.Ctx).Infow("ToggleMaintenance function called", "msg", c.Message())
+	log.C(m.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
 	if err != nil {

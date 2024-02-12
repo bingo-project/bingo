@@ -14,7 +14,7 @@ func Context(next telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
 		Ctx = context.WithValue(Ctx, log.KeyTrace, uuid.New().String())
 		Ctx = context.WithValue(Ctx, log.KeySubject, c.Sender().ID)
-		Ctx = context.WithValue(Ctx, log.KeyInfo, c.Text())
+		Ctx = context.WithValue(Ctx, log.KeyObject, c.Text())
 
 		return next(c)
 	}
