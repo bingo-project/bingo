@@ -11,6 +11,7 @@ func RegisterBotRouters(b *telebot.Bot) {
 	serverController := server.New(store.S)
 
 	// Server
+	b.Handle("/ping", serverController.Pong)
 	b.Handle("/healthz", serverController.Healthz)
 	b.Handle("/version", serverController.Version)
 	b.Handle("/maintenance", serverController.ToggleMaintenance)

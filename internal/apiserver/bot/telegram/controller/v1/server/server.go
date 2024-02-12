@@ -19,10 +19,21 @@ func New(ds store.IStore) *ServerController {
 	return &ServerController{b: biz.NewBiz(ds)}
 }
 
+func (ctrl *ServerController) Pong(c telebot.Context) error {
+	log.Infow("Pong function called")
+
+	return c.Send("pong")
+}
+
 func (ctrl *ServerController) Healthz(c telebot.Context) error {
 	log.Infow("Healthz function called")
 
-	return c.Send("ok")
+	status, err := ctrl.b.Servers().Status(context.Background())
+	if err != nil {
+		return err
+	}
+
+	return c.Send(status)
 }
 
 func (ctrl *ServerController) Version(c telebot.Context) error {
