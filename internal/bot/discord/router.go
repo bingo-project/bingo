@@ -10,6 +10,7 @@ import (
 
 func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	middleware.Context(s, i)
+	defer middleware.Recover()
 
 	serverController := server.New(store.S, s, i)
 
