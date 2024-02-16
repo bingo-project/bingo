@@ -23,99 +23,129 @@ func New(ds store.IStore) *ServerController {
 	return &ServerController{b: biz.NewBiz(ds)}
 }
 
-func (ctrl *ServerController) Pong(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) Pong(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("Pong function called")
 
-	_, err := s.ChannelMessageSend(m.ChannelID, "pong")
-	if err != nil {
-		log.Errorw(err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "pong",
+		},
+	})
 }
 
-func (ctrl *ServerController) Healthz(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) Healthz(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("Healthz function called")
 
-	status, err := ctrl.b.Servers().Status(context.Background())
+	status, err := ctrl.b.Servers().Status(mw.Ctx)
 	if err != nil {
+		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: err.Error(),
+			},
+		})
+
 		return
 	}
 
-	_, err = s.ChannelMessageSend(m.ChannelID, status)
-	if err != nil {
-		log.Errorw("send message error", log.KeyResult, err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: status,
+		},
+	})
 }
 
-func (ctrl *ServerController) Version(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) Version(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
 
-	_, err := s.ChannelMessageSend(m.ChannelID, v)
-	if err != nil {
-		log.Errorw("send message error", log.KeyResult, err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: v,
+		},
+	})
 }
 
-func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
 	if err != nil {
-		_, err := s.ChannelMessageSend(m.ChannelID, "Operation failed:"+err.Error())
-		if err != nil {
-			log.Errorw("send message error", log.KeyResult, err.Error())
+		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: "Operation failed:" + err.Error(),
+			},
+		})
 
-			return
-		}
+		return
 	}
 
-	_, err = s.ChannelMessageSend(m.ChannelID, "Operation success")
-	if err != nil {
-		log.Errorw("send message error", log.KeyResult, err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Operation success",
+		},
+	})
 }
 
-func (ctrl *ServerController) Subscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) Subscribe(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("Subscribe function called")
+
+	user := i.User
+	if i.User == nil {
+		user = i.Member.User
+	}
 
 	req := v1.CreateChannelRequest{
 		Source:    string(bot.SourceDiscord),
-		ChannelID: m.ChannelID,
-		Author:    convertor.ToString(m.Message.Author),
+		ChannelID: i.ChannelID,
+		Author:    convertor.ToString(user),
 	}
 
-	_, err := ctrl.b.Channels().Create(context.Background(), &req)
+	_, err := ctrl.b.Channels().Create(mw.Ctx, &req)
 	if err != nil {
-		_, err := s.ChannelMessageSend(m.ChannelID, err.Error())
-		if err != nil {
-			log.Errorw("send message error", log.KeyResult, err.Error())
+		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: err.Error(),
+			},
+		})
 
-			return
-		}
+		return
 	}
 
-	_, err = s.ChannelMessageSend(m.ChannelID, "Successfully subscribe, enjoy it!")
-	if err != nil {
-		log.Errorw("send message error", log.KeyResult, err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Successfully subscribe, enjoy it!",
+		},
+	})
 }
 
-func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
-	err := ctrl.b.Channels().DeleteChannel(context.Background(), m.ChannelID)
+	err := ctrl.b.Channels().DeleteChannel(context.Background(), i.ChannelID)
 	if err != nil {
-		_, err := s.ChannelMessageSend(m.ChannelID, err.Error())
-		if err != nil {
-			log.Errorw("send message error", log.KeyResult, err.Error())
+		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseChannelMessageWithSource,
+			Data: &discordgo.InteractionResponseData{
+				Content: err.Error(),
+			},
+		})
 
-			return
-		}
+		return
 	}
 
-	_, err = s.ChannelMessageSend(m.ChannelID, "Successfully unsubscribe, thanks for your support!")
-	if err != nil {
-		log.Errorw("send message error", log.KeyResult, err.Error())
-	}
+	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "Successfully unsubscribe, thanks for your support!",
+		},
+	})
 }

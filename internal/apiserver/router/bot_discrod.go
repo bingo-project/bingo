@@ -8,36 +8,36 @@ import (
 	"bingo/internal/apiserver/store"
 )
 
-func RegisterBotDiscordRouters(s *discordgo.Session, m *discordgo.MessageCreate) {
-	middleware.Context(s, m)
+func RegisterBotDiscordRouters(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	middleware.Context(s, i)
 
 	serverController := server.New(store.S)
 
-	switch m.Content {
+	switch i.ApplicationCommandData().Name {
 
 	// Ping
 	case "ping":
-		serverController.Pong(s, m)
+		serverController.Pong(s, i)
 
 	// Healthz
 	case "healthz":
-		serverController.Healthz(s, m)
+		serverController.Healthz(s, i)
 
 	// Version
 	case "version":
-		serverController.Version(s, m)
-
-	// Maintenance
-	case "maintenance":
-		serverController.ToggleMaintenance(s, m)
+		serverController.Version(s, i)
 
 	// Subscribe
 	case "subscribe":
-		serverController.Subscribe(s, m)
+		serverController.Subscribe(s, i)
 
 	// UnSubscribe
 	case "unsubscribe":
-		serverController.UnSubscribe(s, m)
+		serverController.UnSubscribe(s, i)
+
+	// Maintenance
+	case "maintenance":
+		serverController.ToggleMaintenance(s, i)
 
 	default:
 	}

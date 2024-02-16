@@ -10,6 +10,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"gopkg.in/telebot.v3"
 
+	"bingo/internal/apiserver/bot/discord"
 	"bingo/internal/apiserver/bot/telegram/middleware"
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/router"
@@ -47,9 +48,7 @@ func RunBotDiscord() {
 		return
 	}
 
-	dg.AddHandler(router.RegisterBotDiscordRouters)
-
-	// dg.Identify.Intents = discordgo.IntentsGuildMessages
+	dg.Identify.Intents = discordgo.IntentsGuildMessages
 
 	err = dg.Open()
 	if err != nil {
@@ -59,6 +58,12 @@ func RunBotDiscord() {
 	}
 
 	log.Infow("Discord Bot started")
+
+	// Register commands
+	discord.RegisterCommands(dg)
+
+	// Register command handlers
+	dg.AddHandler(router.RegisterBotDiscordRouters)
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
