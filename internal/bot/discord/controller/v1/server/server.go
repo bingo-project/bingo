@@ -15,16 +15,18 @@ import (
 
 type ServerController struct {
 	b biz.IBiz
+	s *discordgo.Session
+	i *discordgo.InteractionCreate
 }
 
-func New(ds store.IStore) *ServerController {
-	return &ServerController{b: biz.NewBiz(ds)}
+func New(ds store.IStore, s *discordgo.Session, i *discordgo.InteractionCreate) *ServerController {
+	return &ServerController{b: biz.NewBiz(ds), s: s, i: i}
 }
 
-func (ctrl *ServerController) Pong(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) Pong() {
 	log.C(mw.Ctx).Infow("Pong function called")
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "pong",
@@ -32,12 +34,12 @@ func (ctrl *ServerController) Pong(s *discordgo.Session, i *discordgo.Interactio
 	})
 }
 
-func (ctrl *ServerController) Healthz(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) Healthz() {
 	log.C(mw.Ctx).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(mw.Ctx)
 	if err != nil {
-		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: err.Error(),
@@ -47,7 +49,7 @@ func (ctrl *ServerController) Healthz(s *discordgo.Session, i *discordgo.Interac
 		return
 	}
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: status,
@@ -55,12 +57,12 @@ func (ctrl *ServerController) Healthz(s *discordgo.Session, i *discordgo.Interac
 	})
 }
 
-func (ctrl *ServerController) Version(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) Version() {
 	log.C(mw.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: v,
@@ -68,12 +70,12 @@ func (ctrl *ServerController) Version(s *discordgo.Session, i *discordgo.Interac
 	})
 }
 
-func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) ToggleMaintenance() {
 	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(mw.Ctx)
 	if err != nil {
-		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: "Operation failed:" + err.Error(),
@@ -83,7 +85,7 @@ func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, i *discord
 		return
 	}
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Operation success",
@@ -91,23 +93,23 @@ func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, i *discord
 	})
 }
 
-func (ctrl *ServerController) Subscribe(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) Subscribe() {
 	log.C(mw.Ctx).Infow("Subscribe function called")
 
-	user := i.User
-	if i.User == nil {
-		user = i.Member.User
+	user := ctrl.i.User
+	if ctrl.i.User == nil {
+		user = ctrl.i.Member.User
 	}
 
 	req := v1.CreateChannelRequest{
 		Source:    string(bot.SourceDiscord),
-		ChannelID: i.ChannelID,
+		ChannelID: ctrl.i.ChannelID,
 		Author:    convertor.ToString(user),
 	}
 
 	_, err := ctrl.b.Channels().Create(mw.Ctx, &req)
 	if err != nil {
-		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: err.Error(),
@@ -117,7 +119,7 @@ func (ctrl *ServerController) Subscribe(s *discordgo.Session, i *discordgo.Inter
 		return
 	}
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Successfully subscribe, enjoy it!",
@@ -125,12 +127,12 @@ func (ctrl *ServerController) Subscribe(s *discordgo.Session, i *discordgo.Inter
 	})
 }
 
-func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (ctrl *ServerController) UnSubscribe() {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
-	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, i.ChannelID)
+	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, ctrl.i.ChannelID)
 	if err != nil {
-		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: err.Error(),
@@ -140,7 +142,7 @@ func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, i *discordgo.Int
 		return
 	}
 
-	_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Content: "Successfully unsubscribe, thanks for your support!",

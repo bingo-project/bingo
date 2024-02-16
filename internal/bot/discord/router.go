@@ -11,33 +11,33 @@ import (
 func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	middleware.Context(s, i)
 
-	serverController := server.New(store.S)
+	serverController := server.New(store.S, s, i)
 
 	switch i.ApplicationCommandData().Name {
 
 	// Ping
 	case "ping":
-		serverController.Pong(s, i)
+		serverController.Pong()
 
 	// Healthz
 	case "healthz":
-		serverController.Healthz(s, i)
+		serverController.Healthz()
 
 	// Version
 	case "version":
-		serverController.Version(s, i)
+		serverController.Version()
 
 	// Subscribe
 	case "subscribe":
-		serverController.Subscribe(s, i)
+		serverController.Subscribe()
 
 	// UnSubscribe
 	case "unsubscribe":
-		serverController.UnSubscribe(s, i)
+		serverController.UnSubscribe()
 
 	// Maintenance
 	case "maintenance":
-		serverController.ToggleMaintenance(s, i)
+		serverController.ToggleMaintenance()
 
 	default:
 	}
