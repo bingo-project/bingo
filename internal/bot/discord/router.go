@@ -36,12 +36,21 @@ func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreat
 	case "unsubscribe":
 		serverController.UnSubscribe()
 
+	default:
+	}
+
+	// Admin only
+	admin := middleware.IsAdmin(s, i)
+	if !admin {
+		return
+	}
+
+	switch i.ApplicationCommandData().Name {
+
 	// Maintenance
 	case "maintenance":
 		serverController.ToggleMaintenance()
 
 	default:
 	}
-
-	return
 }

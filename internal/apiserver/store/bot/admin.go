@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
@@ -28,6 +29,7 @@ type AdminStore interface {
 	DeleteInBatch(ctx context.Context, ids []uint) error
 
 	GetByUserID(ctx context.Context, userID string) (admin *model.Admin, err error)
+	IsAdmin(ctx context.Context, userID string) (ret bool, err error)
 }
 
 type admins struct {
@@ -134,4 +136,18 @@ func (s *admins) GetByUserID(ctx context.Context, userID string) (admin *model.A
 	err = s.db.Where("user_id = ?", userID).First(&admin).Error
 
 	return
+}
+
+func (s *admins) IsAdmin(ctx context.Context, userID string) (ret bool, err error) {
+	admin, err := s.GetByUserID(ctx, userID)
+	if err != nil {
+		return ret, err
+	}
+
+	roles := []model.Role{model.RoleRoot, model.RoleAdmin}
+	if !slices.Contains(roles, admin.Role) {
+		return
+	}
+
+	return true, nil
 }
