@@ -10,28 +10,26 @@ import (
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
+	"bingo/internal/bot/discord/client"
 	mw "bingo/internal/bot/discord/middleware"
 )
 
 type ServerController struct {
 	b biz.IBiz
-	s *discordgo.Session
-	i *discordgo.InteractionCreate
+	*client.Client
 }
 
 func New(ds store.IStore, s *discordgo.Session, i *discordgo.InteractionCreate) *ServerController {
-	return &ServerController{b: biz.NewBiz(ds), s: s, i: i}
+	return &ServerController{
+		b:      biz.NewBiz(ds),
+		Client: client.NewClient(s, i),
+	}
 }
 
 func (ctrl *ServerController) Pong() {
 	log.C(mw.Ctx).Infow("Pong function called")
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "pong",
-		},
-	})
+	ctrl.WriteResponse("pong")
 }
 
 func (ctrl *ServerController) Healthz() {
@@ -39,22 +37,12 @@ func (ctrl *ServerController) Healthz() {
 
 	status, err := ctrl.b.Servers().Status(mw.Ctx)
 	if err != nil {
-		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: err.Error(),
-			},
-		})
+		ctrl.WriteResponse(err.Error())
 
 		return
 	}
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: status,
-		},
-	})
+	ctrl.WriteResponse(status)
 }
 
 func (ctrl *ServerController) Version() {
@@ -62,12 +50,7 @@ func (ctrl *ServerController) Version() {
 
 	v := version.Get().GitVersion
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: v,
-		},
-	})
+	ctrl.WriteResponse(v)
 }
 
 func (ctrl *ServerController) ToggleMaintenance() {
@@ -75,77 +58,47 @@ func (ctrl *ServerController) ToggleMaintenance() {
 
 	err := ctrl.b.Servers().ToggleMaintenance(mw.Ctx)
 	if err != nil {
-		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "Operation failed:" + err.Error(),
-			},
-		})
+		ctrl.WriteResponse("Operation failed:" + err.Error())
 
 		return
 	}
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Operation success",
-		},
-	})
+	ctrl.WriteResponse("Operation success")
 }
 
 func (ctrl *ServerController) Subscribe() {
 	log.C(mw.Ctx).Infow("Subscribe function called")
 
-	user := ctrl.i.User
-	if ctrl.i.User == nil {
-		user = ctrl.i.Member.User
+	user := ctrl.I.User
+	if ctrl.I.User == nil {
+		user = ctrl.I.Member.User
 	}
 
 	req := v1.CreateChannelRequest{
 		Source:    string(bot.SourceDiscord),
-		ChannelID: ctrl.i.ChannelID,
+		ChannelID: ctrl.I.ChannelID,
 		Author:    convertor.ToString(user),
 	}
 
 	_, err := ctrl.b.Channels().Create(mw.Ctx, &req)
 	if err != nil {
-		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: err.Error(),
-			},
-		})
+		ctrl.WriteResponse(err.Error())
 
 		return
 	}
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Successfully subscribe, enjoy it!",
-		},
-	})
+	ctrl.WriteResponse("Successfully subscribe, enjoy it!")
 }
 
 func (ctrl *ServerController) UnSubscribe() {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
-	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, ctrl.i.ChannelID)
+	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, ctrl.I.ChannelID)
 	if err != nil {
-		_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: err.Error(),
-			},
-		})
+		ctrl.WriteResponse(err.Error())
 
 		return
 	}
 
-	_ = ctrl.s.InteractionRespond(ctrl.i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
-			Content: "Successfully unsubscribe, thanks for your support!",
-		},
-	})
+	ctrl.WriteResponse("Successfully unsubscribe, thanks for your support!")
 }
