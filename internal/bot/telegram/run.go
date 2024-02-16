@@ -1,6 +1,9 @@
 package telegram
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/bingo-project/component-base/log"
@@ -29,5 +32,13 @@ func Run() {
 
 	log.Infow("Telegram Bot started")
 
-	b.Start()
+	go b.Start()
+
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	b.Stop()
+
+	log.Infow("Telegram Bot stopped")
 }
