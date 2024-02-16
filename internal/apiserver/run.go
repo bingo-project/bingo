@@ -11,6 +11,8 @@ import (
 	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/job"
+	"bingo/internal/bot/discord"
+	"bingo/internal/bot/telegram"
 	"bingo/pkg/queue"
 )
 
@@ -34,8 +36,8 @@ func run() error {
 
 	// 启动 Bot 服务
 	if facade.Config.Bot.Enabled {
-		go RunBotTelegram()
-		go RunBotDiscord()
+		go telegram.Run()
+		go discord.Run()
 	}
 
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。

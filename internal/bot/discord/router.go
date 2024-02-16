@@ -1,14 +1,14 @@
-package router
+package discord
 
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/apiserver/bot/discord/controller/v1/server"
-	"bingo/internal/apiserver/bot/discord/middleware"
 	"bingo/internal/apiserver/store"
+	"bingo/internal/bot/discord/controller/v1/server"
+	"bingo/internal/bot/discord/middleware"
 )
 
-func RegisterBotDiscordRouters(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	middleware.Context(s, i)
 
 	serverController := server.New(store.S)

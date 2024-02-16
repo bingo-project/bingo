@@ -1,14 +1,14 @@
-package router
+package telegram
 
 import (
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/apiserver/bot/telegram/controller/v1/server"
-	"bingo/internal/apiserver/bot/telegram/middleware"
 	"bingo/internal/apiserver/store"
+	"bingo/internal/bot/telegram/controller/v1/server"
+	"bingo/internal/bot/telegram/middleware"
 )
 
-func RegisterBotRouters(b *telebot.Bot) {
+func RegisterRouters(b *telebot.Bot) {
 	serverController := server.New(store.S)
 
 	// Server

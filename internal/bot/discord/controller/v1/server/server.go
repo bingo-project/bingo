@@ -1,18 +1,16 @@
 package server
 
 import (
-	"context"
-
 	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
 	"github.com/bwmarrin/discordgo"
 	"github.com/duke-git/lancet/v2/convertor"
 
 	"bingo/internal/apiserver/biz"
-	mw "bingo/internal/apiserver/bot/discord/middleware"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
+	mw "bingo/internal/bot/discord/middleware"
 )
 
 type ServerController struct {
@@ -73,7 +71,7 @@ func (ctrl *ServerController) Version(s *discordgo.Session, i *discordgo.Interac
 func (ctrl *ServerController) ToggleMaintenance(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
-	err := ctrl.b.Servers().ToggleMaintenance(context.Background())
+	err := ctrl.b.Servers().ToggleMaintenance(mw.Ctx)
 	if err != nil {
 		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
@@ -130,7 +128,7 @@ func (ctrl *ServerController) Subscribe(s *discordgo.Session, i *discordgo.Inter
 func (ctrl *ServerController) UnSubscribe(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
-	err := ctrl.b.Channels().DeleteChannel(context.Background(), i.ChannelID)
+	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, i.ChannelID)
 	if err != nil {
 		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
