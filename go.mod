@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/bingo-project/bingoctl v1.3.2
-	github.com/bingo-project/component-base v0.3.6
+	github.com/bingo-project/component-base v0.3.7
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.79.0
@@ -36,6 +36,7 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.2
 	github.com/ulule/limiter/v3 v3.11.2
+	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.18.0
 	golang.org/x/time v0.5.0
 	google.golang.org/grpc v1.59.0
@@ -128,7 +129,6 @@ require (
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/arch v0.6.0 // indirect
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
 	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect

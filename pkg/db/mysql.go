@@ -6,7 +6,8 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+
+	"bingo/internal/pkg/logger"
 )
 
 // MySQLOptions defines options for mysql database.
@@ -35,12 +36,8 @@ func (o *MySQLOptions) DSN() string {
 
 // NewMySQL create a new gorm db instance with the given options.
 func NewMySQL(opts *MySQLOptions) (*gorm.DB, error) {
-	logLevel := logger.Silent
-	if opts.LogLevel != 0 {
-		logLevel = logger.LogLevel(opts.LogLevel)
-	}
 	db, err := gorm.Open(mysql.Open(opts.DSN()), &gorm.Config{
-		Logger:                                   logger.Default.LogMode(logLevel),
+		Logger:                                   logger.New(opts.LogLevel),
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
