@@ -27,16 +27,14 @@ func NewHttp() *httpAPIServer {
 }
 
 func (s *httpAPIServer) Run() {
-	go func() {
-		// Initializing the server in a goroutine so that
-		// it won't block the graceful shutdown handling below
-		log.Infow("Start http server on " + s.insecureAddress)
+	// Initializing the server in a goroutine so that
+	// it won't block the graceful shutdown handling below
+	log.Infow("Start http server on " + s.insecureAddress)
 
+	go func() {
 		if err := s.insecureServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalw("Failed to listen: " + err.Error())
 		}
-
-		log.Infow(fmt.Sprintf("HTTP server on %s stopped", s.insecureAddress))
 	}()
 }
 
@@ -51,4 +49,6 @@ func (s *httpAPIServer) Close() {
 	if err := s.insecureServer.Shutdown(ctx); err != nil {
 		log.Fatalw("Shutdown insecure server failed: " + err.Error())
 	}
+
+	log.Infow(fmt.Sprintf("HTTP server on %s stopped", s.insecureAddress))
 }

@@ -1,27 +1,31 @@
 package discord
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/discordgo"
 
 	"bingo/internal/apiserver/facade"
 )
 
-func Run() {
+type DiscordServer struct {
+	*discordgo.Session
+}
+
+func NewDiscord() *DiscordServer {
 	dg, err := discordgo.New("Bot " + facade.Config.Bot.Discord)
 	if err != nil {
 		log.Errorw("Error creating Discord session: " + err.Error())
 
-		return
+		return nil
 	}
 
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	return &DiscordServer{dg}
+}
 
-	err = dg.Open()
+func (s *DiscordServer) Run() {
+	s.Identify.Intents = discordgo.IntentsGuildMessages
+
+	err := s.Open()
 	if err != nil {
 		log.Errorw("Error opening Discord session: " + err.Error())
 
@@ -31,16 +35,14 @@ func Run() {
 	log.Infow("Discord Bot started")
 
 	// Register commands
-	RegisterCommands(dg)
+	RegisterCommands(s.Session)
 
 	// Register command handlers
-	dg.AddHandler(RegisterCommandHandlers)
+	s.AddHandler(RegisterCommandHandlers)
+}
 
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
-
-	_ = dg.Close()
+func (s *DiscordServer) Close() {
+	_ = s.Session.Close()
 
 	log.Infow("Discord Bot stopped")
 }

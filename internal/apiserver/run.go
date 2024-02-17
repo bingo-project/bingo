@@ -11,8 +11,6 @@ import (
 	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/job"
-	"bingo/internal/bot/discord"
-	"bingo/internal/bot/telegram"
 	"bingo/pkg/queue"
 )
 
@@ -23,9 +21,6 @@ import (
 func run() error {
 	bootstrap.Boot()
 
-	// 启动 queue worker.
-	go runJobs()
-
 	// 启动 http 服务
 	httpServer := NewHttp()
 	httpServer.Run()
@@ -34,11 +29,8 @@ func run() error {
 	grpcServer := NewGRPC()
 	grpcServer.Run()
 
-	// 启动 Bot 服务
-	if facade.Config.Bot.Enabled {
-		go telegram.Run()
-		go discord.Run()
-	}
+	// 启动 queue worker.
+	go runJobs()
 
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。
 	quit := make(chan os.Signal, 1)

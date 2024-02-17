@@ -37,9 +37,9 @@ func (s *grpcAPIServer) Run() {
 		log.Fatalw("Failed to listen: " + err.Error())
 	}
 
-	go func() {
-		log.Infow("Start grpc server at " + s.address)
+	log.Infow("Start grpc server at " + s.address)
 
+	go func() {
 		if err := s.Serve(listen); err != nil {
 			log.Fatalw("Failed to start grpc server: " + err.Error())
 		}

@@ -1,9 +1,6 @@
 package telegram
 
 import (
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/bingo-project/component-base/log"
@@ -13,7 +10,11 @@ import (
 	"bingo/internal/bot/telegram/middleware"
 )
 
-func Run() {
+type TelegramServer struct {
+	*telebot.Bot
+}
+
+func NewTelegram() *TelegramServer {
 	pref := telebot.Settings{
 		Token:  facade.Config.Bot.Telegram,
 		Poller: &telebot.LongPoller{Timeout: 10 * time.Second},
@@ -24,20 +25,23 @@ func Run() {
 		log.Fatalw("Failed to start bot: " + err.Error())
 	}
 
+	return &TelegramServer{b}
+}
+
+func (b *TelegramServer) Run() {
+
 	// Global middleware
 	b.Use(middleware.Context)
 	b.Use(middleware.Recover)
 
-	RegisterRouters(b)
+	RegisterRouters(b.Bot)
 
 	log.Infow("Telegram Bot started")
 
 	go b.Start()
+}
 
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
-	<-sc
-
+func (b *TelegramServer) Close() {
 	b.Stop()
 
 	log.Infow("Telegram Bot stopped")
