@@ -4,7 +4,7 @@ import (
 	cmdutil "github.com/bingo-project/component-base/cli/util"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/database/seeder"
+	"bingo/internal/bingoctl/database/seeder"
 )
 
 const (

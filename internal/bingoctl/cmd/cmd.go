@@ -10,12 +10,12 @@ import (
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/bootstrap"
-	"bingo/internal/apiserver/database/migration"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/bingoctl/cmd/version"
+	"bingo/internal/bingoctl/database/migration"
 )
 
 func NewDefaultBingoCtlCommand() *cobra.Command {
