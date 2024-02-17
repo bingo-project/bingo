@@ -7,9 +7,11 @@ import (
 	"github.com/bingo-project/bingoctl/pkg/cmd/migrate"
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/bootstrap"
+	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
@@ -47,7 +49,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Database Commands:",
 			Commands: []*cobra.Command{
 				db.NewCmdDb(),
-				migrate.NewCmdMigrate(store.S.DB()),
+				migrate.NewCmdMigrate(store.S.DB(), facade.Config.Server.Mode == gin.ReleaseMode),
 			},
 		},
 		{
