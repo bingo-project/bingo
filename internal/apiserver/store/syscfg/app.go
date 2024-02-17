@@ -64,49 +64,51 @@ func SearchApp(req *v1.ListAppRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *apps) List(ctx context.Context, req *v1.ListAppRequest) (count int64, ret []*model.App, err error) {
-	db := s.db.Scopes(SearchApp(req))
+	db := s.db.WithContext(ctx).Scopes(SearchApp(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *apps) Create(ctx context.Context, app *model.App) error {
-	return s.db.Create(&app).Error
+	return s.db.WithContext(ctx).Create(&app).Error
 }
 
 func (s *apps) Get(ctx context.Context, ID uint) (app *model.App, err error) {
-	err = s.db.Where("id = ?", ID).First(&app).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&app).Error
 
 	return
 }
 
 func (s *apps) Update(ctx context.Context, app *model.App, fields ...string) error {
-	return s.db.Select(fields).Save(&app).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&app).Error
 }
 
 func (s *apps) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.App{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.App{}).Error
 }
 
 func (s *apps) CreateInBatch(ctx context.Context, apps []*model.App) error {
-	return s.db.CreateInBatches(&apps, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&apps, global.CreateBatchSize).Error
 }
 
 func (s *apps) CreateIfNotExist(ctx context.Context, app *model.App) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&app).
 		Error
 }
 
 func (s *apps) FirstOrCreate(ctx context.Context, where any, app *model.App) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&app).
 		FirstOrCreate(&app).
 		Error
 }
 
 func (s *apps) UpdateOrCreate(ctx context.Context, where any, app *model.App) error {
-	return s.db.Transaction(func(tx *gorm.DB) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.App
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
@@ -129,13 +131,15 @@ func (s *apps) Upsert(ctx context.Context, app *model.App, fields ...string) err
 		do.DoUpdates = clause.AssignmentColumns(fields)
 	}
 
-	return s.db.Clauses(do).
+	return s.db.WithContext(ctx).
+		Clauses(do).
 		Create(&app).
 		Error
 }
 
 func (s *apps) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.db.Where("id IN (?)", ids).
+	return s.db.WithContext(ctx).
+		Where("id IN (?)", ids).
 		Delete(&model.App{}).
 		Error
 }

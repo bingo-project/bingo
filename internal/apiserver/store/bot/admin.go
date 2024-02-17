@@ -56,42 +56,44 @@ func SearchAdmin(req *v1.ListAdminRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.Admin, err error) {
-	db := s.db.Scopes(SearchAdmin(req))
+	db := s.db.WithContext(ctx).Scopes(SearchAdmin(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *admins) Create(ctx context.Context, admin *model.Admin) error {
-	return s.db.Create(&admin).Error
+	return s.db.WithContext(ctx).Create(&admin).Error
 }
 
 func (s *admins) Get(ctx context.Context, ID uint) (admin *model.Admin, err error) {
-	err = s.db.Where("id = ?", ID).First(&admin).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&admin).Error
 
 	return
 }
 
 func (s *admins) Update(ctx context.Context, admin *model.Admin, fields ...string) error {
-	return s.db.Select(fields).Save(&admin).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&admin).Error
 }
 
 func (s *admins) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.Admin{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.Admin{}).Error
 }
 
 func (s *admins) CreateInBatch(ctx context.Context, admins []*model.Admin) error {
-	return s.db.CreateInBatches(&admins, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&admins, global.CreateBatchSize).Error
 }
 
 func (s *admins) CreateIfNotExist(ctx context.Context, admin *model.Admin) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&admin).
 		Error
 }
 
 func (s *admins) FirstOrCreate(ctx context.Context, where any, admin *model.Admin) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&admin).
 		FirstOrCreate(&admin).
 		Error
@@ -100,7 +102,8 @@ func (s *admins) FirstOrCreate(ctx context.Context, where any, admin *model.Admi
 func (s *admins) UpdateOrCreate(ctx context.Context, where any, admin *model.Admin) error {
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		var exist model.Admin
-		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+		err := tx.WithContext(ctx).
+			Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
 			First(&exist).
 			Error
@@ -121,19 +124,21 @@ func (s *admins) Upsert(ctx context.Context, admin *model.Admin, fields ...strin
 		do.DoUpdates = clause.AssignmentColumns(fields)
 	}
 
-	return s.db.Clauses(do).
+	return s.db.WithContext(ctx).
+		Clauses(do).
 		Create(&admin).
 		Error
 }
 
 func (s *admins) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.db.Where("id IN (?)", ids).
+	return s.db.WithContext(ctx).
+		Where("id IN (?)", ids).
 		Delete(&model.Admin{}).
 		Error
 }
 
 func (s *admins) GetByUserID(ctx context.Context, userID string) (admin *model.Admin, err error) {
-	err = s.db.Where("user_id = ?", userID).First(&admin).Error
+	err = s.db.WithContext(ctx).Where("user_id = ?", userID).First(&admin).Error
 
 	return
 }

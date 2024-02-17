@@ -61,49 +61,51 @@ func SearchConfig(req *v1.ListConfigRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *configs) List(ctx context.Context, req *v1.ListConfigRequest) (count int64, ret []*model.Config, err error) {
-	db := s.db.Scopes(SearchConfig(req))
+	db := s.db.WithContext(ctx).Scopes(SearchConfig(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *configs) Create(ctx context.Context, config *model.Config) error {
-	return s.db.Create(&config).Error
+	return s.db.WithContext(ctx).Create(&config).Error
 }
 
 func (s *configs) Get(ctx context.Context, ID uint) (config *model.Config, err error) {
-	err = s.db.Where("id = ?", ID).First(&config).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&config).Error
 
 	return
 }
 
 func (s *configs) Update(ctx context.Context, config *model.Config, fields ...string) error {
-	return s.db.Select(fields).Save(&config).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&config).Error
 }
 
 func (s *configs) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.Config{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.Config{}).Error
 }
 
 func (s *configs) CreateInBatch(ctx context.Context, configs []*model.Config) error {
-	return s.db.CreateInBatches(&configs, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&configs, global.CreateBatchSize).Error
 }
 
 func (s *configs) CreateIfNotExist(ctx context.Context, config *model.Config) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&config).
 		Error
 }
 
 func (s *configs) FirstOrCreate(ctx context.Context, where any, config *model.Config) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&config).
 		FirstOrCreate(&config).
 		Error
 }
 
 func (s *configs) UpdateOrCreate(ctx context.Context, where any, config *model.Config) error {
-	return s.db.Transaction(func(tx *gorm.DB) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.Config
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
@@ -126,13 +128,15 @@ func (s *configs) Upsert(ctx context.Context, config *model.Config, fields ...st
 		do.DoUpdates = clause.AssignmentColumns(fields)
 	}
 
-	return s.db.Clauses(do).
+	return s.db.WithContext(ctx).
+		Clauses(do).
 		Create(&config).
 		Error
 }
 
 func (s *configs) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.db.Where("id IN (?)", ids).
+	return s.db.WithContext(ctx).
+		Where("id IN (?)", ids).
 		Delete(&model.Config{}).
 		Error
 }
@@ -168,7 +172,8 @@ func (s *configs) GetServerConfig(ctx context.Context) (*model.ServerConfig, err
 }
 
 func (s *configs) UpdateServerConfig(ctx context.Context, data *model.ServerConfig) error {
-	return s.db.Model(&model.Config{}).
+	return s.db.WithContext(ctx).
+		Model(&model.Config{}).
 		Where(&model.Config{Key: model.CfgKeyServer}).
 		Update("value", convertor.ToString(data)).
 		Error

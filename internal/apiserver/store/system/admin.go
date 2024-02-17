@@ -60,7 +60,8 @@ func SearchAdmin(req *v1.ListAdminRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int64, ret []*model.AdminM, err error) {
-	db := u.db.Preload("Role").
+	db := u.db.WithContext(ctx).
+		Preload("Role").
 		Preload("Roles").
 		Scopes(SearchAdmin(req))
 
@@ -70,17 +71,17 @@ func (u *admins) List(ctx context.Context, req *v1.ListAdminRequest) (count int6
 }
 
 func (u *admins) Create(ctx context.Context, admin *model.AdminM) error {
-	return u.db.Create(&admin).Error
+	return u.db.WithContext(ctx).Create(&admin).Error
 }
 
 func (u *admins) Get(ctx context.Context, username string) (admin *model.AdminM, err error) {
-	err = u.db.Where("username = ?", username).First(&admin).Error
+	err = u.db.WithContext(ctx).Where("username = ?", username).First(&admin).Error
 
 	return
 }
 
 func (u *admins) Update(ctx context.Context, admin *model.AdminM) error {
-	err := u.db.Model(&admin).Association("Roles").Replace(admin.Roles)
+	err := u.db.WithContext(ctx).Model(&admin).Association("Roles").Replace(admin.Roles)
 	if err != nil {
 		return err
 	}
@@ -89,7 +90,7 @@ func (u *admins) Update(ctx context.Context, admin *model.AdminM) error {
 }
 
 func (u *admins) Delete(ctx context.Context, username string) error {
-	err := u.db.Where("username = ?", username).Delete(&model.AdminM{}).Error
+	err := u.db.WithContext(ctx).Where("username = ?", username).Delete(&model.AdminM{}).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -117,39 +118,40 @@ func (u *admins) InitData(ctx context.Context) error {
 		return errors.New("admin:" + admin.Username + " already exist")
 	}
 
-	return u.db.Create(&admin).Error
+	return u.db.WithContext(ctx).Create(&admin).Error
 }
 
 func (u *admins) CheckExist(ctx context.Context, admin *model.AdminM) (exist bool, err error) {
 	var id uint
 
 	if admin.Username != "" {
-		u.db.Model(&admin).Where("username = ?", admin.Username).Select("id").First(&id)
+		u.db.WithContext(ctx).Model(&admin).Where("username = ?", admin.Username).Select("id").First(&id)
 		if id > 0 {
 			return true, nil
 		}
 	}
 
 	if admin.Email != nil {
-		u.db.Model(&admin).Where("email = ?", admin.Email).Select("id").First(&id)
+		u.db.WithContext(ctx).Model(&admin).Where("email = ?", admin.Email).Select("id").First(&id)
 		if id > 0 {
 			return true, nil
 		}
 	}
 
-	u.db.Model(&admin).Where("phone = ?", admin.Phone).Select("id").First(&id)
+	u.db.WithContext(ctx).Model(&admin).Where("phone = ?", admin.Phone).Select("id").First(&id)
 
 	return id > 0, nil
 }
 
 func (u *admins) HasRole(ctx context.Context, admin *model.AdminM, roleName string) bool {
-	count := u.db.Model(&admin).Where("role_name = ?", roleName).Association("Roles").Count()
+	count := u.db.WithContext(ctx).Model(&admin).Where("role_name = ?", roleName).Association("Roles").Count()
 
 	return count > 0
 }
 
 func (u *admins) GetUserInfo(ctx context.Context, username string) (admin *model.AdminM, err error) {
-	err = u.db.Preload("Role").
+	err = u.db.WithContext(ctx).
+		Preload("Role").
 		Preload("Roles").
 		Where("username = ?", username).
 		First(&admin).

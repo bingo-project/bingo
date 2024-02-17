@@ -58,49 +58,50 @@ func SearchApi(req *v1.ListApiRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *apis) List(ctx context.Context, req *v1.ListApiRequest) (count int64, ret []*model.ApiM, err error) {
-	db := s.db.Scopes(SearchApi(req))
+	db := s.db.WithContext(ctx).Scopes(SearchApi(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *apis) Create(ctx context.Context, api *model.ApiM) error {
-	return s.db.Create(&api).Error
+	return s.db.WithContext(ctx).Create(&api).Error
 }
 
 func (s *apis) Get(ctx context.Context, ID uint) (api *model.ApiM, err error) {
-	err = s.db.Where("id = ?", ID).First(&api).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&api).Error
 
 	return
 }
 
 func (s *apis) Update(ctx context.Context, api *model.ApiM, fields ...string) error {
-	return s.db.Select(fields).Save(&api).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&api).Error
 }
 
 func (s *apis) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.ApiM{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.ApiM{}).Error
 }
 
 func (s *apis) CreateInBatch(ctx context.Context, apis []*model.ApiM) error {
-	return s.db.CreateInBatches(&apis, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&apis, global.CreateBatchSize).Error
 }
 
 func (s *apis) CreateIfNotExist(ctx context.Context, api *model.ApiM) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&api).
 		Error
 }
 
 func (s *apis) FirstOrCreate(ctx context.Context, where any, api *model.ApiM) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&api).
 		FirstOrCreate(&api).
 		Error
 }
 
 func (s *apis) UpdateOrCreate(ctx context.Context, where any, api *model.ApiM) error {
-	return s.db.Transaction(func(tx *gorm.DB) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.ApiM
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
@@ -123,25 +124,27 @@ func (s *apis) Upsert(ctx context.Context, api *model.ApiM, fields ...string) er
 		do.DoUpdates = clause.AssignmentColumns(fields)
 	}
 
-	return s.db.Clauses(do).
+	return s.db.WithContext(ctx).
+		Clauses(do).
 		Create(&api).
 		Error
 }
 
 func (s *apis) All(ctx context.Context) (ret []*model.ApiM, err error) {
-	err = s.db.Find(&ret).Error
+	err = s.db.WithContext(ctx).Find(&ret).Error
 
 	return
 }
 
 func (s *apis) GetByIDs(ctx context.Context, IDs []uint) (ret []*model.ApiM, err error) {
-	err = s.db.Where("id IN ?", IDs).Find(&ret).Error
+	err = s.db.WithContext(ctx).Where("id IN ?", IDs).Find(&ret).Error
 
 	return
 }
 
 func (s *apis) GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) (ret []uint, err error) {
-	err = s.db.Model(&model.ApiM{}).
+	err = s.db.WithContext(ctx).
+		Model(&model.ApiM{}).
 		Select("id").
 		Where("(path, method) IN ?", pathAndMethod).
 		Find(&ret).

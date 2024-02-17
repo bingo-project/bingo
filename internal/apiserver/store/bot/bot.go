@@ -61,42 +61,44 @@ func SearchBot(req *v1.ListBotRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *bots) List(ctx context.Context, req *v1.ListBotRequest) (count int64, ret []*model.Bot, err error) {
-	db := s.db.Scopes(SearchBot(req))
+	db := s.db.WithContext(ctx).Scopes(SearchBot(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *bots) Create(ctx context.Context, bot *model.Bot) error {
-	return s.db.Create(&bot).Error
+	return s.db.WithContext(ctx).Create(&bot).Error
 }
 
 func (s *bots) Get(ctx context.Context, ID uint) (bot *model.Bot, err error) {
-	err = s.db.Where("id = ?", ID).First(&bot).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&bot).Error
 
 	return
 }
 
 func (s *bots) Update(ctx context.Context, bot *model.Bot, fields ...string) error {
-	return s.db.Select(fields).Save(&bot).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&bot).Error
 }
 
 func (s *bots) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.Bot{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.Bot{}).Error
 }
 
 func (s *bots) CreateInBatch(ctx context.Context, bots []*model.Bot) error {
-	return s.db.CreateInBatches(&bots, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&bots, global.CreateBatchSize).Error
 }
 
 func (s *bots) CreateIfNotExist(ctx context.Context, bot *model.Bot) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&bot).
 		Error
 }
 
 func (s *bots) FirstOrCreate(ctx context.Context, where any, bot *model.Bot) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&bot).
 		FirstOrCreate(&bot).
 		Error
@@ -105,7 +107,8 @@ func (s *bots) FirstOrCreate(ctx context.Context, where any, bot *model.Bot) err
 func (s *bots) UpdateOrCreate(ctx context.Context, where any, bot *model.Bot) error {
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		var exist model.Bot
-		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
+		err := tx.WithContext(ctx).
+			Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
 			First(&exist).
 			Error
@@ -132,7 +135,8 @@ func (s *bots) Upsert(ctx context.Context, bot *model.Bot, fields ...string) err
 }
 
 func (s *bots) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.db.Where("id IN (?)", ids).
+	return s.db.WithContext(ctx).
+		Where("id IN (?)", ids).
 		Delete(&model.Bot{}).
 		Error
 }

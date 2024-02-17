@@ -44,8 +44,9 @@ func SearchRole(req *v1.ListRoleRequest) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (u *roles) List(ctx context.Context, req *v1.ListRoleRequest) (count int64, ret []*model.RoleM, err error) {
-	db := u.db.Scopes(SearchRole(req)).
+func (s *roles) List(ctx context.Context, req *v1.ListRoleRequest) (count int64, ret []*model.RoleM, err error) {
+	db := s.db.WithContext(ctx).
+		Scopes(SearchRole(req)).
 		Where("name != ?", global.RoleRoot)
 
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
@@ -53,38 +54,38 @@ func (u *roles) List(ctx context.Context, req *v1.ListRoleRequest) (count int64,
 	return
 }
 
-func (u *roles) Create(ctx context.Context, role *model.RoleM) error {
-	return u.db.Create(&role).Error
+func (s *roles) Create(ctx context.Context, role *model.RoleM) error {
+	return s.db.WithContext(ctx).Create(&role).Error
 }
 
-func (u *roles) Get(ctx context.Context, roleName string) (role *model.RoleM, err error) {
-	err = u.db.Where("name = ?", roleName).First(&role).Error
+func (s *roles) Get(ctx context.Context, roleName string) (role *model.RoleM, err error) {
+	err = s.db.WithContext(ctx).Where("name = ?", roleName).First(&role).Error
 
 	return
 }
 
-func (u *roles) Update(ctx context.Context, role *model.RoleM, fields ...string) error {
-	err := u.db.Model(&role).Association("Menus").Replace(role.Menus)
+func (s *roles) Update(ctx context.Context, role *model.RoleM, fields ...string) error {
+	err := s.db.WithContext(ctx).Model(&role).Association("Menus").Replace(role.Menus)
 	if err != nil {
 		return err
 	}
 
-	return u.db.Select(fields).Save(&role).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&role).Error
 }
 
-func (u *roles) Delete(ctx context.Context, roleName string) error {
-	return u.db.Where("name = ?", roleName).Delete(&model.RoleM{}).Error
+func (s *roles) Delete(ctx context.Context, roleName string) error {
+	return s.db.WithContext(ctx).Where("name = ?", roleName).Delete(&model.RoleM{}).Error
 }
 
-func (u *roles) GetByNames(ctx context.Context, names []string) (ret []model.RoleM, err error) {
-	err = u.db.Where("name IN ?", names).Find(&ret).Error
+func (s *roles) GetByNames(ctx context.Context, names []string) (ret []model.RoleM, err error) {
+	err = s.db.WithContext(ctx).Where("name IN ?", names).Find(&ret).Error
 
 	return
 }
 
-func (u *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error) {
-	err = u.db.Preload("Menus",
-		func(db *gorm.DB) *gorm.DB {
+func (s *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.RoleM, err error) {
+	err = s.db.WithContext(ctx).
+		Preload("Menus", func(db *gorm.DB) *gorm.DB {
 			return db.Order("sort asc")
 		}).
 		Where("name = ?", roleName).
@@ -94,8 +95,8 @@ func (u *roles) GetWithMenus(ctx context.Context, roleName string) (role *model.
 	return
 }
 
-func (u *roles) All(ctx context.Context) (ret []*model.RoleM, err error) {
-	err = u.db.Find(&ret).Error
+func (s *roles) All(ctx context.Context) (ret []*model.RoleM, err error) {
+	err = s.db.WithContext(ctx).Find(&ret).Error
 
 	return
 }

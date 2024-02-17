@@ -57,49 +57,51 @@ func SearchChannel(req *v1.ListChannelRequest) func(db *gorm.DB) *gorm.DB {
 }
 
 func (s *channels) List(ctx context.Context, req *v1.ListChannelRequest) (count int64, ret []*model.Channel, err error) {
-	db := s.db.Scopes(SearchChannel(req))
+	db := s.db.WithContext(ctx).Scopes(SearchChannel(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *channels) Create(ctx context.Context, channel *model.Channel) error {
-	return s.db.Create(&channel).Error
+	return s.db.WithContext(ctx).Create(&channel).Error
 }
 
 func (s *channels) Get(ctx context.Context, ID uint) (channel *model.Channel, err error) {
-	err = s.db.Where("id = ?", ID).First(&channel).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&channel).Error
 
 	return
 }
 
 func (s *channels) Update(ctx context.Context, channel *model.Channel, fields ...string) error {
-	return s.db.Select(fields).Save(&channel).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&channel).Error
 }
 
 func (s *channels) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.Channel{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.Channel{}).Error
 }
 
 func (s *channels) CreateInBatch(ctx context.Context, channels []*model.Channel) error {
-	return s.db.CreateInBatches(&channels, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&channels, global.CreateBatchSize).Error
 }
 
 func (s *channels) CreateIfNotExist(ctx context.Context, channel *model.Channel) error {
-	return s.db.Clauses(clause.OnConflict{DoNothing: true}).
+	return s.db.WithContext(ctx).
+		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&channel).
 		Error
 }
 
 func (s *channels) FirstOrCreate(ctx context.Context, where any, channel *model.Channel) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&channel).
 		FirstOrCreate(&channel).
 		Error
 }
 
 func (s *channels) UpdateOrCreate(ctx context.Context, where any, channel *model.Channel) error {
-	return s.db.Transaction(func(tx *gorm.DB) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.Channel
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
@@ -122,17 +124,19 @@ func (s *channels) Upsert(ctx context.Context, channel *model.Channel, fields ..
 		do.DoUpdates = clause.AssignmentColumns(fields)
 	}
 
-	return s.db.Clauses(do).
+	return s.db.WithContext(ctx).
+		Clauses(do).
 		Create(&channel).
 		Error
 }
 
 func (s *channels) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.db.Where("id IN (?)", ids).
+	return s.db.WithContext(ctx).
+		Where("id IN (?)", ids).
 		Delete(&model.Channel{}).
 		Error
 }
 
 func (s *channels) DeleteChannel(ctx context.Context, channelID string) error {
-	return s.db.Where("channel_id = ?", channelID).Delete(&model.Channel{}).Error
+	return s.db.WithContext(ctx).Where("channel_id = ?", channelID).Delete(&model.Channel{}).Error
 }

@@ -44,42 +44,43 @@ func NewMenus(db *gorm.DB) *menus {
 }
 
 func (s *menus) List(ctx context.Context, req *v1.ListMenuRequest) (count int64, ret []*model.MenuM, err error) {
-	count, err = gormutil.Paginate(s.db, &req.ListOptions, &ret)
+	count, err = gormutil.Paginate(s.db.WithContext(ctx), &req.ListOptions, &ret)
 
 	return
 }
 
 func (s *menus) Create(ctx context.Context, menu *model.MenuM) error {
-	return s.db.Create(&menu).Error
+	return s.db.WithContext(ctx).Create(&menu).Error
 }
 
 func (s *menus) Get(ctx context.Context, ID uint) (menu *model.MenuM, err error) {
-	err = s.db.Where("id = ?", ID).First(&menu).Error
+	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&menu).Error
 
 	return
 }
 
 func (s *menus) Update(ctx context.Context, menu *model.MenuM, fields ...string) error {
-	return s.db.Select(fields).Save(&menu).Error
+	return s.db.WithContext(ctx).Select(fields).Save(&menu).Error
 }
 
 func (s *menus) Delete(ctx context.Context, ID uint) error {
-	return s.db.Where("id = ?", ID).Delete(&model.MenuM{}).Error
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.MenuM{}).Error
 }
 
 func (s *menus) CreateInBatch(ctx context.Context, menus []*model.MenuM) error {
-	return s.db.CreateInBatches(&menus, global.CreateBatchSize).Error
+	return s.db.WithContext(ctx).CreateInBatches(&menus, global.CreateBatchSize).Error
 }
 
 func (s *menus) FirstOrCreate(ctx context.Context, where any, menu *model.MenuM) error {
-	return s.db.Where(where).
+	return s.db.WithContext(ctx).
+		Where(where).
 		Attrs(&menu).
 		FirstOrCreate(&menu).
 		Error
 }
 
 func (s *menus) UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM) error {
-	return s.db.Transaction(func(tx *gorm.DB) error {
+	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.MenuM
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
@@ -96,13 +97,14 @@ func (s *menus) UpdateOrCreate(ctx context.Context, where any, menu *model.MenuM
 }
 
 func (s *menus) All(ctx context.Context) (ret []*model.MenuM, err error) {
-	err = s.db.Order("sort asc").Find(&ret).Error
+	err = s.db.WithContext(ctx).Order("sort asc").Find(&ret).Error
 
 	return
 }
 
 func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []*model.MenuM, err error) {
-	err = s.db.Where("id IN ?", ids).
+	err = s.db.WithContext(ctx).
+		Where("id IN ?", ids).
 		Order("sort asc").
 		Find(&ret).
 		Error
@@ -111,7 +113,7 @@ func (s *menus) GetByIDs(ctx context.Context, ids []uint) (ret []*model.MenuM, e
 }
 
 func (s *menus) GetByParentID(ctx context.Context, parentID uint) (ret []*model.MenuM, err error) {
-	err = s.db.Where(&model.MenuM{ParentID: parentID}).Find(&ret).Error
+	err = s.db.WithContext(ctx).Where(&model.MenuM{ParentID: parentID}).Find(&ret).Error
 
 	return
 }
