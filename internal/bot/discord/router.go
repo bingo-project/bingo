@@ -15,7 +15,6 @@ func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreat
 	serverController := server.New(store.S, s, i)
 
 	switch i.ApplicationCommandData().Name {
-
 	// Ping
 	case "ping":
 		serverController.Pong()
@@ -46,7 +45,6 @@ func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreat
 	}
 
 	switch i.ApplicationCommandData().Name {
-
 	// Maintenance
 	case "maintenance":
 		serverController.ToggleMaintenance()

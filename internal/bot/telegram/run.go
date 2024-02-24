@@ -29,7 +29,6 @@ func NewTelegram() *TelegramServer {
 }
 
 func (b *TelegramServer) Run() {
-
 	// Global middleware
 	b.Use(middleware.Context)
 	b.Use(middleware.Recover)
