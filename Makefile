@@ -4,7 +4,7 @@
 # ==============================================================================
 # 定义 Makefile all 伪目标，执行 `make` 时，会默认会执行 all 伪目标
 .PHONY: all
-all: tidy lint format protoc build
+all: lint format protoc build
 
 # ==============================================================================
 # Build options
@@ -64,7 +64,7 @@ deps: ## 安装依赖，例如：生成需要的代码、安装需要的工具�
 
 ## build: Build source code for host platform.
 .PHONY: build
-build:
+build: tidy
 	@$(MAKE) go.build
 
 ## --------------------------------------
