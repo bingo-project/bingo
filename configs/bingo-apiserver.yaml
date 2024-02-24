@@ -49,6 +49,8 @@ log:
   path: storage/log/apiserver.log # 日志文件位置
 
 feature:
+  metrics: true # 开启 metrics, router:  /metrics
+  profiling: true # 开启性能分析, 可以通过 <host>:<port>/debug/pprof/地址查看程序栈、线程等系统信息，默认值为 true
   apiDoc: true # 是否开启 swagger api docs
   queueDash: true # 是否开启队列监控面板
 

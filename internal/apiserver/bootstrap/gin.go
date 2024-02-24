@@ -1,7 +1,9 @@
 package bootstrap
 
 import (
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	ginprom "github.com/zsais/go-gin-prometheus"
 
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/http/middleware"
@@ -18,6 +20,17 @@ func InitGin() *gin.Engine {
 
 	// Register static file server
 	registerStaticFileServer(g)
+
+	// Metrics
+	if facade.Config.Feature.Metrics {
+		prometheus := ginprom.NewPrometheus("gin")
+		prometheus.Use(g)
+	}
+
+	// Profiling
+	if facade.Config.Feature.Profiling {
+		registerProfiling(g)
+	}
 
 	// Swagger
 	if facade.Config.Feature.ApiDoc {
@@ -69,4 +82,11 @@ func registerStaticFileServer(g *gin.Engine) {
 	// Authentication for secure file.
 	storage.Use(middleware.Authn())
 	storage.Static("log", "./storage/log")
+}
+
+func registerProfiling(g *gin.Engine) {
+	p := g.Group("system")
+	p.Use(middleware.Debug())
+
+	pprof.RouteRegister(p, "debug/pprof")
 }
