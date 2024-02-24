@@ -4,7 +4,7 @@ import (
 	"google.golang.org/grpc"
 
 	"bingo/internal/apiserver/grpc/controller/v1/apiserver"
-	v1 "bingo/internal/apiserver/grpc/proto/v1"
+	v1 "bingo/internal/apiserver/grpc/proto/v1/pb"
 	"bingo/internal/apiserver/store"
 )
 

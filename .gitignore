@@ -83,6 +83,9 @@ Temporary Items
 # Output files
 _output
 
+# Protobuf go files
+*.pb.go
+
 # Tools
 .air.toml
 .bingoctl.yaml

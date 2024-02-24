@@ -4,7 +4,7 @@
 # ==============================================================================
 # 定义 Makefile all 伪目标，执行 `make` 时，会默认会执行 all 伪目标
 .PHONY: all
-all: tidy lint format build
+all: tidy lint format protoc build
 
 # ==============================================================================
 # Build options

@@ -4,7 +4,7 @@ package v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "bingo/internal/apiserver/grpc/proto/v1";
+option go_package = "bingo/internal/apiserver/grpc/proto/v1/pb";
 
 service ApiServer {
   rpc Healthz (HealthzRequest) returns (HealthzReply) {}
