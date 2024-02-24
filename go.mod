@@ -20,6 +20,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.5.4
 	github.com/gookit/goutil v0.6.15
+	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/hibiken/asynq v0.24.1
 	github.com/hibiken/asynqmon v0.7.2
 	github.com/jasonsoft/go-short-id v0.0.0-20180410073244-6ed30cc4305d

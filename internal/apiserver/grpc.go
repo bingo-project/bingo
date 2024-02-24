@@ -5,10 +5,12 @@ import (
 	"net"
 
 	"github.com/bingo-project/component-base/log"
+	gm "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
 	"bingo/internal/apiserver/facade"
+	"bingo/internal/apiserver/grpc/interceptor"
 	"bingo/internal/apiserver/router"
 )
 
@@ -19,8 +21,11 @@ type grpcAPIServer struct {
 
 // NewGRPC create a grpcAPIServer instance.
 func NewGRPC() *grpcAPIServer {
+	// 注册拦截器 interceptor
+	opts := RegisterInterceptor()
+
 	// 创建 GRPC Server 实例
-	srv := grpc.NewServer()
+	srv := grpc.NewServer(opts...)
 
 	// 注册 GRPC 路由
 	router.GRPC(srv)
@@ -29,6 +34,17 @@ func NewGRPC() *grpcAPIServer {
 	reflection.Register(srv)
 
 	return &grpcAPIServer{srv, facade.Config.GRPC.Addr}
+}
+
+func RegisterInterceptor() (ret []grpc.ServerOption) {
+	return []grpc.ServerOption{
+		grpc.UnaryInterceptor(gm.ChainUnaryServer(
+			interceptor.RequestID, // TraceID
+			interceptor.ClientIP,  // Client IP
+			interceptor.Logger,    // Log
+			interceptor.Recovery,  // Panic recover
+		)),
+	}
 }
 
 func (s *grpcAPIServer) Run() {
