@@ -11,6 +11,7 @@ import (
 	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/job"
+	"bingo/internal/apiserver/ws"
 	"bingo/pkg/queue"
 )
 
@@ -28,6 +29,9 @@ func run() error {
 	// 启动 grpc 服务
 	grpcServer := NewGRPC()
 	grpcServer.Run()
+
+	// 启动 WebSocket 服务
+	ws.Run()
 
 	// 启动 queue worker.
 	go runJobs()
