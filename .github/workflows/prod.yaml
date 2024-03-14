@@ -73,7 +73,7 @@ jobs:
       - test
       - build
     runs-on: ubuntu-latest
-    environment: development
+    environment: production
     steps:
       - uses: actions/download-artifact@v4
         id: download-files
