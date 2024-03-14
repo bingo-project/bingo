@@ -42,6 +42,7 @@ install.mockgen:
 .PHONY: install.protoc-gen-go
 install.protoc-gen-go:
 	@$(GO) install github.com/golang/protobuf/protoc-gen-go@latest
+	@$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 .PHONY: install.swagger
 install.swagger:

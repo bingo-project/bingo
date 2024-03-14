@@ -10,10 +10,10 @@ tmp_dir = "_output/tmp"
 # cmd = "make build"
 cmd = "make swag && make protoc && make build"
 # Binary file yields from `cmd`.
-bin = "_output/platforms/darwin/arm64/bingo-apiserver"
+bin = "_output/bin/bingo-apiserver"
 
 # Customize binary, can setup environment variables when run your app.
-full_bin = "APP_ENV=dev APP_USER=air _output/platforms/darwin/arm64/bingo-apiserver"
+full_bin = "APP_ENV=dev APP_USER=air _output/bin/bingo-apiserver"
 # Watch these filename extensions.
 include_ext = ["go", "tpl", "tmpl", "html"]
 # Ignore these filename extensions or directories.
