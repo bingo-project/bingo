@@ -11,7 +11,7 @@ services:
     restart: always
     build:
       context: ../../
-      dockerfile: ./build/docker/bingo-apiserver/multistage.Dockerfile
+      dockerfile: bingo-apiserver/Dockerfile
     networks:
       - bingo
     ports:
