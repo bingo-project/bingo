@@ -1,0 +1,119 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Bingo
+
+on:
+  push:
+    branches:
+      - main
+      - feature/ci # test
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+
+      - name: Run Unit tests.
+        run: make cover
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: ./_output/coverage.out
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get the version
+        id: get_version
+        run: |
+          VERSION=$(git describe --tags --abbrev=0)
+          VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Build by Docker Compose
+        run: |
+          export APP_VERSION=${{ env.VERSION }}
+          cd build/docker
+          cp .env.example .env
+          docker-compose build
+
+      - name: Save Docker images
+        run: |
+          docker save bingo-apiserver:${{ env.VERSION }} | gzip > bingo-apiserver.tar.gz
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: bingo
+          path: |
+            build/docker
+            bingo-apiserver.tar.gz
+  
+
+  publish:
+    name: Deploy Development
+    needs:
+      - test
+      - build
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - uses: actions/download-artifact@v4
+        id: download-files
+        with:
+          name: bingo
+          path: ./
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Deploy
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_KEY }}
+          source: "./*"
+          target: "/tmp"
+
+      - name: Run
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_KEY }}
+          script: |
+            mkdir -p /opt/bingo
+            cd /opt/bingo
+            
+            rsync -a /tmp/build/docker/* ./
+            rsync -a /tmp/build/docker/.env.example ./
+            if [ ! -f .env ]; then
+              cp .env.example .env
+            fi
+            
+            docker load < /tmp/bingo-apiserver.tar.gz
+            docker-compose up -d
+            
+            rm -rf /tmp/build
+            # rm /tmp/bingo-apiserver.tar.gz
