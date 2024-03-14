@@ -46,7 +46,7 @@ jobs:
       - name: Get the version
         id: get_version
         run: |
-          VERSION=$(git describe --tags --abbrev=0)
+          VERSION=$(git describe --tags)
           VERSION=${VERSION#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
