@@ -34,6 +34,7 @@ func LoadConfig(cfg string, defaultName string, data interface{}, onChange func(
 		cobra.CheckErr(err)
 
 		// Add `$HOME/<RecommendedHomeDir>` & `.`
+		viper.AddConfigPath(filepath.Join("/etc", RecommendedName))
 		viper.AddConfigPath(filepath.Join(home, RecommendedHomeDir))
 		viper.AddConfigPath(".")
 
