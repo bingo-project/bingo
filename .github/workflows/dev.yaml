@@ -68,7 +68,6 @@ jobs:
           path: |
             build/docker
             bingo-apiserver.tar.gz
-  
 
   publish:
     name: Deploy Development
@@ -78,13 +77,26 @@ jobs:
     runs-on: ubuntu-latest
     environment: development
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get the version
+        id: get_version
+        run: |
+          VERSION=$(git describe --tags)
+          VERSION=${VERSION#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
       - uses: actions/download-artifact@v4
         id: download-files
         with:
           name: bingo
           path: ./
+
       - name: Display structure of downloaded files
-        run: ls -R
+        run: |
+          ls -l
 
       - name: Deploy
         uses: appleboy/scp-action@v0.1.7
@@ -114,8 +126,12 @@ jobs:
               cp config/bingo-apiserver.example.yaml config/bingo-apiserver.yaml
             fi
             
+            # Update app version by .env
+            sed -i 's/APP_VERSION=.*/APP_VERSION=${{ env.VERSION }}/g' .env
+            
             docker load < /tmp/bingo-apiserver.tar.gz
             docker-compose up -d
             
             rm -rf /tmp/build
-            # rm /tmp/bingo-apiserver.tar.gz
+            rm /tmp/bingo-apiserver.tar.gz
+            rm config/bingo-apiserver.example.yaml
