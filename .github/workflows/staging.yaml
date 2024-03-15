@@ -70,12 +70,12 @@ jobs:
             bingo-apiserver.tar.gz
 
   publish:
-    name: Deploy Development
+    name: Deploy Staging
     needs:
       - test
       - build
     runs-on: ubuntu-latest
-    environment: development
+    environment: staging
     steps:
       - uses: actions/checkout@v4
         with:
