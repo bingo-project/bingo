@@ -49,8 +49,7 @@ deploy_staging:
     - build
   script:
     - echo "Start deploying staging..."
-    - export CI_DEBUG_TRACE=true
-    - ls -l _output
+    - ls -hl _output
     - ./scripts/docker/deploy.sh ${APP_VERSION} ${REMOTE_USER} ${REMOTE_HOST} ${REMOTE_KEY}
   only:
     - tags
