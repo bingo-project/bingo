@@ -1,0 +1,60 @@
+image: ubuntu:latest
+
+variables:
+  APP_NAME: bingo
+  GIT_DEPTH: 200
+  DOCKER_HOST: tcp://docker:2375
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: true
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq git make protobuf-compiler
+  # - export APP_VERSION=${CI_COMMIT_TAG}
+  - VERSION=$(git describe --tags)
+  - export APP_VERSION=${VERSION#v}
+  - echo ${APP_VERSION}
+
+stages:
+  - Test
+  - Build
+  - Deploy
+
+test:
+  stage: Build
+  image: golang:latest
+  script:
+    - echo "Run Unit tests."
+    - make cover
+  only:
+    - tags
+
+build:
+  stage: Build
+  image: golang:latest
+  services:
+    - docker:stable-dind
+  script:
+    - echo "Start building..."
+    - make protoc
+    - ./scripts/docker/build.sh ${APP_VERSION}
+  artifacts:
+    paths:
+      - _output/*.tar.gz
+  only:
+    - tags
+    - develop
+
+deploy_staging:
+  stage: Deploy
+  dependencies:
+    - build
+  script:
+    - echo "Start deploying staging..."
+    - export CI_DEBUG_TRACE=true
+    - ls -l _output
+    - ./scripts/docker/deploy.sh ${APP_VERSION} ${REMOTE_USER} ${REMOTE_HOST} ${REMOTE_KEY}
+  only:
+    - tags
+    - develop
+  environment:
+    name: staging
+    url: https://staging.bingo.com
