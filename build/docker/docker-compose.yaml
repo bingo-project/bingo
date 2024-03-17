@@ -18,7 +18,8 @@ services:
       - '${APP_PORT}:8080'
     volumes:
       - ${DATA_PATH_HOST}/config:/etc/bingo
-      - ${DATA_PATH_HOST}/data/bingo-apiserver:/opt/bingo/storage
+      - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
   mysql:
     image: mysql
