@@ -7,7 +7,7 @@ networks:
 services:
   apiserver:
     image: ${APP_NAME}-apiserver:${APP_VERSION}
-    container_name: ${APP_NAME}-apiserver
+    container_name: ${APP_NAME}/apiserver
     restart: always
     build:
       context: ../../
@@ -23,7 +23,7 @@ services:
 
   mysql:
     image: mysql
-    container_name: ${APP_NAME}-mysql
+    container_name: ${APP_NAME}/mysql
     restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
@@ -39,7 +39,7 @@ services:
   redis:
     restart: always
     image: redis
-    container_name: ${APP_NAME}-redis
+    container_name: ${APP_NAME}/redis
     networks:
       - bingo
     ports:
