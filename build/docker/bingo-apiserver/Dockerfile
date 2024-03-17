@@ -1,30 +1,34 @@
-FROM golang:alpine as builder
-LABEL maintainer="<brooksyang@outlook.com>"
-
-# Install system dependencies including 'make'
-RUN apk update && apk add --no-cache bash make protobuf-dev
-
+FROM golang:latest as builder
 WORKDIR /workspace
 
-ADD go.mod .
-ADD go.sum .
+ARG OS
+ARG ARCH
+
+# Copy the Go Modules manifests
+COPY go.mod .
+COPY go.sum .
 
 RUN go mod download
 
-COPY . .
+# Copy the sources
+COPY api/ api/
+COPY cmd/bingo-apiserver cmd/bingo-apiserver
+COPY pkg/ pkg/
+COPY internal/ internal/
 
-RUN make ca & make protoc && make build
+# Build
+# the GOARCH has not a default value to allow the binary be built according to the host where the command
+# was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
+# the docker BUILDPLATFORM arg will be linux/arm64 when for Apple x86 it will be linux/amd64. Therefore,
+# by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
+RUN CGO_ENABLED=0 GOOS=${OS:-linux} GOARCH=${ARCH:-amd64} go build -a ./cmd/bingo-apiserver
 
 FROM alpine:latest
+LABEL maintainer="<brooksyang@outlook.com>"
 
-ARG app_name=bingo
-WORKDIR /opt/${app_name}
+WORKDIR /opt/bingo
 
-COPY --from=builder /workspace/_output/cert /opt/${app_name}/cert
-COPY --from=builder /workspace/_output/bin/${app_name}-apiserver /opt/${app_name}/bin/
-
-# configs
-COPY build/docker /opt/${app_name}/
+COPY --from=builder /workspace/bingo-apiserver bin/
 
 EXPOSE 8080
 
