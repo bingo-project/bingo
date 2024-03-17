@@ -124,10 +124,10 @@ jobs:
           
             tar -xzvpf /tmp/docker-compose.tar.gz -C ./
             if [ ! -f .env ]; then
-            cp .env.example .env
+              cp .env.example .env
             fi
             if [ ! -f config/bingo-apiserver.yaml ]; then
-            cp config/bingo-apiserver.example.yaml config/bingo-apiserver.yaml
+              cp config/bingo-apiserver.example.yaml config/bingo-apiserver.yaml
             fi
           
             # Update app version by .env
