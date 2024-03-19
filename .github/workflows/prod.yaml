@@ -6,7 +6,7 @@ name: Bingo
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   test:
@@ -22,6 +22,8 @@ jobs:
 
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Unit tests.
         run: make cover
@@ -47,24 +49,28 @@ jobs:
           VERSION=${VERSION#v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-      - name: Build by Docker Compose
-        run: |
-          export APP_VERSION=${{ env.VERSION }}
-          cd build/docker
-          cp .env.example .env
-          docker-compose build
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
 
-      - name: Save Docker images
-        run: |
-          docker save bingo-apiserver:${{ env.VERSION }} | gzip > bingo-apiserver.tar.gz
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate pb files
+        run: make protoc
+
+      - name: Build by Docker Compose
+        run: bash ./scripts/docker/build.sh ${{ env.VERSION }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: bingo
           path: |
-            build/docker
-            bingo-apiserver.tar.gz
+            _output/*tar.gz
 
   publish:
     name: Deploy Production
@@ -95,13 +101,13 @@ jobs:
         run: |
           ls -l
 
-      - name: Deploy
+      - name: Scp
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_KEY }}
-          source: "./*"
+          source: "./*.tar.gz"
           target: "/tmp"
 
       - name: Run
@@ -112,23 +118,28 @@ jobs:
           key: ${{ secrets.REMOTE_KEY }}
           script: |
             mkdir -p /opt/bingo
-            cd /opt/bingo
+            cd /opt/bingo || exit
             
-            rsync -a /tmp/build/docker/* ./
-            rsync -a /tmp/build/docker/.env.example ./
+            tar -xzvpf /tmp/docker-compose.tar.gz -C ./
             if [ ! -f .env ]; then
               cp .env.example .env
             fi
             if [ ! -f config/bingo-apiserver.yaml ]; then
               cp config/bingo-apiserver.example.yaml config/bingo-apiserver.yaml
             fi
+            if [ ! -f config/promtail.yaml ]; then
+              cp config/promtail.example.yaml config/promtail.yaml
+            fi
             
             # Update app version by .env
-            sed -i 's/APP_VERSION=.*/APP_VERSION=${{ env.VERSION }}/g' .env
+            if [ -n "${{ env.VERSION }}" ]; then
+              sed -i "s/APP_VERSION=.*/APP_VERSION=${{ env.VERSION }}/g" .env
+            fi
             
-            docker load < /tmp/bingo-apiserver.tar.gz
+            docker load </tmp/bingo-apiserver.tar.gz
             docker-compose up -d
             
-            rm -rf /tmp/build
+            rm /tmp/docker-compose.tar.gz
             rm /tmp/bingo-apiserver.tar.gz
             rm config/bingo-apiserver.example.yaml
+            rm config/promtail.example.yaml

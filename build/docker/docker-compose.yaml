@@ -7,7 +7,7 @@ networks:
 services:
   apiserver:
     image: ${APP_NAME}-apiserver:${APP_VERSION}
-    container_name: ${APP_NAME}/apiserver
+    container_name: ${APP_NAME}-apiserver
     restart: always
     build:
       context: ../../
@@ -21,9 +21,24 @@ services:
       - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
       - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
+  promtail:
+    restart: always
+    image: grafana/promtail
+    container_name: ${APP_NAME}-promtail
+    hostname: promtail
+    user: root
+    networks:
+      - bingo
+    volumes:
+      - ${DATA_PATH_HOST}/config/promtail.yaml:/etc/promtail/promtail.yaml
+      - ${DATA_PATH_HOST}/data/promtail:/promtail
+      - ${DATA_PATH_HOST}/log:/var/log/bingo
+    command:
+      - "-config.file=/etc/promtail/promtail.yaml"
+
   mysql:
     image: mysql
-    container_name: ${APP_NAME}/mysql
+    container_name: ${APP_NAME}-mysql
     restart: always
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
@@ -39,7 +54,7 @@ services:
   redis:
     restart: always
     image: redis
-    container_name: ${APP_NAME}/redis
+    container_name: ${APP_NAME}-redis
     networks:
       - bingo
     ports:

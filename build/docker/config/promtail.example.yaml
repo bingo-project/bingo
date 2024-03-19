@@ -1,0 +1,56 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: bingo
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: bingo
+          __path__: /var/log/bingo/*log
+    pipeline_stages:
+      - json:
+          expressions:
+            level: level
+            ts: ts
+            caller: caller
+            msg: msg
+            trace: trace
+            subject: subject
+            object: object
+            instance: instance
+            task: task
+            cost: cost
+            result: result
+            status: status
+            ip: ip
+            err: err
+            biz: biz
+            code: code
+            info: info
+      - labels:
+          level:
+          ts:
+          caller:
+          msg:
+          trace:
+          subject:
+          object:
+          instance:
+          task:
+          cost:
+          result:
+          status:
+          ip:
+          err:
+          biz:
+          code:
+          info:

@@ -14,6 +14,9 @@ run() {
   if [ ! -f config/bingo-apiserver.yaml ]; then
     cp config/bingo-apiserver.example.yaml config/bingo-apiserver.yaml
   fi
+  if [ ! -f config/promtail.yaml ]; then
+    cp config/promtail.example.yaml config/promtail.yaml
+  fi
 
   # Update app version by .env
   if [ -n "${tag}" ]; then
@@ -26,6 +29,7 @@ run() {
   rm /tmp/docker-compose.tar.gz
   rm /tmp/bingo-apiserver.tar.gz
   rm config/bingo-apiserver.example.yaml
+  rm config/promtail.example.yaml
 }
 
 run
