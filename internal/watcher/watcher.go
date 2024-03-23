@@ -48,7 +48,7 @@ func (w *watchJob) addWatchers() *watchJob {
 	for name, watch := range watcher.ListWatchers() {
 		// log with `{"watcher": "counter"}` key-value to distinguish which watcher the log comes from.
 		// nolint: golint,staticcheck
-		ctx := context.WithValue(context.Background(), "watcher", name)
+		ctx := context.WithValue(context.Background(), log.KeyWatcher, name)
 
 		if err := watch.Init(ctx, w.rs.NewMutex(name, redsync.WithExpiry(2*time.Hour)), nil); err != nil {
 			log.Fatalw("construct watcher %s failed: %s", name, err.Error())
