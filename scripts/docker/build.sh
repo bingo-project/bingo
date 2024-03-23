@@ -26,12 +26,21 @@ validate_params() {
 build() {
   echo "start building..."
 
+  # list images to save.
+  images=("bingo-apiserver" "bingo-watcher" "bingo-bot" "bingoctl")
+
+  # Add tag
+  for index in "${!images[@]}"
+  do
+    images[index]="${images[index]}:${tag}"
+  done
+
   cd build/docker || exit
-  tar -czvpf docker-compose.tar.gz * .env.example
+  tar -czvpf bingo-docker.tar.gz * .env.example
 
   cp .env.example .env
   docker-compose build
-  docker save bingo-apiserver:"$tag" | gzip >bingo-apiserver.tar.gz
+  docker save "${images[@]}" | gzip >bingo-images.tar.gz
 
   cd - || exit
   mkdir -p _output
