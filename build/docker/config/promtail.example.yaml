@@ -15,7 +15,7 @@ scrape_configs:
           - localhost
         labels:
           job: bingo
-          __path__: /var/log/bingo/*log
+          __path__: /var/log/bingo/**/*log
     pipeline_stages:
       - json:
           expressions:
