@@ -15,7 +15,7 @@ import (
 func Authn() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Parse JWT Token
-		payload, err := token.ParseRequest(c)
+		payload, err := token.ParseRequest(c.Request)
 		if err != nil {
 			core.WriteResponse(c, errno.ErrTokenInvalid, nil)
 			c.Abort()

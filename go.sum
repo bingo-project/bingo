@@ -111,8 +111,8 @@ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6r
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/bingo-project/bingoctl v1.3.2 h1:gVKiGrZewn+52fRIQht23VXIIDB+gHRTOhx9rlZHZNU=
 github.com/bingo-project/bingoctl v1.3.2/go.mod h1:1SFdsXGru38AQbeNwFk8t7sqNJc7tSZ9sxsI2cKEG08=
-github.com/bingo-project/component-base v0.3.8 h1:4JauSq8Uxd3howchYdFwHYaxcPhPqjejzFVT4qGWU8A=
-github.com/bingo-project/component-base v0.3.8/go.mod h1:Ky/iFxkWgA5Lyuuoss1+DEZDJmESOyTIL/7ja/scfm8=
+github.com/bingo-project/component-base v0.4.0 h1:e9eNSfMejMn8UgFfuxmT/t4dyZd0v2IaK+x6FrkZyBk=
+github.com/bingo-project/component-base v0.4.0/go.mod h1:dHebgnt9yTHLCDl3Mk+cvnT1uX5tDKGrk7p2unpz/Pw=
 github.com/bsm/ginkgo/v2 v2.7.0/go.mod h1:AiKlXPm7ItEHNc/2+OkrNG4E0ITzojb9/xWzvQ9XZ9w=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/ginkgo/v2 v2.12.0/go.mod h1:SwYbGRRDovPVboqFv0tPTcG1sN61LM1Z4ARdbAV9g4c=
