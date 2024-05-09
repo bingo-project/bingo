@@ -6,9 +6,10 @@ networks:
 
 services:
   apiserver:
-    image: ${APP_NAME}-apiserver:${APP_VERSION}
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-apiserver:${APP_VERSION}
     container_name: ${APP_NAME}-apiserver
     restart: always
+    platform: ${IMAGE_PLATFORM}
     build:
       context: ../../
       dockerfile: build/docker/bingo-apiserver/Dockerfile
@@ -23,9 +24,10 @@ services:
       - ${DATA_PATH_HOST}/log/apiserver:/opt/bingo/storage/log
 
   watcher:
-    image: ${APP_NAME}-watcher:${APP_VERSION}
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-watcher:${APP_VERSION}
     container_name: ${APP_NAME}-watcher
     restart: always
+    platform: ${IMAGE_PLATFORM}
     build:
       context: ../../
       dockerfile: build/docker/bingo-watcher/Dockerfile
@@ -36,9 +38,10 @@ services:
       - ${DATA_PATH_HOST}/log/watcher:/opt/bingo/storage/log
 
   bot:
-    image: ${APP_NAME}-bot:${APP_VERSION}
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-bot:${APP_VERSION}
     container_name: ${APP_NAME}-bot
     restart: always
+    platform: ${IMAGE_PLATFORM}
     build:
       context: ../../
       dockerfile: build/docker/bingo-bot/Dockerfile
@@ -51,9 +54,10 @@ services:
   # add alias to zsh to run bingoctl cmd.
   # alias bingoctl="docker run --rm -v /path/to/config:/etc/bingo --network bingo_bingo bingoctl"
   bingoctl:
-    image: ${APP_NAME}ctl:${APP_VERSION}
+    image: ${REGISTRY_PREFIX}/${APP_NAME}ctl:${APP_VERSION}
     container_name: ${APP_NAME}ctl
     restart: "no"
+    platform: ${IMAGE_PLATFORM}
     build:
       context: ../../
       dockerfile: build/docker/bingoctl/Dockerfile
@@ -64,9 +68,10 @@ services:
       - ${DATA_PATH_HOST}/log/bingoctl:/opt/bingo/storage/log
 
   promtail:
-    restart: always
     image: grafana/promtail
     container_name: ${APP_NAME}-promtail
+    restart: always
+    platform: ${IMAGE_PLATFORM}
     hostname: promtail
     user: root
     networks:
@@ -82,6 +87,7 @@ services:
     image: mysql
     container_name: ${APP_NAME}-mysql
     restart: always
+    platform: ${IMAGE_PLATFORM}
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
       - bingo
@@ -94,9 +100,10 @@ services:
       - ${DATA_PATH_HOST}/data/mysql:/var/lib/mysql
 
   redis:
-    restart: always
     image: redis
     container_name: ${APP_NAME}-redis
+    restart: always
+    platform: ${IMAGE_PLATFORM}
     networks:
       - bingo
     ports:

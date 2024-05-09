@@ -35,7 +35,7 @@ build:
   script:
     - echo "Start building..."
     - make protoc
-    - ./scripts/docker/build.sh ${APP_VERSION}
+    - ./scripts/docker/build.sh -n ${APP_NAME}
   artifacts:
     paths:
       - _output/*.tar.gz
