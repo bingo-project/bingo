@@ -5,6 +5,7 @@ import (
 
 	"bingo/internal/apiserver/http/controller/v1/system"
 	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
+	"bingo/internal/apiserver/http/controller/v1/system/user"
 	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/store"
 	"bingo/pkg/auth"
@@ -86,4 +87,12 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.GET("cfg/configs/:id", configController.Get)
 	v1.PUT("cfg/configs/:id", configController.Update)
 	v1.DELETE("cfg/configs/:id", configController.Delete)
+
+	// User
+	userController := user.NewUserController(store.S, authz)
+	v1.POST("users", userController.Create)         // 创建用户
+	v1.GET("users", userController.List)            // 列出用户列表，只有 root 用户才能访问
+	v1.GET("users/:name", userController.Get)       // 获取用户详情
+	v1.PUT("users/:name", userController.Update)    // 更新用户
+	v1.DELETE("users/:name", userController.Delete) // 删除用户
 }

@@ -28,14 +28,14 @@ func NewUserController(ds store.IStore, a *auth.Authz) *UserController {
 // List
 // @Summary    List users
 // @Security   Bearer
-// @Tags       User
+// @Tags       System.User
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListUserRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListUserResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users [GET].
+// @Router    /v1/system/users [GET].
 func (ctrl *UserController) List(c *gin.Context) {
 	log.C(c).Infow("List user function called")
 
@@ -59,14 +59,14 @@ func (ctrl *UserController) List(c *gin.Context) {
 // Create
 // @Summary    Create a user
 // @Security   Bearer
-// @Tags       User
+// @Tags       System.User
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateUserRequest	 true  "Param"
 // @Success	   200		{object}	v1.UserInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users [POST].
+// @Router    /v1/system/users [POST].
 func (ctrl *UserController) Create(c *gin.Context) {
 	log.C(c).Infow("Create user function called")
 
@@ -85,7 +85,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 	}
 
 	// Create policy
-	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/users/"+req.Username, defaultMethods); err != nil {
+	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/system/users/"+req.Username, defaultMethods); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return
@@ -97,14 +97,14 @@ func (ctrl *UserController) Create(c *gin.Context) {
 // Get
 // @Summary    Get user info
 // @Security   Bearer
-// @Tags       User
+// @Tags       System.User
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string          	 true  "Username"
 // @Success	   200		{object}	v1.UserInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [GET].
+// @Router    /v1/system/users/{name} [GET].
 func (ctrl *UserController) Get(c *gin.Context) {
 	log.C(c).Infow("Get user function called")
 
@@ -121,7 +121,7 @@ func (ctrl *UserController) Get(c *gin.Context) {
 // Update
 // @Summary    Update user info
 // @Security   Bearer
-// @Tags       User
+// @Tags       System.User
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string          	 true  "Username"
@@ -129,7 +129,7 @@ func (ctrl *UserController) Get(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [PUT].
+// @Router    /v1/system/users/{name} [PUT].
 func (ctrl *UserController) Update(c *gin.Context) {
 	log.C(c).Infow("Update user function called")
 
@@ -152,14 +152,14 @@ func (ctrl *UserController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete a user
 // @Security   Bearer
-// @Tags       User
+// @Tags       System.User
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string          	 true  "Username"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [DELETE].
+// @Router    /v1/system/users/{name} [DELETE].
 func (ctrl *UserController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete user function called")
 

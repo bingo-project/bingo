@@ -2632,7 +2632,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users": {
+        "/v1/system/users": {
             "get": {
                 "security": [
                     {
@@ -2646,7 +2646,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "List users",
                 "parameters": [
@@ -2715,7 +2715,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "Create a user",
                 "parameters": [
@@ -2751,7 +2751,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{name}": {
+        "/v1/system/users/{name}": {
             "get": {
                 "security": [
                     {
@@ -2765,7 +2765,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "Get user info",
                 "parameters": [
@@ -2811,7 +2811,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "Update user info",
                 "parameters": [
@@ -2896,7 +2896,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "Delete a user",
                 "parameters": [
