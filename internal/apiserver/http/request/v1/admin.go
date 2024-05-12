@@ -19,7 +19,7 @@ type AdminInfo struct {
 	RoleName string `json:"roleName"`
 
 	Role  *RoleInfo  `json:"role,omitempty"`
-	Roles []RoleInfo `json:"roles,omitempty"`
+	Roles []RoleInfo `json:"roles"`
 }
 
 type ListAdminRequest struct {
