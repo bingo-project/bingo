@@ -63,7 +63,12 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t.AccessToken}, nil
+	resp := &v1.LoginResponse{
+		AccessToken: t.AccessToken,
+		ExpiresAt:   t.ExpiresAt,
+	}
+
+	return resp, nil
 }
 
 func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
@@ -85,7 +90,12 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t.AccessToken}, nil
+	resp := &v1.LoginResponse{
+		AccessToken: t.AccessToken,
+		ExpiresAt:   t.ExpiresAt,
+	}
+
+	return resp, nil
 }
 
 func (b *authBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {

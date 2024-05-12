@@ -1,5 +1,7 @@
 package v1
 
+import "time"
+
 type RegisterRequest struct {
 	Nickname string `json:"nickname" binding:"alphanum,min=2,max=255" example:"Peter"`
 	Username string `json:"username" binding:"required,alphanum,min=2,max=255" example:"peter"`
@@ -12,7 +14,8 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Token string `json:"token"`
+	AccessToken string    `json:"accessToken"`
+	ExpiresAt   time.Time `json:"expiresAt"`
 }
 
 type ChangePasswordRequest struct {

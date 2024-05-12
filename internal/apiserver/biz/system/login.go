@@ -30,7 +30,12 @@ func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRe
 		return nil, errno.ErrSignToken
 	}
 
-	return &v1.LoginResponse{Token: t.AccessToken}, nil
+	resp := &v1.LoginResponse{
+		AccessToken: t.AccessToken,
+		ExpiresAt:   t.ExpiresAt,
+	}
+
+	return resp, nil
 }
 
 func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {

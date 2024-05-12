@@ -3411,7 +3411,10 @@ const docTemplate = `{
         "bingo_internal_apiserver_http_request_v1.LoginResponse": {
             "type": "object",
             "properties": {
-                "token": {
+                "accessToken": {
+                    "type": "string"
+                },
+                "expiresAt": {
                     "type": "string"
                 }
             }
