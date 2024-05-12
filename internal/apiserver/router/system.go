@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
+	"bingo/internal/apiserver/global"
 	"bingo/internal/apiserver/http/controller/v1/system"
 	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
 	"bingo/internal/apiserver/http/controller/v1/system/user"
@@ -23,7 +24,7 @@ func MapSystemRouters(g *gin.Engine) {
 	// Login
 	v1.POST("auth/login", adminController.Login)
 
-	v1.Use(middleware.Authn(), middleware.Authz(authz))
+	v1.Use(middleware.Authn(global.AuthAdmin), middleware.Authz(authz))
 
 	// Auth
 	v1.GET("auth/user-info", authController.UserInfo)             // 获取登录账号信息

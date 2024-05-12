@@ -82,3 +82,27 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 
 	core.WriteResponse(c, nil, resp)
 }
+
+// UserInfo
+// @Summary    Get user info
+// @Security   Bearer
+// @Tags       Auth
+// @Accept     application/json
+// @Produce    json
+// @Success	   200		{object}	v1.UserInfo
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/auth/user-info [GET].
+func (ctrl *AuthController) UserInfo(c *gin.Context) {
+	log.C(c).Infow("UserInfo function called")
+
+	var user v1.UserInfo
+	err := auth.User(c, &user)
+	if err != nil {
+		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, user)
+}

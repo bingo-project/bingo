@@ -6,6 +6,7 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 
+	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
@@ -17,7 +18,7 @@ import (
 type AuthBiz interface {
 	Register(ctx context.Context, r *v1.RegisterRequest) (*v1.LoginResponse, error)
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
-	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
+	ChangePassword(ctx context.Context, uid string, r *v1.ChangePasswordRequest) error
 }
 
 type authBiz struct {
@@ -58,7 +59,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 	}
 
 	// Generate token
-	t, err := token.Sign(user.Username, nil)
+	t, err := token.Sign(user.UID, global.AuthUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
@@ -85,7 +86,7 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	}
 
 	// Generate token
-	t, err := token.Sign(user.Username, nil)
+	t, err := token.Sign(user.UID, global.AuthUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
@@ -98,8 +99,8 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	return resp, nil
 }
 
-func (b *authBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {
-	userM, err := b.ds.Users().Get(ctx, username)
+func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.ChangePasswordRequest) error {
+	userM, err := b.ds.Users().GetByUID(ctx, uid)
 	if err != nil {
 		return err
 	}

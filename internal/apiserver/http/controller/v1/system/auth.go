@@ -33,7 +33,7 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/auth/user-info [GET].
 func (ctrl *AuthController) UserInfo(c *gin.Context) {
-	log.C(c).Infow("Self function called")
+	log.C(c).Infow("UserInfo function called")
 
 	var admin v1.AdminInfo
 	err := auth.User(c, &admin)

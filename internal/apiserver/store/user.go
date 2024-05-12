@@ -19,6 +19,7 @@ type UserStore interface {
 	Delete(ctx context.Context, username string) error
 
 	IsExist(ctx context.Context, user *model.UserM) (exist bool, err error)
+	GetByUID(ctx context.Context, uid string) (user *model.UserM, err error)
 }
 
 type users struct {
@@ -78,4 +79,10 @@ func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err
 	}
 
 	return id > 0, nil
+}
+
+func (u *users) GetByUID(ctx context.Context, uid string) (user *model.UserM, err error) {
+	err = u.db.WithContext(ctx).Where("uid = ?", uid).First(&user).Error
+
+	return
 }
