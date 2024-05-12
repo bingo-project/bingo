@@ -22,6 +22,7 @@ func MapApiRouters(g *gin.Engine) {
 
 	// Login
 	v1.POST("auth/code/email", authController.SendEmailCode)
+	v1.POST("auth/register", authController.Register)
 	v1.POST("auth/login", authController.Login)
 
 	v1.Use(middleware.Authn(), middleware.Authz(authz))

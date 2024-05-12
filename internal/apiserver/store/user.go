@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"errors"
 
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
@@ -16,6 +17,8 @@ type UserStore interface {
 	Get(ctx context.Context, username string) (*model.UserM, error)
 	Update(ctx context.Context, user *model.UserM, fields ...string) error
 	Delete(ctx context.Context, username string) error
+
+	IsExist(ctx context.Context, user *model.UserM) (exist bool, err error)
 }
 
 type users struct {
@@ -50,4 +53,29 @@ func (u *users) Update(ctx context.Context, user *model.UserM, fields ...string)
 
 func (u *users) Delete(ctx context.Context, username string) error {
 	return u.db.WithContext(ctx).Where("username = ?", username).Delete(&model.UserM{}).Error
+}
+
+func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err error) {
+	db := u.db.WithContext(ctx).Model(&model.UserM{})
+
+	if user.UID != "" {
+		db = db.Where("uid = ?", user.UID)
+	}
+	if user.Username != "" {
+		db = db.Where("username = ?", user.Username)
+	}
+	if user.Email != "" {
+		db = db.Where("email = ?", user.Email)
+	}
+	if user.Phone != "" {
+		db = db.Where("phone = ?", user.Phone)
+	}
+
+	var id int
+	err = db.Select("ID").Take(&id).Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return
+	}
+
+	return id > 0, nil
 }

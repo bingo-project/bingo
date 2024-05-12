@@ -147,6 +147,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/register": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/file/upload": {
             "post": {
                 "security": [
@@ -3350,12 +3397,14 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "maxLength": 18,
-                    "minLength": 6
+                    "minLength": 6,
+                    "example": "123123"
                 },
                 "username": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 2
+                    "minLength": 2,
+                    "example": "peter"
                 }
             }
         },
@@ -3411,6 +3460,33 @@ const docTemplate = `{
                 },
                 "updatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "bingo_internal_apiserver_http_request_v1.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "Peter"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6,
+                    "example": "123123"
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "peter"
                 }
             }
         },

@@ -51,3 +51,34 @@ func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
 
 	core.WriteResponse(c, nil, nil)
 }
+
+// Register
+// @Summary    Register
+// @Security   Bearer
+// @Tags       Auth
+// @Accept     application/json
+// @Produce    json
+// @Param      request	 body	    v1.RegisterRequest	 true  "Param"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/auth/register [POST].
+func (ctrl *AuthController) Register(c *gin.Context) {
+	log.C(c).Infow("Register function called")
+
+	var req v1.RegisterRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.WriteResponse(c, errno.ErrBind, nil)
+
+		return
+	}
+
+	resp, err := ctrl.b.Auth().Register(c, &req)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

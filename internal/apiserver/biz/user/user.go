@@ -59,12 +59,12 @@ func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (err er
 
 	err = b.ds.Users().Create(ctx, &userM)
 	if err == nil {
-		return
-	}
+		// User exists
+		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
+			return errno.ErrUserAlreadyExist
+		}
 
-	// User exists
-	if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
-		return errno.ErrUserAlreadyExist
+		return
 	}
 
 	return
