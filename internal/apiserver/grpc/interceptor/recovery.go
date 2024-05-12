@@ -10,7 +10,7 @@ import (
 )
 
 // Recovery catch panic & recover.
-func Recovery(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func Recovery(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.C(ctx).Errorw("recovery", "method", info.FullMethod, "req", req, "err", err)

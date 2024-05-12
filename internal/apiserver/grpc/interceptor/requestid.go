@@ -10,14 +10,14 @@ import (
 	"google.golang.org/grpc/peer"
 )
 
-func RequestID(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func RequestID(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	rid := uuid.New().String()
 	ctx = context.WithValue(ctx, log.KeyTrace, rid)
 
 	return handler(ctx, req)
 }
 
-func ClientIP(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func ClientIP(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	client, ok := peer.FromContext(ctx)
 	if !ok {
 		log.C(ctx).Errorw("failed to parse peer from context")

@@ -27,7 +27,7 @@ func Compare(hashedPassword, password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
-func ID(c *gin.Context) interface{} {
+func ID(c *gin.Context) any {
 	info, exists := c.Get(XUsernameKey)
 	if !exists {
 		return nil
@@ -36,7 +36,7 @@ func ID(c *gin.Context) interface{} {
 	return info
 }
 
-func User(c *gin.Context, user interface{}) error {
+func User(c *gin.Context, user any) error {
 	info, exists := c.Get(XUserInfoKey)
 	if !exists {
 		return errors.New("not exists")
