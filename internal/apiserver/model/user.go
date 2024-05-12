@@ -31,7 +31,7 @@ type UserM struct {
 }
 
 func (*UserM) TableName() string {
-	return "user"
+	return "uc_user"
 }
 
 // BeforeCreate 在创建数据库记录之前加密明文密码.

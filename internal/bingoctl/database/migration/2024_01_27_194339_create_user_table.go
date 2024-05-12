@@ -32,7 +32,7 @@ type CreateUserTable struct {
 }
 
 func (CreateUserTable) TableName() string {
-	return "user"
+	return "uc_user"
 }
 
 func (CreateUserTable) Up(migrator gorm.Migrator) {
