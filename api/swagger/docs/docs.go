@@ -2927,7 +2927,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{name}/change-password": {
+        "/v1/system/users/{name}/change-password": {
             "put": {
                 "security": [
                     {
@@ -2941,7 +2941,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "System.User"
                 ],
                 "summary": "Change password",
                 "parameters": [

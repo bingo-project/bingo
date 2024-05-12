@@ -26,5 +26,4 @@ func MapApiRouters(g *gin.Engine) {
 	v1.Use(middleware.Authn(), middleware.Authz(authz))
 
 	// Auth
-	v1.PUT(":name/change-password", authController.ChangePassword) // 修改用户密码
 }
