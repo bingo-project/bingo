@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"github.com/bingo-project/component-base/log"
@@ -33,7 +33,7 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/code/email [POST].
 func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
-	log.C(c).Infow("Login function called")
+	log.C(c).Infow("SendEmailCode function called")
 
 	var req v1.SendEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

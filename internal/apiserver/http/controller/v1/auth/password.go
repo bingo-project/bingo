@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"github.com/bingo-project/component-base/log"
@@ -21,7 +21,7 @@ import (
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users/{name}/change-password [PUT].
-func (ctrl *UserController) ChangePassword(c *gin.Context) {
+func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change password function called")
 
 	var req v1.ChangePasswordRequest
@@ -32,7 +32,7 @@ func (ctrl *UserController) ChangePassword(c *gin.Context) {
 	}
 
 	username := c.Param("name")
-	err := ctrl.b.Users().ChangePassword(c, username, &req)
+	err := ctrl.b.Auth().ChangePassword(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

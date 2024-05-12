@@ -1,4 +1,4 @@
-package user
+package auth
 
 import (
 	"github.com/gin-gonic/gin"
@@ -20,8 +20,8 @@ import (
 // @Success	    200		{object}	v1.LoginResponse
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
-// @Router		/v1/login [POST].
-func (ctrl *UserController) Login(c *gin.Context) {
+// @Router		/v1/auth/login [POST].
+func (ctrl *AuthController) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 
 	var req v1.LoginRequest
@@ -31,7 +31,7 @@ func (ctrl *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	resp, err := ctrl.b.Users().Login(c, &req)
+	resp, err := ctrl.b.Auth().Login(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
