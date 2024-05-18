@@ -8,10 +8,6 @@ variables:
 
 before_script:
   - apt-get update -qq && apt-get install -y -qq git make protobuf-compiler
-  # - export APP_VERSION=${CI_COMMIT_TAG}
-  - VERSION=$(git describe --tags)
-  - export APP_VERSION=${VERSION#v}
-  - echo ${APP_VERSION}
 
 stages:
   - Test
@@ -26,6 +22,7 @@ test:
     - make cover
   only:
     - tags
+    # - develop
 
 build:
   stage: Build
@@ -42,6 +39,7 @@ build:
   only:
     - tags
     - develop
+    - feature/ci
 
 deploy_staging:
   stage: Deploy
@@ -50,10 +48,20 @@ deploy_staging:
   script:
     - echo "Start deploying staging..."
     - ls -hl _output
-    - ./scripts/docker/deploy.sh ${APP_VERSION} ${REMOTE_USER} ${REMOTE_HOST} ${REMOTE_KEY}
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - touch ~/.ssh/config
+    - touch ~/.ssh/known_hosts
+    - chmod -R 400 ~/.ssh
+    - cat ${REMOTE_KEY} | ssh-add -
+    - ssh-add -l
+    - ssh-keyscan ${REMOTE_HOST} >>~/.ssh/known_hosts
+    - echo "StrictHostKeyChecking no" >>~/.ssh/config
+    - ./scripts/docker/deploy.sh ${REMOTE_USER} ${REMOTE_HOST}
   only:
     - tags
     - develop
+    - feature/ci
   environment:
     name: staging
     url: https://staging.bingo.com
