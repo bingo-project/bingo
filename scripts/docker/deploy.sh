@@ -33,10 +33,10 @@ validate_params() {
 }
 
 package() {
-  cd build/docker || exit
+  cd deployments/docker || exit
 
   # config file
-  mkdir -p config _output
+  mkdir -p config
   cp -a ../../configs/*.yaml config
 
   # docker-compose
@@ -44,7 +44,8 @@ package() {
 
   rm -r config
   cd - || exit
-  mv build/docker/*.tar.gz _output/
+  mkdir -p _output
+  mv deployments/docker/*.tar.gz _output/
 
   ls -lh _output/
 }
