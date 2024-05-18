@@ -67,7 +67,7 @@ build() {
   cd build/docker || exit
   cp .env.example .env
   docker-compose build
-  docker save "${images[@]}" | gzip >bingo-images.tar.gz
+  docker save "${images[@]}" | gzip >"$app_name"-images.tar.gz
 
   cd - || exit
   mkdir -p _output

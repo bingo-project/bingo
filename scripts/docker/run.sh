@@ -18,7 +18,13 @@ validate_params() {
 
 install_docker() {
   if ! command -v docker &>/dev/null; then
-    apt update && apt install -y -qq docker.io docker-compose
+    apt update && apt install -y -qq docker.io
+  fi
+
+  if ! command -v docker-compose &>/dev/null; then
+    curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 \
+      -o /usr/local/bin/docker-compose &&
+      chmod +x /usr/local/bin/docker-compose && ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
   fi
 }
 
@@ -47,13 +53,18 @@ run() {
     sed -i "s/APP_VERSION=.*/APP_VERSION=${tag}/g" .env
   fi
 
-  # Load and tag latest
-  loaded=$(docker load </tmp/"${app_name}"-images.tar.gz)
-  for image_with_version in $(echo "$loaded" | awk -F ': ' '{print $2}'); do
-    image=${image_with_version%:*}
-    docker tag "$image_with_version" "$image":latest
-  done
+  # Load images
+  docker load </tmp/"${app_name}"-images.tar.gz
 
+  # tag latest
+  #  echo "tag latest"
+  #  loaded=$(docker load </tmp/"${app_name}"-images.tar.gz)
+  #  for image_with_version in $(echo "$loaded" | awk -F ': ' '{print $2}'); do
+  #    image=${image_with_version%:*}
+  #    docker tag "$image_with_version" "$image":latest
+  #  done
+
+  echo "docker-compose up -d"
   docker-compose up -d
 
   rm /tmp/"${app_name}"*.tar.gz

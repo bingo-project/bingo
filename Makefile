@@ -22,6 +22,7 @@ VERSION_PACKAGE=github.com/bingo-project/component-base/version
 # make sure include common.mk at the first include line
 include scripts/make-rules/common.mk
 include scripts/make-rules/golang.mk
+include scripts/make-rules/image.mk
 include scripts/make-rules/tools.mk
 include scripts/make-rules/generate.mk
 include scripts/make-rules/swagger.mk
@@ -66,6 +67,10 @@ deps: ## 安装依赖，例如：生成需要的代码、安装需要的工具�
 .PHONY: build
 build: tidy protoc
 	@$(MAKE) go.build
+
+.PHONY: image
+image: ## Build docker images for host arch.
+	@$(MAKE) image.build
 
 ## --------------------------------------
 ## Cleanup

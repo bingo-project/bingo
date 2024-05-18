@@ -10,7 +10,13 @@ install_git() {
 # Docker
 install_docker() {
   if ! command -v docker &>/dev/null; then
-    apt update && apt install -y -qq docker.io docker-compose
+    apt update && apt install -y -qq docker.io
+  fi
+
+  if ! command -v docker-compose &>/dev/null; then
+    curl -SL https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64 \
+              -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose && ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
   fi
 }
 
