@@ -7,6 +7,9 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      # - develop
+      - feature/ci
 
 jobs:
   test:
@@ -42,13 +45,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get the version
-        id: get_version
-        run: |
-          VERSION=$(git describe --tags)
-          VERSION=${VERSION#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
@@ -63,14 +59,14 @@ jobs:
         run: make protoc
 
       - name: Build by Docker Compose
-        run: bash ./scripts/docker/build.sh ${{ env.VERSION }}
+        run: bash ./scripts/docker/build.sh -a amd64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bingo
+          name: download-files
           path: |
-            _output/*tar.gz
+            _output/*.tar.gz
 
   publish:
     name: Deploy Staging
@@ -84,67 +80,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get the version
-        id: get_version
-        run: |
-          VERSION=$(git describe --tags)
-          VERSION=${VERSION#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
       - uses: actions/download-artifact@v4
+        id: download-files
         with:
-          name: bingo
-          path: ./
+          name: download-files
+          path: ./_output
 
       - name: Display structure of downloaded files
         run: |
           ls -l
 
-      - name: Scp
-        uses: appleboy/scp-action@v0.1.7
+      - name: Setup ssh-agent
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.REMOTE_KEY }}
-          source: "./*.tar.gz"
-          target: "/tmp"
+          ssh-private-key: ${{ secrets.REMOTE_KEY }}
 
-      - name: Run
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.REMOTE_KEY }}
-          script: |
-            app_name=bingo
-            mkdir -p /opt/${app_name}
-            cd /opt/${app_name} || exit
-          
-            tar -xzvpf /tmp/${app_name}-docker.tar.gz -C ./
-            if [ ! -f .env ]; then
-              cp .env.example .env
-            fi
-            if [ ! -f config/${app_name}-apiserver.yaml ]; then
-              cp config/${app_name}-apiserver.example.yaml config/${app_name}-apiserver.yaml
-            fi
-            if [ ! -f config/promtail.yaml ]; then
-              cp config/promtail.example.yaml config/promtail.yaml
-            fi
-          
-            # Update app version by .env
-            if [ -n "${{ env.VERSION }}" ]; then
-              sed -i "s/APP_VERSION=.*/APP_VERSION=${{ env.VERSION }}/g" .env
-            fi
-          
-            # Load and tag latest
-            loaded=$(docker load </tmp/${app_name}-images.tar.gz)
-            for image_with_version in $(echo "$loaded" | awk -F ': ' '{print $2}'); do
-              image=${image_with_version%:*}
-              docker tag "$image_with_version" "$image":latest
-            done
-  
-            docker-compose up -d
-          
-            rm /tmp/${app_name}*.tar.gz
-            rm config/${app_name}-apiserver.example.yaml
-            rm config/promtail.example.yaml
+      - name: Deploy
+        run: bash ./scripts/docker/deploy.sh ${{ secrets.REMOTE_USER }} ${{ secrets.REMOTE_HOST }}
