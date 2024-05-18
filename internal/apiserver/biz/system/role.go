@@ -172,7 +172,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 		return
 	}
 
-	list := a.GetFilteredPolicy(0, global.RolePrefix+role.Name)
+	list, _ := a.GetFilteredPolicy(0, global.RolePrefix+role.Name)
 
 	pathAndMethod := make([][]string, 0)
 	for _, v := range list {
