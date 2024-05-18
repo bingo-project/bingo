@@ -20,6 +20,10 @@ type UserStore interface {
 
 	IsExist(ctx context.Context, user *model.UserM) (exist bool, err error)
 	GetByUID(ctx context.Context, uid string) (user *model.UserM, err error)
+
+	CreateWithAccount(ctx context.Context, user *model.UserM, account *model.UserAccount) error
+	FindAccounts(ctx context.Context, uid string) ([]*model.UserAccount, error)
+	CountAccounts(ctx context.Context, uid string) (ret int64, err error)
 }
 
 type users struct {
@@ -83,6 +87,58 @@ func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err
 
 func (u *users) GetByUID(ctx context.Context, uid string) (user *model.UserM, err error) {
 	err = u.db.WithContext(ctx).Where("uid = ?", uid).First(&user).Error
+
+	return
+}
+
+func (u *users) CreateWithAccount(ctx context.Context, user *model.UserM, account *model.UserAccount) error {
+	return u.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		// Check exist.
+		err := tx.Model(&model.UserAccount{}).
+			Where("provider = ?", account.Provider).
+			Where("account_id = ?", account.AccountID).
+			First(&account).
+			Error
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			return err
+		}
+
+		// Update account info
+		if account.ID > 0 {
+			tx.Where("uid = ?", account.UID).Updates(&model.UserM{
+				LastLoginTime: user.LastLoginTime,
+				LastLoginIP:   user.LastLoginIP,
+				LastLoginType: user.LastLoginType,
+			})
+
+			return nil
+		}
+
+		// Create user
+		err = tx.Create(account).Error
+		if err != nil {
+			return err
+		}
+
+		return tx.Create(user).Error
+	})
+}
+
+func (u *users) FindAccounts(ctx context.Context, uid string) (ret []*model.UserAccount, err error) {
+	err = u.db.WithContext(ctx).
+		Where("uid = ?", uid).
+		Find(&ret).
+		Error
+
+	return
+}
+
+func (u *users) CountAccounts(ctx context.Context, uid string) (ret int64, err error) {
+	err = u.db.WithContext(ctx).
+		Model(&model.UserAccount{}).
+		Where("uid = ?", uid).
+		Count(&ret).
+		Error
 
 	return
 }

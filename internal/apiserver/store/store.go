@@ -20,14 +20,20 @@ var (
 // IStore 定义了 Store 层需要实现的方法.
 type IStore interface {
 	DB() *gorm.DB
+
 	Users() UserStore
+	UserAccounts() UserAccountStore
+	AuthProviders() AuthProviderStore
+
 	Admins() system.AdminStore
 	Roles() system.RoleStore
 	Apis() system.ApiStore
 	Menus() system.MenuStore
 	RoleMenus() system.RoleMenuStore
+
 	Apps() syscfg.AppStore
 	Configs() syscfg.ConfigStore
+
 	Bots() bot.BotStore
 	BotChannels() bot.ChannelStore
 	BotAdmins() bot.AdminStore
@@ -59,6 +65,14 @@ func (ds *datastore) DB() *gorm.DB {
 // Users 返回一个实现了 UserStore 接口的实例.
 func (ds *datastore) Users() UserStore {
 	return newUsers(ds.db)
+}
+
+func (ds *datastore) AuthProviders() AuthProviderStore {
+	return NewAuthProviders(ds.db)
+}
+
+func (ds *datastore) UserAccounts() UserAccountStore {
+	return NewUserAccounts(ds.db)
 }
 
 func (ds *datastore) Admins() system.AdminStore {

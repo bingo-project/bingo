@@ -13,6 +13,10 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required,min=6,max=18" example:"123123"`
 }
 
+type LoginByProviderRequest struct {
+	Code string `json:"code" form:"code"` // Auth code
+}
+
 type LoginResponse struct {
 	AccessToken string    `json:"accessToken"`
 	ExpiresAt   time.Time `json:"expiresAt"`

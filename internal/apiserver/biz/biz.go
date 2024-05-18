@@ -16,16 +16,21 @@ import (
 // IBiz 定义了 Biz 层需要实现的方法.
 type IBiz interface {
 	Auth() auth.AuthBiz
+	AuthProviders() auth.AuthProviderBiz
 	Users() user.UserBiz
+
+	Servers() syscfg.ServerBiz
+	Email() common.EmailBiz
+	Files() file.FileBiz
+
 	Admins() system.AdminBiz
 	Roles() system.RoleBiz
 	Apis() system.ApiBiz
 	Menus() system.MenuBiz
-	Files() file.FileBiz
-	Email() common.EmailBiz
+
 	Apps() syscfg.AppBiz
 	Configs() syscfg.ConfigBiz
-	Servers() syscfg.ServerBiz
+
 	Bots() bot.BotBiz
 	Channels() bot.ChannelBiz
 }
@@ -47,9 +52,25 @@ func (b *biz) Auth() auth.AuthBiz {
 	return auth.NewAuth(b.ds)
 }
 
+func (b *biz) AuthProviders() auth.AuthProviderBiz {
+	return auth.NewAuthProvider(b.ds)
+}
+
 // Users 返回一个实现了 UserBiz 接口的实例.
 func (b *biz) Users() user.UserBiz {
 	return user.New(b.ds)
+}
+
+func (b *biz) Servers() syscfg.ServerBiz {
+	return syscfg.NewServer(b.ds)
+}
+
+func (b *biz) Email() common.EmailBiz {
+	return common.NewEmail(b.ds)
+}
+
+func (b *biz) Files() file.FileBiz {
+	return file.NewFile(b.ds)
 }
 
 // Admins 管理员.
@@ -70,24 +91,12 @@ func (b *biz) Menus() system.MenuBiz {
 	return system.NewMenu(b.ds)
 }
 
-func (b *biz) Files() file.FileBiz {
-	return file.NewFile(b.ds)
-}
-
-func (b *biz) Email() common.EmailBiz {
-	return common.NewEmail(b.ds)
-}
-
 func (b *biz) Apps() syscfg.AppBiz {
 	return syscfg.NewApp(b.ds)
 }
 
 func (b *biz) Configs() syscfg.ConfigBiz {
 	return syscfg.NewConfig(b.ds)
-}
-
-func (b *biz) Servers() syscfg.ServerBiz {
-	return syscfg.NewServer(b.ds)
 }
 
 func (b *biz) Bots() bot.BotBiz {

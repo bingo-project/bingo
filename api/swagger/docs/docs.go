@@ -50,6 +50,102 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/accounts": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get accounts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AuthProviderBrief"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/bind/{provider}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Bind provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Auth provider name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Auth code",
+                        "name": "code",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/change-password": {
             "put": {
                 "security": [
@@ -177,6 +273,154 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/login/{provider}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login by provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Auth provider name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Auth code",
+                        "name": "code",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login by provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Auth provider name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Auth code",
+                        "name": "code",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/providers": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get auth providers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.AuthProviderBrief"
+                            }
                         }
                     },
                     "400": {
@@ -3166,6 +3410,27 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "bingo_internal_apiserver_http_request_v1.AuthProviderBrief": {
+            "type": "object",
+            "properties": {
+                "authUrl": {
+                    "description": "Auth URL",
+                    "type": "string"
+                },
+                "isDefault": {
+                    "description": "Is default provider, 0-not, 1-yes",
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "Auth provider name",
+                    "type": "string"
+                },
+                "redirectUrl": {
+                    "description": "Redirect URL",
                     "type": "string"
                 }
             }
