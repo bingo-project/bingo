@@ -52,7 +52,7 @@ services:
       - ${DATA_PATH_HOST}/log/bot:/opt/bingo/storage/log
 
   # add alias to zsh to run bingoctl cmd.
-  # alias bingoctl="docker run --rm -v /path/to/config:/etc/bingo --network bingo_bingo bingoctl"
+  # alias bingoctl="docker run --rm -v /opt/bingo/config:/etc/bingo --network bingo_bingo bingo/bingoctl:{APP_VERSION}"
   bingoctl:
     image: ${REGISTRY_PREFIX}/${APP_NAME}ctl:${APP_VERSION}
     container_name: ${APP_NAME}ctl
