@@ -144,7 +144,6 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	account.UID = facade.Snowflake.Generate().String()
 	user := &model.UserM{
 		UID:           account.UID,
-		Username:      account.Provider + "::" + account.Username,
 		Email:         account.Email,
 		Status:        model.UserStatusEnabled,
 		Avatar:        account.Avatar,
