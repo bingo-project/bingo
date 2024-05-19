@@ -11,6 +11,8 @@ import (
 func Context() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set(log.KeyTrace, c.GetString(auth.XRequestIDKey))
+		c.Set(log.KeyIP, c.ClientIP())
+		c.Set(auth.XForwardedKey, c.GetHeader(auth.XForwardedKey))
 
 		c.Next()
 	}
