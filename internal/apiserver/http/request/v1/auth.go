@@ -22,6 +22,19 @@ type LoginResponse struct {
 	ExpiresAt   time.Time `json:"expiresAt"`
 }
 
+type AddressRequest struct {
+	Address string `json:"address" form:"address" binding:"required,eth_addr"` // ETH Address
+}
+
+type NonceResponse struct {
+	Nonce string `json:"nonce"` // Nonce
+}
+
+type LoginByAddressRequest struct {
+	AddressRequest
+	Sign string `json:"sign" form:"sign" binding:"required"` // Signature
+}
+
 type ChangePasswordRequest struct {
 	PasswordOld string `json:"passwordOld" binding:"required,min=6,max=18"`
 	PasswordNew string `json:"passwordNew" binding:"required,min=6,max=18"`

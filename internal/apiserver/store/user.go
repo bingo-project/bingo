@@ -18,6 +18,8 @@ type UserStore interface {
 	Update(ctx context.Context, user *model.UserM, fields ...string) error
 	Delete(ctx context.Context, username string) error
 
+	FirstOrCreate(ctx context.Context, where any, user *model.UserM) error
+
 	IsExist(ctx context.Context, user *model.UserM) (exist bool, err error)
 	GetByUID(ctx context.Context, uid string) (user *model.UserM, err error)
 
@@ -58,6 +60,14 @@ func (u *users) Update(ctx context.Context, user *model.UserM, fields ...string)
 
 func (u *users) Delete(ctx context.Context, username string) error {
 	return u.db.WithContext(ctx).Where("username = ?", username).Delete(&model.UserM{}).Error
+}
+
+func (u *users) FirstOrCreate(ctx context.Context, where any, user *model.UserM) error {
+	return u.db.WithContext(ctx).
+		Where(where).
+		Attrs(&user).
+		FirstOrCreate(&user).
+		Error
 }
 
 func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err error) {

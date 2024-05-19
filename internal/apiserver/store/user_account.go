@@ -28,6 +28,7 @@ type UserAccountStore interface {
 	DeleteInBatch(ctx context.Context, ids []uint) error
 
 	CheckExist(ctx context.Context, provider, accountID string) bool
+	GetAccount(ctx context.Context, provider, accountID string) (ret *model.UserAccount, err error)
 }
 
 type userAccounts struct {
@@ -162,4 +163,15 @@ func (s *userAccounts) CheckExist(ctx context.Context, provider, accountID strin
 		Take(&id)
 
 	return id > 0
+}
+
+func (s *userAccounts) GetAccount(ctx context.Context, provider, accountID string) (ret *model.UserAccount, err error) {
+	err = s.db.WithContext(ctx).
+		Model(&model.UserAccount{}).
+		Where("provider = ?", provider).
+		Where("account_id = ?", accountID).
+		Take(&ret).
+		Error
+
+	return
 }

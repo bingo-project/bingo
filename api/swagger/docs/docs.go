@@ -290,6 +290,61 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/login/address": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login by provider",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ETH Address",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Signature",
+                        "name": "sign",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/login/{provider}": {
             "get": {
                 "security": [
@@ -379,6 +434,54 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_pkg_core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/nonce": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get Address auth nonce",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ETH Address",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1.NonceResponse"
                         }
                     },
                     "400": {
@@ -3813,6 +3916,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "bingo_internal_apiserver_http_request_v1.NonceResponse": {
+            "type": "object",
+            "properties": {
+                "nonce": {
+                    "description": "Nonce",
                     "type": "string"
                 }
             }

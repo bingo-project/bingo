@@ -19,6 +19,7 @@ type CreateUserAccountTable struct {
 	Email     string `gorm:"type:varchar(255);not null;default:''"`
 	Bio       string `gorm:"type:varchar(255);not null;default:''"`
 	Avatar    string `gorm:"type:varchar(255);not null;default:''"`
+	Nonce     string `gorm:"type:varchar(255);not null;default:''"`
 }
 
 func (CreateUserAccountTable) TableName() string {

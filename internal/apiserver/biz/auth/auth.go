@@ -27,6 +27,10 @@ import (
 type AuthBiz interface {
 	Register(ctx context.Context, r *v1.RegisterRequest) (*v1.LoginResponse, error)
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
+
+	Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error)
+	LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error)
+
 	LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error)
 	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error)
 

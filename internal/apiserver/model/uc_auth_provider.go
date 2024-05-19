@@ -27,4 +27,7 @@ type AuthProviderStatus int
 const (
 	AuthProviderStatusEnabled  AuthProviderStatus = 1
 	AuthProviderStatusDisabled AuthProviderStatus = 2
+
+	AuthProviderGithub = "github"
+	AuthProviderWallet = "wallet"
 )
