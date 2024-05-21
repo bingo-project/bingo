@@ -31,7 +31,7 @@ type IStore interface {
 	Menus() system.MenuStore
 	RoleMenus() system.RoleMenuStore
 
-	Apps() syscfg.AppStore
+	AppVersions() syscfg.AppVersionStore
 	Configs() syscfg.ConfigStore
 
 	Bots() bot.BotStore
@@ -95,8 +95,8 @@ func (ds *datastore) RoleMenus() system.RoleMenuStore {
 	return system.NewRoleMenus(ds.db)
 }
 
-func (ds *datastore) Apps() syscfg.AppStore {
-	return syscfg.NewApps(ds.db)
+func (ds *datastore) AppVersions() syscfg.AppVersionStore {
+	return syscfg.NewAppVersions(ds.db)
 }
 
 func (ds *datastore) Configs() syscfg.ConfigStore {

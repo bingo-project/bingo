@@ -6,7 +6,7 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 )
 
-type AppInfo struct {
+type AppVersionInfo struct {
 	ID          uint64     `json:"id"`
 	CreatedAt   *time.Time `json:"createdAt"`
 	UpdatedAt   *time.Time `json:"updatedAt"`
@@ -19,7 +19,7 @@ type AppInfo struct {
 	Enabled     int32      `json:"enabled"` // Is enabled
 }
 
-type ListAppRequest struct {
+type ListAppVersionRequest struct {
 	gormutil.ListOptions
 
 	Name        *string `json:"name"`
@@ -30,12 +30,12 @@ type ListAppRequest struct {
 	Enabled     *int32  `json:"enabled"` // Is enabled
 }
 
-type ListAppResponse struct {
-	Total int64     `json:"total"`
-	Data  []AppInfo `json:"data"`
+type ListAppVersionResponse struct {
+	Total int64            `json:"total"`
+	Data  []AppVersionInfo `json:"data"`
 }
 
-type CreateAppRequest struct {
+type CreateAppVersionRequest struct {
 	Name        string `json:"name" binding:"required,max=255"`
 	Version     string `json:"version" binding:"required,max=255"`
 	Description string `json:"description" binding:"required,max=1000"`
@@ -44,7 +44,7 @@ type CreateAppRequest struct {
 	Enabled     int32  `json:"enabled"` // Is enabled
 }
 
-type UpdateAppRequest struct {
+type UpdateAppVersionRequest struct {
 	Name        *string `json:"name" binding:"omitempty,max=255"`
 	Version     *string `json:"version"`
 	Description *string `json:"description"`

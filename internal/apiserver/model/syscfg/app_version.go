@@ -2,7 +2,7 @@ package syscfg
 
 import "bingo/internal/apiserver/model"
 
-type App struct {
+type AppVersion struct {
 	model.Base
 
 	Name        string `gorm:"column:name;type:varchar(255);not null" json:"name"`
@@ -13,6 +13,6 @@ type App struct {
 	Enabled     int32  `gorm:"column:enabled;type:tinyint;not null;comment:Is enabled" json:"enabled"` // Is enabled
 }
 
-func (*App) TableName() string {
+func (*AppVersion) TableName() string {
 	return "sys_cfg_app"
 }

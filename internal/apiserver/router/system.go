@@ -73,13 +73,13 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.DELETE("menus/:id", menuController.Delete)
 	v1.GET("menus/tree", menuController.Tree)
 
-	// App
-	appController := syscfg.NewAppController(store.S, authz)
-	v1.GET("cfg/apps", appController.List)
-	v1.POST("cfg/apps", appController.Create)
-	v1.GET("cfg/apps/:id", appController.Get)
-	v1.PUT("cfg/apps/:id", appController.Update)
-	v1.DELETE("cfg/apps/:id", appController.Delete)
+	// App Version
+	appVersionController := syscfg.NewAppVersionController(store.S, authz)
+	v1.GET("cfg/apps", appVersionController.List)
+	v1.POST("cfg/apps", appVersionController.Create)
+	v1.GET("cfg/apps/:id", appVersionController.Get)
+	v1.PUT("cfg/apps/:id", appVersionController.Update)
+	v1.DELETE("cfg/apps/:id", appVersionController.Delete)
 
 	// Sys config
 	configController := syscfg.NewConfigController(store.S, authz)

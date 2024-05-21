@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type AppController struct {
+type AppVersionController struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
-	return &AppController{a: a, b: biz.NewBiz(ds)}
+func NewAppVersionController(ds store.IStore, a *auth.Authz) *AppVersionController {
+	return &AppVersionController{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -28,22 +28,22 @@ func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
 // @Tags       System.App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 query	    v1.ListAppRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListAppResponse
+// @Param      request	 query	    v1.ListAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.ListAppVersionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/cfg/apps [GET].
-func (ctrl *AppController) List(c *gin.Context) {
+func (ctrl *AppVersionController) List(c *gin.Context) {
 	log.C(c).Infow("List app function called")
 
-	var req v1.ListAppRequest
+	var req v1.ListAppVersionRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
-	resp, err := ctrl.b.Apps().List(c, &req)
+	resp, err := ctrl.b.AppVersions().List(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -59,15 +59,15 @@ func (ctrl *AppController) List(c *gin.Context) {
 // @Tags       System.App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 body	    v1.CreateAppRequest	 true  "Param"
-// @Success	   200		{object}	v1.AppInfo
+// @Param      request	 body	    v1.CreateAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/cfg/apps [POST].
-func (ctrl *AppController) Create(c *gin.Context) {
+func (ctrl *AppVersionController) Create(c *gin.Context) {
 	log.C(c).Infow("Create app function called")
 
-	var req v1.CreateAppRequest
+	var req v1.CreateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
@@ -75,7 +75,7 @@ func (ctrl *AppController) Create(c *gin.Context) {
 	}
 
 	// Create app
-	resp, err := ctrl.b.Apps().Create(c, &req)
+	resp, err := ctrl.b.AppVersions().Create(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -92,15 +92,15 @@ func (ctrl *AppController) Create(c *gin.Context) {
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Success	   200		{object}	v1.AppInfo
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/cfg/apps/{id} [GET].
-func (ctrl *AppController) Get(c *gin.Context) {
+func (ctrl *AppVersionController) Get(c *gin.Context) {
 	log.C(c).Infow("Get app function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	app, err := ctrl.b.Apps().Get(c, ID)
+	app, err := ctrl.b.AppVersions().Get(c, ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -117,15 +117,15 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Param      request	 body	    v1.UpdateAppRequest	 true  "Param"
-// @Success	   200		{object}	v1.AppInfo
+// @Param      request	 body	    v1.UpdateAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/cfg/apps/{id} [PUT].
-func (ctrl *AppController) Update(c *gin.Context) {
+func (ctrl *AppVersionController) Update(c *gin.Context) {
 	log.C(c).Infow("Update app function called")
 
-	var req v1.UpdateAppRequest
+	var req v1.UpdateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
@@ -133,7 +133,7 @@ func (ctrl *AppController) Update(c *gin.Context) {
 	}
 
 	ID := cast.ToUint(c.Param("id"))
-	resp, err := ctrl.b.Apps().Update(c, ID, &req)
+	resp, err := ctrl.b.AppVersions().Update(c, ID, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -154,11 +154,11 @@ func (ctrl *AppController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/system/cfg/apps/{id} [DELETE].
-func (ctrl *AppController) Delete(c *gin.Context) {
+func (ctrl *AppVersionController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete app function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	if err := ctrl.b.Apps().Delete(c, ID); err != nil {
+	if err := ctrl.b.AppVersions().Delete(c, ID); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

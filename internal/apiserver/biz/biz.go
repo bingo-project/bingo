@@ -28,7 +28,7 @@ type IBiz interface {
 	Apis() system.ApiBiz
 	Menus() system.MenuBiz
 
-	Apps() syscfg.AppBiz
+	AppVersions() syscfg.AppVersionBiz
 	Configs() syscfg.ConfigBiz
 
 	Bots() bot.BotBiz
@@ -91,8 +91,8 @@ func (b *biz) Menus() system.MenuBiz {
 	return system.NewMenu(b.ds)
 }
 
-func (b *biz) Apps() syscfg.AppBiz {
-	return syscfg.NewApp(b.ds)
+func (b *biz) AppVersions() syscfg.AppVersionBiz {
+	return syscfg.NewAppVersion(b.ds)
 }
 
 func (b *biz) Configs() syscfg.ConfigBiz {

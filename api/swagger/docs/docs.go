@@ -1754,7 +1754,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.ListAppResponse"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.ListAppVersionResponse"
                         }
                     },
                     "400": {
@@ -1794,7 +1794,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.CreateAppRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.CreateAppVersionRequest"
                         }
                     }
                 ],
@@ -1802,7 +1802,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppVersionInfo"
                         }
                     },
                     "400": {
@@ -1850,7 +1850,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppVersionInfo"
                         }
                     },
                     "400": {
@@ -1897,7 +1897,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.UpdateAppRequest"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.UpdateAppVersionRequest"
                         }
                     }
                 ],
@@ -1905,7 +1905,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppInfo"
+                            "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppVersionInfo"
                         }
                     },
                     "400": {
@@ -4211,7 +4211,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_internal_apiserver_http_request_v1_syscfg.AppInfo": {
+        "bingo_internal_apiserver_http_request_v1_syscfg.AppVersionInfo": {
             "type": "object",
             "properties": {
                 "aboutUs": {
@@ -4279,7 +4279,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_internal_apiserver_http_request_v1_syscfg.CreateAppRequest": {
+        "bingo_internal_apiserver_http_request_v1_syscfg.CreateAppVersionRequest": {
             "type": "object",
             "required": [
                 "aboutUs",
@@ -4341,13 +4341,13 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_internal_apiserver_http_request_v1_syscfg.ListAppResponse": {
+        "bingo_internal_apiserver_http_request_v1_syscfg.ListAppVersionResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppInfo"
+                        "$ref": "#/definitions/bingo_internal_apiserver_http_request_v1_syscfg.AppVersionInfo"
                     }
                 },
                 "total": {
@@ -4369,7 +4369,7 @@ const docTemplate = `{
                 }
             }
         },
-        "bingo_internal_apiserver_http_request_v1_syscfg.UpdateAppRequest": {
+        "bingo_internal_apiserver_http_request_v1_syscfg.UpdateAppVersionRequest": {
             "type": "object",
             "properties": {
                 "aboutUs": {

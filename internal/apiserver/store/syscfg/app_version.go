@@ -13,32 +13,32 @@ import (
 	model "bingo/internal/apiserver/model/syscfg"
 )
 
-type AppStore interface {
-	List(ctx context.Context, req *v1.ListAppRequest) (int64, []*model.App, error)
-	Create(ctx context.Context, app *model.App) error
-	Get(ctx context.Context, ID uint) (*model.App, error)
-	Update(ctx context.Context, app *model.App, fields ...string) error
+type AppVersionStore interface {
+	List(ctx context.Context, req *v1.ListAppVersionRequest) (int64, []*model.AppVersion, error)
+	Create(ctx context.Context, app *model.AppVersion) error
+	Get(ctx context.Context, ID uint) (*model.AppVersion, error)
+	Update(ctx context.Context, app *model.AppVersion, fields ...string) error
 	Delete(ctx context.Context, ID uint) error
 
-	CreateInBatch(ctx context.Context, apps []*model.App) error
-	CreateIfNotExist(ctx context.Context, app *model.App) error
-	FirstOrCreate(ctx context.Context, where any, app *model.App) error
-	UpdateOrCreate(ctx context.Context, where any, app *model.App) error
-	Upsert(ctx context.Context, app *model.App, fields ...string) error
+	CreateInBatch(ctx context.Context, apps []*model.AppVersion) error
+	CreateIfNotExist(ctx context.Context, app *model.AppVersion) error
+	FirstOrCreate(ctx context.Context, where any, app *model.AppVersion) error
+	UpdateOrCreate(ctx context.Context, where any, app *model.AppVersion) error
+	Upsert(ctx context.Context, app *model.AppVersion, fields ...string) error
 	DeleteInBatch(ctx context.Context, ids []uint) error
 }
 
-type apps struct {
+type appVersions struct {
 	db *gorm.DB
 }
 
-var _ AppStore = (*apps)(nil)
+var _ AppVersionStore = (*appVersions)(nil)
 
-func NewApps(db *gorm.DB) *apps {
-	return &apps{db: db}
+func NewAppVersions(db *gorm.DB) *appVersions {
+	return &appVersions{db: db}
 }
 
-func SearchApp(req *v1.ListAppRequest) func(db *gorm.DB) *gorm.DB {
+func SearchApp(req *v1.ListAppVersionRequest) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		if req.Name != nil {
 			db.Where("name = ?", req.Name)
@@ -63,43 +63,43 @@ func SearchApp(req *v1.ListAppRequest) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func (s *apps) List(ctx context.Context, req *v1.ListAppRequest) (count int64, ret []*model.App, err error) {
+func (s *appVersions) List(ctx context.Context, req *v1.ListAppVersionRequest) (count int64, ret []*model.AppVersion, err error) {
 	db := s.db.WithContext(ctx).Scopes(SearchApp(req))
 	count, err = gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return
 }
 
-func (s *apps) Create(ctx context.Context, app *model.App) error {
+func (s *appVersions) Create(ctx context.Context, app *model.AppVersion) error {
 	return s.db.WithContext(ctx).Create(&app).Error
 }
 
-func (s *apps) Get(ctx context.Context, ID uint) (app *model.App, err error) {
+func (s *appVersions) Get(ctx context.Context, ID uint) (app *model.AppVersion, err error) {
 	err = s.db.WithContext(ctx).Where("id = ?", ID).First(&app).Error
 
 	return
 }
 
-func (s *apps) Update(ctx context.Context, app *model.App, fields ...string) error {
+func (s *appVersions) Update(ctx context.Context, app *model.AppVersion, fields ...string) error {
 	return s.db.WithContext(ctx).Select(fields).Save(&app).Error
 }
 
-func (s *apps) Delete(ctx context.Context, ID uint) error {
-	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.App{}).Error
+func (s *appVersions) Delete(ctx context.Context, ID uint) error {
+	return s.db.WithContext(ctx).Where("id = ?", ID).Delete(&model.AppVersion{}).Error
 }
 
-func (s *apps) CreateInBatch(ctx context.Context, apps []*model.App) error {
+func (s *appVersions) CreateInBatch(ctx context.Context, apps []*model.AppVersion) error {
 	return s.db.WithContext(ctx).CreateInBatches(&apps, global.CreateBatchSize).Error
 }
 
-func (s *apps) CreateIfNotExist(ctx context.Context, app *model.App) error {
+func (s *appVersions) CreateIfNotExist(ctx context.Context, app *model.AppVersion) error {
 	return s.db.WithContext(ctx).
 		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&app).
 		Error
 }
 
-func (s *apps) FirstOrCreate(ctx context.Context, where any, app *model.App) error {
+func (s *appVersions) FirstOrCreate(ctx context.Context, where any, app *model.AppVersion) error {
 	return s.db.WithContext(ctx).
 		Where(where).
 		Attrs(&app).
@@ -107,9 +107,9 @@ func (s *apps) FirstOrCreate(ctx context.Context, where any, app *model.App) err
 		Error
 }
 
-func (s *apps) UpdateOrCreate(ctx context.Context, where any, app *model.App) error {
+func (s *appVersions) UpdateOrCreate(ctx context.Context, where any, app *model.AppVersion) error {
 	return s.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		var exist model.App
+		var exist model.AppVersion
 		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
 			Where(where).
 			First(&exist).
@@ -124,7 +124,7 @@ func (s *apps) UpdateOrCreate(ctx context.Context, where any, app *model.App) er
 	})
 }
 
-func (s *apps) Upsert(ctx context.Context, app *model.App, fields ...string) error {
+func (s *appVersions) Upsert(ctx context.Context, app *model.AppVersion, fields ...string) error {
 	do := clause.OnConflict{UpdateAll: true}
 	if len(fields) > 0 {
 		do.UpdateAll = false
@@ -137,9 +137,9 @@ func (s *apps) Upsert(ctx context.Context, app *model.App, fields ...string) err
 		Error
 }
 
-func (s *apps) DeleteInBatch(ctx context.Context, ids []uint) error {
+func (s *appVersions) DeleteInBatch(ctx context.Context, ids []uint) error {
 	return s.db.WithContext(ctx).
 		Where("id IN (?)", ids).
-		Delete(&model.App{}).
+		Delete(&model.AppVersion{}).
 		Error
 }
