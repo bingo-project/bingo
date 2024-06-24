@@ -67,13 +67,6 @@ build() {
   cd deployments/docker || exit
   cp .env.example .env
   docker-compose build
-  docker save "${images[@]}" | gzip >"$app_name"-images.tar.gz
-
-  cd - || exit
-  mkdir -p _output
-  mv deployments/docker/*.tar.gz _output/
-
-  ls -lh
 
   echo "build success"
 }
