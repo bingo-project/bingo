@@ -1,6 +1,6 @@
 # App info
 export app_name=bingo
-export version=$(git describe --tags --match='v*' | sed 's/^v//')
+export version=$(git describe --tags --match='v*' | sed 's/^v//' || echo '0.0.0')
 
 # Build
 export registry_prefix=bingo
