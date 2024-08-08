@@ -39,14 +39,14 @@ package() {
   mkdir -p config
   cp -a ../../configs/*.yaml config
 
+  # docker-compose
+  tar -czvpf "$app_name"-docker.tar.gz * .env.example
+
   # Save images
   for index in "${!images[@]}"; do
     images[index]="${registry_prefix}/${images[index]}:${tag}"
   done
   docker save "${images[@]}" | gzip >"$app_name"-images.tar.gz
-
-  # docker-compose
-  tar -czvpf "$app_name"-docker.tar.gz * .env.example
 
   rm -r config
   cd - || exit
