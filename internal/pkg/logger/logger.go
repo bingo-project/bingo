@@ -7,13 +7,17 @@ import (
 	"time"
 
 	"github.com/bingo-project/component-base/log"
+	"github.com/duke-git/lancet/v2/slice"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 )
 
 var (
-	opt = zap.AddCallerSkip(3)
+	opt       = zap.AddCallerSkip(3)
+	blacklist = []string{
+		"SELECT * FROM `casbin_rule` ORDER BY ID",
+	}
 )
 
 // Config defines a gorm logger configuration.
@@ -75,6 +79,10 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 
 	elapsed := time.Since(begin)
 	sql, rows := fc()
+
+	if slice.Contain(blacklist, sql) {
+		return
+	}
 
 	switch {
 	case err != nil && l.LogLevel >= gormlogger.Error && (!errors.Is(err, gorm.ErrRecordNotFound) || l.LogLevel >= gormlogger.Error):
