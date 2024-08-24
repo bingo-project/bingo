@@ -52,7 +52,7 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	if err := enforcer.LoadPolicy(); err != nil {
 		return nil, err
 	}
-	enforcer.StartAutoLoadPolicy(5 * time.Second)
+	enforcer.StartAutoLoadPolicy(time.Minute)
 
 	a := &Authz{enforcer}
 
