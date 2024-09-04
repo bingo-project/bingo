@@ -5,13 +5,13 @@ go 1.22
 require (
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/bingo-project/bingoctl v1.3.4
-	github.com/bingo-project/component-base v0.4.2
+	github.com/bingo-project/component-base v0.4.3
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.89.0
 	github.com/casbin/gorm-adapter/v3 v3.24.0
 	github.com/disintegration/imaging v1.6.2
-	github.com/duke-git/lancet/v2 v2.3.1
+	github.com/duke-git/lancet/v2 v2.3.2
 	github.com/ethereum/go-ethereum v1.14.3
 	github.com/fsnotify/fsnotify v1.7.0
 	github.com/ghodss/yaml v1.0.0
