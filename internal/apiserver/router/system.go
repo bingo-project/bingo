@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/global"
+	"bingo/internal/apiserver/http/controller/v1/app"
 	"bingo/internal/apiserver/http/controller/v1/system"
 	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
 	"bingo/internal/apiserver/http/controller/v1/system/user"
@@ -91,10 +92,19 @@ func MapSystemRouters(g *gin.Engine) {
 
 	// User
 	userController := user.NewUserController(store.S, authz)
-	v1.POST("users", userController.Create)                              // 创建用户
 	v1.GET("users", userController.List)                                 // 列出用户列表，只有 root 用户才能访问
+	v1.POST("users", userController.Create)                              // 创建用户
 	v1.GET("users/:name", userController.Get)                            // 获取用户详情
 	v1.PUT("users/:name", userController.Update)                         // 更新用户
 	v1.DELETE("users/:name", userController.Delete)                      // 删除用户
 	v1.PUT("users/:name/change-password", userController.ChangePassword) // 修改用户密码
+
+	// App
+	appController := app.NewAppController(store.S, authz)
+	v1.GET("apps", appController.List)
+	v1.POST("apps", appController.Create)
+	v1.GET("apps/:appid", appController.Get)
+	v1.PUT("apps/:appid", appController.Update)
+	v1.DELETE("apps/:id", appController.Delete)
+
 }

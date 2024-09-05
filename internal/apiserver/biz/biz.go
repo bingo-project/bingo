@@ -3,6 +3,7 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/apiserver/biz IBiz
 
 import (
+	"bingo/internal/apiserver/biz/app"
 	"bingo/internal/apiserver/biz/auth"
 	"bingo/internal/apiserver/biz/bot"
 	"bingo/internal/apiserver/biz/common"
@@ -33,6 +34,7 @@ type IBiz interface {
 
 	Bots() bot.BotBiz
 	Channels() bot.ChannelBiz
+	Apps() app.AppBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -105,4 +107,8 @@ func (b *biz) Bots() bot.BotBiz {
 
 func (b *biz) Channels() bot.ChannelBiz {
 	return bot.NewChannel(b.ds)
+}
+
+func (b *biz) Apps() app.AppBiz {
+	return app.NewApp(b.ds)
 }
