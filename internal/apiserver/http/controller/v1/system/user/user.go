@@ -12,8 +12,6 @@ import (
 	"bingo/pkg/auth"
 )
 
-const defaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
-
 // UserController 是 user 模块在 Controller 层的实现，用来处理用户模块的请求.
 type UserController struct {
 	a *auth.Authz
@@ -85,7 +83,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 	}
 
 	// Create policy
-	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/system/users/"+req.Username, defaultMethods); err != nil {
+	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/system/users/"+req.Username, auth.AclDefaultMethods); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

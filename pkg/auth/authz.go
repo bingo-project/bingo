@@ -25,6 +25,8 @@ e = some(where (p.eft == allow))
 
 [matchers]
 m = g(r.sub, p.sub) && r.sub == p.sub && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)`
+
+	AclDefaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
 )
 
 // Authz 定义了一个授权器，提供授权功能.
@@ -52,7 +54,7 @@ func NewAuthz(db *gorm.DB) (*Authz, error) {
 	if err := enforcer.LoadPolicy(); err != nil {
 		return nil, err
 	}
-	enforcer.StartAutoLoadPolicy(time.Minute)
+	enforcer.StartAutoLoadPolicy(time.Second * 5)
 
 	a := &Authz{enforcer}
 
