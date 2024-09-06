@@ -24,7 +24,7 @@ func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
 // List
 // @Summary    List apps
 // @Security   Bearer
-// @Tags       App
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAppRequest	 true  "Param"
@@ -55,7 +55,7 @@ func (ctrl *AppController) List(c *gin.Context) {
 // Create
 // @Summary    Create app
 // @Security   Bearer
-// @Tags       App
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateAppRequest	 true  "Param"
@@ -87,7 +87,7 @@ func (ctrl *AppController) Create(c *gin.Context) {
 // Get
 // @Summary    Get app info
 // @Security   Bearer
-// @Tags       App
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            		 true  "ID"
@@ -112,7 +112,7 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // Update
 // @Summary    Update app info
 // @Security   Bearer
-// @Tags       App
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            		 true  "ID"
@@ -145,7 +145,7 @@ func (ctrl *AppController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete app
 // @Security   Bearer
-// @Tags       App
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            true  "ID"

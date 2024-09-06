@@ -1459,7 +1459,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "App"
+                    "System.App"
                 ],
                 "summary": "List apps",
                 "parameters": [
@@ -1559,7 +1559,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "App"
+                    "System.App"
                 ],
                 "summary": "Create app",
                 "parameters": [
@@ -1609,7 +1609,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "App"
+                    "System.App"
                 ],
                 "summary": "Get app info",
                 "parameters": [
@@ -1655,7 +1655,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "App"
+                    "System.App"
                 ],
                 "summary": "Update app info",
                 "parameters": [
@@ -1710,7 +1710,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "App"
+                    "System.App"
                 ],
                 "summary": "Delete app",
                 "parameters": [
@@ -1980,7 +1980,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "System.Config"
                 ],
                 "summary": "List apps",
                 "parameters": [
@@ -2080,7 +2080,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "System.Config"
                 ],
                 "summary": "Create app",
                 "parameters": [
@@ -2130,7 +2130,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "System.Config"
                 ],
                 "summary": "Get app info",
                 "parameters": [
@@ -2176,7 +2176,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "System.Config"
                 ],
                 "summary": "Update app info",
                 "parameters": [
@@ -2231,7 +2231,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "System.Config"
                 ],
                 "summary": "Delete app",
                 "parameters": [

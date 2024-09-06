@@ -25,7 +25,7 @@ func NewAppVersionController(ds store.IStore, a *auth.Authz) *AppVersionControll
 // List
 // @Summary    List apps
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       System.Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAppVersionRequest	 true  "Param"
@@ -56,7 +56,7 @@ func (ctrl *AppVersionController) List(c *gin.Context) {
 // Create
 // @Summary    Create app
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       System.Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateAppVersionRequest	 true  "Param"
@@ -88,7 +88,7 @@ func (ctrl *AppVersionController) Create(c *gin.Context) {
 // Get
 // @Summary    Get app info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       System.Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -113,7 +113,7 @@ func (ctrl *AppVersionController) Get(c *gin.Context) {
 // Update
 // @Summary    Update app info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       System.Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -146,7 +146,7 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete app
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       System.Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
