@@ -109,7 +109,7 @@ func (b *appBiz) Update(ctx context.Context, appID string, req *v1.UpdateAppRequ
 	}
 
 	var resp v1.AppInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, appM)
 
 	return &resp, nil
 }

@@ -26,6 +26,8 @@ type AppStore interface {
 	UpdateOrCreate(ctx context.Context, where any, app *model.App) error
 	Upsert(ctx context.Context, app *model.App, fields ...string) error
 	DeleteInBatch(ctx context.Context, ids []uint) error
+
+	GetByAppID(ctx context.Context, appID string) (*model.App, error)
 }
 
 type apps struct {
@@ -142,4 +144,10 @@ func (s *apps) DeleteInBatch(ctx context.Context, ids []uint) error {
 		Where("id IN (?)", ids).
 		Delete(&model.App{}).
 		Error
+}
+
+func (s *apps) GetByAppID(ctx context.Context, appID string) (ret *model.App, err error) {
+	err = s.db.WithContext(ctx).Where("app_id = ?", appID).First(&ret).Error
+
+	return
 }

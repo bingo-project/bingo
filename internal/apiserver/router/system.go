@@ -105,6 +105,13 @@ func MapSystemRouters(g *gin.Engine) {
 	v1.POST("apps", appController.Create)
 	v1.GET("apps/:appid", appController.Get)
 	v1.PUT("apps/:appid", appController.Update)
-	v1.DELETE("apps/:id", appController.Delete)
+	v1.DELETE("apps/:appid", appController.Delete)
 
+	// Api keys
+	apiKeyController := app.NewApiKeyController(store.S, authz)
+	v1.GET("api-keys", apiKeyController.List)
+	v1.POST("api-keys", apiKeyController.Create)
+	v1.GET("api-keys/:id", apiKeyController.Get)
+	v1.PUT("api-keys/:id", apiKeyController.Update)
+	v1.DELETE("api-keys/:id", apiKeyController.Delete)
 }

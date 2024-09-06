@@ -19,6 +19,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-playground/validator/v10 v10.20.0
 	github.com/go-redsync/redsync/v4 v4.13.0
+	github.com/golang-module/carbon/v2 v2.3.12
 	github.com/google/go-github/v62 v62.0.0
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.5.4
@@ -48,6 +49,7 @@ require (
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
 	gopkg.in/telebot.v3 v3.2.1
+	gorm.io/datatypes v1.2.0
 	gorm.io/driver/mysql v1.5.6
 	gorm.io/gorm v1.25.10
 )

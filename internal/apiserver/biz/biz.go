@@ -35,6 +35,7 @@ type IBiz interface {
 	Bots() bot.BotBiz
 	Channels() bot.ChannelBiz
 	Apps() app.AppBiz
+	ApiKeys() app.ApiKeyBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -111,4 +112,8 @@ func (b *biz) Channels() bot.ChannelBiz {
 
 func (b *biz) Apps() app.AppBiz {
 	return app.NewApp(b.ds)
+}
+
+func (b *biz) ApiKeys() app.ApiKeyBiz {
+	return app.NewApiKey(b.ds)
 }
