@@ -113,7 +113,7 @@ func (b *apiBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) 
 	}
 
 	var resp v1.ApiInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, apiM)
 
 	return &resp, nil
 }

@@ -110,7 +110,7 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 	}
 
 	var resp v1.RoleInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, roleM)
 
 	return &resp, nil
 }

@@ -109,7 +109,7 @@ func (b *botBiz) Update(ctx context.Context, ID uint, req *v1.UpdateBotRequest) 
 	}
 
 	var resp v1.BotInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, botM)
 
 	return &resp, nil
 }

@@ -130,7 +130,7 @@ func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAut
 	}
 
 	var resp v1.AuthProviderInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, authProviderM)
 
 	return &resp, nil
 }

@@ -105,7 +105,7 @@ func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelR
 	}
 
 	var resp v1.ChannelInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, channelM)
 
 	return &resp, nil
 }

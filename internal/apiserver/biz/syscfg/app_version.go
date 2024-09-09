@@ -112,7 +112,7 @@ func (b *appVersionBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAppVe
 	}
 
 	var resp v1.AppVersionInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, appM)
 
 	return &resp, nil
 }

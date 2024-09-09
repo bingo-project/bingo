@@ -109,7 +109,7 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 	}
 
 	var resp v1.ConfigInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, configM)
 
 	return &resp, nil
 }

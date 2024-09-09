@@ -127,7 +127,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 	}
 
 	var resp v1.MenuInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, menuM)
 
 	return &resp, nil
 }

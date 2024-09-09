@@ -142,7 +142,7 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	}
 
 	var resp v1.AdminInfo
-	_ = copier.Copy(&resp, req)
+	_ = copier.Copy(&resp, adminM)
 
 	return &resp, nil
 }
