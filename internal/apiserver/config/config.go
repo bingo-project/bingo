@@ -18,4 +18,5 @@ type Config struct {
 	Log     *log.Options     `mapstructure:"log" json:"log" yaml:"log"`
 	Mail    *mail.Options    `mapstructure:"mail" json:"mail" yaml:"mail"`
 	Code    Code             `mapstructure:"code" json:"code" yaml:"code"`
+	OpenAPI OpenAPI          `mapstructure:"openapi" json:"openapi" yaml:"openapi"`
 }

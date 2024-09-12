@@ -8,6 +8,7 @@ var (
 	ErrResourceAlreadyExists = &Errno{HTTP: 400, Code: "ResourceAlreadyExists", Message: "Resource already exists."}                                          // 表示资源已存在
 	ErrBind                  = &Errno{HTTP: 400, Code: "InvalidParameter.BindError", Message: "Error occurred while binding the request body to the struct."} // 表示参数绑定错误
 	ErrInvalidParameter      = &Errno{HTTP: 400, Code: "InvalidParameter", Message: "Parameter verification failed."}                                         // 表示所有验证失败的错误
+	ErrIllegalRequest        = &Errno{HTTP: 400, Code: "IllegalRequest", Message: "Illegal request."}                                                         // 表示非法请求
 	ErrResourceNotFound      = &Errno{HTTP: 404, Code: "ResourceNotFound", Message: "Resource not found."}                                                    // 表示资源不存在
 	ErrTooManyRequests       = &Errno{HTTP: 429, Code: "TooManyRequests", Message: "Too Many Requests"}                                                       // 请求过于频繁
 

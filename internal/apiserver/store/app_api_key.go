@@ -26,6 +26,8 @@ type ApiKeyStore interface {
 	UpdateOrCreate(ctx context.Context, where any, apiKey *model.ApiKey) error
 	Upsert(ctx context.Context, apiKey *model.ApiKey, fields ...string) error
 	DeleteInBatch(ctx context.Context, ids []uint) error
+
+	GetByAK(ctx context.Context, ak string) (*model.ApiKey, error)
 }
 
 type apiKeys struct {
@@ -139,4 +141,10 @@ func (s *apiKeys) DeleteInBatch(ctx context.Context, ids []uint) error {
 		Where("id IN (?)", ids).
 		Delete(&model.ApiKey{}).
 		Error
+}
+
+func (s *apiKeys) GetByAK(ctx context.Context, ak string) (apiKey *model.ApiKey, err error) {
+	err = s.db.WithContext(ctx).Where("access_key = ?", ak).First(&apiKey).Error
+
+	return
 }
