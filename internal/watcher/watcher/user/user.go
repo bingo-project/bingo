@@ -6,6 +6,7 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 	"github.com/go-redsync/redsync/v4"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 
 	"bingo/internal/apiserver/store"
@@ -18,6 +19,7 @@ type UserWatcher struct {
 
 // Run runs the watcher job.
 func (w *UserWatcher) Run() {
+	w.ctx = context.WithValue(w.ctx, log.KeyTrace, uuid.New().String())
 	if err := w.mutex.Lock(); err != nil {
 		log.C(w.ctx).Infow("UserWatcher already run.")
 

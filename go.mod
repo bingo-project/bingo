@@ -6,7 +6,7 @@ require (
 	github.com/agiledragon/gomonkey/v2 v2.12.0
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/bingo-project/bingoctl v1.3.4
-	github.com/bingo-project/component-base v0.4.3
+	github.com/bingo-project/component-base v0.4.4
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/casbin/casbin/v2 v2.89.0

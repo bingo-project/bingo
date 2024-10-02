@@ -3,6 +3,7 @@ package core
 import (
 	"net/http"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/errno"
@@ -23,8 +24,8 @@ func WriteResponse(c *gin.Context, err error, data interface{}) {
 	hcode, code, message := errno.Decode(err)
 
 	// Set errno to ctx
-	c.Set("code", code)
-	c.Set("message", message)
+	c.Set(log.KeyCode, code)
+	c.Set(log.KeyMessage, message)
 
 	if err != nil {
 		c.JSON(hcode, ErrResponse{

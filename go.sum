@@ -121,8 +121,8 @@ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6r
 github.com/bgentry/speakeasy v0.1.0/go.mod h1:+zsyZBPWlz7T6j88CTgSN5bM796AkVf0kBD4zp0CCIs=
 github.com/bingo-project/bingoctl v1.3.4 h1:9lz+tMgKlh+GyyEHfxT5/b/hTc3s2wYhqJ5gnd0PwAo=
 github.com/bingo-project/bingoctl v1.3.4/go.mod h1:1SFdsXGru38AQbeNwFk8t7sqNJc7tSZ9sxsI2cKEG08=
-github.com/bingo-project/component-base v0.4.3 h1:b3yCdrSYtmA7AkD7R2EPEv0V5QurORDGDkQjk5fkPs0=
-github.com/bingo-project/component-base v0.4.3/go.mod h1:RCBb/oZu/r6qoHoAnpJ7Gb8bC12Wb5wucxznYkPW7cU=
+github.com/bingo-project/component-base v0.4.4 h1:4o7SWMqs1P/VadDrd4b476c5BpafQkXVEYL03IXlAE8=
+github.com/bingo-project/component-base v0.4.4/go.mod h1:RCBb/oZu/r6qoHoAnpJ7Gb8bC12Wb5wucxznYkPW7cU=
 github.com/bits-and-blooms/bitset v1.10.0 h1:ePXTeiPEazB5+opbv5fr8umg2R/1NlzgDsyepwsSr88=
 github.com/bits-and-blooms/bitset v1.10.0/go.mod h1:7hO7Gc7Pp1vODcmWvKMRA9BNmbv6a/7QIWpPxHddWR8=
 github.com/bsm/ginkgo/v2 v2.7.0/go.mod h1:AiKlXPm7ItEHNc/2+OkrNG4E0ITzojb9/xWzvQ9XZ9w=
