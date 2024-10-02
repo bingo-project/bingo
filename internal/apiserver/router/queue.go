@@ -19,5 +19,5 @@ func MapQueueRouters(g *gin.Engine) {
 		},
 	})
 
-	g.GET("/monitoring/tasks/*any", gin.WrapH(mon))
+	g.Any("/monitoring/tasks/*any", gin.WrapH(mon))
 }
