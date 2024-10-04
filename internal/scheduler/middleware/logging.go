@@ -1,4 +1,4 @@
-package queue
+package middleware
 
 import (
 	"context"
@@ -10,7 +10,11 @@ import (
 
 func Logging(h asynq.Handler) asynq.Handler {
 	return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) error {
+		// Context
+		taskId, _ := asynq.GetTaskID(ctx)
 		ctx = context.WithValue(ctx, log.KeyTask, t.Type())
+		ctx = context.WithValue(ctx, log.KeyTrace, taskId)
+
 		start := time.Now()
 
 		log.C(ctx).Infow("Start processing " + t.Type())

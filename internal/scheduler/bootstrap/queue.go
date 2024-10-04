@@ -1,10 +1,11 @@
 package bootstrap
 
 import (
+	"runtime"
+
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/apiserver/facade"
-	"bingo/internal/pkg/task"
+	"bingo/internal/scheduler/facade"
 )
 
 func InitQueue() {
@@ -15,5 +16,7 @@ func InitQueue() {
 		DB:       facade.Config.Redis.Database,
 	}
 
-	task.NewTask(opt)
+	facade.Worker = asynq.NewServer(opt, asynq.Config{
+		Concurrency: runtime.NumCPU(),
+	})
 }

@@ -92,3 +92,4 @@ _output
 
 # Config
 bingo-apiserver.yaml
+bingo-scheduler.yaml

@@ -6,19 +6,12 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/task"
+	"bingo/internal/scheduler/facade"
 )
 
-const EmailVerificationCode = "email:verification"
-
-type EmailVerificationCodePayload struct {
-	To      string
-	Subject string
-	Content string
-}
-
 func HandleEmailVerificationTask(ctx context.Context, t *asynq.Task) error {
-	var payload EmailVerificationCodePayload
+	var payload task.EmailVerificationCodePayload
 	err := json.Unmarshal(t.Payload(), &payload)
 	if err != nil {
 		return err

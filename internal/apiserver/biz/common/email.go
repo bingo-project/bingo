@@ -6,9 +6,7 @@ import (
 	"time"
 
 	"github.com/bingo-project/component-base/log"
-	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/random"
-	"github.com/hibiken/asynq"
 
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/global"
@@ -53,8 +51,7 @@ func (b *emailBiz) SendEmailVerifyCode(ctx context.Context, req *v1.SendEmailReq
 	}
 
 	// Enqueue email task
-	t := asynq.NewTask(task.EmailVerificationCode, []byte(convertor.ToString(payload)))
-	_, err := facade.Queue.Enqueue(t)
+	_, err := task.T.Queue(ctx, task.EmailVerificationCode, payload).Dispatch()
 	if err != nil {
 		log.C(ctx).Errorw("enqueue failed", "err", err)
 
