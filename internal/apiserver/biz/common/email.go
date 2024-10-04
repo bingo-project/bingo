@@ -13,9 +13,9 @@ import (
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/job"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/task"
 )
 
 type EmailBiz interface {
@@ -46,14 +46,14 @@ func (b *emailBiz) SendEmailVerifyCode(ctx context.Context, req *v1.SendEmailReq
 	msg := fmt.Sprintf("Your verification code is: %s, please note that it will expire in 5 minutes.", code)
 
 	// Email task payload
-	payload := &job.EmailVerificationCodePayload{
+	payload := &task.EmailVerificationCodePayload{
 		To:      req.Email,
 		Subject: subject,
 		Content: msg,
 	}
 
 	// Enqueue email task
-	t := asynq.NewTask(job.EmailVerificationCode, []byte(convertor.ToString(payload)))
+	t := asynq.NewTask(task.EmailVerificationCode, []byte(convertor.ToString(payload)))
 	_, err := facade.Queue.Enqueue(t)
 	if err != nil {
 		log.C(ctx).Errorw("enqueue failed", "err", err)
