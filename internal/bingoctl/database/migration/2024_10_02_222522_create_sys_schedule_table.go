@@ -12,7 +12,7 @@ type CreateSysScheduleTable struct {
 	model.Base
 
 	Name        string `gorm:"type:varchar(255);not null;default:''"`
-	Job         string `gorm:"type:varchar(255);not null;default:''"`
+	Job         string `gorm:"type:varchar(255);uniqueIndex:uk_job;not null;default:''"`
 	Spec        string `gorm:"type:varchar(255);not null;default:''"`
 	Status      string `gorm:"type:tinyint;not null;default:1;comment:Status, 1-enabled, 2-disabled"`
 	Description string `gorm:"type:varchar(1000);not null;default:''"`
