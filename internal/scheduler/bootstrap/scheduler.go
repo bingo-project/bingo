@@ -3,9 +3,12 @@ package bootstrap
 import (
 	"time"
 
+	"github.com/bingo-project/component-base/log"
 	"github.com/hibiken/asynq"
 
+	"bingo/internal/scheduler/biz/syscfg"
 	"bingo/internal/scheduler/facade"
+	"bingo/internal/scheduler/store"
 )
 
 func InitScheduler() {
@@ -19,10 +22,22 @@ func InitScheduler() {
 	// Timezone
 	location, err := time.LoadLocation(facade.Config.Server.Timezone)
 	if err != nil {
-		panic(err)
+		log.Fatalf(err.Error())
 	}
 
+	// Periodic task
 	facade.Scheduler = asynq.NewScheduler(opt, &asynq.SchedulerOpts{
 		Location: location,
 	})
+
+	// Periodic task (Dynamic)
+	facade.TaskManager, err = asynq.NewPeriodicTaskManager(
+		asynq.PeriodicTaskManagerOpts{
+			RedisConnOpt:               opt,
+			PeriodicTaskConfigProvider: syscfg.NewSchedule(store.S),
+			SyncInterval:               time.Second * 10,
+		})
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
 }

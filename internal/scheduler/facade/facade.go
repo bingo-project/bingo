@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	Config    config.Config
-	Mail      *mail.Mailer
-	Worker    *asynq.Server
-	Scheduler *asynq.Scheduler
+	Config      config.Config
+	Mail        *mail.Mailer
+	Worker      *asynq.Server
+	Scheduler   *asynq.Scheduler
+	TaskManager *asynq.PeriodicTaskManager
 )

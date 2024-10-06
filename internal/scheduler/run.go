@@ -12,16 +12,19 @@ import (
 
 // run 函数是实际的业务代码入口函数.
 func run() error {
-	// Queue task
-	go runJobs()
+	// Queue job
+	go runQueueJobs()
 
-	// Scheduler
-	runSchedulers()
+	// Cron job
+	go runCronJobs()
+
+	// Cron job from database
+	runDynamicCronJobs()
 
 	return nil
 }
 
-func runJobs() {
+func runQueueJobs() {
 	mux := asynq.NewServeMux()
 	mux.Use(middleware.Logging)
 
@@ -29,14 +32,20 @@ func runJobs() {
 
 	err := facade.Worker.Run(mux)
 	if err != nil {
-		log.Fatalw("run worker failed", "err", err)
+		log.Fatalw("runQueueJobs failed", "err", err)
 	}
 }
 
-func runSchedulers() {
-	scheduler.Register()
+func runCronJobs() {
+	scheduler.RegisterPeriodicTasks()
 
 	if err := facade.Scheduler.Run(); err != nil {
-		log.Fatalw("run job failed", "err", err)
+		log.Fatalw("runCronJobs failed", "err", err)
+	}
+}
+
+func runDynamicCronJobs() {
+	if err := facade.TaskManager.Run(); err != nil {
+		log.Fatalw("runDynamicCronJobs failed", "err", err)
 	}
 }
