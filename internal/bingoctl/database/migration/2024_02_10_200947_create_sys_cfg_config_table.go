@@ -5,7 +5,7 @@ import (
 
 	"github.com/bingo-project/bingoctl/pkg/migrate"
 
-	"bingo/internal/apiserver/model"
+	"bingo/internal/pkg/model"
 )
 
 type CreateSysCfgConfigTable struct {

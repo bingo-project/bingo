@@ -10,9 +10,9 @@ import (
 
 	"bingo/internal/apiserver/config"
 	"bingo/internal/apiserver/facade"
-	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/model"
 
 	"github.com/bingo-project/component-base/web/signer"
 

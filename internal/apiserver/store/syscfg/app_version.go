@@ -10,7 +10,7 @@ import (
 
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1/syscfg"
-	model "bingo/internal/apiserver/model/syscfg"
+	model "bingo/internal/pkg/model/syscfg"
 )
 
 type AppVersionStore interface {

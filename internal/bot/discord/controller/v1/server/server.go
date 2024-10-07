@@ -8,10 +8,10 @@ import (
 
 	"bingo/internal/apiserver/biz"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
-	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/bot/discord/client"
 	mw "bingo/internal/bot/discord/middleware"
+	"bingo/internal/pkg/model/bot"
 )
 
 type ServerController struct {

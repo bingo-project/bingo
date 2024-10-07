@@ -4,10 +4,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	model "bingo/internal/apiserver/model/syscfg"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	model "bingo/internal/pkg/model/syscfg"
 )
 
 func Maintenance() gin.HandlerFunc {

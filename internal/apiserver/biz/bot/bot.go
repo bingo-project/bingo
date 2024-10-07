@@ -8,9 +8,9 @@ import (
 	"github.com/jinzhu/copier"
 
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
-	model "bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	model "bingo/internal/pkg/model/bot"
 )
 
 type BotBiz interface {

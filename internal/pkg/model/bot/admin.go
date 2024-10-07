@@ -1,11 +1,9 @@
 package bot
 
-import (
-	"gorm.io/gorm"
-)
+import "bingo/internal/pkg/model"
 
 type Admin struct {
-	gorm.Model
+	model.Base
 
 	Source string `gorm:"column:source;type:varchar(255);not null;uniqueIndex:uk_source_user,priority:1" json:"source"`
 	UserID string `gorm:"column:user_id;type:varchar(255);not null;uniqueIndex:uk_source_user,priority:2" json:"userId"`

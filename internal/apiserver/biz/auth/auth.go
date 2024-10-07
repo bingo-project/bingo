@@ -17,9 +17,9 @@ import (
 	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	model2 "bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 )
 
@@ -32,7 +32,7 @@ type AuthBiz interface {
 	LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error)
 
 	LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error)
-	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error)
+	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model2.UserM) (ret *v1.UserAccountInfo, err error)
 
 	ChangePassword(ctx context.Context, uid string, r *v1.ChangePasswordRequest) error
 }
@@ -48,7 +48,7 @@ func NewAuth(ds store.IStore) *authBiz {
 }
 
 func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.LoginResponse, error) {
-	user := &model.UserM{
+	user := &model2.UserM{
 		Username: req.Username,
 		Nickname: req.Nickname,
 		Password: req.Password,
@@ -146,10 +146,10 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	}
 
 	account.UID = facade.Snowflake.Generate().String()
-	user := &model.UserM{
+	user := &model2.UserM{
 		UID:           account.UID,
 		Email:         account.Email,
-		Status:        model.UserStatusEnabled,
+		Status:        model2.UserStatusEnabled,
 		Avatar:        account.Avatar,
 		LastLoginTime: pointer.Of(time.Now()),
 		LastLoginIP:   ctx.ClientIP(),
@@ -178,7 +178,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	return resp, nil
 }
 
-func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error) {
+func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model2.UserM) (ret *v1.UserAccountInfo, err error) {
 	oauthProvider, err := b.ds.AuthProviders().FirstEnabled(ctx, provider)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
@@ -226,7 +226,7 @@ func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProvide
 }
 
 // GetUserInfo todo::other provider
-func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret *model.UserAccount, err error) {
+func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret *model2.UserAccount, err error) {
 	// Get User info
 	client := github.NewClient(nil).WithAuthToken(token)
 	data, _, err := client.Users.Get(ctx, "")
@@ -234,7 +234,7 @@ func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret 
 		return nil, err
 	}
 
-	ret = &model.UserAccount{
+	ret = &model2.UserAccount{
 		Provider:  provider,
 		AccountID: cast.ToString(&data.ID),
 		Username:  cast.ToString(data.Login),

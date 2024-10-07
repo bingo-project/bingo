@@ -8,23 +8,23 @@ import (
 	"gorm.io/gorm"
 
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/model"
+	model2 "bingo/internal/pkg/model"
 )
 
 type UserStore interface {
-	List(ctx context.Context, req *v1.ListUserRequest) (int64, []*model.UserM, error)
-	Create(ctx context.Context, user *model.UserM) error
-	Get(ctx context.Context, username string) (*model.UserM, error)
-	Update(ctx context.Context, user *model.UserM, fields ...string) error
+	List(ctx context.Context, req *v1.ListUserRequest) (int64, []*model2.UserM, error)
+	Create(ctx context.Context, user *model2.UserM) error
+	Get(ctx context.Context, username string) (*model2.UserM, error)
+	Update(ctx context.Context, user *model2.UserM, fields ...string) error
 	Delete(ctx context.Context, username string) error
 
-	FirstOrCreate(ctx context.Context, where any, user *model.UserM) error
+	FirstOrCreate(ctx context.Context, where any, user *model2.UserM) error
 
-	IsExist(ctx context.Context, user *model.UserM) (exist bool, err error)
-	GetByUID(ctx context.Context, uid string) (user *model.UserM, err error)
+	IsExist(ctx context.Context, user *model2.UserM) (exist bool, err error)
+	GetByUID(ctx context.Context, uid string) (user *model2.UserM, err error)
 
-	CreateWithAccount(ctx context.Context, user *model.UserM, account *model.UserAccount) error
-	FindAccounts(ctx context.Context, uid string) ([]*model.UserAccount, error)
+	CreateWithAccount(ctx context.Context, user *model2.UserM, account *model2.UserAccount) error
+	FindAccounts(ctx context.Context, uid string) ([]*model2.UserAccount, error)
 	CountAccounts(ctx context.Context, uid string) (ret int64, err error)
 }
 
@@ -38,31 +38,31 @@ func newUsers(db *gorm.DB) *users {
 	return &users{db: db}
 }
 
-func (u *users) List(ctx context.Context, req *v1.ListUserRequest) (count int64, ret []*model.UserM, err error) {
+func (u *users) List(ctx context.Context, req *v1.ListUserRequest) (count int64, ret []*model2.UserM, err error) {
 	count, err = gormutil.Paginate(u.db.WithContext(ctx), &req.ListOptions, &ret)
 
 	return
 }
 
-func (u *users) Create(ctx context.Context, user *model.UserM) error {
+func (u *users) Create(ctx context.Context, user *model2.UserM) error {
 	return u.db.WithContext(ctx).Create(&user).Error
 }
 
-func (u *users) Get(ctx context.Context, username string) (user *model.UserM, err error) {
+func (u *users) Get(ctx context.Context, username string) (user *model2.UserM, err error) {
 	err = u.db.WithContext(ctx).Where("username = ?", username).First(&user).Error
 
 	return
 }
 
-func (u *users) Update(ctx context.Context, user *model.UserM, fields ...string) error {
+func (u *users) Update(ctx context.Context, user *model2.UserM, fields ...string) error {
 	return u.db.WithContext(ctx).Select(fields).Save(&user).Error
 }
 
 func (u *users) Delete(ctx context.Context, username string) error {
-	return u.db.WithContext(ctx).Where("username = ?", username).Delete(&model.UserM{}).Error
+	return u.db.WithContext(ctx).Where("username = ?", username).Delete(&model2.UserM{}).Error
 }
 
-func (u *users) FirstOrCreate(ctx context.Context, where any, user *model.UserM) error {
+func (u *users) FirstOrCreate(ctx context.Context, where any, user *model2.UserM) error {
 	return u.db.WithContext(ctx).
 		Where(where).
 		Attrs(&user).
@@ -70,8 +70,8 @@ func (u *users) FirstOrCreate(ctx context.Context, where any, user *model.UserM)
 		Error
 }
 
-func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err error) {
-	db := u.db.WithContext(ctx).Model(&model.UserM{})
+func (u *users) IsExist(ctx context.Context, user *model2.UserM) (exist bool, err error) {
+	db := u.db.WithContext(ctx).Model(&model2.UserM{})
 
 	if user.UID != "" {
 		db = db.Where("uid = ?", user.UID)
@@ -95,16 +95,16 @@ func (u *users) IsExist(ctx context.Context, user *model.UserM) (exist bool, err
 	return id > 0, nil
 }
 
-func (u *users) GetByUID(ctx context.Context, uid string) (user *model.UserM, err error) {
+func (u *users) GetByUID(ctx context.Context, uid string) (user *model2.UserM, err error) {
 	err = u.db.WithContext(ctx).Where("uid = ?", uid).First(&user).Error
 
 	return
 }
 
-func (u *users) CreateWithAccount(ctx context.Context, user *model.UserM, account *model.UserAccount) error {
+func (u *users) CreateWithAccount(ctx context.Context, user *model2.UserM, account *model2.UserAccount) error {
 	return u.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// Check exist.
-		err := tx.Model(&model.UserAccount{}).
+		err := tx.Model(&model2.UserAccount{}).
 			Where("provider = ?", account.Provider).
 			Where("account_id = ?", account.AccountID).
 			First(&account).
@@ -115,7 +115,7 @@ func (u *users) CreateWithAccount(ctx context.Context, user *model.UserM, accoun
 
 		// Update account info
 		if account.ID > 0 {
-			tx.Where("uid = ?", account.UID).Updates(&model.UserM{
+			tx.Where("uid = ?", account.UID).Updates(&model2.UserM{
 				LastLoginTime: user.LastLoginTime,
 				LastLoginIP:   user.LastLoginIP,
 				LastLoginType: user.LastLoginType,
@@ -134,7 +134,7 @@ func (u *users) CreateWithAccount(ctx context.Context, user *model.UserM, accoun
 	})
 }
 
-func (u *users) FindAccounts(ctx context.Context, uid string) (ret []*model.UserAccount, err error) {
+func (u *users) FindAccounts(ctx context.Context, uid string) (ret []*model2.UserAccount, err error) {
 	err = u.db.WithContext(ctx).
 		Where("uid = ?", uid).
 		Find(&ret).
@@ -145,7 +145,7 @@ func (u *users) FindAccounts(ctx context.Context, uid string) (ret []*model.User
 
 func (u *users) CountAccounts(ctx context.Context, uid string) (ret int64, err error) {
 	err = u.db.WithContext(ctx).
-		Model(&model.UserAccount{}).
+		Model(&model2.UserAccount{}).
 		Where("uid = ?", uid).
 		Count(&ret).
 		Error

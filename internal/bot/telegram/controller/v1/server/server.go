@@ -9,9 +9,9 @@ import (
 
 	"bingo/internal/apiserver/biz"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
-	"bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 	mw "bingo/internal/bot/telegram/middleware"
+	"bingo/internal/pkg/model/bot"
 )
 
 type ServerController struct {

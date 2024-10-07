@@ -10,10 +10,10 @@ import (
 	"github.com/spf13/cast"
 
 	"bingo/internal/apiserver/facade"
-	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 	"bingo/pkg/util/ip"
 )

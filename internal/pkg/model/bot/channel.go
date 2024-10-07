@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"bingo/internal/apiserver/model"
+	"bingo/internal/pkg/model"
 )
 
 type Channel struct {

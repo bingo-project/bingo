@@ -9,9 +9,9 @@ import (
 	"github.com/jinzhu/copier"
 
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/model"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/model"
 )
 
 type ApiBiz interface {

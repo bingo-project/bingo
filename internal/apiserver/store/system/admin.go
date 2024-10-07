@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/model"
+	"bingo/internal/pkg/model"
 )
 
 type AdminStore interface {

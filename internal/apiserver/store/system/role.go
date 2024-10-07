@@ -8,7 +8,7 @@ import (
 
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
-	"bingo/internal/apiserver/model"
+	"bingo/internal/pkg/model"
 )
 
 type RoleStore interface {

@@ -1,7 +1,9 @@
-package model
+package syscfg
+
+import "bingo/internal/pkg/model"
 
 type Schedule struct {
-	Base
+	model.Base
 
 	Name        string         `gorm:"column:name;type:varchar(255);not null" json:"name"`
 	Job         string         `gorm:"column:job;type:varchar(255);not null;uniqueIndex:uk_job,priority:1" json:"job"`

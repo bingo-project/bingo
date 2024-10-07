@@ -4,7 +4,7 @@ rootPackage: bingo
 
 directory:
   cmd: internal/bingoctl/cmd
-  model: internal/apiserver/model
+  model: internal/pkg/model
   store: internal/apiserver/store
   biz: internal/apiserver/biz
   controller: internal/apiserver/http/controller/v1

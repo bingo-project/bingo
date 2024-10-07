@@ -1,6 +1,6 @@
 package syscfg
 
-import "bingo/internal/apiserver/model"
+import "bingo/internal/pkg/model"
 
 type Config struct {
 	model.Base

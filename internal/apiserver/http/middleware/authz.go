@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/global"
-	"bingo/internal/apiserver/model"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 )
 

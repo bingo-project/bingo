@@ -8,9 +8,9 @@ import (
 	"github.com/jinzhu/copier"
 
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
-	model "bingo/internal/apiserver/model/bot"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	bot2 "bingo/internal/pkg/model/bot"
 )
 
 type ChannelBiz interface {
@@ -53,7 +53,7 @@ func (b *channelBiz) List(ctx context.Context, req *v1.ListChannelRequest) (*v1.
 }
 
 func (b *channelBiz) Create(ctx context.Context, req *v1.CreateChannelRequest) (*v1.ChannelInfo, error) {
-	var channelM model.Channel
+	var channelM bot2.Channel
 	_ = copier.Copy(&channelM, req)
 
 	err := b.ds.BotChannels().Create(ctx, &channelM)
@@ -91,7 +91,7 @@ func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelR
 	}
 
 	if req.Source != nil {
-		channelM.Source = model.Source(*req.Source)
+		channelM.Source = bot2.Source(*req.Source)
 	}
 	if req.ChannelID != nil {
 		channelM.ChannelID = *req.ChannelID

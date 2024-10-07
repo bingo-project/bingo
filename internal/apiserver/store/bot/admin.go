@@ -11,7 +11,7 @@ import (
 
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
-	model "bingo/internal/apiserver/model/bot"
+	model "bingo/internal/pkg/model/bot"
 )
 
 type AdminStore interface {

@@ -5,11 +5,11 @@ import (
 
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/model/syscfg"
 )
 
 type ScheduleStore interface {
-	AllEnabled(ctx context.Context) ([]*model.Schedule, error)
+	AllEnabled(ctx context.Context) ([]*syscfg.Schedule, error)
 }
 
 type schedules struct {
@@ -22,9 +22,9 @@ func NewSchedules(db *gorm.DB) *schedules {
 	return &schedules{db: db}
 }
 
-func (s *schedules) AllEnabled(ctx context.Context) (ret []*model.Schedule, err error) {
+func (s *schedules) AllEnabled(ctx context.Context) (ret []*syscfg.Schedule, err error) {
 	err = s.db.WithContext(ctx).
-		Where("status = ?", model.ScheduleStatusEnabled).
+		Where("status = ?", syscfg.ScheduleStatusEnabled).
 		Find(&ret).
 		Error
 

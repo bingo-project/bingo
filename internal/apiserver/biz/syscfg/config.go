@@ -8,9 +8,9 @@ import (
 	"github.com/jinzhu/copier"
 
 	v1 "bingo/internal/apiserver/http/request/v1/syscfg"
-	model "bingo/internal/apiserver/model/syscfg"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
+	model "bingo/internal/pkg/model/syscfg"
 )
 
 type ConfigBiz interface {
