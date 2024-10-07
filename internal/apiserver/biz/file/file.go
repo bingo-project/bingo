@@ -11,9 +11,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/goutil/fsutil"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	imageutil "bingo/internal/pkg/util/image"
+	"bingo/pkg/api/apiserver/v1"
 )
 
 type FileBiz interface {

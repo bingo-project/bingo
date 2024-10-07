@@ -8,9 +8,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type ApiKeyStore interface {

@@ -4,10 +4,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	_ "bingo/internal/apiserver/http/request/v1"
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/pkg/api/apiserver/v1"
 )
 
 // Nonce

@@ -9,10 +9,10 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 // UserBiz 定义了 user 模块在 biz 层所实现的方法.

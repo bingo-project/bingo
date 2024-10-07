@@ -7,10 +7,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
-	bot2 "bingo/internal/pkg/model/bot"
+	model "bingo/internal/pkg/model/bot"
+	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
 type ChannelBiz interface {
@@ -53,7 +53,7 @@ func (b *channelBiz) List(ctx context.Context, req *v1.ListChannelRequest) (*v1.
 }
 
 func (b *channelBiz) Create(ctx context.Context, req *v1.CreateChannelRequest) (*v1.ChannelInfo, error) {
-	var channelM bot2.Channel
+	var channelM model.Channel
 	_ = copier.Copy(&channelM, req)
 
 	err := b.ds.BotChannels().Create(ctx, &channelM)
@@ -91,7 +91,7 @@ func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelR
 	}
 
 	if req.Source != nil {
-		channelM.Source = bot2.Source(*req.Source)
+		channelM.Source = model.Source(*req.Source)
 	}
 	if req.ChannelID != nil {
 		channelM.ChannelID = *req.ChannelID

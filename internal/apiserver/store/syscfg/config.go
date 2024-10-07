@@ -10,9 +10,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	v1 "bingo/internal/apiserver/http/request/v1/syscfg"
 	"bingo/internal/pkg/global"
 	model "bingo/internal/pkg/model/syscfg"
+	v1 "bingo/pkg/api/apiserver/v1/syscfg"
 )
 
 type ConfigStore interface {

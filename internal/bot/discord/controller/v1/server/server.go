@@ -7,11 +7,11 @@ import (
 	"github.com/duke-git/lancet/v2/convertor"
 
 	"bingo/internal/apiserver/biz"
-	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/bot/discord/client"
 	mw "bingo/internal/bot/discord/middleware"
 	"bingo/internal/pkg/model/bot"
+	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
 type ServerController struct {

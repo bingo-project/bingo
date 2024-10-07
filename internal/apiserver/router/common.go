@@ -3,8 +3,8 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/http/controller/v1/common"
-	"bingo/internal/apiserver/http/controller/v1/file"
+	"bingo/internal/apiserver/controller/v1/common"
+	"bingo/internal/apiserver/controller/v1/file"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"

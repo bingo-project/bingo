@@ -3,10 +3,10 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/http/controller/v1/app"
-	"bingo/internal/apiserver/http/controller/v1/system"
-	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
-	"bingo/internal/apiserver/http/controller/v1/system/user"
+	"bingo/internal/apiserver/controller/v1/app"
+	"bingo/internal/apiserver/controller/v1/system"
+	"bingo/internal/apiserver/controller/v1/system/syscfg"
+	"bingo/internal/apiserver/controller/v1/system/user"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/http/middleware"

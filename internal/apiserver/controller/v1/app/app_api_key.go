@@ -1,4 +1,4 @@
-package syscfg
+package app
 
 import (
 	"github.com/bingo-project/component-base/log"
@@ -6,44 +6,44 @@ import (
 	"github.com/spf13/cast"
 
 	"bingo/internal/apiserver/biz"
-	v1 "bingo/internal/apiserver/http/request/v1/syscfg"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
-type AppVersionController struct {
+type ApiKeyController struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAppVersionController(ds store.IStore, a *auth.Authz) *AppVersionController {
-	return &AppVersionController{a: a, b: biz.NewBiz(ds)}
+func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
+	return &ApiKeyController{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
-// @Summary    List apps
+// @Summary    List apiKeys
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 query	    v1.ListAppVersionRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListAppVersionResponse
+// @Param      request	 query	    v1.ListApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ListApiKeyResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps [GET].
-func (ctrl *AppVersionController) List(c *gin.Context) {
-	log.C(c).Infow("List app function called")
+// @Router    /v1/system/api-keys [GET]
+func (ctrl *ApiKeyController) List(c *gin.Context) {
+	log.C(c).Infow("List apiKey function called")
 
-	var req v1.ListAppVersionRequest
+	var req v1.ListApiKeyRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
-	resp, err := ctrl.b.AppVersions().List(c, &req)
+	resp, err := ctrl.b.ApiKeys().List(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -54,28 +54,28 @@ func (ctrl *AppVersionController) List(c *gin.Context) {
 }
 
 // Create
-// @Summary    Create app
+// @Summary    Create apiKey
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 body	    v1.CreateAppVersionRequest	 true  "Param"
-// @Success	   200		{object}	v1.AppVersionInfo
+// @Param      request	 body	    v1.CreateApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps [POST].
-func (ctrl *AppVersionController) Create(c *gin.Context) {
-	log.C(c).Infow("Create app function called")
+// @Router    /v1/system/api-keys [POST]
+func (ctrl *ApiKeyController) Create(c *gin.Context) {
+	log.C(c).Infow("Create apiKey function called")
 
-	var req v1.CreateAppVersionRequest
+	var req v1.CreateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
-	// Create app
-	resp, err := ctrl.b.AppVersions().Create(c, &req)
+	// Create apiKey
+	resp, err := ctrl.b.ApiKeys().Create(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -86,46 +86,46 @@ func (ctrl *AppVersionController) Create(c *gin.Context) {
 }
 
 // Get
-// @Summary    Get app info
+// @Summary    Get apiKey info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Success	   200		{object}	v1.AppVersionInfo
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [GET].
-func (ctrl *AppVersionController) Get(c *gin.Context) {
-	log.C(c).Infow("Get app function called")
+// @Router    /v1/system/api-keys/{id} [GET]
+func (ctrl *ApiKeyController) Get(c *gin.Context) {
+	log.C(c).Infow("Get apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	app, err := ctrl.b.AppVersions().Get(c, ID)
+	apiKey, err := ctrl.b.ApiKeys().Get(c, ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, app)
+	core.WriteResponse(c, nil, apiKey)
 }
 
 // Update
-// @Summary    Update app info
+// @Summary    Update apiKey info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Param      request	 body	    v1.UpdateAppVersionRequest	 true  "Param"
-// @Success	   200		{object}	v1.AppVersionInfo
+// @Param      request	 body	    v1.UpdateApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [PUT].
-func (ctrl *AppVersionController) Update(c *gin.Context) {
-	log.C(c).Infow("Update app function called")
+// @Router    /v1/system/api-keys/{id} [PUT]
+func (ctrl *ApiKeyController) Update(c *gin.Context) {
+	log.C(c).Infow("Update apiKey function called")
 
-	var req v1.UpdateAppVersionRequest
+	var req v1.UpdateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
@@ -133,7 +133,7 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 	}
 
 	ID := cast.ToUint(c.Param("id"))
-	resp, err := ctrl.b.AppVersions().Update(c, ID, &req)
+	resp, err := ctrl.b.ApiKeys().Update(c, ID, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -144,21 +144,21 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary    Delete app
+// @Summary    Delete apiKey
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       System.App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [DELETE].
-func (ctrl *AppVersionController) Delete(c *gin.Context) {
-	log.C(c).Infow("Delete app function called")
+// @Router    /v1/system/api-keys/{id} [DELETE]
+func (ctrl *ApiKeyController) Delete(c *gin.Context) {
+	log.C(c).Infow("Delete apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	if err := ctrl.b.AppVersions().Delete(c, ID); err != nil {
+	if err := ctrl.b.ApiKeys().Delete(c, ID); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

@@ -6,9 +6,9 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type RoleStore interface {

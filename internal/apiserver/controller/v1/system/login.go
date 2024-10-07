@@ -5,9 +5,9 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/pkg/api/apiserver/v1"
 )
 
 // Login returns a JWT token.

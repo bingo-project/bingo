@@ -8,19 +8,19 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/eth/sign"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/global"
-	model2 "bingo/internal/pkg/model"
+	"bingo/internal/pkg/model"
+	"bingo/pkg/api/apiserver/v1"
 )
 
 func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error) {
-	where := model2.UserAccount{AccountID: req.Address}
-	account := model2.UserAccount{
+	where := model.UserAccount{AccountID: req.Address}
+	account := model.UserAccount{
 		UID:       facade.Snowflake.Generate().String(),
-		Provider:  model2.AuthProviderWallet,
+		Provider:  model.AuthProviderWallet,
 		AccountID: where.AccountID,
 		Nonce:     uuid.New().String(),
 	}
@@ -38,7 +38,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.Nonce
 }
 
 func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error) {
-	account, err := b.ds.UserAccounts().GetAccount(ctx, model2.AuthProviderWallet, req.Address)
+	account, err := b.ds.UserAccounts().GetAccount(ctx, model.AuthProviderWallet, req.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -50,16 +50,16 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	}
 
 	// First or create user.
-	user := &model2.UserM{
+	user := &model.UserM{
 		UID:           account.UID,
 		Email:         account.Email,
-		Status:        model2.UserStatusEnabled,
+		Status:        model.UserStatusEnabled,
 		Avatar:        account.Avatar,
 		LastLoginTime: pointer.Of(time.Now()),
 		LastLoginIP:   ctx.ClientIP(),
 		LastLoginType: account.Provider,
 	}
-	err = b.ds.Users().FirstOrCreate(ctx, &model2.UserM{UID: user.UID}, user)
+	err = b.ds.Users().FirstOrCreate(ctx, &model.UserM{UID: user.UID}, user)
 	if err != nil {
 		return
 	}

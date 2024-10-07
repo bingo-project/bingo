@@ -7,10 +7,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	v1 "bingo/internal/apiserver/http/request/v1/syscfg"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	model "bingo/internal/pkg/model/syscfg"
+	v1 "bingo/pkg/api/apiserver/v1/syscfg"
 )
 
 type ConfigBiz interface {

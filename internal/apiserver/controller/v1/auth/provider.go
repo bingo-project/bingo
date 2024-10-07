@@ -4,8 +4,8 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	_ "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/core"
+	_ "bingo/pkg/api/apiserver/v1"
 )
 
 // Providers

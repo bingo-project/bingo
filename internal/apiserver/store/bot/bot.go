@@ -8,9 +8,9 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	v1 "bingo/internal/apiserver/http/request/v1/bot"
 	"bingo/internal/pkg/global"
 	model "bingo/internal/pkg/model/bot"
+	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
 type BotStore interface {

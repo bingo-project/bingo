@@ -5,11 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 

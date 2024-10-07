@@ -8,10 +8,10 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/jinzhu/copier"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type ApiBiz interface {

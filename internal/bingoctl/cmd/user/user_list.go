@@ -12,8 +12,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"bingo/internal/apiserver/biz"
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 const (

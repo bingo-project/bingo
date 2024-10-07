@@ -5,9 +5,9 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 
-	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/global"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
