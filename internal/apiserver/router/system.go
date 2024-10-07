@@ -7,9 +7,9 @@ import (
 	"bingo/internal/apiserver/http/controller/v1/system"
 	"bingo/internal/apiserver/http/controller/v1/system/syscfg"
 	"bingo/internal/apiserver/http/controller/v1/system/user"
-	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/http/middleware"
 	"bingo/pkg/auth"
 )
 

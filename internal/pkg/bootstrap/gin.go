@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	ginprom "github.com/zsais/go-gin-prometheus"
 
-	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/router"
 	"bingo/internal/pkg/facade"
+	middleware2 "bingo/internal/pkg/http/middleware"
 )
 
 func InitGin() *gin.Engine {
@@ -61,15 +61,15 @@ func InitGin() *gin.Engine {
 func registerGlobalMiddleWare(g *gin.Engine) {
 	g.Use(
 		gin.Recovery(),
-		middleware.NoCache,
-		middleware.Cors,
-		middleware.Secure,
-		middleware.ForceUserAgent,
-		middleware.RequestID(),
-		middleware.Context(),
-		middleware.LimitWrite("1-S"), // 限制写操作，每秒 1 次
-		middleware.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
-		middleware.Logger(),
+		middleware2.NoCache,
+		middleware2.Cors,
+		middleware2.Secure,
+		middleware2.ForceUserAgent,
+		middleware2.RequestID(),
+		middleware2.Context(),
+		middleware2.LimitWrite("1-S"), // 限制写操作，每秒 1 次
+		middleware2.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
+		middleware2.Logger(),
 	)
 }
 
@@ -81,13 +81,13 @@ func registerStaticFileServer(g *gin.Engine) {
 	storage.Static("upload", "./storage/public/upload")
 
 	// Authentication for secure file.
-	storage.Use(middleware.Authn())
+	storage.Use(middleware2.Authn())
 	storage.Static("log", "./storage/log")
 }
 
 func registerProfiling(g *gin.Engine) {
 	p := g.Group("system")
-	p.Use(middleware.Debug())
+	p.Use(middleware2.Debug())
 
 	pprof.RouteRegister(p, "debug/pprof")
 }
