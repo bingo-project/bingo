@@ -11,8 +11,8 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"bingo/internal/apiserver/biz"
-	v1 "bingo/internal/apiserver/grpc/proto/v1/pb"
 	"bingo/internal/apiserver/store"
+	v1 "bingo/pkg/proto/v1/pb"
 )
 
 type ApiServerController struct {
