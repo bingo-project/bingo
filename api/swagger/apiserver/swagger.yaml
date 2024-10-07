@@ -1,0 +1,606 @@
+basePath: /
+definitions:
+  core.ErrResponse:
+    properties:
+      code:
+        description: Code defines the business error code.
+        type: string
+      message:
+        description: |-
+          Message contains the detail of this message.
+          This message is suitable to be exposed to external
+        type: string
+    type: object
+  v1.AuthProviderBrief:
+    properties:
+      authUrl:
+        description: Auth URL
+        type: string
+      isDefault:
+        description: Is default provider, 0-not, 1-yes
+        type: integer
+      name:
+        description: Auth provider name
+        type: string
+      redirectUrl:
+        description: Redirect URL
+        type: string
+    type: object
+  v1.ChangePasswordRequest:
+    properties:
+      passwordNew:
+        maxLength: 18
+        minLength: 6
+        type: string
+      passwordOld:
+        maxLength: 18
+        minLength: 6
+        type: string
+    required:
+    - passwordNew
+    - passwordOld
+    type: object
+  v1.HealthzResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  v1.LoginRequest:
+    properties:
+      password:
+        example: "123123"
+        maxLength: 18
+        minLength: 6
+        type: string
+      username:
+        example: peter
+        maxLength: 255
+        minLength: 2
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  v1.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      expiresAt:
+        type: string
+    type: object
+  v1.NonceResponse:
+    properties:
+      nonce:
+        description: Nonce
+        type: string
+    type: object
+  v1.RegisterRequest:
+    properties:
+      nickname:
+        example: Peter
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: "123123"
+        maxLength: 18
+        minLength: 6
+        type: string
+      username:
+        example: peter
+        maxLength: 255
+        minLength: 2
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  v1.SendEmailRequest:
+    properties:
+      email:
+        example: peter@gmail.com
+        type: string
+    required:
+    - email
+    type: object
+  v1.UserInfo:
+    properties:
+      age:
+        type: integer
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      googleStatus:
+        type: string
+      inviteCount:
+        type: integer
+      kycStatus:
+        description: KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
+        type: integer
+      nickname:
+        type: string
+      payPassword:
+        type: boolean
+      phone:
+        type: string
+      pid:
+        type: integer
+      status:
+        description: Status, 1-enabled, 2-disabled
+        type: integer
+      uid:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  version.Info:
+    properties:
+      buildDate:
+        type: string
+      compiler:
+        type: string
+      gitCommit:
+        type: string
+      gitTreeState:
+        type: string
+      gitVersion:
+        type: string
+      goVersion:
+        type: string
+      platform:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: API Docs
+  version: "1.0"
+paths:
+  /healthz:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.HealthzResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Heath check
+      tags:
+      - Common
+  /v1/auth/accounts:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v1.AuthProviderBrief'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get accounts
+      tags:
+      - Auth
+  /v1/auth/bind/{provider}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Auth provider name
+        in: path
+        name: provider
+        required: true
+        type: string
+      - description: Auth code
+        in: query
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Bind provider
+      tags:
+      - Auth
+  /v1/auth/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Change password
+      tags:
+      - Auth
+  /v1/auth/code/email:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SendEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Send email code
+      tags:
+      - Auth
+  /v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Login
+      tags:
+      - Auth
+  /v1/auth/login/{provider}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Auth provider name
+        in: path
+        name: provider
+        required: true
+        type: string
+      - description: Auth code
+        in: query
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Login by provider
+      tags:
+      - Auth
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Auth provider name
+        in: path
+        name: provider
+        required: true
+        type: string
+      - description: Auth code
+        in: query
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Login by provider
+      tags:
+      - Auth
+  /v1/auth/login/address:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ETH Address
+        in: query
+        name: address
+        required: true
+        type: string
+      - description: Signature
+        in: query
+        name: sign
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Login by provider
+      tags:
+      - Auth
+  /v1/auth/nonce:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ETH Address
+        in: query
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.NonceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get Address auth nonce
+      tags:
+      - Auth
+  /v1/auth/providers:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v1.AuthProviderBrief'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get auth providers
+      tags:
+      - Auth
+  /v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Register
+      tags:
+      - Auth
+  /v1/auth/user-info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get user info
+      tags:
+      - Auth
+  /v1/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Upload file
+      tags:
+      - File
+  /version:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/version.Info'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Get App Version
+      tags:
+      - Common
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

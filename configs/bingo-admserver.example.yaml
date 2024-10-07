@@ -1,0 +1,70 @@
+# bingo-apiserver 全配置
+
+# RESTful Server
+server:
+  name: bingo
+  mode: debug # server mode: release, debug, test，默认 release
+  addr: :18080
+  timezone: UTC
+  key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
+
+# gRPC Server
+grpc:
+  addr: :18081
+
+# bot Server
+bot:
+  telegram: # bot token
+  discord: # discord token
+
+# MySQL
+mysql:
+  host: mysql:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
+  username: root # MySQL 用户名(建议授权最小权限集)
+  password: root # MySQL 用户密码
+  database: bingo # 系统所用的数据库名
+  maxIdleConnections: 100 # MySQL 最大空闲连接数，默认 100
+  maxOpenConnections: 100 # MySQL 最大打开的连接数，默认 100
+  maxConnectionLifeTime: 10s # 空闲连接最大存活时间，默认 10s
+  logLevel: 4 # GORM log level, 1: silent, 2:error, 3:warn, 4:info
+
+# Redis
+redis:
+  host: redis:6379 # redis 地址，默认 127.0.0.1:6379
+  password:  # redis 密码
+  database: 1 # redis 数据库
+
+# JWT 配置
+jwt:
+  secretKey: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
+  ttl: 1440 # token 过期时间(分钟)，默认 1 天
+
+log:
+  level: debug # 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。
+  days: 7 # 日志文件保留天数
+  format: console # 支持的日志输出格式，目前支持console和json两种。console其实就是text格式。
+  console: true
+  maxSize: 100 # 日志文件大小限制（M）
+  compress: true # 是否使用 gz 压缩历史日志文件
+  path: storage/log/admserver.log # 日志文件位置
+
+feature:
+  metrics: true # 开启 metrics, router:  /metrics
+  profiling: true # 开启性能分析, 可以通过 <host>:<port>/debug/pprof/地址查看程序栈、线程等系统信息，默认值为 true
+  apiDoc: true # 是否开启 swagger api docs
+  queueDash: true # 是否开启队列监控面板
+
+# 邮件服务
+mail:
+  host: "smtp.bingo.com"
+  port: 465
+  username: "bingo"
+  password: ""
+  fromAddr: "noreply@bingo.com"
+  fromName: "Bingo"
+
+# 验证码
+code:
+  length: 6 # 长度
+  ttl: 5 # 有效期（分钟）
+  waiting: 1 # 重发等待时间（分钟）

@@ -5,9 +5,8 @@ import (
 	"github.com/gin-gonic/gin"
 	ginprom "github.com/zsais/go-gin-prometheus"
 
-	"bingo/internal/apiserver/router"
 	"bingo/internal/pkg/facade"
-	middleware2 "bingo/internal/pkg/http/middleware"
+	"bingo/internal/pkg/http/middleware"
 )
 
 func InitGin() *gin.Engine {
@@ -32,44 +31,21 @@ func InitGin() *gin.Engine {
 		registerProfiling(g)
 	}
 
-	// Swagger
-	if facade.Config.Feature.ApiDoc {
-		router.MapSwagRouters(g)
-	}
-
-	// Queue dashboard
-	if facade.Config.Feature.QueueDash {
-		router.MapQueueRouters(g)
-	}
-
-	// Common router
-	router.MapCommonRouters(g)
-
-	// Api
-	router.MapApiRouters(g)
-
-	// System
-	router.MapSystemRouters(g)
-
-	// Init System API
-	router.InitSystemAPI(g)
-
 	return g
 }
 
-// Register global middlewares.
 func registerGlobalMiddleWare(g *gin.Engine) {
 	g.Use(
 		gin.Recovery(),
-		middleware2.NoCache,
-		middleware2.Cors,
-		middleware2.Secure,
-		middleware2.ForceUserAgent,
-		middleware2.RequestID(),
-		middleware2.Context(),
-		middleware2.LimitWrite("1-S"), // 限制写操作，每秒 1 次
-		middleware2.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
-		middleware2.Logger(),
+		middleware.NoCache,
+		middleware.Cors,
+		middleware.Secure,
+		middleware.ForceUserAgent,
+		middleware.RequestID(),
+		middleware.Context(),
+		middleware.LimitWrite("1-S"), // 限制写操作，每秒 1 次
+		middleware.LimitIP("20-S"),   // 限制 IP 请求，每秒 20 次
+		middleware.Logger(),
 	)
 }
 
@@ -81,13 +57,13 @@ func registerStaticFileServer(g *gin.Engine) {
 	storage.Static("upload", "./storage/public/upload")
 
 	// Authentication for secure file.
-	storage.Use(middleware2.Authn())
+	storage.Use(middleware.Authn())
 	storage.Static("log", "./storage/log")
 }
 
 func registerProfiling(g *gin.Engine) {
 	p := g.Group("system")
-	p.Use(middleware2.Debug())
+	p.Use(middleware.Debug())
 
 	pprof.RouteRegister(p, "debug/pprof")
 }

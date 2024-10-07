@@ -1,0 +1,2976 @@
+basePath: /
+definitions:
+  core.ErrResponse:
+    properties:
+      code:
+        description: Code defines the business error code.
+        type: string
+      message:
+        description: |-
+          Message contains the detail of this message.
+          This message is suitable to be exposed to external
+        type: string
+    type: object
+  syscfg.AppVersionInfo:
+    properties:
+      aboutUs:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      enabled:
+        description: Is enabled
+        type: integer
+      id:
+        type: integer
+      logo:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+      version:
+        type: string
+    type: object
+  syscfg.ConfigInfo:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      key:
+        type: string
+      name:
+        type: string
+      operatorId:
+        type: integer
+      updatedAt:
+        type: string
+      value:
+        type: string
+    type: object
+  syscfg.CreateAppVersionRequest:
+    properties:
+      aboutUs:
+        maxLength: 2000
+        type: string
+      description:
+        maxLength: 1000
+        type: string
+      enabled:
+        description: Is enabled
+        type: integer
+      logo:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      version:
+        maxLength: 255
+        type: string
+    required:
+    - aboutUs
+    - description
+    - logo
+    - name
+    - version
+    type: object
+  syscfg.CreateConfigRequest:
+    properties:
+      description:
+        type: string
+      key:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      operatorId:
+        type: integer
+      value:
+        type: string
+    required:
+    - key
+    - name
+    type: object
+  syscfg.ListAppVersionResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/syscfg.AppVersionInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  syscfg.ListConfigResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/syscfg.ConfigInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  syscfg.UpdateAppVersionRequest:
+    properties:
+      aboutUs:
+        type: string
+      description:
+        type: string
+      enabled:
+        description: Is enabled
+        type: integer
+      logo:
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      version:
+        type: string
+    type: object
+  syscfg.UpdateConfigRequest:
+    properties:
+      description:
+        type: string
+      key:
+        type: string
+      name:
+        type: string
+      operatorId:
+        type: integer
+      value:
+        type: string
+    type: object
+  v1.AdminInfo:
+    properties:
+      avatar:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      nickname:
+        type: string
+      phone:
+        type: string
+      role:
+        $ref: '#/definitions/v1.RoleInfo'
+      roleName:
+        type: string
+      roles:
+        items:
+          $ref: '#/definitions/v1.RoleInfo'
+        type: array
+      status:
+        type: integer
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  v1.ApiInfo:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      group:
+        type: string
+      id:
+        type: integer
+      method:
+        type: string
+      path:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.ApiKeyInfo:
+    properties:
+      accessKey:
+        type: string
+      acl:
+        items:
+          type: string
+        type: array
+      appId:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      expiredAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      secretKey:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        type: integer
+      uid:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.AppInfo:
+    properties:
+      appId:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      logo:
+        type: string
+      name:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        type: integer
+      uid:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.ChangePasswordRequest:
+    properties:
+      passwordNew:
+        maxLength: 18
+        minLength: 6
+        type: string
+      passwordOld:
+        maxLength: 18
+        minLength: 6
+        type: string
+    required:
+    - passwordNew
+    - passwordOld
+    type: object
+  v1.CreateAdminRequest:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      nickname:
+        maxLength: 20
+        minLength: 2
+        type: string
+      password:
+        maxLength: 18
+        minLength: 6
+        type: string
+      phone:
+        type: string
+      roleNames:
+        items:
+          type: string
+        type: array
+      username:
+        maxLength: 255
+        minLength: 2
+        type: string
+    required:
+    - nickname
+    - password
+    - username
+    type: object
+  v1.CreateApiKeyRequest:
+    properties:
+      acl:
+        items:
+          type: string
+        type: array
+      appId:
+        type: string
+      description:
+        type: string
+      expiredAt:
+        type: string
+      name:
+        maxLength: 255
+        minLength: 2
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        enum:
+        - 1
+        - 2
+        type: integer
+    required:
+    - name
+    - status
+    type: object
+  v1.CreateApiRequest:
+    properties:
+      description:
+        maxLength: 255
+        minLength: 1
+        type: string
+      group:
+        maxLength: 255
+        minLength: 1
+        type: string
+      method:
+        maxLength: 255
+        minLength: 1
+        type: string
+      path:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - description
+    - group
+    - method
+    - path
+    type: object
+  v1.CreateAppRequest:
+    properties:
+      description:
+        type: string
+      logo:
+        type: string
+      name:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        enum:
+        - 1
+        - 2
+        type: integer
+      uid:
+        type: string
+    required:
+    - name
+    - status
+    type: object
+  v1.CreateMenuRequest:
+    properties:
+      component:
+        maxLength: 255
+        minLength: 1
+        type: string
+      hidden:
+        type: boolean
+      icon:
+        maxLength: 255
+        minLength: 1
+        type: string
+      name:
+        type: string
+      parentID:
+        type: integer
+      path:
+        maxLength: 255
+        minLength: 1
+        type: string
+      sort:
+        type: integer
+      title:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - component
+    - path
+    - sort
+    type: object
+  v1.CreateRoleRequest:
+    properties:
+      description:
+        maxLength: 255
+        minLength: 1
+        type: string
+      name:
+        maxLength: 20
+        minLength: 2
+        type: string
+      remark:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - description
+    - name
+    - remark
+    type: object
+  v1.CreateUserRequest:
+    properties:
+      age:
+        example: 0
+        maximum: 130
+        minimum: 0
+        type: integer
+      avatar:
+        type: string
+      countryCode:
+        example: us
+        type: string
+      email:
+        example: peter@gmail.com
+        type: string
+      gender:
+        description: Gender, male female secret
+        enum:
+        - male
+        - female
+        - secret
+        example: male
+        type: string
+      nickname:
+        example: Peter
+        type: string
+      password:
+        example: "123456"
+        minLength: 6
+        type: string
+      phone:
+        example: "9999999999"
+        type: string
+      pid:
+        example: "88888888"
+        type: string
+      status:
+        default: 1
+        description: Status, 1-enabled, 2-disabled
+        enum:
+        - 1
+        - 2
+        type: integer
+      username:
+        example: peter
+        type: string
+    required:
+    - countryCode
+    - nickname
+    - password
+    - username
+    type: object
+  v1.HealthzResponse:
+    properties:
+      status:
+        type: string
+    type: object
+  v1.ListAdminResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AdminInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListApiKeyResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.ApiKeyInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListApiResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.ApiInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListAppResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AppInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListMenuResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.MenuInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListRoleResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.RoleInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListUserResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.UserInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.LoginRequest:
+    properties:
+      password:
+        example: "123123"
+        maxLength: 18
+        minLength: 6
+        type: string
+      username:
+        example: peter
+        maxLength: 255
+        minLength: 2
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  v1.LoginResponse:
+    properties:
+      accessToken:
+        type: string
+      expiresAt:
+        type: string
+    type: object
+  v1.MenuInfo:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/v1.MenuInfo'
+        type: array
+      component:
+        type: string
+      createdAt:
+        type: string
+      hidden:
+        type: boolean
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parentID:
+        type: integer
+      path:
+        type: string
+      redirect:
+        type: string
+      sort:
+        type: integer
+      title:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.RoleInfo:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      remark:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.SetApisRequest:
+    properties:
+      apiIDs:
+        items:
+          type: integer
+        type: array
+    type: object
+  v1.SetMenusRequest:
+    properties:
+      menuIDs:
+        items:
+          type: integer
+        type: array
+    type: object
+  v1.SetRolesRequest:
+    properties:
+      roleNames:
+        items:
+          type: string
+        type: array
+    required:
+    - roleNames
+    type: object
+  v1.SwitchRoleRequest:
+    properties:
+      roleName:
+        type: string
+    required:
+    - roleName
+    type: object
+  v1.UpdateAdminRequest:
+    properties:
+      avatar:
+        type: string
+      email:
+        type: string
+      nickname:
+        maxLength: 20
+        minLength: 2
+        type: string
+      password:
+        maxLength: 18
+        minLength: 6
+        type: string
+      phone:
+        type: string
+      roleNames:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+    type: object
+  v1.UpdateApiKeyRequest:
+    properties:
+      acl:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      expiredAt:
+        type: string
+      name:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        enum:
+        - 1
+        - 2
+        type: integer
+    type: object
+  v1.UpdateApiRequest:
+    properties:
+      description:
+        maxLength: 255
+        minLength: 1
+        type: string
+      group:
+        maxLength: 255
+        minLength: 1
+        type: string
+      method:
+        maxLength: 255
+        minLength: 1
+        type: string
+      path:
+        maxLength: 255
+        minLength: 1
+        type: string
+    type: object
+  v1.UpdateAppRequest:
+    properties:
+      description:
+        type: string
+      logo:
+        type: string
+      name:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        enum:
+        - 1
+        - 2
+        type: integer
+    type: object
+  v1.UpdateMenuRequest:
+    properties:
+      component:
+        maxLength: 255
+        minLength: 1
+        type: string
+      hidden:
+        type: boolean
+      icon:
+        maxLength: 255
+        minLength: 1
+        type: string
+      name:
+        type: string
+      parentID:
+        type: integer
+      path:
+        maxLength: 255
+        minLength: 1
+        type: string
+      redirect:
+        maxLength: 255
+        minLength: 1
+        type: string
+      sort:
+        type: integer
+      title:
+        maxLength: 255
+        minLength: 1
+        type: string
+    type: object
+  v1.UpdateRoleRequest:
+    properties:
+      description:
+        maxLength: 255
+        minLength: 1
+        type: string
+      remark:
+        maxLength: 255
+        minLength: 1
+        type: string
+    type: object
+  v1.UserInfo:
+    properties:
+      age:
+        type: integer
+      avatar:
+        type: string
+      countryCode:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      gender:
+        type: string
+      googleStatus:
+        type: string
+      inviteCount:
+        type: integer
+      kycStatus:
+        description: KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
+        type: integer
+      nickname:
+        type: string
+      payPassword:
+        type: boolean
+      phone:
+        type: string
+      pid:
+        type: integer
+      status:
+        description: Status, 1-enabled, 2-disabled
+        type: integer
+      uid:
+        type: string
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
+  version.Info:
+    properties:
+      buildDate:
+        type: string
+      compiler:
+        type: string
+      gitCommit:
+        type: string
+      gitTreeState:
+        type: string
+      gitVersion:
+        type: string
+      goVersion:
+        type: string
+      platform:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: API Docs
+  version: "1.0"
+paths:
+  /healthz:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.HealthzResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Heath check
+      tags:
+      - Common
+  /v1/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Upload file
+      tags:
+      - File
+  /v1/system/admins:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: email
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: nickname
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: phone
+        type: string
+      - in: query
+        name: roleName
+        type: string
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      - in: query
+        name: status
+        type: integer
+      - in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAdminResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List admins
+      tags:
+      - System.Admin
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create admin
+      tags:
+      - System.Admin
+  /v1/system/admins/{name}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete a admin
+      tags:
+      - System.Admin
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get admin info
+      tags:
+      - System.Admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAdminRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update admin info
+      tags:
+      - System.Admin
+  /v1/system/admins/{name}/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Change password
+      tags:
+      - System.Admin
+  /v1/system/admins/{name}/roles:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Query params
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SetRolesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Set admin roles
+      tags:
+      - System.Admin
+  /v1/system/api-keys:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: accessKey
+        type: string
+      - in: query
+        name: appId
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      - description: Status, 1-enabled, 2-disabled
+        in: query
+        name: status
+        type: integer
+      - in: query
+        name: uid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListApiKeyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List apiKeys
+      tags:
+      - System.App
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateApiKeyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiKeyInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create apiKey
+      tags:
+      - System.App
+  /v1/system/api-keys/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete apiKey
+      tags:
+      - System.App
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiKeyInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get apiKey info
+      tags:
+      - System.App
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateApiKeyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiKeyInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update apiKey info
+      tags:
+      - System.App
+  /v1/system/apis:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: group
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: method
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - in: query
+        name: path
+        type: string
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListApiResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List apis
+      tags:
+      - System.Api
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateApiRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create a api
+      tags:
+      - System.Api
+  /v1/system/apis/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete api
+      tags:
+      - System.Api
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get api info
+      tags:
+      - System.Api
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateApiRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ApiInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update api info
+      tags:
+      - System.Api
+  /v1/system/apis/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v1.ApiInfo'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: All apis
+      tags:
+      - System.Api
+  /v1/system/apis/tree:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v1.ApiInfo'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: API Tree
+      tags:
+      - System.Api
+  /v1/system/apps:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: appId
+        type: string
+      - in: query
+        name: description
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: logo
+        type: string
+      - in: query
+        name: name
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      - description: Status, 1-enabled, 2-disabled
+        in: query
+        name: status
+        type: integer
+      - in: query
+        name: uid
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAppResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List apps
+      tags:
+      - System.App
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAppRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AppInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create app
+      tags:
+      - System.App
+  /v1/system/apps/{appid}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: appid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete app
+      tags:
+      - System.App
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: appid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AppInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get app info
+      tags:
+      - System.App
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: appid
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAppRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AppInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update app info
+      tags:
+      - System.App
+  /v1/system/auth/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Change password
+      tags:
+      - System.Auth
+  /v1/system/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Login
+      tags:
+      - System.Auth
+  /v1/system/auth/menus:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListMenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get menu tree
+      tags:
+      - System.Auth
+  /v1/system/auth/switch-role:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SwitchRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Switch role
+      tags:
+      - System.Auth
+  /v1/system/auth/user-info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AdminInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get user info
+      tags:
+      - System.Auth
+  /v1/system/cfg/apps:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: aboutUs
+        type: string
+      - in: query
+        name: description
+        type: string
+      - description: Is enabled
+        in: query
+        name: enabled
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: logo
+        type: string
+      - in: query
+        name: name
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      - in: query
+        name: version
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.ListAppVersionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List apps
+      tags:
+      - System.Config
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/syscfg.CreateAppVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.AppVersionInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create app
+      tags:
+      - System.Config
+  /v1/system/cfg/apps/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete app
+      tags:
+      - System.Config
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.AppVersionInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get app info
+      tags:
+      - System.Config
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/syscfg.UpdateAppVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.AppVersionInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update app info
+      tags:
+      - System.Config
+  /v1/system/cfg/configs:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: description
+        type: string
+      - in: query
+        name: key
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.ListConfigResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List configs
+      tags:
+      - System.Config
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/syscfg.CreateConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.ConfigInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create config
+      tags:
+      - System.Config
+  /v1/system/cfg/configs/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete config
+      tags:
+      - System.Config
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.ConfigInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get config info
+      tags:
+      - System.Config
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/syscfg.UpdateConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/syscfg.ConfigInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update config info
+      tags:
+      - System.Config
+  /v1/system/menus:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListMenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List menus
+      tags:
+      - System.Menu
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.MenuInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create menu
+      tags:
+      - System.Menu
+  /v1/system/menus/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete menu
+      tags:
+      - System.Menu
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.MenuInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get menu info
+      tags:
+      - System.Menu
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.MenuInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update menu info
+      tags:
+      - System.Menu
+  /v1/system/menus/tree:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListMenuResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get menu tree
+      tags:
+      - System.Menu
+  /v1/system/roles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - in: query
+        name: name
+        type: string
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List roles
+      tags:
+      - System.Role
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.RoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create a role
+      tags:
+      - System.Role
+  /v1/system/roles/{name}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete a role
+      tags:
+      - System.Role
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.RoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get role info
+      tags:
+      - System.Role
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.RoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update role info
+      tags:
+      - System.Role
+  /v1/system/roles/{name}/apis:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get apis
+      tags:
+      - System.Role
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SetApisRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Set apis
+      tags:
+      - System.Role
+  /v1/system/roles/{name}/menus:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              type: integer
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get menuIDs of role
+      tags:
+      - System.Role
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SetMenusRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Set menus
+      tags:
+      - System.Role
+  /v1/system/roles/all:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: All roles
+      tags:
+      - System.Role
+  /v1/system/users:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Order asc or desc.
+        in: query
+        name: order
+        type: string
+      - description: Page
+        in: query
+        name: page
+        type: integer
+      - description: Sort field.
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List users
+      tags:
+      - System.User
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create a user
+      tags:
+      - System.User
+  /v1/system/users/{name}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete a user
+      tags:
+      - System.User
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.UserInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get user info
+      tags:
+      - System.User
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      - in: query
+        name: age
+        type: integer
+      - in: query
+        name: avatar
+        type: string
+      - in: query
+        name: email
+        type: string
+      - description: Gender, male female secret
+        enum:
+        - male
+        - female
+        - secret
+        in: query
+        name: gender
+        type: string
+      - in: query
+        name: nickname
+        type: string
+      - in: query
+        name: phone
+        type: string
+      - description: Status, 1-enabled, 2-disabled
+        in: query
+        name: status
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update user info
+      tags:
+      - System.User
+  /v1/system/users/{name}/change-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Username
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Change password
+      tags:
+      - Auth
+  /version:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/version.Info'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Get App Version
+      tags:
+      - Common
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

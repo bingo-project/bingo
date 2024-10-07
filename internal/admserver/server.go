@@ -1,4 +1,4 @@
-package apiserver
+package admserver
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/router"
+	"bingo/internal/admserver/router"
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
 )
@@ -23,6 +23,7 @@ type httpAPIServer struct {
 // NewHttp create a grpcAPIServer instance.
 func NewHttp() *httpAPIServer {
 	g := bootstrap.InitGin()
+
 	installRouters(g)
 
 	srv := &http.Server{Addr: facade.Config.Server.Addr, Handler: g}
@@ -63,11 +64,19 @@ func installRouters(g *gin.Engine) *gin.Engine {
 		router.MapSwagRouters(g)
 	}
 
+	// Queue dashboard
+	if facade.Config.Feature.QueueDash {
+		router.MapQueueRouters(g)
+	}
+
 	// Common router
 	router.MapCommonRouters(g)
 
-	// Api
+	// System
 	router.MapApiRouters(g)
+
+	// Init System API
+	router.InitSystemAPI(g)
 
 	return g
 }
