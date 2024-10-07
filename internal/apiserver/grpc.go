@@ -9,9 +9,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/grpc/interceptor"
 	"bingo/internal/apiserver/router"
+	"bingo/internal/pkg/facade"
 )
 
 type grpcAPIServer struct {

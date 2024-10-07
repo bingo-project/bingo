@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
+	"bingo/internal/pkg/facade"
 	genericapiserver "bingo/internal/pkg/server"
-	"bingo/internal/scheduler/facade"
 )
 
 var CfgFile string

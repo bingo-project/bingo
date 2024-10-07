@@ -8,11 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/eth/sign"
+	"bingo/internal/pkg/facade"
 	model2 "bingo/internal/pkg/model"
 )
 

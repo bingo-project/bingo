@@ -7,7 +7,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/redis"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 var (

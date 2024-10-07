@@ -6,8 +6,8 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/hibiken/asynq"
 
+	"bingo/internal/pkg/facade"
 	"bingo/internal/scheduler/biz/syscfg"
-	"bingo/internal/scheduler/facade"
 	"bingo/internal/scheduler/store"
 )
 

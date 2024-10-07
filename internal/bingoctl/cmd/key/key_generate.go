@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 const (

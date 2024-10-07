@@ -6,8 +6,8 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/apiserver/facade"
 	"bingo/internal/bot/telegram/middleware"
+	"bingo/internal/pkg/facade"
 )
 
 type TelegramServer struct {

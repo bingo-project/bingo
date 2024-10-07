@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
-	"bingo/internal/apiserver/config"
-	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/model"
 
 	"github.com/bingo-project/component-base/web/signer"

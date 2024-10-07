@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/task"
 )
 

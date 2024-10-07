@@ -4,6 +4,7 @@ import (
 	"github.com/bingo-project/component-base/cache"
 	"github.com/bingo-project/component-base/crypt"
 	"github.com/bwmarrin/snowflake"
+	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"
 
 	"bingo/internal/apiserver/config"
@@ -17,4 +18,8 @@ var (
 	Cache     *cache.CacheService
 	Snowflake *snowflake.Node
 	Mail      *mail.Mailer
+
+	Worker      *asynq.Server
+	Scheduler   *asynq.Scheduler
+	TaskManager *asynq.PeriodicTaskManager
 )

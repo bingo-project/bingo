@@ -5,7 +5,7 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/scheduler/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func InitQueue() {

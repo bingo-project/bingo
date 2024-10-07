@@ -5,7 +5,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/hibiken/asynqmon"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func MapQueueRouters(g *gin.Engine) {

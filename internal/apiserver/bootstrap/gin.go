@@ -5,9 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 	ginprom "github.com/zsais/go-gin-prometheus"
 
-	"bingo/internal/apiserver/facade"
 	"bingo/internal/apiserver/http/middleware"
 	"bingo/internal/apiserver/router"
+	"bingo/internal/pkg/facade"
 )
 
 func InitGin() *gin.Engine {

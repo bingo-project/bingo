@@ -10,7 +10,7 @@ import (
 	"github.com/ulule/limiter/v3"
 	redisStore "github.com/ulule/limiter/v3/drivers/store/redis"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func LimitIP(limit string) gin.HandlerFunc {

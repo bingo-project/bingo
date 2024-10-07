@@ -10,7 +10,7 @@ import (
 	goredislib "github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 	"bingo/internal/watcher/watcher"
 
 	// trigger init functions in `internal/watcher/watcher/`.

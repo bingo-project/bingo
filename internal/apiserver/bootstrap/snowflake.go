@@ -4,7 +4,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/snowflake"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func InitSnowflake() {

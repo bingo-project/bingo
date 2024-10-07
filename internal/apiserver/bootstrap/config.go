@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 	genericapiserver "bingo/internal/pkg/server"
 )
 

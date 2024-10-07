@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/bingo-project/component-base/log"
 
-	"bingo/internal/scheduler/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func InitLog() {

@@ -8,7 +8,7 @@ import (
 	"github.com/bingo-project/component-base/util"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 const (

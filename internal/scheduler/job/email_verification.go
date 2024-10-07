@@ -6,8 +6,8 @@ import (
 
 	"github.com/hibiken/asynq"
 
+	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/task"
-	"bingo/internal/scheduler/facade"
 )
 
 func HandleEmailVerificationTask(ctx context.Context, t *asynq.Task) error {

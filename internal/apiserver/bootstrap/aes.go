@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/bingo-project/component-base/crypt"
 
-	"bingo/internal/apiserver/facade"
+	"bingo/internal/pkg/facade"
 )
 
 func InitAES() {
