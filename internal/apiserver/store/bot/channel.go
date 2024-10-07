@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1/bot"
+	"bingo/internal/pkg/global"
 	model "bingo/internal/pkg/model/bot"
 )
 

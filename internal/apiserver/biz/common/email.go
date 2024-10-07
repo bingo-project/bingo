@@ -8,11 +8,11 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/random"
 
-	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/task"
 )
 

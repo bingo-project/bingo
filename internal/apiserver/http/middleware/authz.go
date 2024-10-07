@@ -4,9 +4,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/global"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
 	"bingo/pkg/auth"
 )

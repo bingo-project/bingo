@@ -7,8 +7,8 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
-	"bingo/internal/apiserver/global"
 	v1 "bingo/internal/apiserver/http/request/v1"
+	"bingo/internal/pkg/global"
 	model2 "bingo/internal/pkg/model"
 )
 
