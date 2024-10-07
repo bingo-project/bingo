@@ -10,13 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/apiserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/bingoctl/cmd/version"
 	"bingo/internal/bingoctl/database/migration"
+	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
 )
 
@@ -75,7 +75,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	bootstrap.InitConfig()
+	bootstrap.InitConfig("bingo-apiserver.yaml")
 	bootstrap.Boot()
 
 	// Init migration

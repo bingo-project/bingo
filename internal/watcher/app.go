@@ -7,7 +7,8 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/bootstrap"
+	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/bootstrap"
 )
 
 // NewWatcherCommand creates an App object with default parameters.
@@ -36,7 +37,7 @@ func NewWatcherCommand() *cobra.Command {
 	}
 
 	// 以下设置，使得 InitConfig 函数在每个命令运行时都会被调用以读取配置
-	cobra.OnInitialize(bootstrap.InitConfig)
+	cobra.OnInitialize(initConfig)
 
 	// 在这里您将定义标志和配置设置。
 
@@ -50,4 +51,13 @@ func NewWatcherCommand() *cobra.Command {
 	verflag.AddFlags(cmd.PersistentFlags())
 
 	return cmd
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	bootstrap.InitConfig("bingo-apiserver.yaml")
+	bootstrap.Boot()
+
+	// Init store
+	_ = store.NewStore(bootstrap.InitDB())
 }

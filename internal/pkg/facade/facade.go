@@ -7,7 +7,7 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"
 
-	"bingo/internal/apiserver/config"
+	"bingo/internal/pkg/config"
 	"bingo/pkg/mail"
 )
 

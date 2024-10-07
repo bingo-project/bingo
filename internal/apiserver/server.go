@@ -9,7 +9,7 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 
-	"bingo/internal/apiserver/bootstrap"
+	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
 )
 

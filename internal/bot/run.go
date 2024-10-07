@@ -7,14 +7,11 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 
-	"bingo/internal/apiserver/bootstrap"
 	"bingo/internal/bot/discord"
 	"bingo/internal/bot/telegram"
 )
 
 func run() error {
-	bootstrap.Boot()
-
 	telegramServer := telegram.NewTelegram()
 	telegramServer.Run()
 

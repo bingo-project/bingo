@@ -7,7 +7,8 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/scheduler/bootstrap"
+	"bingo/internal/pkg/bootstrap"
+	"bingo/internal/scheduler/store"
 )
 
 // NewSchedulerCommand creates an App object with default parameters.
@@ -54,6 +55,12 @@ func NewSchedulerCommand() *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	bootstrap.InitConfig()
+	bootstrap.InitConfig("bingo-scheduler.yaml")
 	bootstrap.Boot()
+
+	// Init store
+	_ = store.NewStore(bootstrap.InitDB())
+
+	bootstrap.InitQueueWorker()
+	bootstrap.InitScheduler()
 }

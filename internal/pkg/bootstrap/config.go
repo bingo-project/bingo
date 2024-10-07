@@ -13,6 +13,10 @@ const (
 )
 
 // InitConfig reads in config file and ENV variables if set.
-func InitConfig() {
-	genericapiserver.LoadConfig(CfgFile, DefaultConfigName, &facade.Config, Boot)
+func InitConfig(configName string) {
+	if configName == "" {
+		configName = DefaultConfigName
+	}
+
+	genericapiserver.LoadConfig(CfgFile, configName, &facade.Config, Boot)
 }
