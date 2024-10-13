@@ -26,18 +26,15 @@ func Authz(a Author) gin.HandlerFunc {
 		act := c.Request.Method
 
 		// System admin
-		guard := c.GetString(auth.XGuard)
-		if guard == global.AuthAdmin {
-			var admin model.AdminM
-			err := auth.User(c, &admin)
-			if err != nil {
-				core.WriteResponse(c, errno.ErrUnauthorized, nil)
+		var admin model.AdminM
+		err := auth.User(c, &admin)
+		if err != nil {
+			core.WriteResponse(c, errno.ErrUnauthorized, nil)
 
-				return
-			}
-
-			sub = global.RolePrefix + admin.RoleName
+			return
 		}
+
+		sub = global.RolePrefix + admin.RoleName
 
 		log.C(c).Debugw("Build authorize context", "sub", sub, "obj", obj, "act", act)
 		if allowed, _ := a.Authorize(sub, obj, act); !allowed {

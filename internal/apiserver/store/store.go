@@ -5,9 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"bingo/internal/apiserver/store/bot"
 	"bingo/internal/apiserver/store/syscfg"
-	"bingo/internal/apiserver/store/system"
 )
 
 //go:generate mockgen -destination mock_store.go -package store bingo/internal/apiserver/store IStore
@@ -25,18 +23,9 @@ type IStore interface {
 	UserAccounts() UserAccountStore
 	AuthProviders() AuthProviderStore
 
-	Admins() system.AdminStore
-	Roles() system.RoleStore
-	Apis() system.ApiStore
-	Menus() system.MenuStore
-	RoleMenus() system.RoleMenuStore
-
 	AppVersions() syscfg.AppVersionStore
 	Configs() syscfg.ConfigStore
 
-	Bots() bot.BotStore
-	BotChannels() bot.ChannelStore
-	BotAdmins() bot.AdminStore
 	Apps() AppStore
 	ApiKeys() ApiKeyStore
 }
@@ -77,44 +66,12 @@ func (ds *datastore) UserAccounts() UserAccountStore {
 	return NewUserAccounts(ds.db)
 }
 
-func (ds *datastore) Admins() system.AdminStore {
-	return system.NewAdmins(ds.db)
-}
-
-func (ds *datastore) Roles() system.RoleStore {
-	return system.NewRoles(ds.db)
-}
-
-func (ds *datastore) Apis() system.ApiStore {
-	return system.NewApis(ds.db)
-}
-
-func (ds *datastore) Menus() system.MenuStore {
-	return system.NewMenus(ds.db)
-}
-
-func (ds *datastore) RoleMenus() system.RoleMenuStore {
-	return system.NewRoleMenus(ds.db)
-}
-
 func (ds *datastore) AppVersions() syscfg.AppVersionStore {
 	return syscfg.NewAppVersions(ds.db)
 }
 
 func (ds *datastore) Configs() syscfg.ConfigStore {
 	return syscfg.NewConfigs(ds.db)
-}
-
-func (ds *datastore) Bots() bot.BotStore {
-	return bot.NewBots(ds.db)
-}
-
-func (ds *datastore) BotChannels() bot.ChannelStore {
-	return bot.NewChannels(ds.db)
-}
-
-func (ds *datastore) BotAdmins() bot.AdminStore {
-	return bot.NewAdmins(ds.db)
 }
 
 func (ds *datastore) Apps() AppStore {

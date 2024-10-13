@@ -25,14 +25,14 @@ func NewAppVersionController(ds store.IStore, a *auth.Authz) *AppVersionControll
 // List
 // @Summary    List apps
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAppVersionRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListAppVersionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps [GET].
+// @Router    /v1/cfg/apps [GET].
 func (ctrl *AppVersionController) List(c *gin.Context) {
 	log.C(c).Infow("List app function called")
 
@@ -56,14 +56,14 @@ func (ctrl *AppVersionController) List(c *gin.Context) {
 // Create
 // @Summary    Create app
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateAppVersionRequest	 true  "Param"
 // @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps [POST].
+// @Router    /v1/cfg/apps [POST].
 func (ctrl *AppVersionController) Create(c *gin.Context) {
 	log.C(c).Infow("Create app function called")
 
@@ -88,14 +88,14 @@ func (ctrl *AppVersionController) Create(c *gin.Context) {
 // Get
 // @Summary    Get app info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [GET].
+// @Router    /v1/cfg/apps/{id} [GET].
 func (ctrl *AppVersionController) Get(c *gin.Context) {
 	log.C(c).Infow("Get app function called")
 
@@ -113,7 +113,7 @@ func (ctrl *AppVersionController) Get(c *gin.Context) {
 // Update
 // @Summary    Update app info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -121,7 +121,7 @@ func (ctrl *AppVersionController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [PUT].
+// @Router    /v1/cfg/apps/{id} [PUT].
 func (ctrl *AppVersionController) Update(c *gin.Context) {
 	log.C(c).Infow("Update app function called")
 
@@ -146,14 +146,14 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete app
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/apps/{id} [DELETE].
+// @Router    /v1/cfg/apps/{id} [DELETE].
 func (ctrl *AppVersionController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete app function called")
 

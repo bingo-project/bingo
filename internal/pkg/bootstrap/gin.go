@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	ginprom "github.com/zsais/go-gin-prometheus"
 
+	middleware2 "bingo/internal/apiserver/middleware"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/http/middleware"
 )
@@ -57,7 +58,7 @@ func registerStaticFileServer(g *gin.Engine) {
 	storage.Static("upload", "./storage/public/upload")
 
 	// Authentication for secure file.
-	storage.Use(middleware.Authn())
+	storage.Use(middleware2.Authn())
 	storage.Static("log", "./storage/log")
 }
 

@@ -24,14 +24,14 @@ func NewAdminController(ds store.IStore, a *auth.Authz) *AdminController {
 // List
 // @Summary    List admins
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAdminRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListAdminResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins [GET].
+// @Router    /v1/admins [GET].
 func (ctrl *AdminController) List(c *gin.Context) {
 	log.C(c).Infow("List admin function called")
 
@@ -55,14 +55,14 @@ func (ctrl *AdminController) List(c *gin.Context) {
 // Create
 // @Summary    Create admin
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateAdminRequest	 true  "Param"
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins [POST].
+// @Router    /v1/admins [POST].
 func (ctrl *AdminController) Create(c *gin.Context) {
 	log.C(c).Infow("Create admin function called")
 
@@ -87,14 +87,14 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 // Get
 // @Summary    Get admin info
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Username"
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/{name} [GET].
+// @Router    /v1/admins/{name} [GET].
 func (ctrl *AdminController) Get(c *gin.Context) {
 	log.C(c).Infow("Get admin function called")
 
@@ -112,7 +112,7 @@ func (ctrl *AdminController) Get(c *gin.Context) {
 // Update
 // @Summary    Update admin info
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Username"
@@ -120,7 +120,7 @@ func (ctrl *AdminController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/{name} [PUT].
+// @Router    /v1/admins/{name} [PUT].
 func (ctrl *AdminController) Update(c *gin.Context) {
 	log.C(c).Infow("Update admin function called")
 
@@ -145,14 +145,14 @@ func (ctrl *AdminController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete a admin
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Username"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/{name} [DELETE].
+// @Router    /v1/admins/{name} [DELETE].
 func (ctrl *AdminController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete admin function called")
 
@@ -169,7 +169,7 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 // SetRoles
 // @Summary    Set admin roles
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      name      path       string  true  "Query params"
@@ -177,7 +177,7 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/admins/{name}/roles [PUT].
+// @Router    /v1/admins/{name}/roles [PUT].
 func (ctrl *AdminController) SetRoles(c *gin.Context) {
 	log.C(c).Infow("SetRoles function called")
 

@@ -25,13 +25,13 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // UserInfo
 // @Summary    Get user info
 // @Security   Bearer
-// @Tags       System.Auth
+// @Tags       Auth
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/auth/user-info [GET].
+// @Router    /v1/auth/user-info [GET].
 func (ctrl *AuthController) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
@@ -49,13 +49,13 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 // Menus
 // @Summary    Get menu tree
 // @Security   Bearer
-// @Tags       System.Auth
+// @Tags       Auth
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/auth/menus [GET].
+// @Router    /v1/auth/menus [GET].
 func (ctrl *AuthController) Menus(c *gin.Context) {
 	log.C(c).Infow("Menus function called")
 
@@ -75,14 +75,14 @@ func (ctrl *AuthController) Menus(c *gin.Context) {
 // ChangePassword
 // @Summary    Change password
 // @Security   Bearer
-// @Tags       System.Auth
+// @Tags       Auth
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.ChangePasswordRequest	true  "Param"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/auth/change-password [PUT].
+// @Router    /v1/auth/change-password [PUT].
 func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change admin password function called")
 
@@ -107,14 +107,14 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 // SwitchRole
 // @Summary    Switch role
 // @Security   Bearer
-// @Tags       System.Auth
+// @Tags       Auth
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.SwitchRoleRequest	 true  "Param"
 // @Success	   200		{object}	v1.AdminInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/auth/switch-role [PUT].
+// @Router    /v1/auth/switch-role [PUT].
 func (ctrl *AuthController) SwitchRole(c *gin.Context) {
 	log.C(c).Infow("SwitchRole function called")
 

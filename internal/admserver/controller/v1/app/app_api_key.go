@@ -25,14 +25,14 @@ func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
 // List
 // @Summary    List apiKeys
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListApiKeyRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListApiKeyResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/api-keys [GET]
+// @Router    /v1/api-keys [GET]
 func (ctrl *ApiKeyController) List(c *gin.Context) {
 	log.C(c).Infow("List apiKey function called")
 
@@ -56,14 +56,14 @@ func (ctrl *ApiKeyController) List(c *gin.Context) {
 // Create
 // @Summary    Create apiKey
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateApiKeyRequest	 true  "Param"
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/api-keys [POST]
+// @Router    /v1/api-keys [POST]
 func (ctrl *ApiKeyController) Create(c *gin.Context) {
 	log.C(c).Infow("Create apiKey function called")
 
@@ -88,14 +88,14 @@ func (ctrl *ApiKeyController) Create(c *gin.Context) {
 // Get
 // @Summary    Get apiKey info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/api-keys/{id} [GET]
+// @Router    /v1/api-keys/{id} [GET]
 func (ctrl *ApiKeyController) Get(c *gin.Context) {
 	log.C(c).Infow("Get apiKey function called")
 
@@ -113,7 +113,7 @@ func (ctrl *ApiKeyController) Get(c *gin.Context) {
 // Update
 // @Summary    Update apiKey info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -121,7 +121,7 @@ func (ctrl *ApiKeyController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/api-keys/{id} [PUT]
+// @Router    /v1/api-keys/{id} [PUT]
 func (ctrl *ApiKeyController) Update(c *gin.Context) {
 	log.C(c).Infow("Update apiKey function called")
 
@@ -146,14 +146,14 @@ func (ctrl *ApiKeyController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete apiKey
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/api-keys/{id} [DELETE]
+// @Router    /v1/api-keys/{id} [DELETE]
 func (ctrl *ApiKeyController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete apiKey function called")
 

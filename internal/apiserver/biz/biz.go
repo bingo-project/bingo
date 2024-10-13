@@ -5,11 +5,9 @@ package biz
 import (
 	"bingo/internal/apiserver/biz/app"
 	"bingo/internal/apiserver/biz/auth"
-	"bingo/internal/apiserver/biz/bot"
 	"bingo/internal/apiserver/biz/common"
 	"bingo/internal/apiserver/biz/file"
 	"bingo/internal/apiserver/biz/syscfg"
-	"bingo/internal/apiserver/biz/system"
 	"bingo/internal/apiserver/biz/user"
 	"bingo/internal/apiserver/store"
 )
@@ -24,16 +22,9 @@ type IBiz interface {
 	Email() common.EmailBiz
 	Files() file.FileBiz
 
-	Admins() system.AdminBiz
-	Roles() system.RoleBiz
-	Apis() system.ApiBiz
-	Menus() system.MenuBiz
-
 	AppVersions() syscfg.AppVersionBiz
 	Configs() syscfg.ConfigBiz
 
-	Bots() bot.BotBiz
-	Channels() bot.ChannelBiz
 	Apps() app.AppBiz
 	ApiKeys() app.ApiKeyBiz
 }
@@ -76,38 +67,12 @@ func (b *biz) Files() file.FileBiz {
 	return file.NewFile(b.ds)
 }
 
-// Admins 管理员.
-func (b *biz) Admins() system.AdminBiz {
-	return system.NewAdmin(b.ds)
-}
-
-// Roles 角色管理.
-func (b *biz) Roles() system.RoleBiz {
-	return system.NewRole(b.ds)
-}
-
-func (b *biz) Apis() system.ApiBiz {
-	return system.NewApi(b.ds)
-}
-
-func (b *biz) Menus() system.MenuBiz {
-	return system.NewMenu(b.ds)
-}
-
 func (b *biz) AppVersions() syscfg.AppVersionBiz {
 	return syscfg.NewAppVersion(b.ds)
 }
 
 func (b *biz) Configs() syscfg.ConfigBiz {
 	return syscfg.NewConfig(b.ds)
-}
-
-func (b *biz) Bots() bot.BotBiz {
-	return bot.NewBot(b.ds)
-}
-
-func (b *biz) Channels() bot.ChannelBiz {
-	return bot.NewChannel(b.ds)
 }
 
 func (b *biz) Apps() app.AppBiz {

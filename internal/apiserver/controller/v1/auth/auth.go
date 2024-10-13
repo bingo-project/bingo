@@ -8,7 +8,6 @@ import (
 	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/model"
 	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
@@ -106,30 +105,4 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 	}
 
 	core.WriteResponse(c, nil, user)
-}
-
-// Accounts
-// @Summary	    Get accounts
-// @Security	Bearer
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	    json
-// @Success	    200		{object}	[]v1.AuthProviderBrief
-// @Failure	    400		{object}	core.ErrResponse
-// @Failure	    500		{object}	core.ErrResponse
-// @Router		/v1/auth/accounts [GET].
-func (ctrl *AuthController) Accounts(c *gin.Context) {
-	log.C(c).Infow("Accounts function called")
-
-	var user model.UserM
-	_ = auth.User(c, &user)
-
-	resp, err := ctrl.b.Users().Accounts(c, user.UID)
-	if err != nil {
-		core.WriteResponse(c, err, nil)
-
-		return
-	}
-
-	core.WriteResponse(c, nil, resp)
 }

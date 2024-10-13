@@ -7,9 +7,8 @@ import (
 	"bingo/internal/admserver/controller/v1/syscfg"
 	"bingo/internal/admserver/controller/v1/system"
 	"bingo/internal/admserver/controller/v1/user"
+	"bingo/internal/admserver/middleware"
 	"bingo/internal/admserver/store"
-	"bingo/internal/pkg/global"
-	"bingo/internal/pkg/http/middleware"
 	"bingo/pkg/auth"
 )
 
@@ -25,7 +24,7 @@ func MapApiRouters(g *gin.Engine) {
 	// Login
 	v1.POST("auth/login", adminController.Login)
 
-	v1.Use(middleware.Authn(global.AuthAdmin), middleware.Authz(authz))
+	v1.Use(middleware.Authn(), middleware.Authz(authz))
 
 	// Auth
 	v1.GET("auth/user-info", authController.UserInfo)             // 获取登录账号信息

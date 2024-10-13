@@ -3,7 +3,7 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/apiserver/store"
+	"bingo/internal/admserver/store"
 	"bingo/internal/bot/discord/controller/v1/server"
 	"bingo/internal/bot/discord/middleware"
 )

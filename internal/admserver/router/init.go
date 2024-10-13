@@ -20,7 +20,7 @@ func InitSystemAPI(g *gin.Engine) {
 	data := make([]model.ApiM, 0)
 	for _, route := range routes {
 		// Only system api
-		if !strings.Contains(route.Path, "/v1/system") {
+		if !strings.Contains(route.Path, "/v1") {
 			continue
 		}
 

@@ -6,8 +6,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/duke-git/lancet/v2/convertor"
 
-	"bingo/internal/apiserver/biz"
-	"bingo/internal/apiserver/store"
+	"bingo/internal/admserver/biz"
+	"bingo/internal/admserver/store"
 	"bingo/internal/bot/discord/client"
 	mw "bingo/internal/bot/discord/middleware"
 	"bingo/internal/pkg/model/bot"

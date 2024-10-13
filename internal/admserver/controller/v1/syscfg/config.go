@@ -25,14 +25,14 @@ func NewConfigController(ds store.IStore, a *auth.Authz) *ConfigController {
 // List
 // @Summary    List configs
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListConfigRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListConfigResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/configs [GET].
+// @Router    /v1/cfg/configs [GET].
 func (ctrl *ConfigController) List(c *gin.Context) {
 	log.C(c).Infow("List config function called")
 
@@ -56,14 +56,14 @@ func (ctrl *ConfigController) List(c *gin.Context) {
 // Create
 // @Summary    Create config
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateConfigRequest	 true  "Param"
 // @Success	   200		{object}	v1.ConfigInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/configs [POST].
+// @Router    /v1/cfg/configs [POST].
 func (ctrl *ConfigController) Create(c *gin.Context) {
 	log.C(c).Infow("Create config function called")
 
@@ -88,14 +88,14 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 // Get
 // @Summary    Get config info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.ConfigInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/configs/{id} [GET].
+// @Router    /v1/cfg/configs/{id} [GET].
 func (ctrl *ConfigController) Get(c *gin.Context) {
 	log.C(c).Infow("Get config function called")
 
@@ -113,7 +113,7 @@ func (ctrl *ConfigController) Get(c *gin.Context) {
 // Update
 // @Summary    Update config info
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -121,7 +121,7 @@ func (ctrl *ConfigController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.ConfigInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/configs/{id} [PUT].
+// @Router    /v1/cfg/configs/{id} [PUT].
 func (ctrl *ConfigController) Update(c *gin.Context) {
 	log.C(c).Infow("Update config function called")
 
@@ -146,14 +146,14 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete config
 // @Security   Bearer
-// @Tags       System.Config
+// @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/cfg/configs/{id} [DELETE].
+// @Router    /v1/cfg/configs/{id} [DELETE].
 func (ctrl *ConfigController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete config function called")
 

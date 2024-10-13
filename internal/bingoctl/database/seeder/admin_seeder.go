@@ -3,7 +3,7 @@ package seeder
 import (
 	"context"
 
-	"bingo/internal/apiserver/store"
+	"bingo/internal/admserver/store"
 	"bingo/internal/pkg/global"
 	"bingo/pkg/auth"
 )

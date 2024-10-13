@@ -50,55 +50,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/file/upload": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "File"
-                ],
-                "summary": "Upload file",
-                "parameters": [
-                    {
-                        "type": "file",
-                        "description": "File",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/system/admins": {
+        "/v1/admins": {
             "get": {
                 "security": [
                     {
@@ -112,7 +64,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "List admins",
                 "parameters": [
@@ -211,7 +163,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Create admin",
                 "parameters": [
@@ -247,7 +199,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/admins/{name}": {
+        "/v1/admins/{name}": {
             "get": {
                 "security": [
                     {
@@ -261,7 +213,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Get admin info",
                 "parameters": [
@@ -307,7 +259,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Update admin info",
                 "parameters": [
@@ -362,7 +314,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Delete a admin",
                 "parameters": [
@@ -393,7 +345,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/admins/{name}/change-password": {
+        "/v1/admins/{name}/change-password": {
             "put": {
                 "security": [
                     {
@@ -447,7 +399,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/admins/{name}/roles": {
+        "/v1/admins/{name}/roles": {
             "put": {
                 "security": [
                     {
@@ -461,7 +413,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Set admin roles",
                 "parameters": [
@@ -504,7 +456,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/api-keys": {
+        "/v1/api-keys": {
             "get": {
                 "security": [
                     {
@@ -518,7 +470,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "List apiKeys",
                 "parameters": [
@@ -613,7 +565,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Create apiKey",
                 "parameters": [
@@ -649,7 +601,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/api-keys/{id}": {
+        "/v1/api-keys/{id}": {
             "get": {
                 "security": [
                     {
@@ -663,7 +615,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Get apiKey info",
                 "parameters": [
@@ -709,7 +661,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Update apiKey info",
                 "parameters": [
@@ -764,7 +716,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Delete apiKey",
                 "parameters": [
@@ -795,7 +747,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apis": {
+        "/v1/apis": {
             "get": {
                 "security": [
                     {
@@ -809,7 +761,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "List apis",
                 "parameters": [
@@ -893,7 +845,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "Create a api",
                 "parameters": [
@@ -929,7 +881,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apis/all": {
+        "/v1/apis/all": {
             "get": {
                 "security": [
                     {
@@ -943,7 +895,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "All apis",
                 "responses": {
@@ -971,7 +923,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apis/tree": {
+        "/v1/apis/tree": {
             "get": {
                 "security": [
                     {
@@ -985,7 +937,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "API Tree",
                 "responses": {
@@ -1013,7 +965,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apis/{id}": {
+        "/v1/apis/{id}": {
             "get": {
                 "security": [
                     {
@@ -1027,7 +979,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "Get api info",
                 "parameters": [
@@ -1073,7 +1025,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "Update api info",
                 "parameters": [
@@ -1128,7 +1080,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Api"
+                    "Api"
                 ],
                 "summary": "Delete api",
                 "parameters": [
@@ -1159,7 +1111,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apps": {
+        "/v1/apps": {
             "get": {
                 "security": [
                     {
@@ -1173,7 +1125,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "List apps",
                 "parameters": [
@@ -1273,7 +1225,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Create app",
                 "parameters": [
@@ -1309,7 +1261,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/apps/{appid}": {
+        "/v1/apps/{appid}": {
             "get": {
                 "security": [
                     {
@@ -1323,7 +1275,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Get app info",
                 "parameters": [
@@ -1369,7 +1321,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Update app info",
                 "parameters": [
@@ -1424,7 +1376,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.App"
+                    "App"
                 ],
                 "summary": "Delete app",
                 "parameters": [
@@ -1455,7 +1407,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/auth/change-password": {
+        "/v1/auth/change-password": {
             "put": {
                 "security": [
                     {
@@ -1469,7 +1421,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Auth"
+                    "Auth"
                 ],
                 "summary": "Change password",
                 "parameters": [
@@ -1502,7 +1454,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/auth/login": {
+        "/v1/auth/login": {
             "post": {
                 "security": [
                     {
@@ -1516,7 +1468,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Auth"
+                    "Auth"
                 ],
                 "summary": "Login",
                 "parameters": [
@@ -1552,7 +1504,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/auth/menus": {
+        "/v1/auth/menus": {
             "get": {
                 "security": [
                     {
@@ -1566,7 +1518,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Auth"
+                    "Auth"
                 ],
                 "summary": "Get menu tree",
                 "responses": {
@@ -1591,7 +1543,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/auth/switch-role": {
+        "/v1/auth/switch-role": {
             "put": {
                 "security": [
                     {
@@ -1605,7 +1557,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Auth"
+                    "Auth"
                 ],
                 "summary": "Switch role",
                 "parameters": [
@@ -1641,7 +1593,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/auth/user-info": {
+        "/v1/auth/user-info": {
             "get": {
                 "security": [
                     {
@@ -1655,7 +1607,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Auth"
+                    "Auth"
                 ],
                 "summary": "Get user info",
                 "responses": {
@@ -1680,7 +1632,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/cfg/apps": {
+        "/v1/cfg/apps": {
             "get": {
                 "security": [
                     {
@@ -1694,7 +1646,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "List apps",
                 "parameters": [
@@ -1794,7 +1746,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Create app",
                 "parameters": [
@@ -1830,7 +1782,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/cfg/apps/{id}": {
+        "/v1/cfg/apps/{id}": {
             "get": {
                 "security": [
                     {
@@ -1844,7 +1796,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Get app info",
                 "parameters": [
@@ -1890,7 +1842,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Update app info",
                 "parameters": [
@@ -1945,7 +1897,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Delete app",
                 "parameters": [
@@ -1976,7 +1928,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/cfg/configs": {
+        "/v1/cfg/configs": {
             "get": {
                 "security": [
                     {
@@ -1990,7 +1942,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "List configs",
                 "parameters": [
@@ -2074,7 +2026,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Create config",
                 "parameters": [
@@ -2110,7 +2062,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/cfg/configs/{id}": {
+        "/v1/cfg/configs/{id}": {
             "get": {
                 "security": [
                     {
@@ -2124,7 +2076,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Get config info",
                 "parameters": [
@@ -2170,7 +2122,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Update config info",
                 "parameters": [
@@ -2225,7 +2177,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Config"
+                    "Config"
                 ],
                 "summary": "Delete config",
                 "parameters": [
@@ -2256,7 +2208,55 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/menus": {
+        "/v1/file/upload": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "File"
+                ],
+                "summary": "Upload file",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/menus": {
             "get": {
                 "security": [
                     {
@@ -2270,7 +2270,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "List menus",
                 "parameters": [
@@ -2339,7 +2339,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "Create menu",
                 "parameters": [
@@ -2375,7 +2375,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/menus/tree": {
+        "/v1/menus/tree": {
             "get": {
                 "security": [
                     {
@@ -2389,7 +2389,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "Get menu tree",
                 "responses": {
@@ -2414,7 +2414,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/menus/{id}": {
+        "/v1/menus/{id}": {
             "get": {
                 "security": [
                     {
@@ -2428,7 +2428,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "Get menu info",
                 "parameters": [
@@ -2474,7 +2474,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "Update menu info",
                 "parameters": [
@@ -2529,7 +2529,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Menu"
+                    "Menu"
                 ],
                 "summary": "Delete menu",
                 "parameters": [
@@ -2560,7 +2560,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles": {
+        "/v1/roles": {
             "get": {
                 "security": [
                     {
@@ -2574,7 +2574,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "List roles",
                 "parameters": [
@@ -2648,7 +2648,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Create a role",
                 "parameters": [
@@ -2684,7 +2684,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles/all": {
+        "/v1/roles/all": {
             "get": {
                 "security": [
                     {
@@ -2698,7 +2698,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "All roles",
                 "responses": {
@@ -2723,7 +2723,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles/{name}": {
+        "/v1/roles/{name}": {
             "get": {
                 "security": [
                     {
@@ -2737,7 +2737,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Get role info",
                 "parameters": [
@@ -2783,7 +2783,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Update role info",
                 "parameters": [
@@ -2838,7 +2838,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Delete a role",
                 "parameters": [
@@ -2869,7 +2869,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles/{name}/apis": {
+        "/v1/roles/{name}/apis": {
             "get": {
                 "security": [
                     {
@@ -2883,7 +2883,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Get apis",
                 "parameters": [
@@ -2932,7 +2932,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Set apis",
                 "parameters": [
@@ -2972,7 +2972,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/roles/{name}/menus": {
+        "/v1/roles/{name}/menus": {
             "get": {
                 "security": [
                     {
@@ -2986,7 +2986,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Get menuIDs of role",
                 "parameters": [
@@ -3035,7 +3035,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Role"
+                    "Role"
                 ],
                 "summary": "Set menus",
                 "parameters": [
@@ -3075,7 +3075,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/users": {
+        "/v1/users": {
             "get": {
                 "security": [
                     {
@@ -3089,7 +3089,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.User"
+                    "User"
                 ],
                 "summary": "List users",
                 "parameters": [
@@ -3158,7 +3158,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.User"
+                    "User"
                 ],
                 "summary": "Create a user",
                 "parameters": [
@@ -3194,7 +3194,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/users/{name}": {
+        "/v1/users/{name}": {
             "get": {
                 "security": [
                     {
@@ -3208,7 +3208,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.User"
+                    "User"
                 ],
                 "summary": "Get user info",
                 "parameters": [
@@ -3254,7 +3254,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.User"
+                    "User"
                 ],
                 "summary": "Update user info",
                 "parameters": [
@@ -3339,7 +3339,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.User"
+                    "User"
                 ],
                 "summary": "Delete a user",
                 "parameters": [
@@ -3370,7 +3370,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/system/users/{name}/change-password": {
+        "/v1/users/{name}/change-password": {
             "put": {
                 "security": [
                     {

@@ -16,7 +16,7 @@ import (
 var (
 	opt       = zap.AddCallerSkip(3)
 	blacklist = []string{
-		"SELECT * FROM `casbin_rule` ORDER BY ID",
+		"SELECT * FROM `sys_casbin_rule` ORDER BY ID",
 	}
 )
 

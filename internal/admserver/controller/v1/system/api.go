@@ -25,14 +25,14 @@ func NewApiController(ds store.IStore, a *auth.Authz) *ApiController {
 // List
 // @Summary    List apis
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListApiRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListApiResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis [GET].
+// @Router    /v1/apis [GET].
 func (ctrl *ApiController) List(c *gin.Context) {
 	log.C(c).Infow("List api function called")
 
@@ -56,14 +56,14 @@ func (ctrl *ApiController) List(c *gin.Context) {
 // Create
 // @Summary    Create a api
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateApiRequest	 true  "Param"
 // @Success	   200		{object}	v1.ApiInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis [POST].
+// @Router    /v1/apis [POST].
 func (ctrl *ApiController) Create(c *gin.Context) {
 	log.C(c).Infow("Create api function called")
 
@@ -88,14 +88,14 @@ func (ctrl *ApiController) Create(c *gin.Context) {
 // Get
 // @Summary    Get api info
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.ApiInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis/{id} [GET].
+// @Router    /v1/apis/{id} [GET].
 func (ctrl *ApiController) Get(c *gin.Context) {
 	log.C(c).Infow("Get api function called")
 
@@ -113,7 +113,7 @@ func (ctrl *ApiController) Get(c *gin.Context) {
 // Update
 // @Summary    Update api info
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -121,7 +121,7 @@ func (ctrl *ApiController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.ApiInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis/{id} [PUT].
+// @Router    /v1/apis/{id} [PUT].
 func (ctrl *ApiController) Update(c *gin.Context) {
 	log.C(c).Infow("Update api function called")
 
@@ -146,14 +146,14 @@ func (ctrl *ApiController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete api
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis/{id} [DELETE].
+// @Router    /v1/apis/{id} [DELETE].
 func (ctrl *ApiController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete api function called")
 
@@ -170,13 +170,13 @@ func (ctrl *ApiController) Delete(c *gin.Context) {
 // All
 // @Summary    All apis
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	[]v1.ApiInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis/all [GET].
+// @Router    /v1/apis/all [GET].
 func (ctrl *ApiController) All(c *gin.Context) {
 	log.C(c).Infow("All api function called")
 
@@ -193,13 +193,13 @@ func (ctrl *ApiController) All(c *gin.Context) {
 // Tree
 // @Summary    API Tree
 // @Security   Bearer
-// @Tags       System.Api
+// @Tags       Api
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	[]v1.ApiInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apis/tree [GET].
+// @Router    /v1/apis/tree [GET].
 func (ctrl *ApiController) Tree(c *gin.Context) {
 	log.C(c).Infow("Tree api function called")
 

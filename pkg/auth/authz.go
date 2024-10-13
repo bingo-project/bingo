@@ -37,7 +37,7 @@ type Authz struct {
 // NewAuthz 创建一个使用 casbin 完成授权的授权器.
 func NewAuthz(db *gorm.DB) (*Authz, error) {
 	// Initialize a Gorm adapter and use it in a Casbin enforcer
-	adapter, err := adapter.NewAdapterByDB(db)
+	adapter, err := adapter.NewAdapterByDBUseTableName(db, "sys", "casbin_rule")
 	if err != nil {
 		return nil, err
 	}

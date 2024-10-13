@@ -9,7 +9,7 @@ var CfgFile string
 
 const (
 	// DefaultConfigName 指定了服务的默认配置文件名.
-	DefaultConfigName = "bingo-scheduler.yaml"
+	DefaultConfigName = "bingo-apiserver.yaml"
 )
 
 // InitConfig reads in config file and ENV variables if set.

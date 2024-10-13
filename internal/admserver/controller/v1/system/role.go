@@ -24,14 +24,14 @@ func NewRoleController(ds store.IStore, a *auth.Authz) *RoleController {
 // List
 // @Summary    List roles
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListRoleRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles [GET].
+// @Router    /v1/roles [GET].
 func (ctrl *RoleController) List(c *gin.Context) {
 	log.C(c).Infow("List role function called")
 
@@ -55,14 +55,14 @@ func (ctrl *RoleController) List(c *gin.Context) {
 // Create
 // @Summary    Create a role
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateRoleRequest	 true  "Param"
 // @Success	   200		{object}	v1.RoleInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles [POST].
+// @Router    /v1/roles [POST].
 func (ctrl *RoleController) Create(c *gin.Context) {
 	log.C(c).Infow("Create role function called")
 
@@ -87,14 +87,14 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 // Get
 // @Summary    Get role info
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Role name"
 // @Success	   200		{object}	v1.RoleInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name} [GET].
+// @Router    /v1/roles/{name} [GET].
 func (ctrl *RoleController) Get(c *gin.Context) {
 	log.C(c).Infow("Get role function called")
 
@@ -112,7 +112,7 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 // Update
 // @Summary    Update role info
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string                  true  "Role name"
@@ -120,7 +120,7 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.RoleInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name} [PUT].
+// @Router    /v1/roles/{name} [PUT].
 func (ctrl *RoleController) Update(c *gin.Context) {
 	log.C(c).Infow("Update role function called")
 
@@ -145,14 +145,14 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete a role
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Role name"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name} [DELETE].
+// @Router    /v1/roles/{name} [DELETE].
 func (ctrl *RoleController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete role function called")
 
@@ -169,7 +169,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 // SetApis
 // @Summary    Set apis
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Role name"
@@ -177,7 +177,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/apis [PUT].
+// @Router    /v1/roles/{name}/apis [PUT].
 func (ctrl *RoleController) SetApis(c *gin.Context) {
 	var req v1.SetApisRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -200,14 +200,14 @@ func (ctrl *RoleController) SetApis(c *gin.Context) {
 // GetApiIDs
 // @Summary    Get apis
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name      path      string           true  "Role name"
 // @Success	   200		{object}	v1.GetApiIDsResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/apis [GET].
+// @Router    /v1/roles/{name}/apis [GET].
 func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 	name := c.Param("name")
 	resp, err := ctrl.b.Roles().GetApiIDs(c, ctrl.a, name)
@@ -223,7 +223,7 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 // SetMenus
 // @Summary    Set menus
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string     true  "Role name"
@@ -231,7 +231,7 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/menus [PUT].
+// @Router    /v1/roles/{name}/menus [PUT].
 func (ctrl *RoleController) SetMenus(c *gin.Context) {
 	var req v1.SetMenusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -254,14 +254,14 @@ func (ctrl *RoleController) SetMenus(c *gin.Context) {
 // GetMenuIDs
 // @Summary    Get menuIDs of role
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Param      name      path      string           true  "Role name"
 // @Success	   200		{object}	v1.GetApiIDsResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/{name}/menus [GET].
+// @Router    /v1/roles/{name}/menus [GET].
 func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 	roleName := c.Param("name")
 	resp, err := ctrl.b.Roles().GetMenuIDs(c, roleName)
@@ -277,13 +277,13 @@ func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 // All
 // @Summary    All roles
 // @Security   Bearer
-// @Tags       System.Role
+// @Tags       Role
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	v1.ListRoleResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/roles/all [GET].
+// @Router    /v1/roles/all [GET].
 func (ctrl *RoleController) All(c *gin.Context) {
 	log.C(c).Infow("All role function called")
 

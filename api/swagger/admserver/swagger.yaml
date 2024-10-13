@@ -828,37 +828,7 @@ paths:
       summary: Heath check
       tags:
       - Common
-  /v1/file/upload:
-    post:
-      consumes:
-      - multipart/form-data
-      parameters:
-      - description: File
-        in: formData
-        name: file
-        required: true
-        type: file
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Upload file
-      tags:
-      - File
-  /v1/system/admins:
+  /v1/admins:
     get:
       consumes:
       - application/json
@@ -920,7 +890,7 @@ paths:
       - Bearer: []
       summary: List admins
       tags:
-      - System.Admin
+      - Admin
     post:
       consumes:
       - application/json
@@ -950,8 +920,8 @@ paths:
       - Bearer: []
       summary: Create admin
       tags:
-      - System.Admin
-  /v1/system/admins/{name}:
+      - Admin
+  /v1/admins/{name}:
     delete:
       consumes:
       - application/json
@@ -978,7 +948,7 @@ paths:
       - Bearer: []
       summary: Delete a admin
       tags:
-      - System.Admin
+      - Admin
     get:
       consumes:
       - application/json
@@ -1007,7 +977,7 @@ paths:
       - Bearer: []
       summary: Get admin info
       tags:
-      - System.Admin
+      - Admin
     put:
       consumes:
       - application/json
@@ -1042,8 +1012,8 @@ paths:
       - Bearer: []
       summary: Update admin info
       tags:
-      - System.Admin
-  /v1/system/admins/{name}/change-password:
+      - Admin
+  /v1/admins/{name}/change-password:
     put:
       consumes:
       - application/json
@@ -1077,7 +1047,7 @@ paths:
       summary: Change password
       tags:
       - System.Admin
-  /v1/system/admins/{name}/roles:
+  /v1/admins/{name}/roles:
     put:
       consumes:
       - application/json
@@ -1112,8 +1082,8 @@ paths:
       - Bearer: []
       summary: Set admin roles
       tags:
-      - System.Admin
-  /v1/system/api-keys:
+      - Admin
+  /v1/api-keys:
     get:
       consumes:
       - application/json
@@ -1173,7 +1143,7 @@ paths:
       - Bearer: []
       summary: List apiKeys
       tags:
-      - System.App
+      - App
     post:
       consumes:
       - application/json
@@ -1203,8 +1173,8 @@ paths:
       - Bearer: []
       summary: Create apiKey
       tags:
-      - System.App
-  /v1/system/api-keys/{id}:
+      - App
+  /v1/api-keys/{id}:
     delete:
       consumes:
       - application/json
@@ -1231,7 +1201,7 @@ paths:
       - Bearer: []
       summary: Delete apiKey
       tags:
-      - System.App
+      - App
     get:
       consumes:
       - application/json
@@ -1260,7 +1230,7 @@ paths:
       - Bearer: []
       summary: Get apiKey info
       tags:
-      - System.App
+      - App
     put:
       consumes:
       - application/json
@@ -1295,8 +1265,8 @@ paths:
       - Bearer: []
       summary: Update apiKey info
       tags:
-      - System.App
-  /v1/system/apis:
+      - App
+  /v1/apis:
     get:
       consumes:
       - application/json
@@ -1349,7 +1319,7 @@ paths:
       - Bearer: []
       summary: List apis
       tags:
-      - System.Api
+      - Api
     post:
       consumes:
       - application/json
@@ -1379,8 +1349,8 @@ paths:
       - Bearer: []
       summary: Create a api
       tags:
-      - System.Api
-  /v1/system/apis/{id}:
+      - Api
+  /v1/apis/{id}:
     delete:
       consumes:
       - application/json
@@ -1407,7 +1377,7 @@ paths:
       - Bearer: []
       summary: Delete api
       tags:
-      - System.Api
+      - Api
     get:
       consumes:
       - application/json
@@ -1436,7 +1406,7 @@ paths:
       - Bearer: []
       summary: Get api info
       tags:
-      - System.Api
+      - Api
     put:
       consumes:
       - application/json
@@ -1471,8 +1441,8 @@ paths:
       - Bearer: []
       summary: Update api info
       tags:
-      - System.Api
-  /v1/system/apis/all:
+      - Api
+  /v1/apis/all:
     get:
       consumes:
       - application/json
@@ -1497,8 +1467,8 @@ paths:
       - Bearer: []
       summary: All apis
       tags:
-      - System.Api
-  /v1/system/apis/tree:
+      - Api
+  /v1/apis/tree:
     get:
       consumes:
       - application/json
@@ -1523,8 +1493,8 @@ paths:
       - Bearer: []
       summary: API Tree
       tags:
-      - System.Api
-  /v1/system/apps:
+      - Api
+  /v1/apps:
     get:
       consumes:
       - application/json
@@ -1587,7 +1557,7 @@ paths:
       - Bearer: []
       summary: List apps
       tags:
-      - System.App
+      - App
     post:
       consumes:
       - application/json
@@ -1617,8 +1587,8 @@ paths:
       - Bearer: []
       summary: Create app
       tags:
-      - System.App
-  /v1/system/apps/{appid}:
+      - App
+  /v1/apps/{appid}:
     delete:
       consumes:
       - application/json
@@ -1645,7 +1615,7 @@ paths:
       - Bearer: []
       summary: Delete app
       tags:
-      - System.App
+      - App
     get:
       consumes:
       - application/json
@@ -1674,7 +1644,7 @@ paths:
       - Bearer: []
       summary: Get app info
       tags:
-      - System.App
+      - App
     put:
       consumes:
       - application/json
@@ -1709,8 +1679,8 @@ paths:
       - Bearer: []
       summary: Update app info
       tags:
-      - System.App
-  /v1/system/auth/change-password:
+      - App
+  /v1/auth/change-password:
     put:
       consumes:
       - application/json
@@ -1738,8 +1708,8 @@ paths:
       - Bearer: []
       summary: Change password
       tags:
-      - System.Auth
-  /v1/system/auth/login:
+      - Auth
+  /v1/auth/login:
     post:
       consumes:
       - application/json
@@ -1769,8 +1739,8 @@ paths:
       - Bearer: []
       summary: Login
       tags:
-      - System.Auth
-  /v1/system/auth/menus:
+      - Auth
+  /v1/auth/menus:
     get:
       consumes:
       - application/json
@@ -1793,8 +1763,8 @@ paths:
       - Bearer: []
       summary: Get menu tree
       tags:
-      - System.Auth
-  /v1/system/auth/switch-role:
+      - Auth
+  /v1/auth/switch-role:
     put:
       consumes:
       - application/json
@@ -1824,8 +1794,8 @@ paths:
       - Bearer: []
       summary: Switch role
       tags:
-      - System.Auth
-  /v1/system/auth/user-info:
+      - Auth
+  /v1/auth/user-info:
     get:
       consumes:
       - application/json
@@ -1848,8 +1818,8 @@ paths:
       - Bearer: []
       summary: Get user info
       tags:
-      - System.Auth
-  /v1/system/cfg/apps:
+      - Auth
+  /v1/cfg/apps:
     get:
       consumes:
       - application/json
@@ -1912,7 +1882,7 @@ paths:
       - Bearer: []
       summary: List apps
       tags:
-      - System.Config
+      - Config
     post:
       consumes:
       - application/json
@@ -1942,8 +1912,8 @@ paths:
       - Bearer: []
       summary: Create app
       tags:
-      - System.Config
-  /v1/system/cfg/apps/{id}:
+      - Config
+  /v1/cfg/apps/{id}:
     delete:
       consumes:
       - application/json
@@ -1970,7 +1940,7 @@ paths:
       - Bearer: []
       summary: Delete app
       tags:
-      - System.Config
+      - Config
     get:
       consumes:
       - application/json
@@ -1999,7 +1969,7 @@ paths:
       - Bearer: []
       summary: Get app info
       tags:
-      - System.Config
+      - Config
     put:
       consumes:
       - application/json
@@ -2034,8 +2004,8 @@ paths:
       - Bearer: []
       summary: Update app info
       tags:
-      - System.Config
-  /v1/system/cfg/configs:
+      - Config
+  /v1/cfg/configs:
     get:
       consumes:
       - application/json
@@ -2088,7 +2058,7 @@ paths:
       - Bearer: []
       summary: List configs
       tags:
-      - System.Config
+      - Config
     post:
       consumes:
       - application/json
@@ -2118,8 +2088,8 @@ paths:
       - Bearer: []
       summary: Create config
       tags:
-      - System.Config
-  /v1/system/cfg/configs/{id}:
+      - Config
+  /v1/cfg/configs/{id}:
     delete:
       consumes:
       - application/json
@@ -2146,7 +2116,7 @@ paths:
       - Bearer: []
       summary: Delete config
       tags:
-      - System.Config
+      - Config
     get:
       consumes:
       - application/json
@@ -2175,7 +2145,7 @@ paths:
       - Bearer: []
       summary: Get config info
       tags:
-      - System.Config
+      - Config
     put:
       consumes:
       - application/json
@@ -2210,8 +2180,38 @@ paths:
       - Bearer: []
       summary: Update config info
       tags:
-      - System.Config
-  /v1/system/menus:
+      - Config
+  /v1/file/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Upload file
+      tags:
+      - File
+  /v1/menus:
     get:
       consumes:
       - application/json
@@ -2255,7 +2255,7 @@ paths:
       - Bearer: []
       summary: List menus
       tags:
-      - System.Menu
+      - Menu
     post:
       consumes:
       - application/json
@@ -2285,8 +2285,8 @@ paths:
       - Bearer: []
       summary: Create menu
       tags:
-      - System.Menu
-  /v1/system/menus/{id}:
+      - Menu
+  /v1/menus/{id}:
     delete:
       consumes:
       - application/json
@@ -2313,7 +2313,7 @@ paths:
       - Bearer: []
       summary: Delete menu
       tags:
-      - System.Menu
+      - Menu
     get:
       consumes:
       - application/json
@@ -2342,7 +2342,7 @@ paths:
       - Bearer: []
       summary: Get menu info
       tags:
-      - System.Menu
+      - Menu
     put:
       consumes:
       - application/json
@@ -2377,8 +2377,8 @@ paths:
       - Bearer: []
       summary: Update menu info
       tags:
-      - System.Menu
-  /v1/system/menus/tree:
+      - Menu
+  /v1/menus/tree:
     get:
       consumes:
       - application/json
@@ -2401,8 +2401,8 @@ paths:
       - Bearer: []
       summary: Get menu tree
       tags:
-      - System.Menu
-  /v1/system/roles:
+      - Menu
+  /v1/roles:
     get:
       consumes:
       - application/json
@@ -2449,7 +2449,7 @@ paths:
       - Bearer: []
       summary: List roles
       tags:
-      - System.Role
+      - Role
     post:
       consumes:
       - application/json
@@ -2479,8 +2479,8 @@ paths:
       - Bearer: []
       summary: Create a role
       tags:
-      - System.Role
-  /v1/system/roles/{name}:
+      - Role
+  /v1/roles/{name}:
     delete:
       consumes:
       - application/json
@@ -2507,7 +2507,7 @@ paths:
       - Bearer: []
       summary: Delete a role
       tags:
-      - System.Role
+      - Role
     get:
       consumes:
       - application/json
@@ -2536,7 +2536,7 @@ paths:
       - Bearer: []
       summary: Get role info
       tags:
-      - System.Role
+      - Role
     put:
       consumes:
       - application/json
@@ -2571,8 +2571,8 @@ paths:
       - Bearer: []
       summary: Update role info
       tags:
-      - System.Role
-  /v1/system/roles/{name}/apis:
+      - Role
+  /v1/roles/{name}/apis:
     get:
       consumes:
       - application/json
@@ -2603,7 +2603,7 @@ paths:
       - Bearer: []
       summary: Get apis
       tags:
-      - System.Role
+      - Role
     put:
       consumes:
       - application/json
@@ -2636,8 +2636,8 @@ paths:
       - Bearer: []
       summary: Set apis
       tags:
-      - System.Role
-  /v1/system/roles/{name}/menus:
+      - Role
+  /v1/roles/{name}/menus:
     get:
       consumes:
       - application/json
@@ -2668,7 +2668,7 @@ paths:
       - Bearer: []
       summary: Get menuIDs of role
       tags:
-      - System.Role
+      - Role
     put:
       consumes:
       - application/json
@@ -2701,8 +2701,8 @@ paths:
       - Bearer: []
       summary: Set menus
       tags:
-      - System.Role
-  /v1/system/roles/all:
+      - Role
+  /v1/roles/all:
     get:
       consumes:
       - application/json
@@ -2725,8 +2725,8 @@ paths:
       - Bearer: []
       summary: All roles
       tags:
-      - System.Role
-  /v1/system/users:
+      - Role
+  /v1/users:
     get:
       consumes:
       - application/json
@@ -2770,7 +2770,7 @@ paths:
       - Bearer: []
       summary: List users
       tags:
-      - System.User
+      - User
     post:
       consumes:
       - application/json
@@ -2800,8 +2800,8 @@ paths:
       - Bearer: []
       summary: Create a user
       tags:
-      - System.User
-  /v1/system/users/{name}:
+      - User
+  /v1/users/{name}:
     delete:
       consumes:
       - application/json
@@ -2828,7 +2828,7 @@ paths:
       - Bearer: []
       summary: Delete a user
       tags:
-      - System.User
+      - User
     get:
       consumes:
       - application/json
@@ -2857,7 +2857,7 @@ paths:
       - Bearer: []
       summary: Get user info
       tags:
-      - System.User
+      - User
     put:
       consumes:
       - application/json
@@ -2911,8 +2911,8 @@ paths:
       - Bearer: []
       summary: Update user info
       tags:
-      - System.User
-  /v1/system/users/{name}/change-password:
+      - User
+  /v1/users/{name}/change-password:
     put:
       consumes:
       - application/json

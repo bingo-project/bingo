@@ -22,8 +22,6 @@ type UserBiz interface {
 	Get(ctx context.Context, username string) (*v1.UserInfo, error)
 	Update(ctx context.Context, username string, req *v1.UpdateUserRequest) error
 	Delete(ctx context.Context, username string) error
-
-	Accounts(ctx context.Context, uid string) (ret []*v1.UserAccountInfo, err error)
 }
 
 type userBiz struct {
@@ -115,21 +113,4 @@ func (b *userBiz) Update(ctx context.Context, username string, req *v1.UpdateUse
 
 func (b *userBiz) Delete(ctx context.Context, username string) error {
 	return b.ds.Users().Delete(ctx, username)
-}
-
-func (b *userBiz) Accounts(ctx context.Context, uid string) (ret []*v1.UserAccountInfo, err error) {
-	list, err := b.ds.Users().FindAccounts(ctx, uid)
-	if err != nil {
-		return nil, err
-	}
-
-	data := make([]*v1.UserAccountInfo, 0, len(list))
-	for _, item := range list {
-		var account v1.UserAccountInfo
-		_ = copier.Copy(&account, item)
-
-		data = append(data, &account)
-	}
-
-	return data, nil
 }

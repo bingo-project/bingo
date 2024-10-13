@@ -24,14 +24,14 @@ func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
 // List
 // @Summary    List apps
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListAppRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListAppResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apps [GET]
+// @Router    /v1/apps [GET]
 func (ctrl *AppController) List(c *gin.Context) {
 	log.C(c).Infow("List app function called")
 
@@ -55,14 +55,14 @@ func (ctrl *AppController) List(c *gin.Context) {
 // Create
 // @Summary    Create app
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateAppRequest	 true  "Param"
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apps [POST]
+// @Router    /v1/apps [POST]
 func (ctrl *AppController) Create(c *gin.Context) {
 	log.C(c).Infow("Create app function called")
 
@@ -87,14 +87,14 @@ func (ctrl *AppController) Create(c *gin.Context) {
 // Get
 // @Summary    Get app info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apps/{appid} [GET]
+// @Router    /v1/apps/{appid} [GET]
 func (ctrl *AppController) Get(c *gin.Context) {
 	log.C(c).Infow("Get app function called")
 
@@ -112,7 +112,7 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // Update
 // @Summary    Update app info
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            		 true  "ID"
@@ -120,7 +120,7 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apps/{appid} [PUT]
+// @Router    /v1/apps/{appid} [PUT]
 func (ctrl *AppController) Update(c *gin.Context) {
 	log.C(c).Infow("Update app function called")
 
@@ -145,14 +145,14 @@ func (ctrl *AppController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete app
 // @Security   Bearer
-// @Tags       System.App
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      appid	 path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/apps/{appid} [DELETE]
+// @Router    /v1/apps/{appid} [DELETE]
 func (ctrl *AppController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete app function called")
 

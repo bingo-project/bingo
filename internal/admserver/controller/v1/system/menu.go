@@ -25,14 +25,14 @@ func NewMenuController(ds store.IStore, a *auth.Authz) *MenuController {
 // List
 // @Summary    List menus
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListMenuRequest	 true  "Param"
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus [GET].
+// @Router    /v1/menus [GET].
 func (ctrl *MenuController) List(c *gin.Context) {
 	log.C(c).Infow("List menu function called")
 
@@ -56,14 +56,14 @@ func (ctrl *MenuController) List(c *gin.Context) {
 // Create
 // @Summary    Create menu
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 body	    v1.CreateMenuRequest	 true  "Param"
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus [POST].
+// @Router    /v1/menus [POST].
 func (ctrl *MenuController) Create(c *gin.Context) {
 	log.C(c).Infow("Create menu function called")
 
@@ -88,14 +88,14 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 // Get
 // @Summary    Get menu info
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [GET].
+// @Router    /v1/menus/{id} [GET].
 func (ctrl *MenuController) Get(c *gin.Context) {
 	log.C(c).Infow("Get menu function called")
 
@@ -113,7 +113,7 @@ func (ctrl *MenuController) Get(c *gin.Context) {
 // Update
 // @Summary    Update menu info
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
@@ -121,7 +121,7 @@ func (ctrl *MenuController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [PUT].
+// @Router    /v1/menus/{id} [PUT].
 func (ctrl *MenuController) Update(c *gin.Context) {
 	log.C(c).Infow("Update menu function called")
 
@@ -146,14 +146,14 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete menu
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/{id} [DELETE].
+// @Router    /v1/menus/{id} [DELETE].
 func (ctrl *MenuController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete menu function called")
 
@@ -170,13 +170,13 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 // Tree
 // @Summary    Get menu tree
 // @Security   Bearer
-// @Tags       System.Menu
+// @Tags       Menu
 // @Accept     application/json
 // @Produce    json
 // @Success	   200		{object}	v1.ListMenuResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/system/menus/tree [GET].
+// @Router    /v1/menus/tree [GET].
 func (ctrl *MenuController) Tree(c *gin.Context) {
 	log.C(c).Infow("Tree menu function called")
 

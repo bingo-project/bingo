@@ -186,32 +186,6 @@ paths:
       summary: Heath check
       tags:
       - Common
-  /v1/auth/accounts:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/v1.AuthProviderBrief'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get accounts
-      tags:
-      - Auth
   /v1/auth/bind/{provider}:
     post:
       consumes:
