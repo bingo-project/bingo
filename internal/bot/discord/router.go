@@ -3,9 +3,9 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/bot/discord/controller/v1/server"
 	"bingo/internal/bot/discord/middleware"
+	"bingo/internal/bot/store"
 )
 
 func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreate) {

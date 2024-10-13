@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cast"
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/admserver/biz"
-	"bingo/internal/admserver/store"
+	"bingo/internal/bot/biz"
+	"bingo/internal/bot/store"
 	mw "bingo/internal/bot/telegram/middleware"
 	"bingo/internal/pkg/model/bot"
 	v1 "bingo/pkg/api/apiserver/v1/bot"

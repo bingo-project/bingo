@@ -12,11 +12,6 @@ server:
 grpc:
   addr: :18081
 
-# bot Server
-bot:
-  telegram: # bot token
-  discord: # discord token
-
 # MySQL
 mysql:
   host: mysql:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306

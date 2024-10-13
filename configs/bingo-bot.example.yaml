@@ -4,9 +4,14 @@
 server:
   name: bingo
   mode: debug # server mode: release, debug, test，默认 release
-  addr: :8080
+  addr: :18080
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
+
+# bot Server
+bot:
+  telegram: # bot token
+  discord: # discord token
 
 # MySQL
 mysql:
@@ -25,6 +30,11 @@ redis:
   password:  # redis 密码
   database: 1 # redis 数据库
 
+# JWT 配置
+jwt:
+  secretKey: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
+  ttl: 1440 # token 过期时间(分钟)，默认 1 天
+
 log:
   level: debug # 日志级别，优先级从低到高依次为：debug, info, warn, error, dpanic, panic, fatal。
   days: 7 # 日志文件保留天数
@@ -32,10 +42,10 @@ log:
   console: true
   maxSize: 100 # 日志文件大小限制（M）
   compress: true # 是否使用 gz 压缩历史日志文件
-  path: storage/log/scheduler.log # 日志文件位置
+  path: storage/log/bot.log # 日志文件位置
 
 feature:
-  queueDash: true # 是否开启队列监控面板
+  profiling: true # 开启性能分析, 可以通过 <host>:<port>/debug/pprof/地址查看程序栈、线程等系统信息，默认值为 true
 
 # 邮件服务
 mail:

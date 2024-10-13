@@ -94,3 +94,4 @@ _output
 bingo-apiserver.yaml
 bingo-admserver.yaml
 bingo-scheduler.yaml
+bingo-bot.yaml

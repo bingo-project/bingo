@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cast"
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/bot/store"
 	"bingo/internal/pkg/errno"
 )
 
