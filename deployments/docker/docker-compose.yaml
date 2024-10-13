@@ -19,21 +19,39 @@ services:
     volumes:
       - ${DATA_PATH_HOST}/config:/etc/bingo
       - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
-      - ${DATA_PATH_HOST}/log/apiserver:/opt/bingo/storage/log
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
-  watcher:
-    image: ${REGISTRY_PREFIX}/${APP_NAME}-watcher:${APP_VERSION}
-    container_name: ${APP_NAME}-watcher
+  admserver:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-admserver:${APP_VERSION}
+    container_name: ${APP_NAME}-admserver
     restart: always
     platform: ${IMAGE_PLATFORM}
     build:
       context: ../../
-      dockerfile: build/docker/bingo-watcher/Dockerfile
+      dockerfile: build/docker/bingo-admserver/Dockerfile
+    networks:
+      - bingo
+    ports:
+      - '${APP_PORT}:8080'
+      - '${GRPC_PORT}:8081'
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  scheduler:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-scheduler:${APP_VERSION}
+    container_name: ${APP_NAME}-scheduler
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingo-scheduler/Dockerfile
     networks:
       - bingo
     volumes:
       - ${DATA_PATH_HOST}/config:/etc/bingo
-      - ${DATA_PATH_HOST}/log/watcher:/opt/bingo/storage/log
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
   bot:
     image: ${REGISTRY_PREFIX}/${APP_NAME}-bot:${APP_VERSION}
@@ -47,7 +65,7 @@ services:
       - bingo
     volumes:
       - ${DATA_PATH_HOST}/config:/etc/bingo
-      - ${DATA_PATH_HOST}/log/bot:/opt/bingo/storage/log
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
   # add alias to zsh to run bingoctl cmd.
   # alias bingoctl="docker run --rm -v /opt/bingo/config:/etc/bingo --network bingo_bingo bingo/bingoctl:{APP_VERSION}"
@@ -63,7 +81,7 @@ services:
       - bingo
     volumes:
       - ${DATA_PATH_HOST}/config:/etc/bingo
-      - ${DATA_PATH_HOST}/log/bingoctl:/opt/bingo/storage/log
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
 
   promtail:
     image: grafana/promtail
