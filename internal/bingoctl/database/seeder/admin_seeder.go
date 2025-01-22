@@ -28,7 +28,7 @@ func (AdminSeeder) Run() error {
 
 	// Init permission
 	authz, _ := auth.NewAuthz(store.S.DB())
-	_, err = authz.AddNamedPolicy("p", global.RolePrefix+global.RoleRoot, auth.AclDefaultMethods)
+	_, err = authz.AddNamedPolicy("p", global.RolePrefix+global.RoleRoot, "*", auth.AclDefaultMethods)
 	if err != nil {
 		return err
 	}

@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/store"
+	"bingo/internal/admserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
@@ -80,6 +80,9 @@ func initConfig() {
 
 	// Init migration
 	migration.Initialize()
+
+	// Init store
+	_ = store.NewStore(bootstrap.InitDB())
 }
 
 func runHelp(cmd *cobra.Command, args []string) {

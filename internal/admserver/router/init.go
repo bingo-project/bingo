@@ -49,12 +49,13 @@ func InitSystemAPI(g *gin.Engine) {
 }
 
 func getGroup(path string) string {
+	path = strings.TrimLeft(path, "/")
 	pathArr := strings.Split(path, "/")
 
 	// group
 	group := ""
-	if len(pathArr) > 3 {
-		group = pathArr[3]
+	if len(pathArr) > 1 {
+		group = pathArr[1]
 	}
 
 	return group
