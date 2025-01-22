@@ -12,7 +12,7 @@ import (
 // ChangePassword 修改指定用户的密码.
 // @Summary    Change password
 // @Security   Bearer
-// @Tags       Auth
+// @Tags       User
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string          	        true  "Username"

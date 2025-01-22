@@ -1046,7 +1046,7 @@ paths:
       - Bearer: []
       summary: Change password
       tags:
-      - System.Admin
+      - Admin
   /v1/admins/{name}/roles:
     put:
       consumes:
@@ -2945,7 +2945,7 @@ paths:
       - Bearer: []
       summary: Change password
       tags:
-      - Auth
+      - User
   /version:
     get:
       consumes:

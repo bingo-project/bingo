@@ -44,7 +44,7 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 // ChangePassword
 // @Summary    Change password
 // @Security   Bearer
-// @Tags       System.Admin
+// @Tags       Admin
 // @Accept     application/json
 // @Produce    json
 // @Param      name	     path	    string          	        true  "Username"

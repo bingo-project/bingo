@@ -359,7 +359,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "System.Admin"
+                    "Admin"
                 ],
                 "summary": "Change password",
                 "parameters": [
@@ -3384,7 +3384,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "User"
                 ],
                 "summary": "Change password",
                 "parameters": [
