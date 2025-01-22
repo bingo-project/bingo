@@ -213,21 +213,17 @@ func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuID
 }
 
 func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
-	roleM, err := b.ds.Roles().Get(ctx, roleName)
-	if err != nil {
-		return nil, errno.ErrResourceNotFound
-	}
-
+	var menus []*model.MenuM
 	if roleName == global.RoleRoot {
-		roleM.Menus, _ = b.ds.Menus().All(ctx)
+		menus, _ = b.ds.Menus().All(ctx)
 	} else {
 		// Auto-fill parent menu
 		menuIDs, _ := b.ds.RoleMenus().GetMenuIDsByRoleNameWithParent(ctx, roleName)
-		roleM.Menus, _ = b.ds.Menus().GetByIDs(ctx, menuIDs)
+		menus, _ = b.ds.Menus().GetByIDs(ctx, menuIDs)
 	}
 
 	// Get menus
-	tree, _ := b.ds.Menus().Tree(ctx, roleM.Menus)
+	tree, err := b.ds.Menus().Tree(ctx, menus)
 	if err != nil {
 		return nil, err
 	}

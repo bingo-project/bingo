@@ -29,13 +29,15 @@ func MapApiRouters(g *gin.Engine) {
 	// Login
 	v1.POST("auth/login", adminController.Login)
 
-	v1.Use(middleware.Authn(), middleware.Authz(authz))
+	v1.Use(middleware.Authn())
 
 	// Auth
 	v1.GET("auth/user-info", authController.UserInfo)             // 获取登录账号信息
 	v1.GET("auth/menus", authController.Menus)                    // 获取登录账号菜单
 	v1.PUT("auth/change-password", authController.ChangePassword) // 修改密码
 	v1.PUT("auth/switch-role", authController.SwitchRole)         // 切换角色
+
+	v1.Use(middleware.Authz(authz))
 
 	// Admin
 	v1.GET("admins", adminController.List)                                 // 管理员列表
