@@ -196,7 +196,7 @@ func (ctrl *ApiController) All(c *gin.Context) {
 // @Tags       Api
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	[]v1.ApiInfo
+// @Success	   200		{object}	[]v1.GroupApiResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/tree [GET].

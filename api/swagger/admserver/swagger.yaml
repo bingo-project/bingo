@@ -460,6 +460,15 @@ definitions:
     - password
     - username
     type: object
+  v1.GroupApiResponse:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/v1.ApiInfo'
+        type: array
+      key:
+        type: string
+    type: object
   v1.HealthzResponse:
     properties:
       status:
@@ -1479,7 +1488,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/v1.ApiInfo'
+              $ref: '#/definitions/v1.GroupApiResponse'
             type: array
         "400":
           description: Bad Request
@@ -2388,7 +2397,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.ListMenuResponse'
+            items:
+              $ref: '#/definitions/v1.MenuInfo'
+            type: array
         "400":
           description: Bad Request
           schema:

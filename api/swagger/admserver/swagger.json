@@ -937,7 +937,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v1.ApiInfo"
+                                "$ref": "#/definitions/v1.GroupApiResponse"
                             }
                         }
                     },
@@ -2387,7 +2387,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListMenuResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.MenuInfo"
+                            }
                         }
                     },
                     "400": {
@@ -4100,6 +4103,20 @@
                 "username": {
                     "type": "string",
                     "example": "peter"
+                }
+            }
+        },
+        "v1.GroupApiResponse": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ApiInfo"
+                    }
+                },
+                "key": {
+                    "type": "string"
                 }
             }
         },

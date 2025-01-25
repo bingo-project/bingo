@@ -946,7 +946,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/v1.ApiInfo"
+                                "$ref": "#/definitions/v1.GroupApiResponse"
                             }
                         }
                     },
@@ -2396,7 +2396,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListMenuResponse"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.MenuInfo"
+                            }
                         }
                     },
                     "400": {
@@ -4109,6 +4112,20 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "peter"
+                }
+            }
+        },
+        "v1.GroupApiResponse": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.ApiInfo"
+                    }
+                },
+                "key": {
+                    "type": "string"
                 }
             }
         },

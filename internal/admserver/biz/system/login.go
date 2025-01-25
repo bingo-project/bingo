@@ -51,7 +51,7 @@ func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.
 
 	// Update password
 	userM.Password, _ = auth.Encrypt(req.PasswordNew)
-	if err := b.ds.Admins().Update(ctx, userM); err != nil {
+	if err := b.ds.Admins().Update(ctx, userM, "password"); err != nil {
 		return err
 	}
 

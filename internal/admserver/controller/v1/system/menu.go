@@ -173,7 +173,7 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 // @Tags       Menu
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	v1.ListMenuResponse
+// @Success	   200		{object}	[]v1.MenuInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/tree [GET].

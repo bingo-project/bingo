@@ -126,9 +126,9 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	// Update roles & current role
 	adminM.RoleName = ""
 	if len(req.RoleNames) > 0 {
-		adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
+		roles, _ := b.ds.Roles().GetByNames(ctx, req.RoleNames)
 		if len(adminM.Roles) > 0 {
-			adminM.RoleName = adminM.Roles[0].Name
+			adminM.RoleName = roles[0].Name
 		}
 	}
 
@@ -161,7 +161,7 @@ func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRol
 	adminM.RoleName = req.RoleNames[0]
 	adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
 
-	err = b.ds.Admins().Update(ctx, adminM)
+	err = b.ds.Admins().UpdateWithRoles(ctx, adminM)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 
 	// Update roles & current role
 	adminM.RoleName = req.RoleName
-	err = b.ds.Admins().Update(ctx, adminM)
+	err = b.ds.Admins().Update(ctx, adminM, "role_name")
 	if err != nil {
 		return nil, err
 	}
