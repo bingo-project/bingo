@@ -215,7 +215,7 @@ func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuID
 func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
 	var menus []*model.MenuM
 	if roleName == global.RoleRoot {
-		menus, _ = b.ds.Menus().All(ctx)
+		menus, _ = b.ds.Menus().AllEnabled(ctx)
 	} else {
 		// Auto-fill parent menu
 		menuIDs, _ := b.ds.RoleMenus().GetMenuIDsByRoleNameWithParent(ctx, roleName)

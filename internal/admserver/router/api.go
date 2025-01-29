@@ -79,6 +79,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.PUT("menus/:id", menuController.Update)
 	v1.DELETE("menus/:id", menuController.Delete)
 	v1.GET("menus/tree", menuController.Tree)
+	v1.POST("menus/:id/toggle-hidden", menuController.ToggleHidden)
 
 	// App Version
 	appVersionController := syscfg.NewAppVersionController(store.S, authz)

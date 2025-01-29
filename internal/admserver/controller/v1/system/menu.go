@@ -189,3 +189,28 @@ func (ctrl *MenuController) Tree(c *gin.Context) {
 
 	core.WriteResponse(c, nil, resp)
 }
+
+// ToggleHidden
+// @Summary    ToggleHidden
+// @Security   Bearer
+// @Tags       Menu
+// @Accept     application/json
+// @Produce    json
+// @Param      id	     path	    string            		 true  "ID"
+// @Success	   200		{object}	v1.MenuInfo
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/menus/{id}/toggle-hidden [POST].
+func (ctrl *MenuController) ToggleHidden(c *gin.Context) {
+	log.C(c).Infow("menu.ToggleHidden function called")
+
+	ID := cast.ToUint(c.Param("id"))
+	resp, err := ctrl.b.Menus().ToggleHidden(c, ID)
+	if err != nil {
+		core.WriteResponse(c, err, nil)
+
+		return
+	}
+
+	core.WriteResponse(c, nil, resp)
+}

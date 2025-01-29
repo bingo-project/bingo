@@ -2387,6 +2387,36 @@ paths:
       summary: Update menu info
       tags:
       - Menu
+  /v1/menus/{id}/toggle-hidden:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.MenuInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: ToggleHidden
+      tags:
+      - Menu
   /v1/menus/tree:
     get:
       consumes:

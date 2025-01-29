@@ -45,13 +45,13 @@ type CreateMenuRequest struct {
 }
 
 type UpdateMenuRequest struct {
-	ParentID  uint    `json:"parentID" binding:"int"`
-	Title     *string `json:"title" binding:"min=1,max=255"`
+	ParentID  *uint   `json:"parentID" binding:"omitempty,number"`
+	Title     *string `json:"title" binding:"omitempty,min=1,max=255"`
 	Name      *string `json:"name"`
-	Path      *string `json:"path" binding:"min=1,max=255"`
+	Path      *string `json:"path" binding:"omitempty,min=1,max=255"`
 	Hidden    *bool   `json:"hidden"`
-	Sort      *int    `json:"sort" binding:"int"`
-	Icon      *string `json:"icon" binding:"min=1,max=255"`
-	Component *string `json:"component" binding:"min=1,max=255"`
-	Redirect  string  `json:"redirect" binding:"min=1,max=255"`
+	Sort      *int    `json:"sort" binding:"omitempty,number"`
+	Icon      *string `json:"icon" binding:"omitempty,min=1,max=255"`
+	Component *string `json:"component" binding:"omitempty,min=1,max=255"`
+	Redirect  *string `json:"redirect" binding:"omitempty,min=1,max=255"`
 }

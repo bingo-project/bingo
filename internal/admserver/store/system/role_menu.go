@@ -99,6 +99,7 @@ func (s *roleMenus) GetMenuIDsByRoleNameWithParent(ctx context.Context, roleName
 	err = s.db.WithContext(ctx).
 		Model(&model.MenuM{}).
 		Where("id IN (?)", menuIDs).
+		Where("hidden = ?", false).
 		Select("parent_id").
 		Find(&parentIDs).
 		Error

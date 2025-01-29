@@ -22,6 +22,7 @@ type MenuBiz interface {
 
 	All(ctx context.Context) ([]*v1.MenuInfo, error)
 	Tree(ctx context.Context) ([]*v1.MenuInfo, error)
+	ToggleHidden(ctx context.Context, ID uint) (*v1.MenuInfo, error)
 }
 
 type menuBiz struct {
@@ -91,8 +92,9 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 		return nil, errno.ErrResourceNotFound
 	}
 
-	menuM.ParentID = req.ParentID
-	menuM.Redirect = req.Redirect
+	if req.ParentID != nil {
+		menuM.ParentID = *req.ParentID
+	}
 
 	if req.Title != nil {
 		menuM.Title = *req.Title
@@ -120,6 +122,10 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 
 	if req.Component != nil {
 		menuM.Component = *req.Component
+	}
+
+	if req.Redirect != nil {
+		menuM.Redirect = *req.Redirect
 	}
 
 	if err := b.ds.Menus().Update(ctx, menuM); err != nil {
@@ -175,4 +181,21 @@ func (b *menuBiz) Tree(ctx context.Context) (ret []*v1.MenuInfo, err error) {
 	}
 
 	return data, nil
+}
+
+func (b *menuBiz) ToggleHidden(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
+	menuM, err := b.ds.Menus().Get(ctx, ID)
+	if err != nil {
+		return nil, errno.ErrResourceNotFound
+	}
+
+	menuM.Hidden = !menuM.Hidden
+	if err := b.ds.Menus().Update(ctx, menuM, "hidden"); err != nil {
+		return nil, err
+	}
+
+	var resp v1.MenuInfo
+	_ = copier.Copy(&resp, menuM)
+
+	return &resp, nil
 }
