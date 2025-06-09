@@ -104,7 +104,7 @@ func getResizeRatio(size int64) float64 {
 	}
 
 	// 10M - 20M
-	if size <= 1024*1024*10 {
+	if size <= 1024*1024*20 {
 		return 0.3
 	}
 
