@@ -12,6 +12,10 @@ server:
 grpc:
   addr: :8081
 
+# websocket
+websocket:
+  addr: :8082
+
 # MySQL
 mysql:
   host: mysql:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
@@ -26,7 +30,7 @@ mysql:
 # Redis
 redis:
   host: redis:6379 # redis 地址，默认 127.0.0.1:6379
-  password:  # redis 密码
+  password: # redis 密码
   database: 1 # redis 数据库
 
 # JWT 配置

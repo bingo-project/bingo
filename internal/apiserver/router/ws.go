@@ -1,0 +1,4 @@
+package router
+
+func Websocket() {
+}
