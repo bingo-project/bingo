@@ -1,12 +1,11 @@
 package ws
 
 import (
-	"bytes"
 	"log"
 	"net/http"
+	"runtime/debug"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -22,6 +21,9 @@ const (
 
 	// Maximum message size allowed from peer.
 	maxMessageSize = 512
+
+	// 用户连接超时时间
+	heartbeatExpirationTime = 30
 )
 
 var (
@@ -37,15 +39,52 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+type Login struct {
+	AppID  uint32
+	UserID string
+	Client *Client
+}
+
+// GetKey 获取 key
+func (l *Login) GetKey() (key string) {
+	key = GetUserKey(l.AppID, l.UserID)
+
+	return
+}
+
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
-	hub *Hub
-
 	// The websocket connection.
 	conn *websocket.Conn
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	Addr          string // 客户端地址
+	AppID         uint32 // 登录的平台ID app/web/ios
+	UserID        string // 用户ID，用户登录以后才有
+	FirstTime     uint64 // 首次连接事件
+	HeartbeatTime uint64 // 用户上次心跳时间
+	LoginTime     uint64 // 登录时间
+}
+
+func NewClient(addr string, socket *websocket.Conn, firstTime uint64) (client *Client) {
+	client = &Client{
+		conn:          socket,
+		send:          make(chan []byte, 100),
+		Addr:          addr,
+		FirstTime:     firstTime,
+		HeartbeatTime: firstTime,
+	}
+
+	return
+}
+
+// GetKey 获取 key
+func (c *Client) GetKey() (key string) {
+	key = GetUserKey(c.AppID, c.UserID)
+
+	return
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -55,7 +94,13 @@ type Client struct {
 // reads from this goroutine.
 func (c *Client) readPump() {
 	defer func() {
-		c.hub.unregister <- c
+		if r := recover(); r != nil {
+			log.Println("write stop", string(debug.Stack()), r)
+		}
+	}()
+
+	defer func() {
+		ClientManager.unregister <- c
 		c.conn.Close()
 	}()
 
@@ -73,11 +118,14 @@ func (c *Client) readPump() {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
+
 			break
 		}
 
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+		// message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+
+		// 处理程序
+		ProcessData(c, message)
 	}
 }
 
@@ -87,8 +135,17 @@ func (c *Client) readPump() {
 // application ensures that there is at most one writer to a connection by
 // executing all writes from this goroutine.
 func (c *Client) writePump() {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("write stop", string(debug.Stack()), r)
+		}
+	}()
+
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
+		ClientManager.unregister <- c
+		_ = c.conn.Close()
+
 		ticker.Stop()
 		c.conn.Close()
 	}()
@@ -99,26 +156,13 @@ func (c *Client) writePump() {
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
+				log.Println("Client发送数据 关闭连接", c.Addr, "ok", ok)
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+
 				return
 			}
 
-			w, err := c.conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
-			w.Write(message)
-
-			// Add queued chat messages to the current websocket message.
-			n := len(c.send)
-			for i := 0; i < n; i++ {
-				w.Write(newline)
-				w.Write(<-c.send)
-			}
-
-			if err := w.Close(); err != nil {
-				return
-			}
+			_ = c.conn.WriteMessage(websocket.TextMessage, message)
 		case <-ticker.C:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if err := c.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
@@ -128,27 +172,48 @@ func (c *Client) writePump() {
 	}
 }
 
-// ServeWs handles websocket requests from the peer.
-func ServeWs(hub *Hub, c *gin.Context) {
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-	if err != nil {
-		log.Println("WebSocket 升级失败:", err)
-
+// SendMsg 发送数据
+func (c *Client) SendMsg(msg []byte) {
+	if c == nil {
 		return
 	}
 
-	// 创建新客户端
-	client := &Client{
-		hub:  hub,
-		conn: conn,
-		send: make(chan []byte, 256),
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("SendMsg stop:", r, string(debug.Stack()))
+		}
+	}()
+
+	c.send <- msg
+}
+
+// close 关闭客户端连接
+func (c *Client) close() {
+	close(c.send)
+}
+
+// Login 用户登录
+func (c *Client) Login(appID uint32, userID string, loginTime uint64) {
+	c.AppID = appID
+	c.UserID = userID
+	c.LoginTime = loginTime
+
+	// 登录成功=心跳一次
+	c.Heartbeat(loginTime)
+}
+
+// Heartbeat 用户心跳
+func (c *Client) Heartbeat(currentTime uint64) {
+	c.HeartbeatTime = currentTime
+
+	return
+}
+
+// IsHeartbeatTimeout 心跳超时
+func (c *Client) IsHeartbeatTimeout(currentTime uint64) (timeout bool) {
+	if c.HeartbeatTime+heartbeatExpirationTime <= currentTime {
+		timeout = true
 	}
 
-	// 注册客户端
-	client.hub.register <- client
-
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
-	go client.writePump()
-	go client.readPump()
+	return
 }
