@@ -11,8 +11,8 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/biz"
-	"bingo/internal/apiserver/store"
+	"bingo/internal/admserver/biz"
+	"bingo/internal/admserver/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 )
 
