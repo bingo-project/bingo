@@ -79,6 +79,7 @@ Temporary Items
 # Editors
 .idea
 .vscode
+.history
 
 # Output files
 _output
