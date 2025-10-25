@@ -17,6 +17,7 @@ var (
 	opt       = zap.AddCallerSkip(3)
 	blacklist = []string{
 		"SELECT * FROM `sys_casbin_rule` ORDER BY ID",
+		"SHOW STATUS",
 	}
 )
 
