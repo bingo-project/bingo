@@ -1,0 +1,128 @@
+networks:
+  bingo:
+    driver: bridge
+
+services:
+  apiserver:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-apiserver:${APP_VERSION}
+    container_name: ${APP_NAME}-apiserver
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingo-apiserver/Bin.Dockerfile
+    networks:
+      - bingo
+    ports:
+      - '${APP_PORT}:8080'
+      - '${GRPC_PORT}:8081'
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  admserver:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-admserver:${APP_VERSION}
+    container_name: ${APP_NAME}-admserver
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingo-admserver/Bin.Dockerfile
+    networks:
+      - bingo
+    ports:
+      - '${APP_PORT}:8080'
+      - '${GRPC_PORT}:8081'
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/data/bingo:/opt/bingo/storage/public
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  scheduler:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-scheduler:${APP_VERSION}
+    container_name: ${APP_NAME}-scheduler
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingo-scheduler/Bin.Dockerfile
+    networks:
+      - bingo
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  bot:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}-bot:${APP_VERSION}
+    container_name: ${APP_NAME}-bot
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingo-bot/Bin.Dockerfile
+    networks:
+      - bingo
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  # add alias to zsh to run bingoctl cmd.
+  # alias bingoctl="docker run --rm -v /opt/bingo/config:/etc/bingo --network bingo_bingo bingo/bingoctl:{APP_VERSION}"
+  bingoctl:
+    image: ${REGISTRY_PREFIX}/${APP_NAME}ctl:${APP_VERSION}
+    container_name: ${APP_NAME}ctl
+    restart: "no"
+    platform: ${IMAGE_PLATFORM}
+    build:
+      context: ../../
+      dockerfile: build/docker/bingoctl/Bin.Dockerfile
+    networks:
+      - bingo
+    volumes:
+      - ${DATA_PATH_HOST}/config:/etc/bingo
+      - ${DATA_PATH_HOST}/log:/opt/bingo/storage/log
+
+  promtail:
+    image: grafana/promtail
+    container_name: ${APP_NAME}-promtail
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    hostname: promtail
+    user: root
+    networks:
+      - bingo
+    volumes:
+      - ${DATA_PATH_HOST}/config/promtail.yaml:/etc/promtail/promtail.yaml
+      - ${DATA_PATH_HOST}/data/promtail:/promtail
+      - ${DATA_PATH_HOST}/log:/var/log/bingo
+    command:
+      - "-config.file=/etc/promtail/promtail.yaml"
+
+  mysql:
+    image: mysql
+    container_name: ${APP_NAME}-mysql
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - bingo
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ${DATA_PATH_HOST}/data/mysql:/var/lib/mysql
+
+  redis:
+    image: redis
+    container_name: ${APP_NAME}-redis
+    restart: always
+    platform: ${IMAGE_PLATFORM}
+    networks:
+      - bingo
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - ${DATA_PATH_HOST}/data/redis:/data

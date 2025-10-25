@@ -6,6 +6,16 @@ set -o pipefail
 
 # Source
 ROOT_PATH=$(dirname "${BASH_SOURCE[0]}")/../..
+
+# Copy env
+if [ ! -f "${ROOT_PATH}/scripts/docker/env.sh" ]; then
+    # 如果不存在，复制 env.example.sh 为 env.sh
+    cp "${ROOT_PATH}/scripts/docker/env.example.sh" "${ROOT_PATH}/scripts/docker/env.sh"
+    echo "env.sh not found, create from env.example.sh"
+else
+    echo "env.sh found"
+fi
+
 source "${ROOT_PATH}/scripts/install/init.sh"
 source "${ROOT_PATH}/scripts/docker/env.sh"
 
@@ -15,6 +25,7 @@ usage() {
   echo "  -n <name> App name, default: current directory name"
   echo "  -i <images> Images to build, default: all"
   echo "  -a <architecture> linux architecture, default: amd64, support: amd64, arm64"
+  echo "  -f <build_from> build from, default: bin, support: image, bin"
   echo "  -h Show help"
   exit 1
 }
@@ -37,6 +48,9 @@ while getopts "n:i:a:h" opt; do
     ;;
   a)
     architecture=$OPTARG
+    ;;
+  f)
+    build_from=$OPTARG
     ;;
   h)
     usage
@@ -66,7 +80,14 @@ build() {
   # images
   cd deployments/docker || exit
   cp .env.example .env
-  docker-compose build
+
+  if [ "$build_from" = "bin" ]; then
+      file="docker-compose.bin.yaml"
+  else
+      file="docker-compose.yaml"
+  fi
+
+  docker-compose -f $file build
 
   echo "build success"
 }
