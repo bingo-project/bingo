@@ -92,6 +92,6 @@ func (l logger) Trace(ctx context.Context, begin time.Time, fc func() (string, i
 		slowLog := fmt.Sprintf("SLOW SQL >= %v", l.SlowThreshold)
 		log.C(ctx).WithOption(opt).Warnw("SQL Slow", "log", slowLog, "elapsed", elapsed, "sql", sql, "rows", rows)
 	case l.LogLevel >= gormlogger.Info:
-		log.C(ctx).WithOption(opt).Infow("SQL Info", "elapsed", elapsed, "sql", sql, "rows", rows)
+		log.C(ctx).WithOption(opt).Debugw("SQL Info", "elapsed", elapsed, "sql", sql, "rows", rows)
 	}
 }
