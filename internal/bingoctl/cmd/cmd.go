@@ -77,7 +77,6 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 func initConfig() {
 	bootstrap.InitConfig("bingo-admserver.yaml")
 	bootstrap.Boot()
-	bootstrap.InitQueue()
 
 	// Init migration
 	migration.Initialize()

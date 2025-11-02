@@ -58,9 +58,7 @@ func NewAppCommand() *cobra.Command {
 func initConfig() {
 	bootstrap.InitConfig("bingo-apiserver.yaml")
 	bootstrap.Boot()
-	bootstrap.InitAES()
 	bootstrap.InitJwt()
-	bootstrap.InitQueue()
 
 	// Init store
 	_ = store.NewStore(bootstrap.InitDB())

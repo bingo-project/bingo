@@ -6,4 +6,6 @@ func Boot() {
 	InitSnowflake()
 	InitMail()
 	InitCache()
+	InitAES()
+	InitQueue()
 }
