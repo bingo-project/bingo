@@ -116,7 +116,7 @@ docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
 make build
 
 # 复制配置文件，并修改数据库配置
-cp .bingoctl.example.yaml .bingoctl.yaml
+cp configs/bingo-admserver.example.yaml bingo-admserver.yaml
 
 # 执行数据库迁移
 bingoctl migrate up
