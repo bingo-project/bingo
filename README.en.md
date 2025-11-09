@@ -641,7 +641,7 @@ func (Article) TableName() string {
 
 ```bash
 # Use bingoctl to generate migration file
-bingoctl migrate create create_articles_table
+bingoctl make migration create create_articles_table
 ```
 
 Edit migration file:

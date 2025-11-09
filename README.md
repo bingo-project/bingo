@@ -641,7 +641,7 @@ func (Article) TableName() string {
 
 ```bash
 # 使用 bingoctl 生成迁移文件
-bingoctl migrate create create_articles_table
+bingoctl make migration create create_articles_table
 ```
 
 编辑迁移文件：
