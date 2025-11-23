@@ -1120,9 +1120,19 @@ bingoctl migrate create migration_name
 
 # Rollback all migrations
 {app}ctl migrate reset
+```
 
-# Check migration status
-{app}ctl migrate status
+**⚠️ Important**: After modifying migration files, you must rebuild the application before running migrations:
+
+```bash
+# 1. Modify migration file
+vim internal/{app}ctl/database/migration/xxx.go
+
+# 2. Rebuild (DON'T FORGET THIS STEP!)
+make build BINS="{app}ctl"
+
+# 3. Run migration
+./_output/platforms/{os}/{arch}/{app}ctl migrate up
 ```
 
 ## Best Practices
