@@ -116,10 +116,13 @@ docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
 make build
 
 # 复制配置文件，并修改数据库配置
-cp configs/bingo-admserver.example.yaml bingo-admserver.yaml
+cp configs/{app}-admserver.example.yaml {app}-admserver.yaml
+
+# Build your app ctl
+make build BINS="{app}ctl"
 
 # 执行数据库迁移
-bingoctl migrate up
+./_output/platforms/{os}/{arch}/{app}ctl migrate up
 ```
 
 > **说明**：`make build` 会将二进制文件输出到 `./_output/platforms/<os>/<arch>/` 目录（如 `./_output/platforms/darwin/arm64/`）
@@ -654,7 +657,7 @@ func up(db *gorm.DB) error {
 
 执行迁移：
 ```bash
-bingoctl migrate up
+{app}ctl migrate up
 ```
 
 #### 3. 创建 Store 层
@@ -1110,16 +1113,16 @@ g.Use(middleware.CustomMiddleware())
 bingoctl migrate create migration_name
 
 # 执行迁移（应用所有未执行的迁移）
-bingoctl migrate up
+{app}ctl migrate up
 
 # 回滚最后一次迁移
-bingoctl migrate rollback
+{app}ctl migrate rollback
 
 # 回滚所有迁移
-bingoctl migrate reset
+{app}ctl migrate reset
 
 # 查看迁移状态
-bingoctl migrate status
+{app}ctl migrate status
 ```
 
 ## 最佳实践

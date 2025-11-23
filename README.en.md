@@ -116,10 +116,13 @@ docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
 make build
 
 # Copy configuration file and modify database settings
-cp configs/bingo-admserver.example.yaml bingo-admserver.yaml
+cp configs/{app}-admserver.example.yaml {app}-admserver.yaml
+
+# Build your app ctl
+make build BINS="{app}ctl"
 
 # Run database migration
-bingoctl migrate up
+./_output/platforms/{os}/{arch}/{app}ctl migrate up
 ```
 
 > **Note**: `make build` outputs binaries to `./_output/platforms/<os>/<arch>/` directory (e.g., `./_output/platforms/darwin/arm64/`)
@@ -654,7 +657,7 @@ func up(db *gorm.DB) error {
 
 Run migration:
 ```bash
-bingoctl migrate up
+{app}ctl migrate up
 ```
 
 #### 3. Create Store Layer
@@ -1110,16 +1113,16 @@ Using gRPC:
 bingoctl migrate create migration_name
 
 # Run migration (apply all pending migrations)
-bingoctl migrate up
+{app}ctl migrate up
 
 # Rollback last migration
-bingoctl migrate rollback
+{app}ctl migrate rollback
 
 # Rollback all migrations
-bingoctl migrate reset
+{app}ctl migrate reset
 
 # Check migration status
-bingoctl migrate status
+{app}ctl migrate status
 ```
 
 ## Best Practices
