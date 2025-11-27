@@ -421,5 +421,5 @@ func (s *userStore) Create(ctx context.Context, user *model.User) error {
 ## 下一步
 
 - [开发第一个功能](../guide/first-feature.md) - 实践分层架构
-- [业务开发指南](../development/business-guide.md) - 复杂场景的分层实践
-- [测试指南](../development/testing.md) - 如何测试各层
+- [业务开发指南](../development/business-guide.md) - 复杂场景的分层实践（待实现）
+- [测试指南](../development/testing.md) - 如何测试各层（待实现）

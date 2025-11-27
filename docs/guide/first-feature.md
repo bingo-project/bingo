@@ -313,6 +313,6 @@ curl http://localhost:8080/v1/articles/1 \
 
 ## 下一步
 
-- [业务开发完整指南](../development/business-guide.md) - 更复杂的场景和最佳实践
+- [业务开发完整指南](../development/business-guide.md) - 更复杂的场景和最佳实践（待实现）
 - [分层架构详解](../essentials/layered-design.md) - 理解为什么要这样分层
 - [开发规范](../development/standards.md) - 代码风格和规范

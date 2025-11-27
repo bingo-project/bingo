@@ -188,4 +188,4 @@ make clean
 
 ## 遇到问题?
 
-查看 [常见问题](../deployment/troubleshooting.md) 或提交 Issue。
+查看 [常见问题](../deployment/troubleshooting.md)（待实现）或提交 Issue。

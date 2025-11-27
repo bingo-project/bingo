@@ -306,6 +306,34 @@ func newUserStore(db *gorm.DB) UserStore {
 func (s *userStore) Create(ctx context.Context, user *model.User) error {}
 ```
 
+### Store 命名规范
+
+Store 层采用以下命名规范（配合 `pkg/store` 通用 Store[T] 使用）：
+
+| 元素 | 规范 | 示例 |
+|------|------|------|
+| 文件名 | `<prefix>_<model>.go` | `user.go`, `sys_config.go` |
+| Store 接口 | `<Prefix><Model>Store` | `UserStore`, `SysConfigStore` |
+| 实现结构体 | `<prefix><model>Store` (小写) | `userStore`, `sysConfigStore` |
+| 扩展接口 | `<Prefix><Model>Expansion` | `UserExpansion`, `SysConfigExpansion` |
+| 创建函数 | `New<Prefix><Model>Store()` | `NewUserStore()`, `NewSysConfigStore()` |
+| IStore 方法 | `<Model>s()` 或 `<Model>()` | `Users()`, `SysConfig()` |
+
+**前缀规范**：
+- **系统模块**: `sys_` 前缀（如 `sys_config.go`, `sys_admin.go`）
+- **特定模块**: 模块名前缀（如 `bot_admin.go`, `bot_channel.go`）
+- **独立功能**: 无前缀（如 `user.go`）
+
+### Store 最佳实践
+
+| 原则 | 说明 |
+|------|------|
+| **文件平铺** | `internal/pkg/store` 中所有文件平铺在一个目录中，避免循环引用 |
+| **依赖接口** | 上层依赖 IStore 接口，不依赖具体实现 |
+| **预加载关联** | 使用 `Load()` 避免 N+1 查询 |
+| **事务一致性** | 多个操作需要原子性时使用 `TX()` |
+| **错误处理** | 数据库错误会自动记录日志 |
+
 ## 数据库规范
 
 ### Model 定义
@@ -426,6 +454,6 @@ make swagger
 
 ## 下一步
 
-- [业务开发指南](./business-guide.md) - 实践这些规范
-- [测试指南](./testing.md) - 编写高质量测试
+- [业务开发指南](./business-guide.md) - 实践这些规范（待实现）
+- [测试指南](./testing.md) - 编写高质量测试（待实现）
 - [最佳实践](./best-practices.md) - 进阶技巧

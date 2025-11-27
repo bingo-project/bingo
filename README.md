@@ -11,6 +11,7 @@ Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服�
 ### 架构层面
 - **微服务架构**: 多服务独立部署,支持水平扩展
 - **分层设计**: Controller → Biz → Store 清晰的三层架构
+- **通用数据层**: 基于泛型的 Store[T] 设计,减少重复代码
 - **依赖注入**: 基于接口编程,易于测试和扩展
 - **服务发现**: 支持 gRPC 服务间通信
 
@@ -103,7 +104,7 @@ docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
 make build
 
 # 复制配置文件
-cp configs/{app}-admserver.example.yaml {app}-admserver.yaml
+cp configs/{app}ctl.example.yaml {app}ctl.yaml
 
 # Build your app ctl
 make build BINS="{app}ctl"
@@ -135,6 +136,14 @@ open http://localhost:8080/swagger/index.html
 ```
 
 ## 文档导航
+
+### 📖 推荐学习路径
+
+**初学者**：[什么是Bingo](./docs/guide/what-is-bingo.md) → [快速开始](./docs/guide/getting-started.md) → [项目结构](./docs/guide/project-structure.md) → [开发第一个功能](./docs/guide/first-feature.md)
+
+**深入学习**：[整体架构](./docs/essentials/architecture.md) → [分层架构详解](./docs/essentials/layered-design.md) → [Store包设计](./docs/essentials/store.md) → [开发规范](./docs/development/standards.md)
+
+**生产部署**：[Docker部署](./docs/deployment/docker.md) → [常见问题排查](./docs/deployment/troubleshooting.md) → [微服务拆分](./docs/advanced/microservices.md)
 
 ### 📚 新手入门
 

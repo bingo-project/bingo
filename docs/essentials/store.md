@@ -4,6 +4,8 @@
 
 Store 包是 Bingo 数据访问层的核心，通过**泛型**和**组合模式**实现了一个灵活、可扩展的数据访问框架，减少重复代码并提高代码复用率。
 
+> **注意**: 本文档说明的是 `pkg/store` 中的通用 Store[T] 设计，它提供了可复用的数据访问基础。具体业务 Store 实现在 `internal/pkg/store` 中，通过组合 Store[T] 并实现业务特定的扩展接口来实现功能（详见[项目结构](../guide/project-structure.md)）。
+
 ## 包结构
 
 ```
@@ -16,13 +18,7 @@ pkg/store/
 internal/pkg/store/
 ├── store.go          # IStore 接口和应用级实现 (datastore)
 ├── logger.go         # 业务日志实现
-├── sys_admin.go      # 系统 Admin Store
-├── sys_schedule.go   # 系统 Schedule Store
-├── bot.go            # Bot 相关 Store
-├── channel.go        # Channel 相关 Store
-├── bot_admin.go      # Bot Admin 相关 Store
-├── sys_config.go     # 系统 Config Store
-└── user.go           # User Store
+└── <model>.go        # 各个业务 Store 实现
 ```
 
 > **注意**: internal/pkg/store 中所有文件必须平铺在同一目录中，避免循环引用。使用命名规范而非目录结构来组织模块。
@@ -63,16 +59,16 @@ type Store[T any] struct {
 }
 
 // internal/pkg/store - 业务扩展
-type scheduleStore struct {
-    *genericstore.Store[syscfg.Schedule]
+type userStore struct {
+    *genericstore.Store[User]
 }
 
-type ScheduleStore interface {
-    Create(ctx context.Context, obj *syscfg.Schedule) error
-    Update(ctx context.Context, obj *syscfg.Schedule, fields ...string) error
+type UserStore interface {
+    Create(ctx context.Context, obj *User) error
+    Update(ctx context.Context, obj *User, fields ...string) error
     Delete(ctx context.Context, opts *where.Options) error
-    Get(ctx context.Context, opts *where.Options) (*syscfg.Schedule, error)
-    List(ctx context.Context, opts *where.Options) (int64, []*syscfg.Schedule, error)
+    Get(ctx context.Context, opts *where.Options) (*User, error)
+    List(ctx context.Context, opts *where.Options) (int64, []*User, error)
 
     UserExpansion  // 业务特定的扩展接口
 }
@@ -144,181 +140,170 @@ func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error)
 ### Store[T] 方法
 
 ```go
-// CRUD
+// CRUD 操作
 Create(ctx context.Context, obj *T) error
 Update(ctx context.Context, obj *T, fields ...string) error
 Delete(ctx context.Context, opts *where.Options) error
 Get(ctx context.Context, opts *where.Options) (*T, error)
 
-// 查询
+// 查询操作
 List(ctx context.Context, opts *where.Options) (count int64, ret []*T, err error)
 Find(ctx context.Context, opts *where.Options) (ret []*T, err error)
 Last(ctx context.Context, opts *where.Options) (*T, error)
 
-// 批量操作
+// 批量和条件操作
 CreateInBatch(ctx context.Context, objs []*T, batchSize int) error
+CreateIfNotExist(ctx context.Context, obj *T) error
+FirstOrCreate(ctx context.Context, where any, obj *T) error
+UpdateOrCreate(ctx context.Context, where any, obj *T) error
 Upsert(ctx context.Context, obj *T, fields ...string) error
+DeleteInBatch(ctx context.Context, ids []uint) error
 
 // 原始数据库访问
 DB(ctx context.Context, wheres ...where.Where) *gorm.DB
 ```
 
+**方法说明**：
+
+- **CreateIfNotExist**: 创建对象，如果已存在则忽略（使用 OnConflict DoNothing）
+- **FirstOrCreate**: 根据条件查找对象，不存在则创建
+- **UpdateOrCreate**: 根据条件在事务中更新或创建对象，支持乐观锁
+- **DeleteInBatch**: 按 ID 批量删除对象
+
 ### IStore 接口
+
+IStore 是应用级的统一数据访问接口，负责返回各个 Store 实现。接口采用模块化设计，通过方法返回相应的 Store：
 
 ```go
 type IStore interface {
+    // 事务和数据库
     DB(ctx context.Context, wheres ...where.Where) *gorm.DB
     TX(ctx context.Context, fn func(ctx context.Context) error) error
 
-    Schedules() ScheduleStore
-    Users() UserStore
-    // ... 其他业务 Store
+    // 业务 Store 方法（按模块组织）
+    // 例如: Users() UserStore, Admin() AdminStore 等
 }
 ```
 
 ## 使用示例
 
-### 简单 CRUD
+本章通过一个简单示例展示 Store 的基本用法。
+
+### 基本 CRUD 操作
+
+假设有一个 `User` 模型，通过 Store 实现基本操作：
 
 ```go
 // 创建
-schedule := &Schedule{Name: "daily-task", Status: "active"}
-err := store.Schedules().Create(ctx, schedule)
+user := &User{Name: "John", Email: "john@example.com"}
+err := store.Users().Create(ctx, user)
 
 // 读取
-schedule, err := store.Schedules().Get(ctx, where.F("id", 1))
+user, err := store.Users().Get(ctx, where.F("id", 1))
 
-// 更新
-schedule.Status = "inactive"
-err := store.Schedules().Update(ctx, schedule, "status")
+// 更新（仅更新指定字段）
+user.Email = "newemail@example.com"
+err := store.Users().Update(ctx, user, "email")
 
 // 删除
-err := store.Schedules().Delete(ctx, where.F("id", 1))
+err := store.Users().Delete(ctx, where.F("id", 1))
 ```
 
-### 分页查询
+### 查询和分页
 
 ```go
+// 构建查询条件
 opts := where.F("status", "active").
-    Load("User").
     P(1, 10)  // 第1页，每页10条
 
-count, schedules, err := store.Schedules().List(ctx, opts)
+// 执行查询
+count, users, err := store.Users().List(ctx, opts)
 ```
 
 ### 事务处理
 
+多个操作需要原子性保证时，使用 `TX()` 方法：
+
 ```go
 err := store.TX(ctx, func(ctx context.Context) error {
-    if err := store.Schedules().Create(ctx, schedule); err != nil {
+    // Store 会自动使用事务
+    if err := store.Users().Create(ctx, user1); err != nil {
         return err  // 自动回滚
     }
-    if err := store.Users().Update(ctx, user, "updated_at"); err != nil {
+    if err := store.Users().Create(ctx, user2); err != nil {
         return err  // 自动回滚
     }
     return nil  // 自动提交
 })
 ```
 
-### 业务特定操作
+### 扩展操作
+
+特定业务 Store 可以通过扩展接口添加自定义操作：
 
 ```go
-// internal/pkg/store/schedule.go
+// internal/pkg/store/user.go
 type UserExpansion interface {
-    GetActiveSchedules(ctx context.Context) ([]*syscfg.Schedule, error)
+    FindByEmail(ctx context.Context, email string) (*User, error)
 }
 
-func (s *scheduleStore) GetActiveSchedules(ctx context.Context) ([]*syscfg.Schedule, error) {
-    opts := where.F("status", syscfg.ScheduleStatusEnabled)
-    _, schedules, err := s.List(ctx, opts)
-    return schedules, err
+func (s *userStore) FindByEmail(ctx context.Context, email string) (*User, error) {
+    return s.Get(ctx, where.F("email", email))
 }
 ```
-
-## Biz 层集成
-
-```go
-// internal/scheduler/biz/syscfg/schedule.go
-type ScheduleBiz struct {
-    store store.IStore
-}
-
-func NewSchedule(store store.IStore) *ScheduleBiz {
-    return &ScheduleBiz{store: store}
-}
-
-func (b *ScheduleBiz) GetConfigs(ctx context.Context) ([]*asynq.PeriodicTaskConfig, error) {
-    whr := where.F("status", syscfg.ScheduleStatusEnabled)
-    _, configs, err := b.store.Schedules().List(ctx, whr)
-    // ... 处理结果
-    return ret, err
-}
-```
-
-关键点：
-- 通过**构造函数依赖注入** IStore 接口
-- 使用 **where 包**构建灵活的查询条件
-- 需要事务时使用 **store.TX()**
 
 ## 添加新的业务 Store
 
-添加新的 Store 时，**必须遵循文件和类型的命名规范**，以保持代码的一致性和可维护性。
+添加新的 Store 需要遵循以下步骤和命名规范（参考"命名规范"一节）：
 
-1. **确定模块和前缀**
-   - 如果是系统功能，使用 `sys_` 前缀 (如 `sys_user.go`)
-   - 如果是特定服务的功能，使用该服务名作前缀 (如 `bot_user.go`)
-   - 文件名: `<prefix>_<model>.go` (如 `user.go`, `sys_admin.go`, `bot_admin.go`)
-
-2. **创建 Store 文件** `internal/pkg/store/user.go`
+### 1. 创建 Store 接口和实现
 
 ```go
+// internal/pkg/store/user.go
 package store
 
-// Store 接口 - 不需要前缀（除非与系统冲突，则使用模块前缀）
+// Store 接口定义 CRUD 操作
 type UserStore interface {
-    Create(ctx context.Context, obj *model.User) error
-    Update(ctx context.Context, obj *model.User, fields ...string) error
+    Create(ctx context.Context, obj *User) error
+    Update(ctx context.Context, obj *User, fields ...string) error
     Delete(ctx context.Context, opts *where.Options) error
-    Get(ctx context.Context, opts *where.Options) (*model.User, error)
-    List(ctx context.Context, opts *where.Options) (int64, []*model.User, error)
+    Get(ctx context.Context, opts *where.Options) (*User, error)
+    List(ctx context.Context, opts *where.Options) (int64, []*User, error)
 
     UserExpansion  // 扩展接口
 }
 
-// 扩展接口 - 带 Expansion 后缀
+// 扩展接口定义业务特定操作
 type UserExpansion interface {
-    GetByUsername(ctx context.Context, username string) (*model.User, error)
+    FindByEmail(ctx context.Context, email string) (*User, error)
 }
 
-// 实现 - 小写
+// 实现类
 type userStore struct {
-    *genericstore.Store[model.User]
+    *genericstore.Store[User]
 }
 
-// 创建函数 - New<PascalCase>
+// 工厂函数
 func NewUserStore(store *datastore) *userStore {
     return &userStore{
-        Store: genericstore.NewStore[model.User](store, NewLogger()),
+        Store: genericstore.NewStore[User](store, NewLogger()),
     }
 }
 
 // 实现扩展方法
-func (s *userStore) GetByUsername(ctx context.Context, username string) (*model.User, error) {
-    return s.Get(ctx, where.F("username", username))
+func (s *userStore) FindByEmail(ctx context.Context, email string) (*User, error) {
+    return s.Get(ctx, where.F("email", email))
 }
 ```
 
-**命名参考**:
-- 如果已有冲突的名称，使用模块前缀 (如系统已有 `AdminStore`，Bot 的则使用 `BotAdminStore`)
-- 如果模块内只有一个 Store，可以不加前缀 (如 `UserStore`)
-- 始终保持 IStore 接口中的方法名与 Store 实现一致
+### 2. 注册到 IStore
 
-2. **更新 IStore** `internal/pkg/store/store.go`
+在 `internal/pkg/store/store.go` 中添加方法：
 
 ```go
 type IStore interface {
-    Schedules() ScheduleStore
     Users() UserStore  // 新增
+    // ...
 }
 
 func (ds *datastore) Users() UserStore {
@@ -326,42 +311,10 @@ func (ds *datastore) Users() UserStore {
 }
 ```
 
-3. **在 Biz 层使用**
+## 相关内容
 
-```go
-type UserBiz struct {
-    store store.IStore
-}
-
-func (b *UserBiz) GetByUsername(ctx context.Context, username string) (*model.User, error) {
-    return b.store.Users().GetByUsername(ctx, username)
-}
-```
-
-## 命名规范快速参考
-
-| 元素 | 示例 |
-|------|------|
-| 文件 | `sys_admin.go`, `bot_channel.go`, `user.go` |
-| Store 接口 | `AdminStore`, `BotChannelStore`, `BotAdminStore` |
-| 实现结构体 | `adminStore`, `botChannelStore`, `botAdminStore` |
-| 扩展接口 | `AdminExpansion`, `BotChannelExpansion` |
-| 创建函数 | `NewAdminStore()`, `NewBotChannelStore()` |
-| IStore 方法 | `Users()`, `BotChannel()`, `BotAdmin()` |
-
-## 最佳实践
-
-| 原则 | 说明 |
-|------|------|
-| **遵循命名规范** | 使用统一的文件和类型命名，方便查找和维护 |
-| **平铺文件结构** | internal/pkg/store 中所有文件平铺在一个目录中 |
-| **依赖接口** | Biz 层依赖 IStore 接口，不依赖具体实现 |
-| **预加载关联** | 使用 `Load()` 避免 N+1 查询 |
-| **业务逻辑分离** | 业务规则在 Biz 层，Store 层仅做数据操作 |
-| **事务隔离** | 多个操作需要原子性时使用 `TX()` |
-| **错误处理** | 数据库错误会自动记录日志 |
-
-## 下一步
-
-- [分层架构详解](./layered-design.md) - 三层架构设计原则
-- [开发第一个功能](../guide/first-feature.md) - 实践分层架构
+- [分层架构详解](./layered-design.md) - 了解 Store 层在三层架构中的角色
+- [整体架构](./architecture.md) - 微服务架构中的数据访问设计
+- [Store 命名规范和最佳实践](../development/standards.md#store-命名规范) - 开发规范
+- [开发第一个功能](../guide/first-feature.md) - 实战应用示例
+- [数据库层](../components/database.md) - GORM 使用指南（待实现）
