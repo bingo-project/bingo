@@ -2,7 +2,26 @@
 
 通过开发一个简单的"文章管理"功能,快速掌握 Bingo 的开发流程。
 
-## 开发流程概览
+## 快速开始: 使用 bingoctl (推荐)
+
+如果你使用 [bingoctl](https://github.com/bingo-project/bingoctl),可以一键生成所有代码:
+
+```bash
+# 生成文章模块的完整 CRUD 代码
+bingoctl make crud article
+```
+
+这会自动生成 Model、Store、Biz、Controller、Request 的完整代码,并自动注册到相应的接口和路由。
+
+> 想了解更多 bingoctl 功能? 查看 [使用 bingoctl](./using-bingoctl.md)
+
+---
+
+## 手动开发: 理解每一步
+
+如果你想深入理解 Bingo 的分层架构,可以按以下步骤手动开发。
+
+### 开发流程概览
 
 ```
 1. 定义数据模型 (Model)

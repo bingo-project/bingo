@@ -41,14 +41,45 @@ Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服�
 
 ## 快速开始
 
-### 1. 克隆项目
+### 方式一: 使用 bingoctl 创建新项目 (推荐)
+
+使用 [bingoctl](https://github.com/bingo-project/bingoctl) CLI 工具快速创建项目:
+
+```bash
+# 安装 bingoctl
+go install github.com/bingo-project/bingoctl@latest
+
+# 创建新项目
+bingoctl create github.com/myorg/myapp
+
+# 进入项目目录
+cd myapp
+
+# 启动依赖服务
+docker-compose -f deployments/docker/docker-compose.yaml up -d
+
+# 生成你的第一个模块 (如用户模块)
+bingoctl make crud user
+
+# 运行服务
+make build
+./myapp-apiserver
+```
+
+详细的 bingoctl 使用指南请查看 [使用 bingoctl](./docs/guide/using-bingoctl.md)。
+
+### 方式二: 克隆 Bingo 仓库
+
+如果你想基于 Bingo 源码进行开发:
+
+#### 1. 克隆项目
 
 ```bash
 git clone <repository-url>
 cd bingo
 ```
 
-### 2. 配置环境
+#### 2. 配置环境
 
 ```bash
 # 复制配置文件
@@ -58,14 +89,14 @@ cp configs/bingo-apiserver.example.yaml bingo-apiserver.yaml
 vim bingo-apiserver.yaml
 ```
 
-### 3. 启动依赖服务
+#### 3. 启动依赖服务
 
 ```bash
 # 使用 Docker Compose 启动 MySQL 和 Redis
 docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
 ```
 
-### 4. 数据库迁移
+#### 4. 数据库迁移
 
 ```bash
 # 编译项目
@@ -81,7 +112,7 @@ make build BINS="{app}ctl"
 ./_output/platforms/{os}/{arch}/{app}ctl migrate up
 ```
 
-### 5. 启动服务
+#### 5. 启动服务
 
 ```bash
 # 方式一:直接运行
@@ -93,7 +124,7 @@ cp .air.example.toml .air.toml
 air
 ```
 
-### 6. 验证服务
+#### 6. 验证服务
 
 ```bash
 # 检查服务状态
@@ -109,6 +140,7 @@ open http://localhost:8080/swagger/index.html
 
 - [什么是 Bingo](./docs/guide/what-is-bingo.md) - 了解 Bingo 的定位和特性
 - [快速开始](./docs/guide/getting-started.md) - 10 分钟快速启动项目
+- [使用 bingoctl](./docs/guide/using-bingoctl.md) - CLI 工具完整指南
 - [项目结构](./docs/guide/project-structure.md) - 理解项目目录组织
 - [开发第一个功能](./docs/guide/first-feature.md) - 通过实例学习开发流程
 

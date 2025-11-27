@@ -33,6 +33,7 @@ Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服�
 - **API 文档**:Swagger,自动生成 API 文档
 
 ### 工程能力
+- **CLI 工具**:[bingoctl](https://github.com/bingo-project/bingoctl) - 快速创建项目和生成代码
 - **热重启**:Air 支持开发时热重启
 - **代码生成**:自动生成 CRUD 代码和 API 文档
 - **Docker 支持**:一键容器化部署
