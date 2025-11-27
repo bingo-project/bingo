@@ -148,6 +148,7 @@ open http://localhost:8080/swagger/index.html
 
 - [整体架构](./docs/essentials/architecture.md) - 理解微服务架构设计
 - [分层架构详解](./docs/essentials/layered-design.md) - 掌握三层架构模式
+- [Store 包设计](./docs/essentials/store.md) - 数据访问层设计原理
 
 ### 💻 开发指南
 

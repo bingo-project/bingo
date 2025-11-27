@@ -232,6 +232,8 @@ func (b *OrderBiz) Create(ctx context.Context, req *CreateOrderRequest) error {
 
 ## Store 层(数据访问层)
 
+> 💡 详细设计说明请参考 [Store 包设计](./store.md)
+
 ### 职责
 
 1. **数据库操作**: 封装 GORM 操作
