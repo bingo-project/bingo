@@ -378,10 +378,27 @@ func (b *UserBiz) GetByUsername(ctx context.Context, username string) (*model.Us
 }
 ```
 
+## 命名规范快速参考
+
+| 元素 | 规范 | 示例 |
+|------|------|------|
+| **文件名** | `<prefix>_<model>.go` | `sys_admin.go`, `bot.go`, `user.go` |
+| **Store 接口** | `<Module>Store` | `UserStore`, `BotStore`, `BotAdminStore` |
+| **扩展接口** | `<Module>Expansion` | `UserExpansion`, `BotExpansion` |
+| **实现结构体** | `<module>Store` (小写) | `userStore`, `botStore`, `botAdminStore` |
+| **创建函数** | `New<Module>Store()` | `NewUserStore()`, `NewBotAdminStore()` |
+| **IStore 方法** | `<Module>s()` 或 `<Module>()` | `Users()`, `Bot()`, `BotAdmin()` |
+
+**命名冲突处理**:
+- 当两个模块有相同的模型时，在接口和实现中使用模块前缀
+- 例: 系统的 `AdminStore` vs Bot 的 `BotAdminStore`
+
 ## 最佳实践
 
 | 原则 | 说明 |
 |------|------|
+| **遵循命名规范** | 使用统一的文件和类型命名，方便查找和维护 |
+| **平铺文件结构** | internal/pkg/store 中所有文件平铺在一个目录中 |
 | **依赖接口** | Biz 层依赖 IStore 接口，不依赖具体实现 |
 | **预加载关联** | 使用 `Load()` 避免 N+1 查询 |
 | **业务逻辑分离** | 业务规则在 Biz 层，Store 层仅做数据操作 |
