@@ -25,7 +25,7 @@ type IStore interface {
 	Admin() AdminStore
 	Schedule() ScheduleStore
 	Bot() BotStore
-	Channel() ChannelStore
+	BotChannel() BotChannelStore
 	BotAdmin() BotAdminStore
 	Config() ConfigStore
 }
@@ -92,8 +92,8 @@ func (ds *datastore) Bot() BotStore {
 	return NewBotStore(ds)
 }
 
-func (ds *datastore) Channel() ChannelStore {
-	return NewChannelStore(ds)
+func (ds *datastore) BotChannel() BotChannelStore {
+	return NewBotChannelStore(ds)
 }
 
 func (ds *datastore) BotAdmin() BotAdminStore {

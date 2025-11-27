@@ -14,19 +14,19 @@ import (
 	"bingo/pkg/store/where"
 )
 
-// ChannelStore 定义了 Channel 相关操作的接口.
-type ChannelStore interface {
+// BotChannelStore 定义了 Bot Channel 相关操作的接口.
+type BotChannelStore interface {
 	Create(ctx context.Context, obj *model.Channel) error
 	Update(ctx context.Context, obj *model.Channel, fields ...string) error
 	Delete(ctx context.Context, opts *where.Options) error
 	Get(ctx context.Context, opts *where.Options) (*model.Channel, error)
 	List(ctx context.Context, opts *where.Options) (int64, []*model.Channel, error)
 
-	ChannelExpansion
+	BotChannelExpansion
 }
 
-// ChannelExpansion 定义了 Channel 操作的扩展方法.
-type ChannelExpansion interface {
+// BotChannelExpansion 定义了 Bot Channel 操作的扩展方法.
+type BotChannelExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListChannelRequest) (int64, []*model.Channel, error)
 	CreateInBatch(ctx context.Context, channels []*model.Channel) error
 	CreateIfNotExist(ctx context.Context, channel *model.Channel) error
@@ -37,20 +37,20 @@ type ChannelExpansion interface {
 	DeleteChannel(ctx context.Context, channelID string) error
 }
 
-type channelStore struct {
+type botChannelStore struct {
 	*genericstore.Store[model.Channel]
 }
 
-var _ ChannelStore = (*channelStore)(nil)
+var _ BotChannelStore = (*botChannelStore)(nil)
 
-func NewChannelStore(store *datastore) *channelStore {
-	return &channelStore{
+func NewBotChannelStore(store *datastore) *botChannelStore {
+	return &botChannelStore{
 		Store: genericstore.NewStore[model.Channel](store, NewLogger()),
 	}
 }
 
 // ListWithRequest 根据请求参数列表查询.
-func (s *channelStore) ListWithRequest(ctx context.Context, req *v1.ListChannelRequest) (int64, []*model.Channel, error) {
+func (s *botChannelStore) ListWithRequest(ctx context.Context, req *v1.ListChannelRequest) (int64, []*model.Channel, error) {
 	// 构建查询条件
 	opts := where.NewWhere()
 
@@ -73,12 +73,12 @@ func (s *channelStore) ListWithRequest(ctx context.Context, req *v1.ListChannelR
 }
 
 // CreateInBatch 批量创建.
-func (s *channelStore) CreateInBatch(ctx context.Context, channels []*model.Channel) error {
+func (s *botChannelStore) CreateInBatch(ctx context.Context, channels []*model.Channel) error {
 	return s.DB(ctx).CreateInBatches(channels, global.CreateBatchSize).Error
 }
 
 // CreateIfNotExist 如果不存在则创建.
-func (s *channelStore) CreateIfNotExist(ctx context.Context, channel *model.Channel) error {
+func (s *botChannelStore) CreateIfNotExist(ctx context.Context, channel *model.Channel) error {
 	return s.DB(ctx).
 		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(channel).
@@ -86,7 +86,7 @@ func (s *channelStore) CreateIfNotExist(ctx context.Context, channel *model.Chan
 }
 
 // FirstOrCreate 首先查找，不存在则创建.
-func (s *channelStore) FirstOrCreate(ctx context.Context, where any, channel *model.Channel) error {
+func (s *botChannelStore) FirstOrCreate(ctx context.Context, where any, channel *model.Channel) error {
 	return s.DB(ctx).
 		Where(where).
 		Attrs(channel).
@@ -95,7 +95,7 @@ func (s *channelStore) FirstOrCreate(ctx context.Context, where any, channel *mo
 }
 
 // UpdateOrCreate 更新或创建.
-func (s *channelStore) UpdateOrCreate(ctx context.Context, where any, channel *model.Channel) error {
+func (s *botChannelStore) UpdateOrCreate(ctx context.Context, where any, channel *model.Channel) error {
 	return s.DB(ctx).Transaction(func(tx *gorm.DB) error {
 		var exist model.Channel
 		err := tx.
@@ -113,7 +113,7 @@ func (s *channelStore) UpdateOrCreate(ctx context.Context, where any, channel *m
 }
 
 // Upsert 创建或更新.
-func (s *channelStore) Upsert(ctx context.Context, channel *model.Channel, fields ...string) error {
+func (s *botChannelStore) Upsert(ctx context.Context, channel *model.Channel, fields ...string) error {
 	do := clause.OnConflict{UpdateAll: true}
 	if len(fields) > 0 {
 		do.UpdateAll = false
@@ -124,7 +124,7 @@ func (s *channelStore) Upsert(ctx context.Context, channel *model.Channel, field
 }
 
 // DeleteInBatch 批量删除.
-func (s *channelStore) DeleteInBatch(ctx context.Context, ids []uint) error {
+func (s *botChannelStore) DeleteInBatch(ctx context.Context, ids []uint) error {
 	return s.DB(ctx).
 		Where("id IN (?)", ids).
 		Delete(&model.Channel{}).
@@ -132,6 +132,6 @@ func (s *channelStore) DeleteInBatch(ctx context.Context, ids []uint) error {
 }
 
 // DeleteChannel 根据 channel_id 删除.
-func (s *channelStore) DeleteChannel(ctx context.Context, channelID string) error {
+func (s *botChannelStore) DeleteChannel(ctx context.Context, channelID string) error {
 	return s.DB(ctx).Where("channel_id = ?", channelID).Delete(&model.Channel{}).Error
 }
