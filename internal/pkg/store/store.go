@@ -18,16 +18,27 @@ var (
 
 // IStore defines the interface for the shared store layer.
 type IStore interface {
+	// DB returns a database instance.
 	DB(ctx context.Context, wheres ...where.Where) *gorm.DB
+	// TX executes a function in a transaction context.
 	TX(ctx context.Context, fn func(ctx context.Context) error) error
 
-	User() UserStore
+	// Admin returns the system admin store.
 	Admin() AdminStore
+	// Schedule returns the system schedule store.
 	Schedule() ScheduleStore
+	// SysConfig returns the system config store.
+	SysConfig() ConfigStore
+
+	// Bot returns the bot store.
 	Bot() BotStore
+	// BotChannel returns the bot channel store.
 	BotChannel() BotChannelStore
+	// BotAdmin returns the bot admin store.
 	BotAdmin() BotAdminStore
-	Config() ConfigStore
+
+	// User returns the user store.
+	User() UserStore
 }
 
 // transactionKey used for context
@@ -76,30 +87,37 @@ func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error)
 	)
 }
 
-func (ds *datastore) User() UserStore {
-	return NewUserStore(ds)
-}
-
+// Admin returns the system admin store.
 func (ds *datastore) Admin() AdminStore {
 	return NewAdminStore(ds)
 }
 
+// Schedule returns the system schedule store.
 func (ds *datastore) Schedule() ScheduleStore {
 	return NewScheduleStore(ds)
 }
 
+// SysConfig returns the system config store.
+func (ds *datastore) SysConfig() ConfigStore {
+	return NewConfigStore(ds)
+}
+
+// Bot returns the bot store.
 func (ds *datastore) Bot() BotStore {
 	return NewBotStore(ds)
 }
 
+// BotChannel returns the bot channel store.
 func (ds *datastore) BotChannel() BotChannelStore {
 	return NewBotChannelStore(ds)
 }
 
+// BotAdmin returns the bot admin store.
 func (ds *datastore) BotAdmin() BotAdminStore {
 	return NewBotAdminStore(ds)
 }
 
-func (ds *datastore) Config() ConfigStore {
-	return NewConfigStore(ds)
+// User returns the user store.
+func (ds *datastore) User() UserStore {
+	return NewUserStore(ds)
 }

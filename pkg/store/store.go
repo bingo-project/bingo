@@ -3,6 +3,7 @@ package store
 import (
 	"context"
 	"errors"
+	"reflect"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -151,6 +152,86 @@ func (s *Store[T]) Upsert(ctx context.Context, obj *T, fields ...string) error {
 
 	if err := s.db(ctx).Clauses(do).Create(obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to upsert object in database", "object", obj)
+		return err
+	}
+
+	return nil
+}
+
+// CreateIfNotExist creates the object if it does not exist.
+func (s *Store[T]) CreateIfNotExist(ctx context.Context, obj *T) error {
+	db := s.db(ctx).Clauses(clause.OnConflict{DoNothing: true}).Create(obj)
+	if err := db.Error; err != nil {
+		s.logger.Error(ctx, err, "Failed to insert object into database if not exists", "object", obj)
+		return err
+	}
+
+	return nil
+}
+
+// FirstOrCreate finds or creates the object based on the condition.
+func (s *Store[T]) FirstOrCreate(ctx context.Context, where any, obj *T) error {
+	db := s.db(ctx).Where(where).Attrs(obj).FirstOrCreate(obj)
+	if err := db.Error; err != nil {
+		s.logger.Error(ctx, err, "Failed to find or create object in database", "condition", where, "object", obj)
+		return err
+	}
+
+	return nil
+}
+
+// UpdateOrCreate updates or creates the object in a transaction with locking.
+func (s *Store[T]) UpdateOrCreate(ctx context.Context, where any, obj *T) error {
+	err := s.db(ctx).Transaction(func(tx *gorm.DB) error {
+		return s.updateOrCreateInTx(tx, where, obj)
+	})
+	if err != nil {
+		s.logger.Error(ctx, err, "Failed to update or create object in database", "condition", where, "object", obj)
+	}
+
+	return err
+}
+
+// updateOrCreateInTx performs the actual update or create logic in a transaction.
+func (s *Store[T]) updateOrCreateInTx(tx *gorm.DB, where any, obj *T) error {
+	var exist T
+	err := tx.
+		Clauses(clause.Locking{Strength: "UPDATE"}).
+		Where(where).
+		First(&exist).
+		Error
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	// If record exists, set the ID from the existing record using reflection
+	if err == nil {
+		s.setIDFromExisting(obj, exist)
+	}
+
+	return tx.Omit("CreatedAt").Save(obj).Error
+}
+
+// setIDFromExisting copies the ID field from the existing record to the new object using reflection.
+func (s *Store[T]) setIDFromExisting(obj *T, exist T) {
+	objValue := reflect.ValueOf(obj).Elem()
+	existValue := reflect.ValueOf(exist)
+	idField := existValue.FieldByName("ID")
+	if !idField.IsValid() {
+		return
+	}
+
+	idFieldPtr := objValue.FieldByName("ID")
+	if idFieldPtr.CanSet() {
+		idFieldPtr.Set(idField)
+	}
+}
+
+// DeleteInBatch deletes objects by IDs.
+func (s *Store[T]) DeleteInBatch(ctx context.Context, ids []uint) error {
+	db := s.db(ctx).Where("id IN (?)", ids).Delete(new(T))
+	if err := db.Error; err != nil {
+		s.logger.Error(ctx, err, "Failed to delete objects in batch", "count", len(ids))
 		return err
 	}
 

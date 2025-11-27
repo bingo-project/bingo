@@ -23,7 +23,7 @@ func NewServer(ds store.IStore) *serverBiz {
 }
 
 func (b *serverBiz) Status(ctx context.Context) (status string, err error) {
-	server, err := b.ds.Config().GetServerConfig(ctx)
+	server, err := b.ds.SysConfig().GetServerConfig(ctx)
 	if err != nil {
 		return
 	}
@@ -32,7 +32,7 @@ func (b *serverBiz) Status(ctx context.Context) (status string, err error) {
 }
 
 func (b *serverBiz) ToggleMaintenance(ctx context.Context) error {
-	server, err := b.ds.Config().GetServerConfig(ctx)
+	server, err := b.ds.SysConfig().GetServerConfig(ctx)
 	if err != nil {
 		return err
 	}
@@ -44,5 +44,5 @@ func (b *serverBiz) ToggleMaintenance(ctx context.Context) error {
 
 	server.Status = toggle
 
-	return b.ds.Config().UpdateServerConfig(ctx, server)
+	return b.ds.SysConfig().UpdateServerConfig(ctx, server)
 }

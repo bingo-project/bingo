@@ -33,7 +33,7 @@ func NewConfig(ds store.IStore) *configBiz {
 }
 
 func (b *configBiz) List(ctx context.Context, req *v1.ListConfigRequest) (*v1.ListConfigResponse, error) {
-	count, list, err := b.ds.Config().ListWithRequest(ctx, req)
+	count, list, err := b.ds.SysConfig().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list configs", "err", err)
 
@@ -55,7 +55,7 @@ func (b *configBiz) Create(ctx context.Context, req *v1.CreateConfigRequest) (*v
 	var configM model.Config
 	_ = copier.Copy(&configM, req)
 
-	err := b.ds.Config().Create(ctx, &configM)
+	err := b.ds.SysConfig().Create(ctx, &configM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -72,7 +72,7 @@ func (b *configBiz) Create(ctx context.Context, req *v1.CreateConfigRequest) (*v
 }
 
 func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
-	config, err := b.ds.Config().Get(ctx, where.F("id", ID))
+	config, err := b.ds.SysConfig().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -84,7 +84,7 @@ func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
 }
 
 func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigRequest) (*v1.ConfigInfo, error) {
-	configM, err := b.ds.Config().Get(ctx, where.F("id", ID))
+	configM, err := b.ds.SysConfig().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -105,7 +105,7 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 		configM.OperatorID = *req.OperatorID
 	}
 
-	if err := b.ds.Config().Update(ctx, configM); err != nil {
+	if err := b.ds.SysConfig().Update(ctx, configM); err != nil {
 		return nil, err
 	}
 
@@ -116,5 +116,5 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 }
 
 func (b *configBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Config().Delete(ctx, where.F("id", ID))
+	return b.ds.SysConfig().Delete(ctx, where.F("id", ID))
 }

@@ -4,8 +4,8 @@ import (
 	"github.com/spf13/cast"
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 )
 
 func AdminOnly(next telebot.HandlerFunc) telebot.HandlerFunc {

@@ -6,10 +6,7 @@ import (
 
 	"github.com/bingo-project/component-base/util/gormutil"
 	"github.com/duke-git/lancet/v2/convertor"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 
-	"bingo/internal/pkg/global"
 	model "bingo/internal/pkg/model/syscfg"
 	v1 "bingo/pkg/api/apiserver/v1/syscfg"
 	genericstore "bingo/pkg/store"
@@ -30,13 +27,6 @@ type ConfigStore interface {
 // ConfigExpansion 定义了 Config 操作的扩展方法.
 type ConfigExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListConfigRequest) (int64, []*model.Config, error)
-	CreateInBatch(ctx context.Context, configs []*model.Config) error
-	CreateIfNotExist(ctx context.Context, config *model.Config) error
-	FirstOrCreate(ctx context.Context, where any, config *model.Config) error
-	UpdateOrCreate(ctx context.Context, where any, config *model.Config) error
-	Upsert(ctx context.Context, config *model.Config, fields ...string) error
-	DeleteInBatch(ctx context.Context, ids []uint) error
-
 	GetObject(ctx context.Context, key model.CfgKey, resp any) error
 	GetServerConfig(ctx context.Context) (*model.ServerConfig, error)
 	UpdateServerConfig(ctx context.Context, data *model.ServerConfig) error
@@ -75,65 +65,6 @@ func (s *configStore) ListWithRequest(ctx context.Context, req *v1.ListConfigReq
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return count, ret, err
-}
-
-// CreateInBatch 批量创建.
-func (s *configStore) CreateInBatch(ctx context.Context, configs []*model.Config) error {
-	return s.DB(ctx).CreateInBatches(configs, global.CreateBatchSize).Error
-}
-
-// CreateIfNotExist 如果不存在则创建.
-func (s *configStore) CreateIfNotExist(ctx context.Context, config *model.Config) error {
-	return s.DB(ctx).
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(config).
-		Error
-}
-
-// FirstOrCreate 首先查找，不存在则创建.
-func (s *configStore) FirstOrCreate(ctx context.Context, where any, config *model.Config) error {
-	return s.DB(ctx).
-		Where(where).
-		Attrs(config).
-		FirstOrCreate(config).
-		Error
-}
-
-// UpdateOrCreate 更新或创建.
-func (s *configStore) UpdateOrCreate(ctx context.Context, where any, config *model.Config) error {
-	return s.DB(ctx).Transaction(func(tx *gorm.DB) error {
-		var exist model.Config
-		err := tx.
-			Clauses(clause.Locking{Strength: "UPDATE"}).
-			Where(where).
-			First(&exist).
-			Error
-		if err != nil && err != gorm.ErrRecordNotFound {
-			return err
-		}
-
-		config.ID = exist.ID
-		return tx.Omit("CreatedAt").Save(config).Error
-	})
-}
-
-// Upsert 创建或更新.
-func (s *configStore) Upsert(ctx context.Context, config *model.Config, fields ...string) error {
-	do := clause.OnConflict{UpdateAll: true}
-	if len(fields) > 0 {
-		do.UpdateAll = false
-		do.DoUpdates = clause.AssignmentColumns(fields)
-	}
-
-	return s.DB(ctx).Clauses(do).Create(config).Error
-}
-
-// DeleteInBatch 批量删除.
-func (s *configStore) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.DB(ctx).
-		Where("id IN (?)", ids).
-		Delete(&model.Config{}).
-		Error
 }
 
 // GetObject 获取 JSON 对象.

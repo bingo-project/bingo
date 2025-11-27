@@ -5,10 +5,7 @@ import (
 	"slices"
 
 	"github.com/bingo-project/component-base/util/gormutil"
-	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 
-	"bingo/internal/pkg/global"
 	model "bingo/internal/pkg/model/bot"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 	genericstore "bingo/pkg/store"
@@ -29,13 +26,6 @@ type BotAdminStore interface {
 // BotAdminExpansion 定义了 Bot Admin 操作的扩展方法.
 type BotAdminExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListAdminRequest) (int64, []*model.Admin, error)
-	CreateInBatch(ctx context.Context, admins []*model.Admin) error
-	CreateIfNotExist(ctx context.Context, admin *model.Admin) error
-	FirstOrCreate(ctx context.Context, where any, admin *model.Admin) error
-	UpdateOrCreate(ctx context.Context, where any, admin *model.Admin) error
-	Upsert(ctx context.Context, admin *model.Admin, fields ...string) error
-	DeleteInBatch(ctx context.Context, ids []uint) error
-
 	GetByUserID(ctx context.Context, userID string) (*model.Admin, error)
 	IsAdmin(ctx context.Context, userID string) (bool, error)
 }
@@ -70,65 +60,6 @@ func (s *botAdminStore) ListWithRequest(ctx context.Context, req *v1.ListAdminRe
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return count, ret, err
-}
-
-// CreateInBatch 批量创建.
-func (s *botAdminStore) CreateInBatch(ctx context.Context, admins []*model.Admin) error {
-	return s.DB(ctx).CreateInBatches(admins, global.CreateBatchSize).Error
-}
-
-// CreateIfNotExist 如果不存在则创建.
-func (s *botAdminStore) CreateIfNotExist(ctx context.Context, admin *model.Admin) error {
-	return s.DB(ctx).
-		Clauses(clause.OnConflict{DoNothing: true}).
-		Create(admin).
-		Error
-}
-
-// FirstOrCreate 首先查找，不存在则创建.
-func (s *botAdminStore) FirstOrCreate(ctx context.Context, where any, admin *model.Admin) error {
-	return s.DB(ctx).
-		Where(where).
-		Attrs(admin).
-		FirstOrCreate(admin).
-		Error
-}
-
-// UpdateOrCreate 更新或创建.
-func (s *botAdminStore) UpdateOrCreate(ctx context.Context, where any, admin *model.Admin) error {
-	return s.DB(ctx).Transaction(func(tx *gorm.DB) error {
-		var exist model.Admin
-		err := tx.
-			Clauses(clause.Locking{Strength: "UPDATE"}).
-			Where(where).
-			First(&exist).
-			Error
-		if err != nil && err != gorm.ErrRecordNotFound {
-			return err
-		}
-
-		admin.ID = exist.ID
-		return tx.Omit("CreatedAt").Save(admin).Error
-	})
-}
-
-// Upsert 创建或更新.
-func (s *botAdminStore) Upsert(ctx context.Context, admin *model.Admin, fields ...string) error {
-	do := clause.OnConflict{UpdateAll: true}
-	if len(fields) > 0 {
-		do.UpdateAll = false
-		do.DoUpdates = clause.AssignmentColumns(fields)
-	}
-
-	return s.DB(ctx).Clauses(do).Create(admin).Error
-}
-
-// DeleteInBatch 批量删除.
-func (s *botAdminStore) DeleteInBatch(ctx context.Context, ids []uint) error {
-	return s.DB(ctx).
-		Where("id IN (?)", ids).
-		Delete(&model.Admin{}).
-		Error
 }
 
 // GetByUserID 根据 user_id 获取.
