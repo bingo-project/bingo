@@ -14,9 +14,79 @@ pkg/store/
     └── where.go      # 查询条件构建器
 
 internal/pkg/store/
-├── store.go          # IStore 接口和应用级实现
-├── schedule.go       # Schedule 业务 Store
-└── logger.go         # 业务日志实现
+├── store.go          # IStore 接口和应用级实现 (datastore)
+├── logger.go         # 业务日志实现
+├── sys_admin.go      # 系统 Admin Store
+├── sys_schedule.go   # 系统 Schedule Store
+├── bot.go            # Bot 相关 Store
+├── channel.go        # Channel 相关 Store
+├── bot_admin.go      # Bot Admin 相关 Store
+├── sys_config.go     # 系统 Config Store
+└── user.go           # User Store
+```
+
+> **注意**: internal/pkg/store 中所有文件必须平铺在同一目录中，避免循环引用。使用命名规范而非目录结构来组织模块。
+
+## 命名规范
+
+由于 `internal/pkg/store` 中所有文件必须平铺在同一目录以避免循环引用，我们使用以下规范组织代码：
+
+### 文件命名规范
+
+- **模块前缀**: 使用业务模块名作为文件前缀
+  - 系统模块: `sys_` 前缀 (如 `sys_admin.go`, `sys_config.go`, `sys_schedule.go`)
+  - Bot 模块: `bot` 或 `bot_` 前缀 (如 `bot.go`, `bot_admin.go`, `channel.go`)
+  - User 模块: 直接使用 `user.go`
+
+### 类型命名规范
+
+- **Store 接口**: 带模块前缀的 PascalCase
+  - 系统: `AdminStore`, `ConfigStore`, `ScheduleStore` (不需要 sys 前缀，因为在全局 IStore 接口中已有上下文)
+  - Bot: `BotStore`, `ChannelStore`, `BotAdminStore` (需要 Bot 前缀以区分)
+
+- **Store 实现**: 小写带模块前缀
+  - 系统: `adminStore`, `configStore`, `scheduleStore`
+  - Bot: `botStore`, `channelStore`, `botAdminStore`
+
+- **扩展接口**: 带模块和 Expansion 后缀
+  - 系统: `AdminExpansion`, `ConfigExpansion`, `ScheduleExpansion`
+  - Bot: `BotExpansion`, `ChannelExpansion`, `BotAdminExpansion`
+
+- **创建函数**: `New<ModulePrefix><StoreName>`
+  - 系统: `NewAdminStore()`, `NewConfigStore()`
+  - Bot: `NewBotStore()`, `NewBotAdminStore()`
+
+### 示例
+
+```go
+// internal/pkg/store/bot_admin.go
+package store
+
+// 接口 - 带 Bot 前缀以区分系统 AdminStore
+type BotAdminStore interface {
+    Create(ctx context.Context, obj *model.Admin) error
+    Update(ctx context.Context, obj *model.Admin, fields ...string) error
+    // ...
+    BotAdminExpansion
+}
+
+// 扩展接口
+type BotAdminExpansion interface {
+    GetByUserID(ctx context.Context, userID string) (*model.Admin, error)
+    IsAdmin(ctx context.Context, userID string) (bool, error)
+}
+
+// 实现 - 小写
+type botAdminStore struct {
+    *genericstore.Store[model.Admin]
+}
+
+// 创建函数
+func NewBotAdminStore(store *datastore) *botAdminStore {
+    return &botAdminStore{
+        Store: genericstore.NewStore[model.Admin](store, NewLogger()),
+    }
+}
 ```
 
 ## 核心设计
@@ -232,11 +302,19 @@ func (b *ScheduleBiz) GetConfigs(ctx context.Context) ([]*asynq.PeriodicTaskConf
 
 ## 添加新的业务 Store
 
-1. **创建模型文件** `internal/pkg/store/user.go`
+添加新的 Store 时，**必须遵循文件和类型的命名规范**，以保持代码的一致性和可维护性。
+
+1. **确定模块和前缀**
+   - 如果是系统功能，使用 `sys_` 前缀 (如 `sys_user.go`)
+   - 如果是特定服务的功能，使用该服务名作前缀 (如 `bot_user.go`)
+   - 文件名: `<prefix>_<model>.go` (如 `user.go`, `sys_admin.go`, `bot_admin.go`)
+
+2. **创建 Store 文件** `internal/pkg/store/user.go`
 
 ```go
 package store
 
+// Store 接口 - 不需要前缀（除非与系统冲突，则使用模块前缀）
 type UserStore interface {
     Create(ctx context.Context, obj *model.User) error
     Update(ctx context.Context, obj *model.User, fields ...string) error
@@ -244,27 +322,36 @@ type UserStore interface {
     Get(ctx context.Context, opts *where.Options) (*model.User, error)
     List(ctx context.Context, opts *where.Options) (int64, []*model.User, error)
 
-    UserExpansion
+    UserExpansion  // 扩展接口
 }
 
+// 扩展接口 - 带 Expansion 后缀
 type UserExpansion interface {
     GetByUsername(ctx context.Context, username string) (*model.User, error)
 }
 
+// 实现 - 小写
 type userStore struct {
     *genericstore.Store[model.User]
 }
 
+// 创建函数 - New<PascalCase>
 func NewUserStore(store *datastore) *userStore {
     return &userStore{
         Store: genericstore.NewStore[model.User](store, NewLogger()),
     }
 }
 
+// 实现扩展方法
 func (s *userStore) GetByUsername(ctx context.Context, username string) (*model.User, error) {
     return s.Get(ctx, where.F("username", username))
 }
 ```
+
+**命名参考**:
+- 如果已有冲突的名称，使用模块前缀 (如系统已有 `AdminStore`，Bot 的则使用 `BotAdminStore`)
+- 如果模块内只有一个 Store，可以不加前缀 (如 `UserStore`)
+- 始终保持 IStore 接口中的方法名与 Store 实现一致
 
 2. **更新 IStore** `internal/pkg/store/store.go`
 
