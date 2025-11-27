@@ -1,6 +1,4 @@
-# bingo-apiserver 全配置
-
-# RESTful Server
+# Scheduler Server
 server:
   name: bingo
   mode: debug # server mode: release, debug, test，默认 release

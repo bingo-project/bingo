@@ -75,7 +75,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	bootstrap.InitConfig("bingo-admserver.yaml")
+	bootstrap.InitConfig("bingoctl.yaml")
 	bootstrap.Boot()
 
 	// Init migration
