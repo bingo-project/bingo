@@ -7,13 +7,11 @@ import (
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
 	cmdutil "github.com/bingo-project/component-base/cli/util"
-	"github.com/bingo-project/component-base/util/gormutil"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/admserver/biz"
-	"bingo/internal/admserver/store"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"bingo/internal/pkg/store"
+	"bingo/pkg/store/where"
 )
 
 const (
@@ -27,7 +25,6 @@ type ListOptions struct {
 	Offset int
 	Limit  int
 
-	b biz.IBiz
 	genericclioptions.IOStreams
 }
 
@@ -78,8 +75,6 @@ func NewCmdList(ioStreams genericclioptions.IOStreams) *cobra.Command {
 
 // Complete completes all the required options.
 func (o *ListOptions) Complete(cmd *cobra.Command, args []string) error {
-	o.b = biz.NewBiz(store.S)
-
 	return nil
 }
 
@@ -90,14 +85,13 @@ func (o *ListOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a list sub command using the specified options.
 func (o *ListOptions) Run(args []string) error {
-	req := &v1.ListUserRequest{ListOptions: gormutil.ListOptions{Offset: o.Offset, Limit: o.Limit}}
-	resp, err := o.b.Users().List(context.Background(), req)
+	_, list, err := store.S.User().List(context.Background(), where.O(o.Offset).L(o.Limit))
 	if err != nil {
 		return err
 	}
 
 	data := make([][]string, 0, 1)
-	for _, user := range resp.Data {
+	for _, user := range list {
 		data = append(data, []string{
 			user.Username,
 			user.Nickname,

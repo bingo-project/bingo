@@ -21,7 +21,9 @@ type IStore interface {
 	DB(ctx context.Context, wheres ...where.Where) *gorm.DB
 	TX(ctx context.Context, fn func(ctx context.Context) error) error
 
-	Schedules() ScheduleStore
+	User() UserStore
+	Admin() AdminStore
+	Schedule() ScheduleStore
 }
 
 // transactionKey used for context
@@ -70,6 +72,14 @@ func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error)
 	)
 }
 
-func (ds *datastore) Schedules() ScheduleStore {
+func (ds *datastore) User() UserStore {
+	return NewUserStore(ds)
+}
+
+func (ds *datastore) Admin() AdminStore {
+	return NewAdminStore(ds)
+}
+
+func (ds *datastore) Schedule() ScheduleStore {
 	return NewScheduleStore(ds)
 }

@@ -31,7 +31,7 @@ func NewSchedule(store store.IStore) *scheduleBiz {
 
 func (b *scheduleBiz) GetConfigs() (ret []*asynq.PeriodicTaskConfig, err error) {
 	whr := where.F("status", syscfg.ScheduleStatusEnabled)
-	_, configs, err := b.store.Schedules().List(context.Background(), whr)
+	_, configs, err := b.store.Schedule().List(context.Background(), whr)
 	if err != nil {
 		return
 	}

@@ -10,8 +10,8 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/admserver/biz"
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
+	"bingo/pkg/store/where"
 )
 
 const (
@@ -22,7 +22,6 @@ const (
 type GetOptions struct {
 	Username string
 
-	b biz.IBiz
 	genericclioptions.IOStreams
 }
 
@@ -72,8 +71,6 @@ func NewCmdGet(ioStreams genericclioptions.IOStreams) *cobra.Command {
 func (o *GetOptions) Complete(cmd *cobra.Command, args []string) error {
 	o.Username = args[0]
 
-	o.b = biz.NewBiz(store.S)
-
 	return nil
 }
 
@@ -88,7 +85,8 @@ func (o *GetOptions) Validate(cmd *cobra.Command, args []string) error {
 
 // Run executes a get sub command using the specified options.
 func (o *GetOptions) Run(args []string) error {
-	user, err := o.b.Users().Get(context.Background(), o.Username)
+	whr := where.F("username", o.Username)
+	user, err := store.S.User().Get(context.Background(), whr)
 	if err != nil {
 		return err
 	}

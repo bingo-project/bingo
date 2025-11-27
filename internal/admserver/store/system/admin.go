@@ -18,7 +18,6 @@ type AdminStore interface {
 	Update(ctx context.Context, admin *model.AdminM, fields ...string) error
 	Delete(ctx context.Context, username string) error
 
-	InitData(ctx context.Context) error
 	CheckExist(ctx context.Context, admin *model.AdminM) (exist bool, err error)
 	HasRole(ctx context.Context, admin *model.AdminM, roleName string) bool
 	GetUserInfo(ctx context.Context, username string) (admin *model.AdminM, err error)
@@ -92,29 +91,6 @@ func (s *admins) Delete(ctx context.Context, username string) error {
 	}
 
 	return nil
-}
-
-func (s *admins) InitData(ctx context.Context) error {
-	admin := model.AdminM{
-		Username: "root",
-		Password: "123456",
-		Nickname: "Root",
-		Email:    nil,
-		Phone:    nil,
-		RoleName: "root",
-	}
-
-	// Check exist
-	resp, err := s.Get(ctx, admin.Username)
-	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
-	}
-
-	if resp.ID > 0 {
-		return errors.New("admin:" + admin.Username + " already exist")
-	}
-
-	return s.db.WithContext(ctx).Create(&admin).Error
 }
 
 func (s *admins) CheckExist(ctx context.Context, admin *model.AdminM) (exist bool, err error) {

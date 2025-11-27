@@ -3,8 +3,9 @@ package seeder
 import (
 	"context"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 )
 
@@ -20,14 +21,23 @@ func (AdminSeeder) Signature() string {
 func (AdminSeeder) Run() error {
 	ctx := context.Background()
 
+	admin := model.AdminM{
+		Username: "root",
+		Password: "123456",
+		Nickname: "Root",
+		Email:    nil,
+		Phone:    nil,
+		RoleName: "root",
+	}
+
 	// Init admin account.
-	err := store.S.Admins().InitData(ctx)
+	err := store.S.Admin().Create(ctx, &admin)
 	if err != nil {
 		return err
 	}
 
 	// Init permission
-	authz, _ := auth.NewAuthz(store.S.DB())
+	authz, _ := auth.NewAuthz(store.S.DB(ctx))
 	_, err = authz.AddNamedPolicy("p", global.RolePrefix+global.RoleRoot, "*", auth.AclDefaultMethods)
 	if err != nil {
 		return err
