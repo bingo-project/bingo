@@ -4,13 +4,13 @@ import (
 	"github.com/spf13/cast"
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/bot/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 )
 
 func AdminOnly(next telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
-		admin, _ := store.S.BotAdmins().IsAdmin(Ctx, cast.ToString(c.Sender().ID))
+		admin, _ := store.S.BotAdmin().IsAdmin(Ctx, cast.ToString(c.Sender().ID))
 		if !admin {
 			return c.Send(errno.ErrForbidden.Message)
 		}

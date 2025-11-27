@@ -7,9 +7,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/bot/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 	model "bingo/internal/pkg/model/bot"
+	"bingo/pkg/store/where"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
@@ -32,7 +33,7 @@ func NewBot(ds store.IStore) *botBiz {
 }
 
 func (b *botBiz) List(ctx context.Context, req *v1.ListBotRequest) (*v1.ListBotResponse, error) {
-	count, list, err := b.ds.Bots().List(ctx, req)
+	count, list, err := b.ds.Bot().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list bots", "err", err)
 
@@ -54,7 +55,7 @@ func (b *botBiz) Create(ctx context.Context, req *v1.CreateBotRequest) (*v1.BotI
 	var botM model.Bot
 	_ = copier.Copy(&botM, req)
 
-	err := b.ds.Bots().Create(ctx, &botM)
+	err := b.ds.Bot().Create(ctx, &botM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -71,7 +72,7 @@ func (b *botBiz) Create(ctx context.Context, req *v1.CreateBotRequest) (*v1.BotI
 }
 
 func (b *botBiz) Get(ctx context.Context, ID uint) (*v1.BotInfo, error) {
-	bot, err := b.ds.Bots().Get(ctx, ID)
+	bot, err := b.ds.Bot().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -83,7 +84,7 @@ func (b *botBiz) Get(ctx context.Context, ID uint) (*v1.BotInfo, error) {
 }
 
 func (b *botBiz) Update(ctx context.Context, ID uint, req *v1.UpdateBotRequest) (*v1.BotInfo, error) {
-	botM, err := b.ds.Bots().Get(ctx, ID)
+	botM, err := b.ds.Bot().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -104,7 +105,7 @@ func (b *botBiz) Update(ctx context.Context, ID uint, req *v1.UpdateBotRequest) 
 		botM.Enabled = *req.Enabled
 	}
 
-	if err := b.ds.Bots().Update(ctx, botM); err != nil {
+	if err := b.ds.Bot().Update(ctx, botM); err != nil {
 		return nil, err
 	}
 
@@ -115,5 +116,5 @@ func (b *botBiz) Update(ctx context.Context, ID uint, req *v1.UpdateBotRequest) 
 }
 
 func (b *botBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Bots().Delete(ctx, ID)
+	return b.ds.Bot().Delete(ctx, where.F("id", ID))
 }

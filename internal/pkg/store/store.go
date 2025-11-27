@@ -24,6 +24,10 @@ type IStore interface {
 	User() UserStore
 	Admin() AdminStore
 	Schedule() ScheduleStore
+	Bot() BotStore
+	Channel() ChannelStore
+	BotAdmin() BotAdminStore
+	Config() ConfigStore
 }
 
 // transactionKey used for context
@@ -82,4 +86,20 @@ func (ds *datastore) Admin() AdminStore {
 
 func (ds *datastore) Schedule() ScheduleStore {
 	return NewScheduleStore(ds)
+}
+
+func (ds *datastore) Bot() BotStore {
+	return NewBotStore(ds)
+}
+
+func (ds *datastore) Channel() ChannelStore {
+	return NewChannelStore(ds)
+}
+
+func (ds *datastore) BotAdmin() BotAdminStore {
+	return NewBotAdminStore(ds)
+}
+
+func (ds *datastore) Config() ConfigStore {
+	return NewConfigStore(ds)
 }

@@ -7,8 +7,8 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/bot/store"
 	"bingo/internal/pkg/bootstrap"
+	"bingo/internal/pkg/store"
 )
 
 // NewBotCommand creates an App object with default parameters.

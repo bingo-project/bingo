@@ -7,9 +7,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/bot/store"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 	model "bingo/internal/pkg/model/bot"
+	"bingo/pkg/store/where"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
@@ -34,7 +35,7 @@ func NewChannel(ds store.IStore) *channelBiz {
 }
 
 func (b *channelBiz) List(ctx context.Context, req *v1.ListChannelRequest) (*v1.ListChannelResponse, error) {
-	count, list, err := b.ds.BotChannels().List(ctx, req)
+	count, list, err := b.ds.Channel().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list channels", "err", err)
 
@@ -56,7 +57,7 @@ func (b *channelBiz) Create(ctx context.Context, req *v1.CreateChannelRequest) (
 	var channelM model.Channel
 	_ = copier.Copy(&channelM, req)
 
-	err := b.ds.BotChannels().Create(ctx, &channelM)
+	err := b.ds.Channel().Create(ctx, &channelM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -73,7 +74,7 @@ func (b *channelBiz) Create(ctx context.Context, req *v1.CreateChannelRequest) (
 }
 
 func (b *channelBiz) Get(ctx context.Context, ID uint) (*v1.ChannelInfo, error) {
-	channel, err := b.ds.BotChannels().Get(ctx, ID)
+	channel, err := b.ds.Channel().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -85,7 +86,7 @@ func (b *channelBiz) Get(ctx context.Context, ID uint) (*v1.ChannelInfo, error) 
 }
 
 func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelRequest) (*v1.ChannelInfo, error) {
-	channelM, err := b.ds.BotChannels().Get(ctx, ID)
+	channelM, err := b.ds.Channel().Get(ctx, where.F("id", ID))
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -100,7 +101,7 @@ func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelR
 		channelM.Author = *req.Author
 	}
 
-	if err := b.ds.BotChannels().Update(ctx, channelM); err != nil {
+	if err := b.ds.Channel().Update(ctx, channelM); err != nil {
 		return nil, err
 	}
 
@@ -111,9 +112,9 @@ func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelR
 }
 
 func (b *channelBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.BotChannels().Delete(ctx, ID)
+	return b.ds.Channel().Delete(ctx, where.F("id", ID))
 }
 
 func (b *channelBiz) DeleteChannel(ctx context.Context, channelID string) error {
-	return b.ds.BotChannels().DeleteChannel(ctx, channelID)
+	return b.ds.Channel().DeleteChannel(ctx, channelID)
 }

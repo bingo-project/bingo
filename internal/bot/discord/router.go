@@ -5,7 +5,7 @@ import (
 
 	"bingo/internal/bot/discord/controller/v1/server"
 	"bingo/internal/bot/discord/middleware"
-	"bingo/internal/bot/store"
+	"bingo/internal/pkg/store"
 )
 
 func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreate) {

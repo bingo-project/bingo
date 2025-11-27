@@ -5,7 +5,7 @@ package biz
 import (
 	"bingo/internal/bot/biz/bot"
 	"bingo/internal/bot/biz/syscfg"
-	"bingo/internal/bot/store"
+	"bingo/internal/pkg/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.

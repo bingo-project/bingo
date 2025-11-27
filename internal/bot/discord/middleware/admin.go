@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/bot/store"
+	"bingo/internal/pkg/store"
 )
 
 func IsAdmin(s *discordgo.Session, i *discordgo.InteractionCreate) bool {
@@ -12,7 +12,7 @@ func IsAdmin(s *discordgo.Session, i *discordgo.InteractionCreate) bool {
 		user = i.Member.User
 	}
 
-	admin, _ := store.S.BotAdmins().IsAdmin(Ctx, user.ID)
+	admin, _ := store.S.BotAdmin().IsAdmin(Ctx, user.ID)
 	if !admin {
 		_ = s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
