@@ -7,8 +7,8 @@ import (
 	"github.com/hibiken/asynq"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/store"
 	"bingo/internal/scheduler/biz/syscfg"
-	"bingo/internal/scheduler/store"
 )
 
 func InitScheduler() {

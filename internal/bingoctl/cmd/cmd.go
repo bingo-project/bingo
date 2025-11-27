@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"io"
 	"os"
 
@@ -10,7 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
@@ -18,6 +18,7 @@ import (
 	"bingo/internal/bingoctl/database/migration"
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/store"
 )
 
 func NewDefaultBingoCtlCommand() *cobra.Command {
@@ -49,7 +50,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Database Commands:",
 			Commands: []*cobra.Command{
 				db.NewCmdDb(),
-				migrate.NewCmdMigrate(store.S.DB(), facade.Config.Server.Mode == gin.ReleaseMode),
+				migrate.NewCmdMigrate(store.S.DB(context.Background()), facade.Config.Server.Mode == gin.ReleaseMode),
 			},
 		},
 		{

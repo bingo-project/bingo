@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/scheduler/store"
+	"bingo/internal/pkg/store"
 )
 
 // NewSchedulerCommand creates an App object with default parameters.
