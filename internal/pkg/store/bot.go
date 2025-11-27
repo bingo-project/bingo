@@ -67,4 +67,3 @@ func (s *botStore) ListWithRequest(ctx context.Context, req *v1.ListBotRequest) 
 
 	return count, ret, err
 }
-

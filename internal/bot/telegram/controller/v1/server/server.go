@@ -8,9 +8,9 @@ import (
 	"gopkg.in/telebot.v3"
 
 	"bingo/internal/bot/biz"
-	"bingo/internal/pkg/store"
 	mw "bingo/internal/bot/telegram/middleware"
 	"bingo/internal/pkg/model/bot"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 

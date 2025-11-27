@@ -8,10 +8,10 @@ import (
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/store"
 	model "bingo/internal/pkg/model/bot"
-	"bingo/pkg/store/where"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
+	"bingo/pkg/store/where"
 )
 
 type ChannelBiz interface {

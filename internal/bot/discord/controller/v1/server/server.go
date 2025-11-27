@@ -9,8 +9,8 @@ import (
 	"bingo/internal/bot/biz"
 	"bingo/internal/bot/discord/client"
 	mw "bingo/internal/bot/discord/middleware"
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/model/bot"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
