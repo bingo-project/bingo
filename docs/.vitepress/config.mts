@@ -13,9 +13,9 @@ export default defineConfig({
       description: "Production-grade Go backend scaffold with complete microservice architecture, core components, and best practices",
       themeConfig: {
         nav: [
-          { text: 'Guide', link: '/guide/what-is-bingo' },
-          { text: 'Essentials', link: '/essentials/architecture' },
-          { text: 'Components', link: '/components/overview' },
+          { text: 'Guide', link: '/en/guide/what-is-bingo' },
+          { text: 'Essentials', link: '/en/essentials/architecture' },
+          { text: 'Components', link: '/en/components/overview' },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
           {
             text: '中文',
@@ -23,31 +23,31 @@ export default defineConfig({
           }
         ],
         sidebar: {
-          '/guide/': [
+          '/en/guide/': [
             {
               text: 'Getting Started',
               items: [
-                { text: 'What is Bingo', link: '/guide/what-is-bingo' },
-                { text: 'Getting Started', link: '/guide/getting-started' },
-                { text: 'Project Structure', link: '/guide/project-structure' },
-                { text: 'First Feature', link: '/guide/first-feature' }
+                { text: 'What is Bingo', link: '/en/guide/what-is-bingo' },
+                { text: 'Getting Started', link: '/en/guide/getting-started' },
+                { text: 'Project Structure', link: '/en/guide/project-structure' },
+                { text: 'First Feature', link: '/en/guide/first-feature' }
               ]
             }
           ],
-          '/essentials/': [
+          '/en/essentials/': [
             {
               text: 'Core Concepts',
               items: [
-                { text: 'Overall Architecture', link: '/essentials/architecture' },
-                { text: 'Layered Design', link: '/essentials/layered-design' }
+                { text: 'Overall Architecture', link: '/en/essentials/architecture' },
+                { text: 'Layered Design', link: '/en/essentials/layered-design' }
               ]
             }
           ],
-          '/components/': [
+          '/en/components/': [
             {
               text: 'Component Reference',
               items: [
-                { text: 'Core Components Overview', link: '/components/overview' }
+                { text: 'Core Components Overview', link: '/en/components/overview' }
               ]
             }
           ]

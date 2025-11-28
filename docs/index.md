@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/getting-started
+      link: /en/guide/getting-started
     - theme: alt
       text: Learn Features
-      link: /guide/what-is-bingo
+      link: /en/guide/what-is-bingo
 
 features:
   - title: 🏗️ Clean Architecture Design
