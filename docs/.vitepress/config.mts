@@ -39,8 +39,8 @@ export default defineConfig({
     // 1. 访问 Google Analytics 创建媒体资源
     // 2. 获取衡量 ID（格式：G-XXXXXXXXXX）
     // 3. 取消下面两行的注释并替换 YOUR_GA_ID
-    // ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=YOUR_GA_ID' }],
-    // ['script', {}, `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'YOUR_GA_ID');`],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-XEQGM96B19' }],
+    ['script', {}, `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-XEQGM96B19');`],
 
     // 百度统计（获取代码：https://tongji.baidu.com/）
     // 1. 访问百度统计注册并添加网站
