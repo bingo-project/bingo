@@ -30,6 +30,12 @@ bingoctl 会自动生成完整的项目结构,包括:
 
 ### 3. 配置数据库连接
 
+复制示例配置文件:
+
+```bash
+cp .bingoctl.example.yaml .bingoctl.yaml
+```
+
 编辑 `.bingoctl.yaml` 配置数据库连接:
 
 ```yaml

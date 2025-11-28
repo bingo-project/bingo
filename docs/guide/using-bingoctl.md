@@ -259,7 +259,13 @@ bingoctl make cmd serve
 
 ## 配置文件
 
-在项目根目录创建 `.bingoctl.yaml`:
+在项目根目录复制示例文件创建 `.bingoctl.yaml`:
+
+```bash
+cp .bingoctl.example.yaml .bingoctl.yaml
+```
+
+配置文件内容:
 
 ```yaml
 version: v1
