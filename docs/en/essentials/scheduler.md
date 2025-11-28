@@ -1,182 +1,116 @@
 # Scheduler
 
-Bingo Scheduler is a distributed task scheduling service based on [Asynq](https://github.com/hibiken/asynq), supporting scheduled tasks, periodic tasks, and dynamic task management.
+Bingo Scheduler is a task scheduling service built on [Asynq](https://github.com/hibiken/asynq), supporting queue jobs, static periodic tasks, and dynamic periodic tasks.
 
 ## Core Features
 
-- **Scheduled Task Execution** - Support for cron expression-based task scheduling
-- **Dynamic Task Management** - Add, modify, and delete tasks at runtime
-- **Distributed Architecture** - Redis-based distributed task queue
-- **High Availability** - Multi-instance deployment with automatic failover
-- **Task Monitoring** - Built-in web monitoring dashboard (optional)
+Scheduler provides three types of task support:
 
-## Architecture
+### 1. Queue Jobs
 
-The Scheduler service consists of two core components:
+One-time tasks for immediate or delayed execution, such as:
+- Sending emails
+- Push notifications
+- Data processing
+- Asynchronous operations
 
-### 1. Static Task Scheduler
+### 2. Static Periodic Tasks (Cron Jobs)
 
-Registers and schedules predefined periodic tasks.
+Periodic tasks defined in code, suitable for:
+- Fixed system maintenance tasks
+- Regular data statistics
+- Log cleanup
 
-```go
-// Initialize scheduler
-facade.Scheduler = asynq.NewScheduler(opt, &asynq.SchedulerOpts{
-    Location: location,
-})
-```
+### 3. Dynamic Periodic Tasks
 
-### 2. Dynamic Task Manager (PeriodicTaskManager)
-
-Dynamically loads task configurations from the database, allowing task updates without service restart.
-
-```go
-// Dynamic task manager
-facade.TaskManager, err = asynq.NewPeriodicTaskManager(
-    asynq.PeriodicTaskManagerOpts{
-        RedisConnOpt:               opt,
-        PeriodicTaskConfigProvider: syscfg.NewSchedule(store.S),
-        SyncInterval:               time.Second * 10,  // Sync every 10 seconds
-    })
-```
+Periodic tasks stored in database, supporting:
+- Runtime task addition/modification
+- No service restart required
+- Configuration via admin dashboard
 
 ## Quick Start
 
-### 1. Configuration
-
-Create `bingo-scheduler.yaml` configuration file:
-
-```yaml
-# Scheduler Server
-server:
-  name: bingo-scheduler
-  mode: release
-  addr: :8080
-  timezone: Asia/Shanghai  # Timezone setting
-  key: your-secret-key
-
-# Redis Configuration (Task queue storage)
-redis:
-  host: redis:6379
-  password: ""
-  database: 1
-
-# MySQL Configuration (Dynamic task configuration storage)
-mysql:
-  host: mysql:3306
-  username: root
-  password: root
-  database: bingo
-  maxIdleConnections: 100
-  maxOpenConnections: 100
-  maxConnectionLifeTime: 10s
-  logLevel: 4
-
-# Logging Configuration
-log:
-  level: info
-  days: 7
-  format: console
-  console: true
-  maxSize: 100
-  compress: true
-  path: storage/log/scheduler.log
-
-# Feature Flags
-feature:
-  queueDash: true  # Enable queue monitoring dashboard
-```
-
-### 2. Start Service
+### 1. Start Scheduler Service
 
 ```bash
-# Use default configuration file
+# Use default configuration
 ./bingo-scheduler
 
 # Specify configuration file
 ./bingo-scheduler -c /path/to/bingo-scheduler.yaml
 ```
 
+### 2. Configuration
+
+Create `bingo-scheduler.yaml`:
+
+```yaml
+server:
+  name: bingo-scheduler
+  mode: release
+  addr: :8080
+  timezone: Asia/Shanghai
+
+redis:
+  host: redis:6379
+  password: ""
+  database: 1
+
+mysql:
+  host: mysql:3306
+  username: root
+  password: root
+  database: bingo
+
+log:
+  level: info
+  path: storage/log/scheduler.log
+
+feature:
+  queueDash: true  # Enable monitoring dashboard
+```
+
 ### 3. Access Monitoring Dashboard
 
-If `queueDash` is enabled, access the monitoring dashboard at:
+If `queueDash` is enabled, visit:
 
 ```
 http://localhost:8080/queue
 ```
 
-## Task Types
+View task status, queue information, and execution statistics.
 
-### Static Tasks (Code-Defined)
+## Development Guide
 
-Register periodic tasks in code:
+### Adding Queue Jobs
 
-```go
-import (
-    "github.com/hibiken/asynq"
-    "bingo/internal/pkg/facade"
-)
+Queue jobs are for one-time immediate or delayed execution.
 
-// Register a task that runs daily at 2 AM
-facade.Scheduler.Register(
-    "0 2 * * *",  // Cron expression
-    asynq.NewTask("task:daily-report", nil),
-)
-```
+#### Step 1: Define Task Type and Payload
 
-**Common Cron Expressions:**
-
-```
-# Every minute
-* * * * *
-
-# Every hour
-0 * * * *
-
-# Daily at 2 AM
-0 2 * * *
-
-# Every Monday at 9 AM
-0 9 * * 1
-
-# First day of every month at midnight
-0 0 1 * *
-```
-
-### Dynamic Tasks (Database-Configured)
-
-Dynamic tasks are stored in the `sys_crontab` table and can be managed through the admin dashboard:
-
-```sql
-CREATE TABLE `sys_crontab` (
-  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL COMMENT 'Task name',
-  `type` varchar(50) NOT NULL COMMENT 'Task type',
-  `spec` varchar(100) NOT NULL COMMENT 'Cron expression',
-  `payload` text COMMENT 'Task parameters (JSON)',
-  `status` tinyint NOT NULL DEFAULT '1' COMMENT 'Status: 1-enabled, 0-disabled',
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
-
-**Example: Add Dynamic Task**
-
-```sql
-INSERT INTO `sys_crontab`
-(`name`, `type`, `spec`, `payload`, `status`)
-VALUES
-('Daily Statistics', 'task:daily-stats', '0 1 * * *', '{"date":"today"}', 1);
-```
-
-Dynamic tasks are automatically synced to the scheduler every 10 seconds without requiring a service restart.
-
-## Task Handlers
-
-### 1. Define Task Handler
+Define in `internal/pkg/task/types.go`:
 
 ```go
-package tasks
+package task
+
+const (
+    EmailVerificationCode = "email:verification"
+    UserDataExport        = "user:export"  // New task type
+)
+
+type UserDataExportPayload struct {
+    UserID   int64
+    Format   string // csv, json, xlsx
+    Email    string
+}
+```
+
+#### Step 2: Implement Handler
+
+Create handler file in `internal/scheduler/job/`, e.g., `user_export.go`:
+
+```go
+package job
 
 import (
     "context"
@@ -184,107 +118,169 @@ import (
 
     "github.com/hibiken/asynq"
     "github.com/bingo-project/component-base/log"
+
+    "bingo/internal/pkg/task"
 )
 
-// DailyReportPayload task parameters
-type DailyReportPayload struct {
-    Date string `json:"date"`
-}
-
-// HandleDailyReport processes daily report task
-func HandleDailyReport(ctx context.Context, t *asynq.Task) error {
-    var p DailyReportPayload
-    if err := json.Unmarshal(t.Payload(), &p); err != nil {
+func HandleUserDataExport(ctx context.Context, t *asynq.Task) error {
+    var payload task.UserDataExportPayload
+    if err := json.Unmarshal(t.Payload(), &payload); err != nil {
         return err
     }
 
-    log.Infof("Generating daily report: %s", p.Date)
+    log.Infow("Processing user data export",
+        "user_id", payload.UserID,
+        "format", payload.Format)
 
     // Business logic
-    // ...
+    // 1. Query user data
+    // 2. Export to specified format
+    // 3. Send email
 
     return nil
 }
 ```
 
-### 2. Register Handler
+#### Step 3: Register Task
+
+Register in `internal/scheduler/job/registry.go`:
 
 ```go
+package job
+
 import (
     "github.com/hibiken/asynq"
-    "bingo/internal/scheduler/tasks"
+    "bingo/internal/pkg/task"
 )
 
-func registerHandlers(srv *asynq.Server) {
-    mux := asynq.NewServeMux()
-
-    // Register task handlers
-    mux.HandleFunc("task:daily-report", tasks.HandleDailyReport)
-    mux.HandleFunc("task:daily-stats", tasks.HandleDailyStats)
-
-    // Start worker
-    if err := srv.Run(mux); err != nil {
-        log.Fatalf("Failed to start server: %v", err)
-    }
+func Register(mux *asynq.ServeMux) {
+    mux.HandleFunc(task.EmailVerificationCode, HandleEmailVerificationTask)
+    mux.HandleFunc(task.UserDataExport, HandleUserDataExport)  // Add new
 }
 ```
 
-## Advanced Usage
-
-### Task Priority
+#### Step 4: Dispatch in Business Code
 
 ```go
-// High priority task
-task := asynq.NewTask("task:important", payload, asynq.MaxRetry(3))
-facade.Scheduler.Register("*/5 * * * *", task)
-```
+import "bingo/internal/pkg/task"
 
-### Task Retry
+// Execute immediately
+task.T.Queue(ctx, task.UserDataExport, task.UserDataExportPayload{
+    UserID: 123,
+    Format: "csv",
+    Email:  "user@example.com",
+}).Dispatch()
 
-```go
-// Set maximum retry count
-task := asynq.NewTask(
-    "task:with-retry",
-    payload,
-    asynq.MaxRetry(5),              // Maximum 5 retries
-    asynq.Timeout(30*time.Second),  // Timeout duration
+// Delayed execution (after 10 minutes)
+task.T.Queue(ctx, task.UserDataExport, payload).Dispatch(
+    asynq.ProcessIn(10 * time.Minute),
+)
+
+// Set priority and retry
+task.T.Queue(ctx, task.UserDataExport, payload).Dispatch(
+    asynq.Queue("critical"),       // Use high-priority queue
+    asynq.MaxRetry(3),              // Max 3 retries
+    asynq.Timeout(5 * time.Minute), // Timeout duration
 )
 ```
 
-### Task Timeout
+### Adding Static Periodic Tasks
+
+Static periodic tasks are defined in code, suitable for fixed system tasks.
+
+Register in `internal/scheduler/scheduler/registry.go`:
 
 ```go
-func HandleTask(ctx context.Context, t *asynq.Task) error {
-    // Check if context is cancelled or timed out
-    select {
-    case <-ctx.Done():
-        return ctx.Err()  // Task was cancelled or timed out
-    default:
-        // Execute task
+package scheduler
+
+import (
+    "github.com/hibiken/asynq"
+    "github.com/bingo-project/component-base/log"
+    "bingo/internal/pkg/facade"
+)
+
+func RegisterPeriodicTasks() {
+    // Daily cleanup at 2 AM
+    t := asynq.NewTask("task:daily-cleanup", nil)
+    _, err := facade.Scheduler.Register("0 2 * * *", t)
+    if err != nil {
+        log.Fatalw("Failed to register task", "err", err)
     }
 
-    return nil
+    // Health check every 5 minutes
+    healthCheck := asynq.NewTask("task:health-check", nil)
+    facade.Scheduler.Register("*/5 * * * *", healthCheck)
 }
 ```
+
+**Common Cron Expressions:**
+
+```
+* * * * *        Every minute
+0 * * * *        Every hour
+0 2 * * *        Daily at 2 AM
+0 9 * * 1        Every Monday at 9 AM
+0 0 1 * *        First day of month at midnight
+@hourly          Every hour (same as 0 * * * *)
+@daily           Daily at midnight (same as 0 0 * * *)
+@every 10s       Every 10 seconds
+```
+
+### Adding Dynamic Periodic Tasks
+
+Dynamic tasks are stored in database and can be managed via admin dashboard or API.
+
+#### Database Schema
+
+Task configurations are stored in `sys_schedule` table:
+
+```sql
+CREATE TABLE `sys_schedule` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT 'Task name',
+  `job` varchar(255) NOT NULL COMMENT 'Task type (unique)',
+  `spec` varchar(255) NOT NULL COMMENT 'Cron expression',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT 'Status: 1-enabled, 2-disabled',
+  `description` varchar(1000) NOT NULL COMMENT 'Task description',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_job` (`job`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+#### Adding Dynamic Tasks
+
+Via admin dashboard or direct database insertion:
+
+```sql
+INSERT INTO `sys_schedule` (name, job, spec, status, description)
+VALUES ('Daily Statistics Report', 'task:daily-stats', '0 1 * * *', 1, 'Generate daily data statistics report');
+```
+
+Dynamic tasks are automatically synced every 10 seconds without service restart.
 
 ## Monitoring and Operations
 
 ### View Task Status
 
-Access the monitoring dashboard to view:
-- Pending tasks count
+Access monitoring dashboard to view:
+- Pending task count
 - Running tasks
-- Completed tasks
-- Failed tasks and retry counts
+- Completed task statistics
+- Failed tasks and error messages
 
 ### View Logs
 
 ```bash
-# View real-time logs
+# Real-time logs
 tail -f storage/log/scheduler.log
 
-# View error logs
+# Error logs
 grep "ERROR" storage/log/scheduler.log
+
+# Specific task logs
+grep "task:daily-stats" storage/log/scheduler.log
 ```
 
 ### Common Issues
@@ -293,46 +289,39 @@ grep "ERROR" storage/log/scheduler.log
 
 **Check:**
 - Redis connection status
-- Timezone configuration
+- Timezone configuration (`server.timezone`)
 - Cron expression validity
-- Task status (enabled/disabled)
+- Dynamic task status is 1 (enabled)
 
 ```bash
 # Test Redis connection
 redis-cli -h redis -p 6379 ping
-```
 
-#### 2. Dynamic Tasks Not Working
-
-**Causes:**
-- Database connection failure
-- `sys_crontab` table doesn't exist
-- Sync interval not reached (default 10 seconds)
-
-**Solutions:**
-```bash
-# Check database connection
+# Check database task configuration
 mysql -h mysql -u root -p bingo
-
-# Manually trigger sync (restart service)
-pkill -USR1 bingo-scheduler
+SELECT * FROM sys_schedule WHERE status = 1;
 ```
+
+#### 2. Task Execution Failed
+
+Check error messages in logs:
+
+```bash
+grep "ERROR" storage/log/scheduler.log | tail -20
+```
+
+Common causes:
+- Database connection failure
+- Dependent services unavailable
+- Task handler logic errors
+- Task timeout
 
 #### 3. Slow Task Execution
 
-**Optimization Tips:**
-- Increase worker concurrency
+Optimization methods:
+- Increase worker concurrency (modify in config)
 - Optimize task handler logic
 - Use task queue sharding
-
-```go
-srv := asynq.NewServer(
-    opt,
-    asynq.Config{
-        Concurrency: 20,  // Increase concurrency
-    },
-)
-```
 
 ## Best Practices
 
@@ -342,9 +331,9 @@ Ensure tasks can be safely retried:
 
 ```go
 func HandleTask(ctx context.Context, t *asynq.Task) error {
-    // Use unique identifier to check if task was already executed
     taskID := t.ResultWriter().TaskID()
 
+    // Check if task already executed
     if exists := checkTaskExecuted(taskID); exists {
         return nil  // Already executed, skip
     }
@@ -366,7 +355,10 @@ func HandleTask(ctx context.Context, t *asynq.Task) error {
 func HandleTask(ctx context.Context, t *asynq.Task) error {
     if err := doWork(); err != nil {
         // Log detailed error information
-        log.Errorf("Task execution failed: %v, payload: %s", err, t.Payload())
+        log.Errorw("Task execution failed",
+            "task_type", t.Type(),
+            "payload", string(t.Payload()),
+            "error", err)
 
         // Return error to trigger retry
         return fmt.Errorf("task failed: %w", err)
@@ -376,66 +368,58 @@ func HandleTask(ctx context.Context, t *asynq.Task) error {
 }
 ```
 
-### 3. Task Monitoring
+### 3. Monitor Task Execution Time
 
 ```go
-// Track task execution time
 func HandleTask(ctx context.Context, t *asynq.Task) error {
     start := time.Now()
     defer func() {
-        log.Infof("Task execution time: %v", time.Since(start))
+        log.Infow("Task execution completed",
+            "task_type", t.Type(),
+            "duration", time.Since(start))
     }()
 
-    // Execute task
     return doWork()
 }
 ```
 
-### 4. Proper Timezone Configuration
-
-```yaml
-# Set timezone in configuration file
-server:
-  timezone: Asia/Shanghai  # Use local timezone
-```
+### 4. Proper Timeout and Retry Settings
 
 ```go
-// Load timezone in code
-location, err := time.LoadLocation(facade.Config.Server.Timezone)
-if err != nil {
-    log.Fatalf("Failed to load timezone: %v", err)
-}
+// Set when dispatching task
+task.T.Queue(ctx, task.UserDataExport, payload).Dispatch(
+    asynq.MaxRetry(3),              // Max 3 retries
+    asynq.Timeout(30*time.Second),  // 30 second timeout
+    asynq.Retention(24*time.Hour),  // Retain task result for 24 hours
+)
 ```
 
 ## Integration with Other Services
 
-### Send Email Notifications
+### Send Email
 
 ```go
-import "bingo/internal/pkg/mail"
+import "bingo/internal/pkg/facade"
 
 func HandleDailyReport(ctx context.Context, t *asynq.Task) error {
-    // Generate report
     report := generateReport()
 
-    // Send email
-    err := mail.Send(mail.Message{
-        To:      []string{"admin@example.com"},
-        Subject: "Daily Report",
-        Body:    report,
-    })
+    err := facade.Mail.Send(
+        "admin@example.com",
+        "Daily Report",
+        report,
+    )
 
     return err
 }
 ```
 
-### Call API Server
+### Access Database
 
 ```go
-import "bingo/internal/apiserver/biz"
+import "bingo/internal/pkg/store"
 
 func HandleDataSync(ctx context.Context, t *asynq.Task) error {
-    // Access data through Store
     users, err := store.S.Users().List(ctx)
     if err != nil {
         return err
@@ -452,11 +436,10 @@ func HandleDataSync(ctx context.Context, t *asynq.Task) error {
 
 ## Related Resources
 
-- [Asynq Official Documentation](https://github.com/hibiken/asynq)
-- [Cron Expression Generator](https://crontab.guru/)
-- [Task Queue Best Practices](/components/overview#asynchronous-tasks)
+- [Asynq Official Documentation](https://github.com/hibiken/asynq) - Underlying task queue implementation
+- [Cron Expression Generator](https://crontab.guru/) - Online cron expression tester
 
 ## Next Steps
 
-- Learn how [Admin Server](/essentials/admserver) manages dynamic tasks
-- Explore [Task Queue Component](/components/overview#asynchronous-tasks) usage
+- Learn how [Admin Server](/en/essentials/admserver) manages dynamic tasks
+- Explore [Bot Service](/en/essentials/bot) for receiving scheduled notifications
