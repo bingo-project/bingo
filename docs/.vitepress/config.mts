@@ -12,8 +12,8 @@ export default defineConfig({
 
   // SEO 优化：Head 标签配置
   head: [
-    // 基础 SEO Meta 标签
-    ['meta', { name: 'keywords', content: 'Go,Golang,微服务,脚手架,框架,后端开发,中后台,API,gRPC,Gin,GORM,Redis' }],
+    // 基础 SEO Meta 标签（中英文混合，提升国际搜索可见度）
+    ['meta', { name: 'keywords', content: 'Go,Golang,Go framework,microservices,scaffold,backend,API,gRPC,Gin,GORM,Redis,微服务,脚手架,框架,后端开发,中后台,Go语言,微服务架构' }],
     ['meta', { name: 'author', content: 'Bingo Team' }],
 
     // Open Graph 标签（社交媒体分享优化）
