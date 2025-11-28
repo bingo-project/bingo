@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - main
-      - develop
     paths:
       - 'docs/**'
       - '.github/workflows/deploy-docs.yml'
+    tags:
+      - 'v*'  # 发布版本时触发（如 v1.0.0）
   workflow_dispatch:  # 允许手动触发
 
 jobs:
