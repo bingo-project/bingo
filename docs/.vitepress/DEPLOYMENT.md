@@ -62,12 +62,23 @@ sudo nginx -s reload
 # 安装 certbot
 sudo apt install certbot python3-certbot-nginx
 
-# 获取证书并自动配置 Nginx
-sudo certbot --nginx -d bingoctl.dev
+# 获取证书并自动配置 Nginx（包含 www 子域名）
+sudo certbot --nginx -d bingoctl.dev -d www.bingoctl.dev
+
+# 或使用 webroot 方式（推荐，适用于自定义配置）
+sudo certbot certonly --webroot \
+  -w /var/www/letsencrypt \
+  -d bingoctl.dev \
+  -d www.bingoctl.dev
 
 # 设置自动续期
 sudo certbot renew --dry-run
+
+# 查看已申请的证书
+sudo certbot certificates
 ```
+
+**注意：** 确保 DNS 已正确配置 www 记录，否则证书申请会失败。
 
 ## Docker 部署（可选）
 
