@@ -81,3 +81,7 @@ func (ds *datastore) Apps() AppStore {
 func (ds *datastore) ApiKeys() ApiKeyStore {
 	return NewApiKeys(ds.db)
 }
+
+func (store *datastore) Demo() DemoStore {
+	return NewDemoStore(store)
+}
