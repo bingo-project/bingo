@@ -154,7 +154,7 @@ export default defineConfig({
               text: '核心服务',
               items: [
                 { text: 'API Server', link: '/essentials/apiserver' },
-                { text: 'Admin Server', link: '/essentials/admserver' },
+                // { text: 'Admin Server', link: '/essentials/admserver' },
                 { text: 'Scheduler 调度器', link: '/essentials/scheduler' },
                 { text: 'Bot 机器人服务', link: '/essentials/bot' }
               ]
@@ -210,7 +210,7 @@ export default defineConfig({
               text: 'Core Services',
               items: [
                 { text: 'API Server', link: '/en/essentials/apiserver' },
-                { text: 'Admin Server', link: '/en/essentials/admserver' },
+                // { text: 'Admin Server', link: '/en/essentials/admserver' },
                 { text: 'Scheduler', link: '/en/essentials/scheduler' },
                 { text: 'Bot Notification', link: '/en/essentials/bot' }
               ]
