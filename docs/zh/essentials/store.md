@@ -317,4 +317,3 @@ func (ds *datastore) Users() UserStore {
 - [整体架构](./architecture.md) - 微服务架构中的数据访问设计
 - [Store 命名规范和最佳实践](../development/standards.md#store-命名规范) - 开发规范
 - [开发第一个功能](../guide/first-feature.md) - 实战应用示例
-- [数据库层](../components/database.md) - GORM 使用指南（待实现）

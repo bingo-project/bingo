@@ -422,4 +422,3 @@ func (s *userStore) Create(ctx context.Context, user *model.User) error {
 
 - [Develop Your First Feature](../guide/first-feature.md) - Practice layered architecture
 - [Development Standards](../development/standards.md) - Code style and conventions
-- [Testing Guide](../development/testing.md) - How to test each layer (coming soon)

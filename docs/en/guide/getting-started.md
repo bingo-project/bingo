@@ -194,4 +194,4 @@ make clean
 
 ## Troubleshooting
 
-Check [FAQs](../deployment/troubleshooting.md) (to be implemented) or submit an Issue.
+If you encounter any issues, please submit an Issue on GitHub.

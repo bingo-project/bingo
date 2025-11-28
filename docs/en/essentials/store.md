@@ -317,4 +317,3 @@ func (ds *datastore) Users() UserStore {
 - [Overall Architecture](./architecture.md) - Data access design in microservice architecture
 - [Store Naming Convention and Best Practices](../development/standards.md#store-naming-convention) - Development standards
 - [Develop Your First Feature](../guide/first-feature.md) - Practical application example
-- [Database Layer](../components/database.md) - GORM usage guide (coming soon)

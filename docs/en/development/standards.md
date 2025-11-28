@@ -454,6 +454,4 @@ make swagger
 
 ## Next Steps
 
-- [Business Development Guide](./business-guide.md) - Practice these standards (coming soon)
-- [Testing Guide](./testing.md) - Write high-quality tests (coming soon)
-- [Best Practices](./best-practices.md) - Advanced techniques
+Additional documentation for business development guide, testing guide, and best practices is coming soon.

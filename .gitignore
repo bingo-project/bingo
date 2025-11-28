@@ -97,3 +97,8 @@ bingo-admserver.yaml
 bingo-scheduler.yaml
 bingo-bot.yaml
 bingoctl.yaml
+
+# VitePress
+node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/

@@ -383,6 +383,4 @@ func MetricsMiddleware(serviceName string) gin.HandlerFunc {
 
 ## 下一步
 
-- [服务发现](./service-discovery.md) - Consul 详细使用
-- [链路追踪](./tracing.md) - Jaeger 集成指南
-- [性能优化](./performance.md) - 微服务性能优化
+有关服务发现、链路追踪和性能优化的详细文档正在筹备中，敬请期待！

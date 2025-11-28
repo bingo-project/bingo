@@ -383,6 +383,4 @@ func MetricsMiddleware(serviceName string) gin.HandlerFunc {
 
 ## Next Steps
 
-- [Service Discovery](./service-discovery.md) - Detailed Consul usage
-- [Distributed Tracing](./tracing.md) - Jaeger integration guide
-- [Performance Optimization](./performance.md) - Microservice performance optimization
+Additional documentation for service discovery, distributed tracing, and performance optimization is coming soon.

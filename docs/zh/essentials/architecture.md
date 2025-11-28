@@ -229,5 +229,4 @@ API-1    API-2    API-3    API-N   多实例
 ## 下一步
 
 - [分层架构详解](./layered-design.md) - 理解单个服务的内部架构
-- [服务详细说明](./services.md) - 每个服务的详细介绍
 - [部署指南](../deployment/docker.md) - 如何部署各个服务

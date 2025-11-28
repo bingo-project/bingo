@@ -9,23 +9,23 @@ Bingo 内置了一系列开箱即用的核心组件,本文介绍各个组件的�
 | 组件 | 说明 | 文档 |
 |------|------|------|
 | **Bootstrap** | 应用启动引导,统一初始化流程 | [配置管理](#bootstrap) |
-| **Logger** | 基于 Zap 的结构化日志 | [日志系统](./logger.md) |
-| **Database** | GORM 数据库封装 | [数据库层](./database.md) |
+| **Logger** | 基于 Zap 的结构化日志 | 🚧 |
+| **Database** | GORM 数据库封装 | 🚧 |
 | **Redis** | Redis 缓存封装 | 本文 |
 
 ### 认证授权
 
 | 组件 | 说明 | 文档 |
 |------|------|------|
-| **Authn** | JWT 认证中间件 | [认证系统](./authentication.md) |
-| **Authz** | Casbin 权限控制 | [权限系统](./authorization.md) |
+| **Authn** | JWT 认证中间件 | 🚧 |
+| **Authz** | Casbin 权限控制 | 🚧 |
 
 ### 异步任务
 
 | 组件 | 说明 | 文档 |
 |------|------|------|
-| **Task Queue** | Asynq 任务队列 | [任务队列](./task-queue.md) |
-| **Scheduler** | 定时任务调度 | [任务队列](./task-queue.md) |
+| **Task Queue** | Asynq 任务队列 | 🚧 |
+| **Scheduler** | 定时任务调度 | 🚧 |
 
 ### 其他组件
 
@@ -234,10 +234,4 @@ func (b *Bootstrap) Boot() error {
 
 ## 下一步
 
-> 部分文档正在筹备中，敬请期待！
-
-- [认证系统](./authentication.md) - JWT 认证详解 🚧
-- [权限系统](./authorization.md) - Casbin 权限控制 🚧
-- [任务队列](./task-queue.md) - 异步任务处理 🚧
-- [数据库层](./database.md) - GORM 使用指南 🚧
-- [日志系统](./logger.md) - Zap 日志配置 🚧
+> 部分文档正在筹备中，敬请期待！有关认证系统、权限系统、任务队列、数据库层和日志系统的详细文档将陆续发布。

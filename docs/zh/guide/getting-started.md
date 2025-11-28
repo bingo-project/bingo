@@ -194,4 +194,4 @@ make clean
 
 ## 遇到问题?
 
-查看 [常见问题](../deployment/troubleshooting.md)（待实现）或提交 Issue。
+如果遇到任何问题，请在 GitHub 上提交 Issue。
