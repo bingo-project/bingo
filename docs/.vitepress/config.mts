@@ -27,7 +27,8 @@ export default defineConfig({
                 { text: 'What is Bingo', link: '/en/guide/what-is-bingo' },
                 { text: 'Getting Started', link: '/en/guide/getting-started' },
                 { text: 'Project Structure', link: '/en/guide/project-structure' },
-                { text: 'First Feature', link: '/en/guide/first-feature' }
+                { text: 'First Feature', link: '/en/guide/first-feature' },
+                { text: 'Using bingoctl', link: '/en/guide/using-bingoctl' }
               ]
             }
           ],
@@ -36,7 +37,9 @@ export default defineConfig({
               text: 'Core Concepts',
               items: [
                 { text: 'Overall Architecture', link: '/en/essentials/architecture' },
-                { text: 'Layered Design', link: '/en/essentials/layered-design' }
+                { text: 'API Server', link: '/en/essentials/apiserver' },
+                { text: 'Layered Design', link: '/en/essentials/layered-design' },
+                { text: 'Store Package Design', link: '/en/essentials/store' }
               ]
             }
           ],
@@ -45,6 +48,30 @@ export default defineConfig({
               text: 'Component Reference',
               items: [
                 { text: 'Core Components Overview', link: '/en/components/overview' }
+              ]
+            }
+          ],
+          '/en/development/': [
+            {
+              text: 'Development Standards',
+              items: [
+                { text: 'Coding Standards', link: '/en/development/standards' }
+              ]
+            }
+          ],
+          '/en/deployment/': [
+            {
+              text: 'Deployment Guide',
+              items: [
+                { text: 'Docker Deployment', link: '/en/deployment/docker' }
+              ]
+            }
+          ],
+          '/en/advanced/': [
+            {
+              text: 'Advanced Topics',
+              items: [
+                { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
               ]
             }
           ]
@@ -81,7 +108,9 @@ export default defineConfig({
               text: '核心概念',
               items: [
                 { text: '整体架构', link: '/zh/essentials/architecture' },
-                { text: '分层架构详解', link: '/zh/essentials/layered-design' }
+                { text: 'API Server 详解', link: '/zh/essentials/apiserver' },
+                { text: '分层架构详解', link: '/zh/essentials/layered-design' },
+                { text: 'Store 包设计', link: '/zh/essentials/store' }
               ]
             }
           ],
