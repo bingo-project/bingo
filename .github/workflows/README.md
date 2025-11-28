@@ -8,70 +8,73 @@
 - `docs/**` 目录下的文件发生变化
 - 也可以手动触发部署
 
-## 配置 GitHub Secrets
+## 配置步骤
 
-在部署之前，需要在 GitHub 仓库中配置以下 Secrets：
+### 一、服务器端配置
 
-### 1. 进入仓库设置
-
-访问：`https://github.com/YOUR_USERNAME/bingo/settings/secrets/actions`
-
-### 2. 添加以下 Secrets
-
-#### SSH_PRIVATE_KEY
-
-SSH 私钥，用于连接服务器。
-
-**生成步骤**：
+#### 1. 创建部署用户
 
 ```bash
-# 在本地生成 SSH 密钥对（如果还没有）
-ssh-keygen -t ed25519 -C "github-actions@bingoctl.dev" -f ~/.ssh/github_actions
-
-# 将公钥添加到服务器
-ssh-copy-id -i ~/.ssh/github_actions.pub user@your-server
-
-# 或手动添加到服务器的 ~/.ssh/authorized_keys
-cat ~/.ssh/github_actions.pub
-
-# 复制私钥内容到 GitHub Secrets
-cat ~/.ssh/github_actions
+# 在服务器上（以 root 或 sudo 用户身份）
+sudo adduser deploy
+# 设置一个强密码（用于 sudo 操作）
 ```
 
-**注意**：复制整个私钥内容，包括 `-----BEGIN OPENSSH PRIVATE KEY-----` 和 `-----END OPENSSH PRIVATE KEY-----`。
-
-#### REMOTE_HOST
-
-服务器 IP 地址或域名。
-
-**示例**：
-- `192.168.1.100`
-- `bingoctl.dev`
-
-#### REMOTE_USER
-
-SSH 登录用户名。
-
-**示例**：
-- `root`
-- `deploy`
-- `ubuntu`
-
-## 服务器配置
-
-### 1. 创建部署目录
+#### 2. 配置部署目录权限
 
 ```bash
-# 在服务器上创建目录
+# 创建部署目录
 sudo mkdir -p /var/www/bingo/docs
 
-# 设置正确的权限
-sudo chown -R $USER:$USER /var/www/bingo
+# 将目录所有权转给 deploy 用户
+sudo chown -R deploy:deploy /var/www/bingo
+
+# 设置适当的权限
+sudo chmod -R 755 /var/www/bingo
 ```
 
-### 2. 配置 SSH 访问
+#### 3. 配置 sudo 规则（可选）
 
-确保 GitHub Actions 可以通过 SSH 访问服务器：
+如果需要在部署后重启 nginx：
+
+```bash
+# 创建 sudo 规则文件
+sudo visudo -f /etc/sudoers.d/deploy
+```
+
+添加以下内容：
+
+```
+# 允许 deploy 用户无密码重启 nginx
+deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl reload nginx
+deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx
+```
+
+保存并验证配置：
+
+```bash
+sudo visudo -c
+```
+
+#### 4. 配置 SSH 目录
+
+```bash
+# 切换到 deploy 用户
+sudo su - deploy
+
+# 创建 .ssh 目录
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+
+# 创建 authorized_keys 文件
+touch ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
+
+# 退出 deploy 用户
+exit
+```
+
+#### 5. 配置 SSH 服务
 
 ```bash
 # 编辑 SSH 配置（可选）
@@ -84,12 +87,93 @@ PubkeyAuthentication yes
 sudo systemctl restart sshd
 ```
 
-### 3. 测试 SSH 连接
+---
+
+### 二、本地配置
+
+#### 1. 生成 SSH 密钥对
 
 ```bash
-# 使用生成的密钥测试连接
-ssh -i ~/.ssh/github_actions user@your-server
+# 在本地机器生成专用于部署的 SSH 密钥对
+ssh-keygen -t ed25519 -C "github-actions@bingoctl.dev" -f ~/.ssh/github-actions
+
+# 生成的文件：
+# - 私钥：~/.ssh/github-actions
+# - 公钥：~/.ssh/github-actions.pub
+
+# 重要：不要设置密码短语（GitHub Actions 需要无密码认证）
 ```
+
+#### 2. 添加公钥到服务器
+
+方法一：使用 ssh-copy-id（推荐）
+
+```bash
+ssh-copy-id -i ~/.ssh/github-actions.pub deploy@your-server-ip
+```
+
+方法二：手动添加
+
+```bash
+# 查看公钥内容
+cat ~/.ssh/github-actions.pub
+
+# 在服务器上（以 deploy 用户身份）
+sudo su - deploy
+echo "粘贴公钥内容" >> ~/.ssh/authorized_keys
+exit
+```
+
+#### 3. 测试 SSH 连接
+
+```bash
+# 测试连接
+ssh -i ~/.ssh/github-actions deploy@your-server-ip
+
+# 测试目录权限
+cd /var/www/bingo/docs
+touch test.txt
+rm test.txt
+
+# 如果配置了 sudo，测试 nginx 重启
+sudo systemctl reload nginx
+
+# 退出
+exit
+```
+
+---
+
+### 三、GitHub 配置
+
+#### 1. 配置 Environment Secrets
+
+访问 GitHub 仓库：**Settings** → **Environments** → **docs**
+
+配置以下 secrets：
+
+| Secret 名称 | 值 | 说明 |
+|------------|-----|------|
+| `SSH_PRIVATE_KEY` | `~/.ssh/github-actions` 的内容 | 完整的私钥文件内容 |
+| `REMOTE_HOST` | 服务器 IP 或域名 | 例如：`123.45.67.89` 或 `bingoctl.dev` |
+| `REMOTE_USER` | `deploy` | 部署用户名 |
+
+#### 2. 获取私钥内容
+
+```bash
+cat ~/.ssh/github-actions
+# 复制完整输出，包括：
+# -----BEGIN OPENSSH PRIVATE KEY-----
+# ... (密钥内容) ...
+# -----END OPENSSH PRIVATE KEY-----
+```
+
+**安全提示**：
+- 私钥绝对不能提交到 git 仓库
+- 私钥只保存在本地和 GitHub Secrets 中
+- 定期轮换密钥（建议每 6-12 个月）
+
+---
 
 ## 部署流程
 
@@ -112,6 +196,8 @@ ssh -i ~/.ssh/github_actions user@your-server
 3. 点击 "Run workflow" 按钮
 4. 选择分支并确认
 
+---
+
 ## 监控部署
 
 ### 查看部署状态
@@ -123,15 +209,17 @@ ssh -i ~/.ssh/github_actions user@your-server
 1. 点击具体的工作流运行
 2. 查看每个步骤的详细日志
 
-### 常见问题
+---
 
-#### 1. 部署失败：Permission denied
+## 常见问题
+
+### 1. 部署失败：Permission denied
 
 **原因**：SSH 密钥权限不正确或公钥未添加到服务器。
 
 **解决**：
 ```bash
-# 检查服务器上的 authorized_keys
+# 在服务器上检查（以 deploy 用户身份）
 cat ~/.ssh/authorized_keys
 
 # 确保权限正确
@@ -139,18 +227,18 @@ chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
 
-#### 2. 部署失败：目录不存在
+### 2. 部署失败：目录不存在
 
-**原因**：服务器上的目标目录不存在。
+**原因**：服务器上的目标目录不存在或权限不正确。
 
 **解决**：
 ```bash
-# 在服务器上创建目录
+# 在服务器上
 sudo mkdir -p /var/www/bingo/docs
-sudo chown -R $USER:$USER /var/www/bingo
+sudo chown -R deploy:deploy /var/www/bingo
 ```
 
-#### 3. 构建失败：依赖安装错误
+### 3. 构建失败：依赖安装错误
 
 **原因**：package.json 或 package-lock.json 问题。
 
@@ -163,6 +251,21 @@ git add package-lock.json
 git commit -m "chore: update package-lock.json"
 ```
 
+### 4. SSH 连接超时
+
+**原因**：服务器防火墙或安全组阻止了 SSH 连接。
+
+**解决**：
+```bash
+# 检查服务器防火墙
+sudo ufw status
+sudo ufw allow 22/tcp
+
+# 或检查云服务器的安全组设置，确保允许 22 端口
+```
+
+---
+
 ## 部署后验证
 
 部署完成后，访问以下 URL 验证：
@@ -171,13 +274,17 @@ git commit -m "chore: update package-lock.json"
 - 🇨🇳 中文文档：https://bingoctl.dev/zh/
 - 🇬🇧 英文文档：https://bingoctl.dev/en/
 
+---
+
 ## 安全建议
 
-1. **使用专用部署用户**：不要使用 root 用户部署
-2. **限制 SSH 访问**：在服务器上只允许特定 IP 访问
-3. **定期轮换密钥**：定期更新 SSH 密钥
-4. **使用 SSH 密钥密码**：为私钥设置密码保护（需要配置 ssh-agent）
-5. **最小权限原则**：部署用户只需要对 /var/www/bingo 有写权限
+1. **限制权限**：deploy 用户仅拥有部署目录的写权限
+2. **限制 SSH 访问**：在服务器上只允许特定 IP 访问（可选）
+3. **定期轮换密钥**：建议每 6-12 个月更新 SSH 密钥
+4. **监控部署日志**：定期检查部署日志，发现异常及时处理
+5. **最小权限原则**：sudo 规则仅允许必要的命令
+
+---
 
 ## 优化建议
 
@@ -202,3 +309,7 @@ git commit -m "chore: update package-lock.json"
 ### 3. 部署通知
 
 添加 Slack、Discord 或邮件通知，及时了解部署状态。
+
+### 4. 增量部署
+
+考虑使用 rsync 的增量传输功能，只同步变更的文件，加快部署速度。
