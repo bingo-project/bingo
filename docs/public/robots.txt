@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /assets/
+
+# Priority crawl paths
+Allow: /guide/
+Allow: /essentials/
+Allow: /en/
+
+# Sitemap
+Sitemap: https://bingoctl.dev/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

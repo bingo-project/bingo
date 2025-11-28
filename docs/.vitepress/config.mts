@@ -10,6 +10,37 @@ export default defineConfig({
     'zh/:rest*': ':rest*'
   },
 
+  // SEO 优化：Head 标签配置
+  head: [
+    // 基础 SEO Meta 标签
+    ['meta', { name: 'keywords', content: 'Go,Golang,微服务,脚手架,框架,后端开发,中后台,API,gRPC,Gin,GORM,Redis' }],
+    ['meta', { name: 'author', content: 'Bingo Team' }],
+
+    // Open Graph 标签（社交媒体分享优化）
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'Bingo' }],
+    ['meta', { property: 'og:title', content: 'Bingo - 生产级 Go 中后台脚手架' }],
+    ['meta', { property: 'og:description', content: 'Bingo 是一个生产级的 Go 中后台脚手架，提供了完整的微服务架构、核心组件和最佳实践，帮助团队快速搭建可扩展的后端服务。' }],
+    ['meta', { property: 'og:url', content: 'https://bingoctl.dev' }],
+    ['meta', { property: 'og:image', content: 'https://bingoctl.dev/og-image.png' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+    ['meta', { property: 'og:locale:alternate', content: 'en_US' }],
+
+    // Twitter Card 标签
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'Bingo - 生产级 Go 中后台脚手架' }],
+    ['meta', { name: 'twitter:description', content: 'Bingo 是一个生产级的 Go 中后台脚手架，提供了完整的微服务架构、核心组件和最佳实践' }],
+    ['meta', { name: 'twitter:image', content: 'https://bingoctl.dev/og-image.png' }],
+
+    // Canonical URL（避免重复内容）
+    ['link', { rel: 'canonical', href: 'https://bingoctl.dev' }],
+  ],
+
+  // 站点地图配置
+  sitemap: {
+    hostname: 'https://bingoctl.dev'
+  },
+
   locales: {
     root: {
       label: '中文',
