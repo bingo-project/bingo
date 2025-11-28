@@ -1,0 +1,66 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取所有历史记录，用于生成正确的最后更新时间
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build VitePress documentation
+        run: npx vitepress build docs
+        env:
+          NODE_ENV: production
+
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          SOURCE: "docs/.vitepress/dist/"
+          TARGET: "/var/www/bingo/docs/"
+          EXCLUDE: "/dist/, /node_modules/"
+          SCRIPT_BEFORE: |
+            whoami
+            ls -la /var/www/bingo/
+          SCRIPT_AFTER: |
+            echo "Deployment completed!"
+            ls -la /var/www/bingo/docs/
+            # 重启 Nginx（如果需要）
+            # sudo systemctl reload nginx
+
+      - name: Deployment notification
+        if: success()
+        run: |
+          echo "✅ Documentation deployed successfully to bingoctl.dev"
+          echo "📅 Deployed at: $(date)"
+          echo "📝 Commit: ${{ github.sha }}"
+
+      - name: Deployment failed
+        if: failure()
+        run: |
+          echo "❌ Documentation deployment failed"
+          echo "Please check the logs above for errors"
