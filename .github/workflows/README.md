@@ -74,7 +74,22 @@ chmod 600 ~/.ssh/authorized_keys
 exit
 ```
 
-#### 5. 配置 SSH 服务
+#### 5. 安装 rsync
+
+部署工作流使用 rsync 来同步文件：
+
+```bash
+# Ubuntu/Debian
+sudo apt-get update && sudo apt-get install -y rsync
+
+# CentOS/RHEL
+sudo yum install -y rsync
+
+# 验证安装
+rsync --version
+```
+
+#### 6. 配置 SSH 服务
 
 ```bash
 # 编辑 SSH 配置（可选）
