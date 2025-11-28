@@ -50,8 +50,11 @@ Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服�
 # 安装 bingoctl
 go install github.com/bingo-project/bingoctl@latest
 
-# 创建新项目
+# 创建新项目（只包含 apiserver）
 bingoctl create github.com/myorg/myapp
+
+# 或创建包含所有服务的项目
+bingoctl create github.com/myorg/myapp --all
 
 # 进入项目目录
 cd myapp
@@ -65,6 +68,25 @@ bingoctl make crud user
 # 运行服务
 make build
 ./myapp-apiserver
+```
+
+**创建项目的常用选项：**
+
+```bash
+# 创建并指定特定服务
+bingoctl create myapp --services apiserver,admserver
+
+# 添加额外的服务
+bingoctl create myapp --add-service scheduler
+
+# 排除某些服务
+bingoctl create myapp --no-service bot
+
+# 控制 git 初始化
+bingoctl create myapp --init-git=false
+
+# 使用特定的模板版本
+bingoctl create myapp -r v1.2.3
 ```
 
 详细的 bingoctl 使用指南请查看 [使用 bingoctl](./docs/guide/using-bingoctl.md)。

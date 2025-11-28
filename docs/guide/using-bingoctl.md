@@ -31,9 +31,118 @@ bingoctl create github.com/myorg/myapp
 - Makefile
 - 基础示例代码
 
+#### 创建命令选项
+
+**项目名称和模块名**
+
+```bash
+# 使用默认模块名（与项目名相同）
+bingoctl create github.com/myorg/myapp
+
+# 自定义模块名（-m 选项）
+bingoctl create myapp -m github.com/mycompany/myapp
+```
+
+**模板版本控制**
+
+```bash
+# 使用推荐版本（默认）
+bingoctl create myapp
+
+# 使用特定版本
+bingoctl create myapp -r v1.2.3
+
+# 使用分支（开发版本）
+bingoctl create myapp -r main
+
+# 强制重新下载模板
+bingoctl create myapp -r main --no-cache
+```
+
+**服务选择**
+
+控制项目中包含哪些服务（apiserver、admserver、scheduler、bot 等）：
+
+```bash
+# 只包含 apiserver（默认）
+bingoctl create myapp
+
+# 创建所有可用服务
+bingoctl create myapp --all
+# 或使用简写
+bingoctl create myapp -a
+
+# 明确指定服务（多个服务用逗号分隔）
+bingoctl create myapp --services apiserver,admserver,scheduler
+
+# 添加服务到默认的 apiserver
+bingoctl create myapp --add-service scheduler
+
+# 排除特定服务
+bingoctl create myapp --no-service bot
+
+# 仅包含骨架，不包含任何服务
+bingoctl create myapp --services none
+```
+
+**Git 初始化**
+
+```bash
+# 创建项目并初始化 git 仓库（默认）
+bingoctl create myapp
+
+# 创建项目但不初始化 git
+bingoctl create myapp --init-git=false
+```
+
+**缓存管理和镜像配置**
+
+```bash
+# 缓存位置：~/.bingoctl/templates/
+
+# 对于 GitHub 访问困难的地区，可以配置镜像
+export BINGOCTL_TEMPLATE_MIRROR=https://ghproxy.com/
+bingoctl create myapp
+
+# 或临时设置
+BINGOCTL_TEMPLATE_MIRROR=https://ghproxy.com/ bingoctl create myapp
+```
+
 ### 2. 代码生成
 
 快速生成各层代码,遵循 Bingo 的最佳实践。
+
+#### 全局选项
+
+```bash
+-d, --directory string   指定生成文件的目录
+-p, --package string     指定包名
+-t, --table string       从数据库表读取字段
+-s, --service string     目标服务名称，用于自动推断路径
+```
+
+#### 多服务支持
+
+当项目包含多个服务时，可以使用 `--service` 参数自动推断生成路径：
+
+```bash
+# 为默认服务（通常是 apiserver）生成代码
+bingoctl make model user
+
+# 为特定服务自动推断路径
+bingoctl make model user --service admserver
+
+# 生成完整 CRUD（为指定服务）
+bingoctl make crud order --service admserver
+
+# 明确指定目录（优先级最高，覆盖 --service）
+bingoctl make model user -d custom/path
+```
+
+**路径推断规则：**
+1. 扫描 `cmd/` 目录识别已存在的服务
+2. 若配置路径包含服务名，则智能替换（如 `internal/apiserver/model` → `internal/admserver/model`）
+3. 否则使用默认模式：`internal/{service}/{suffix}`
 
 #### CRUD 完整代码生成
 
