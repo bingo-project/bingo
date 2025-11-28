@@ -34,11 +34,86 @@ export default defineConfig({
 
     // Canonical URL（避免重复内容）
     ['link', { rel: 'canonical', href: 'https://bingoctl.dev' }],
+
+    // Google Analytics（获取 ID：https://analytics.google.com/）
+    // 1. 访问 Google Analytics 创建媒体资源
+    // 2. 获取衡量 ID（格式：G-XXXXXXXXXX）
+    // 3. 取消下面两行的注释并替换 YOUR_GA_ID
+    // ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=YOUR_GA_ID' }],
+    // ['script', {}, `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'YOUR_GA_ID');`],
+
+    // 百度统计（获取代码：https://tongji.baidu.com/）
+    // 1. 访问百度统计注册并添加网站
+    // 2. 获取统计代码中的 hm.js?后面的ID
+    // 3. 取消下面一行的注释并替换 YOUR_BAIDU_ID
+    // ['script', {}, `var _hmt = _hmt || [];(function() {var hm = document.createElement("script");hm.src = "https://hm.baidu.com/hm.js?YOUR_BAIDU_ID";var s = document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm, s);})();`],
   ],
 
   // 站点地图配置
   sitemap: {
-    hostname: 'https://bingoctl.dev'
+    hostname: 'https://bingoctl.dev',
+    transformItems: (items) => {
+      // 为不同类型的页面设置不同的优先级和更新频率
+      return items.map((item) => {
+        const url = item.url || ''
+
+        // 首页：最高优先级，每日更新（匹配 / 或 /en/）
+        if (url === '/' || url === '/en/' || url === '/index.html' || url === '/en/index.html') {
+          item.priority = 1.0
+          item.changefreq = 'daily'
+        }
+        // 指南页面：高优先级，每周更新
+        else if (url.includes('/guide/')) {
+          item.priority = 0.9
+          item.changefreq = 'weekly'
+        }
+        // 核心概念页面：较高优先级，每周更新
+        else if (url.includes('/essentials/')) {
+          item.priority = 0.8
+          item.changefreq = 'weekly'
+        }
+        // 其他页面：标准优先级，每月更新
+        else {
+          item.priority = 0.7
+          item.changefreq = 'monthly'
+        }
+        return item
+      })
+    }
+  },
+
+  // 结构化数据配置
+  transformHead: ({ pageData }) => {
+    const head = []
+
+    // 为首页添加 JSON-LD 结构化数据
+    if (pageData.relativePath === 'index.md' || pageData.relativePath === 'zh/index.md') {
+      head.push([
+        'script',
+        { type: 'application/ld+json' },
+        JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          'name': 'Bingo',
+          'applicationCategory': 'DeveloperApplication',
+          'operatingSystem': 'Linux, macOS, Windows',
+          'description': 'Bingo 是一个生产级的 Go 中后台脚手架，提供了完整的微服务架构、核心组件和最佳实践',
+          'url': 'https://bingoctl.dev',
+          'author': {
+            '@type': 'Organization',
+            'name': 'Bingo Team'
+          },
+          'offers': {
+            '@type': 'Offer',
+            'price': '0',
+            'priceCurrency': 'USD'
+          },
+          'programmingLanguage': 'Go'
+        })
+      ])
+    }
+
+    return head
   },
 
   locales: {
