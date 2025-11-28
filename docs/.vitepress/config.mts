@@ -146,9 +146,17 @@ export default defineConfig({
               text: '核心概念',
               items: [
                 { text: '整体架构', link: '/essentials/architecture' },
-                { text: 'API Server 详解', link: '/essentials/apiserver' },
                 { text: '分层架构详解', link: '/essentials/layered-design' },
                 { text: 'Store 包设计', link: '/essentials/store' }
+              ]
+            },
+            {
+              text: '核心服务',
+              items: [
+                { text: 'API Server', link: '/essentials/apiserver' },
+                { text: 'Admin Server', link: '/essentials/admserver' },
+                { text: 'Scheduler 调度器', link: '/essentials/scheduler' },
+                { text: 'Bot 机器人服务', link: '/essentials/bot' }
               ]
             }
           ],
@@ -194,9 +202,17 @@ export default defineConfig({
               text: 'Core Concepts',
               items: [
                 { text: 'Overall Architecture', link: '/en/essentials/architecture' },
-                { text: 'API Server', link: '/en/essentials/apiserver' },
                 { text: 'Layered Design', link: '/en/essentials/layered-design' },
                 { text: 'Store Package Design', link: '/en/essentials/store' }
+              ]
+            },
+            {
+              text: 'Core Services',
+              items: [
+                { text: 'API Server', link: '/en/essentials/apiserver' },
+                { text: 'Admin Server', link: '/en/essentials/admserver' },
+                { text: 'Scheduler', link: '/en/essentials/scheduler' },
+                { text: 'Bot Notification', link: '/en/essentials/bot' }
               ]
             }
           ],
