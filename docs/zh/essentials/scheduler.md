@@ -441,5 +441,4 @@ func HandleDataSync(ctx context.Context, t *asynq.Task) error {
 
 ## 下一步
 
-- 了解 [Admin Server](/essentials/admserver) 如何管理动态任务
 - 学习 [Bot 服务](/essentials/bot) 如何接收定时通知
