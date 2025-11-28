@@ -5,7 +5,58 @@ export default defineConfig({
   title: "Bingo",
   description: "Production-grade Go backend scaffold with complete microservice architecture",
 
+  // 重写规则：将 zh/ 映射到根路径
+  rewrites: {
+    'zh/:rest*': ':rest*'
+  },
+
   locales: {
+    root: {
+      label: '中文',
+      lang: 'zh-CN',
+      title: "Bingo",
+      description: "Bingo 是一个生产级的 Go 中后台脚手架,提供了完整的微服务架构、核心组件和最佳实践,帮助团队快速搭建可扩展的后端服务。",
+      themeConfig: {
+        nav: [
+          { text: '指南', link: '/guide/what-is-bingo' },
+          { text: '核心概念', link: '/essentials/architecture' },
+          { text: '组件', link: '/components/overview' },
+          { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
+        ],
+        sidebar: {
+          '/guide/': [
+            {
+              text: '新手入门',
+              items: [
+                { text: '什么是 Bingo', link: '/guide/what-is-bingo' },
+                { text: '快速开始', link: '/guide/getting-started' },
+                { text: '项目结构', link: '/guide/project-structure' },
+                { text: '开发第一个功能', link: '/guide/first-feature' }
+              ]
+            }
+          ],
+          '/essentials/': [
+            {
+              text: '核心概念',
+              items: [
+                { text: '整体架构', link: '/essentials/architecture' },
+                { text: 'API Server 详解', link: '/essentials/apiserver' },
+                { text: '分层架构详解', link: '/essentials/layered-design' },
+                { text: 'Store 包设计', link: '/essentials/store' }
+              ]
+            }
+          ],
+          '/components/': [
+            {
+              text: '组件参考',
+              items: [
+                { text: '核心组件概览', link: '/components/overview' }
+              ]
+            }
+          ]
+        }
+      }
+    },
     en: {
       label: 'English',
       lang: 'en',
@@ -72,53 +123,6 @@ export default defineConfig({
               text: 'Advanced Topics',
               items: [
                 { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
-              ]
-            }
-          ]
-        }
-      }
-    },
-    root: {
-      label: '中文',
-      lang: 'zh-CN',
-      title: "Bingo",
-      description: "Bingo 是一个生产级的 Go 中后台脚手架,提供了完整的微服务架构、核心组件和最佳实践,帮助团队快速搭建可扩展的后端服务。",
-      link: '/zh/',
-      themeConfig: {
-        nav: [
-          { text: '指南', link: '/zh/guide/what-is-bingo' },
-          { text: '核心概念', link: '/zh/essentials/architecture' },
-          { text: '组件', link: '/zh/components/overview' },
-          { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
-        ],
-        sidebar: {
-          '/zh/guide/': [
-            {
-              text: '新手入门',
-              items: [
-                { text: '什么是 Bingo', link: '/zh/guide/what-is-bingo' },
-                { text: '快速开始', link: '/zh/guide/getting-started' },
-                { text: '项目结构', link: '/zh/guide/project-structure' },
-                { text: '开发第一个功能', link: '/zh/guide/first-feature' }
-              ]
-            }
-          ],
-          '/zh/essentials/': [
-            {
-              text: '核心概念',
-              items: [
-                { text: '整体架构', link: '/zh/essentials/architecture' },
-                { text: 'API Server 详解', link: '/zh/essentials/apiserver' },
-                { text: '分层架构详解', link: '/zh/essentials/layered-design' },
-                { text: 'Store 包设计', link: '/zh/essentials/store' }
-              ]
-            }
-          ],
-          '/zh/components/': [
-            {
-              text: '组件参考',
-              items: [
-                { text: '核心组件概览', link: '/zh/components/overview' }
               ]
             }
           ]
