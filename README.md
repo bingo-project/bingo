@@ -2,6 +2,12 @@
 
 一个开箱即用的 Go 语言中后台脚手架,基于微服务架构设计,让开发者只需关注业务开发。
 
+## 📖 在线文档
+
+- 🌐 **在线文档**: [https://bingoctl.dev](https://bingoctl.dev)
+- 🇨🇳 **中文文档**: [https://bingoctl.dev/zh/](https://bingoctl.dev/zh/)
+- 🇬🇧 **English Docs**: [https://bingoctl.dev/en/](https://bingoctl.dev/en/)
+
 ## 项目定位
 
 Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服务架构、核心组件和最佳实践,帮助团队快速搭建可扩展的后端服务。
