@@ -4,28 +4,28 @@ layout: home
 
 hero:
   name: "Bingo"
-  text: "Production-grade Go backend scaffold with complete microservice architecture, core components, and best practices"
-  tagline: Out-of-the-box • Business-focused • Production-ready
+  text: "生产级 Go 脚手架，开箱即用的微服务解决方案"
+  tagline: 开箱即用 • 业务聚焦 • 生产就绪
   actions:
     - theme: brand
-      text: Get Started
-      link: /en/guide/getting-started
+      text: 快速开始
+      link: /zh/guide/getting-started
     - theme: alt
-      text: Learn Features
-      link: /en/guide/what-is-bingo
+      text: 了解特性
+      link: /zh/guide/what-is-bingo
 
 features:
-  - title: 🏗️ Clean Architecture Design
-    details: Adopts Controller → Biz → Store three-layer architecture, supports microservice decomposition, enabling teams to quickly understand and maintain code.
-  - title: 🚀 Complete Engineering Capabilities
-    details: Built-in code generation, hot reload, automated testing, Docker support, improving development efficiency.
-  - title: 📚 Complete Tech Stack
-    details: Gin, GORM, Redis, Asynq, Casbin and other core components pre-integrated, ready to use out-of-the-box.
-  - title: 🔧 Production-grade Quality
-    details: Includes logging, monitoring, distributed tracing and other production-essential features, supporting rapid scaling.
-  - title: 💡 Best Practices
-    details: Follows Go community best practices, provides comprehensive example code and documentation guidance.
-  - title: 🎯 Business-focused
-    details: The scaffold handles technical details, allowing teams to focus on business logic development and rapid iteration.
+  - title: 🏗️ 清晰的架构设计
+    details: 采用 Controller → Biz → Store 三层架构,支持微服务拆分,让团队快速理解和维护代码。
+  - title: 🚀 工程能力完备
+    details: 内置代码生成、热重启、自动化测试、Docker 支持,提高开发效率。
+  - title: 📚 技术栈齐全
+    details: Gin、GORM、Redis、Asynq、Casbin 等核心组件预集成,开箱即用。
+  - title: 🔧 生产级品质
+    details: 包含日志、监控、链路追踪等生产环境必备功能,支持快速扩展。
+  - title: 💡 最佳实践
+    details: 遵循 Go 社区最佳实践,提供完整的示例代码和文档指导。
+  - title: 🎯 业务聚焦
+    details: 脚手架处理技术细节,团队可专注于业务逻辑开发,快速迭代。
 ---
 

@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "Bingo"
-  text: "Production-grade Go backend scaffold with complete microservice architecture, core components, and best practices"
-  tagline: Out-of-the-box • Business-focused • Production-ready
+  text: "Build scalable Go backends with confidence"
+  tagline: Production-grade • Out-of-the-box • Production-ready
   actions:
     - theme: brand
       text: Get Started

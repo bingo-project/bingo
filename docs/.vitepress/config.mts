@@ -6,21 +6,18 @@ export default defineConfig({
   description: "Production-grade Go backend scaffold with complete microservice architecture",
 
   locales: {
-    root: {
+    en: {
       label: 'English',
       lang: 'en',
       title: "Bingo",
       description: "Production-grade Go backend scaffold with complete microservice architecture, core components, and best practices",
+      link: '/en/',
       themeConfig: {
         nav: [
           { text: 'Guide', link: '/en/guide/what-is-bingo' },
           { text: 'Essentials', link: '/en/essentials/architecture' },
           { text: 'Components', link: '/en/components/overview' },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
-          {
-            text: '中文',
-            link: '/zh/'
-          }
         ],
         sidebar: {
           '/en/guide/': [
@@ -54,7 +51,7 @@ export default defineConfig({
         }
       }
     },
-    zh: {
+    root: {
       label: '中文',
       lang: 'zh-CN',
       title: "Bingo",
@@ -66,10 +63,6 @@ export default defineConfig({
           { text: '核心概念', link: '/zh/essentials/architecture' },
           { text: '组件', link: '/zh/components/overview' },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
-          {
-            text: 'English',
-            link: '/'
-          }
         ],
         sidebar: {
           '/zh/guide/': [
