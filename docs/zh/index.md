@@ -9,10 +9,10 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /zh/guide/getting-started
+      link: /guide/getting-started
     - theme: alt
       text: 了解特性
-      link: /zh/guide/what-is-bingo
+      link: /guide/what-is-bingo
 
 features:
   - title: 🏗️ 清晰的架构设计
