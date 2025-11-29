@@ -218,6 +218,14 @@ export default defineConfig({
           { text: 'Guide', link: '/en/guide/what-is-bingo' },
           { text: 'Essentials', link: '/en/essentials/architecture' },
           { text: 'Components', link: '/en/components/overview' },
+          {
+            text: 'More',
+            items: [
+              { text: 'Development Standards', link: '/en/development/standards' },
+              { text: 'Docker Deployment', link: '/en/deployment/docker' },
+              { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
+            ]
+          },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
         ],
         sidebar: {
@@ -248,7 +256,7 @@ export default defineConfig({
                 { text: 'API Server', link: '/en/essentials/apiserver' },
                 // { text: 'Admin Server', link: '/en/essentials/admserver' },
                 { text: 'Scheduler', link: '/en/essentials/scheduler' },
-                { text: 'Bot Notification', link: '/en/essentials/bot' }
+                { text: 'Bot Service', link: '/en/essentials/bot' }
               ]
             }
           ],
