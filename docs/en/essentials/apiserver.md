@@ -1,3 +1,8 @@
+---
+title: API Server Guide - Bingo Go Core Microservice
+description: Deep dive into Bingo API Server architecture, including HTTP RESTful API, gRPC inter-service communication, authentication, and performance optimization.
+---
+
 # API Server Guide
 
 The API Server is the core service in Bingo's microservice architecture. It provides user-facing APIs through three communication protocols: HTTP, gRPC, and WebSocket, supporting diverse business scenarios.
@@ -456,8 +461,6 @@ All instances share the same database and cache, allowing you to add or remove i
 
 A: WebSocket is currently in development. We plan to release it in v1.2.0. Stay tuned!
 
-## Next Steps
+## Next Step
 
-- [Layered Design](./layered-design.md) - Understand API Server's internal architecture
-- [Core Components](../components/overview.md) - Learn about dependencies
-- [Deployment Guide](../deployment/docker.md) - How to deploy API Server
+- [Scheduler](./scheduler.md) - Learn about scheduled tasks and async queue service

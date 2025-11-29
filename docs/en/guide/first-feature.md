@@ -1,3 +1,8 @@
+---
+title: Develop Your First Feature - Bingo Go Development Tutorial
+description: Learn the complete Bingo Go microservices framework development workflow by building an article management feature, including Model, Store, Biz, and Controller layer implementations.
+---
+
 # Develop Your First Feature
 
 This guide walks you through developing your first feature in Bingo using the code generation tools and following best practices.
@@ -348,16 +353,6 @@ func TestCreatePost(t *testing.T) {
 }
 ```
 
-## Next Steps
+## Next Step
 
-- Implement additional features
-- Add authentication and authorization
-- Set up database migrations
-- Deploy to production
-- Monitor and optimize performance
-
-## See Also
-
-- [Project Structure](./project-structure.md) - Understanding code organization
-- [Layered Architecture](../essentials/layered-design.md) - Deep dive into layers
-- [Development Standards](../development/standards.md) - Follow coding standards
+- [Using bingoctl](./using-bingoctl.md) - Boost development efficiency with the code generator

@@ -1,3 +1,8 @@
+---
+title: Development Standards - Bingo Go Project Code Style and Conventions
+description: Learn about Bingo Go microservices project development standards, including naming conventions, error handling, logging, comments, database conventions, and Git workflow.
+---
+
 # Development Standards
 
 This document defines coding standards and development conventions for the Bingo project.
@@ -452,6 +457,6 @@ make format
 make swagger
 ```
 
-## Next Steps
+## Next Step
 
-Additional documentation for business development guide, testing guide, and best practices is coming soon.
+- [Docker Deployment](../deployment/docker.md) - Deploy Bingo projects using Docker

@@ -190,12 +190,9 @@ make swagger
 make clean
 ```
 
-## Next Steps
+## Next Step
 
-- [Using bingoctl](./using-bingoctl.md) - Deep dive into bingoctl's powerful features
-- [Develop Your First Feature](./first-feature.md) - Learn Bingo development through examples
 - [Project Structure](./project-structure.md) - Understand project directory organization
-- [Layered Architecture](../essentials/layered-design.md) - Understand three-layer architecture design
 
 ## Troubleshooting
 

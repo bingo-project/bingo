@@ -1,3 +1,8 @@
+---
+title: Layered Architecture - Bingo Go Three-Layer Design Guide
+description: Deep dive into Bingo's Controller, Biz, Store three-layer architecture design, including layer responsibilities, code examples, and best practices.
+---
+
 # Layered Architecture in Detail
 
 Bingo adopts a classic three-layer architecture design. This document explains the responsibility and design principles of each layer.
@@ -418,7 +423,6 @@ func (s *userStore) Create(ctx context.Context, user *model.User) error {
 }
 ```
 
-## Next Steps
+## Next Step
 
-- [Develop Your First Feature](../guide/first-feature.md) - Practice layered architecture
-- [Development Standards](../development/standards.md) - Code style and conventions
+- [Store Package Design](./store.md) - Deep dive into the generic data access layer design

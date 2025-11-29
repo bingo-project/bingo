@@ -1,3 +1,8 @@
+---
+title: Bot Service - Bingo Telegram/Discord Integration
+description: Learn about Bingo Bot, a multi-platform bot service supporting Telegram and Discord with service management, notifications, and channel subscriptions.
+---
+
 # Bot Service
 
 Bingo Bot is a multi-platform bot service supporting Telegram and Discord, providing service management, notification delivery, and channel subscription features.
@@ -520,7 +525,6 @@ func (ctrl *ServerController) SendReport(c telebot.Context) error {
 - [Telebot Documentation](https://pkg.go.dev/gopkg.in/telebot.v3)
 - [DiscordGo Documentation](https://pkg.go.dev/github.com/bwmarrin/discordgo)
 
-## Next Steps
+## Next Step
 
-- Learn how [Scheduler](/essentials/scheduler) sends scheduled notifications
-- Explore [API Server](/essentials/apiserver) integration
+- [Core Components Overview](../components/overview.md) - Learn about the framework's core components

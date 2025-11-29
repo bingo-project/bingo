@@ -1,3 +1,8 @@
+---
+title: Using bingoctl - Bingo Go CLI Tool Guide
+description: Master the bingoctl CLI tool to create projects, generate CRUD code, database models, migrations, and more. Boost your Bingo Go microservices development efficiency.
+---
+
 # Using bingoctl
 
 [bingoctl](https://github.com/bingo-project/bingoctl) is the official CLI tool for the Bingo framework, used for quickly creating projects and generating code, significantly improving development efficiency.
@@ -523,11 +528,9 @@ A: They are two different tools:
 - **bingoctl (CLI tool)**: Independent project scaffold and code generation tool
 - **cmd/bingoctl (project component)**: Built-in CLI tool in Bingo projects for database migration etc.
 
-## Next Steps
+## Next Step
 
-- [Develop Your First Feature](./first-feature.md) - Develop business logic based on generated code
-- [Project Structure](./project-structure.md) - Understand generated code structure
-- [Layered Architecture](../essentials/layered-design.md) - Understand layer responsibilities
+- [Overall Architecture](../essentials/architecture.md) - Deep dive into microservices architecture design
 
 ## Reference Resources
 

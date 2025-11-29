@@ -1,3 +1,8 @@
+---
+title: Docker Deployment - Bingo Go Containerization Guide
+description: Learn how to containerize and deploy Bingo Go microservices applications using Docker and Docker Compose, including multi-stage builds, development and production configurations.
+---
+
 # Docker Deployment
 
 This guide explains how to containerize and deploy Bingo applications using Docker.
@@ -363,12 +368,9 @@ kill -9 <PID>
 7. **Resource Limits**: Set CPU and memory limits
 8. **Logging**: Redirect logs to stdout/stderr for Docker logs
 
-## Next Steps
+## Next Step
 
-- Deploy to Kubernetes for production orchestration
-- Set up CI/CD pipeline for automated builds
-- Configure monitoring and logging
-- Implement auto-scaling policies
+- [Microservice Decomposition](../advanced/microservices.md) - Strategies for splitting monolithic applications into microservices
 
 ## References
 

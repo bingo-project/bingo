@@ -228,8 +228,6 @@ Load Balancer ─────┤
                     └──────────────┘
 ```
 
-## Next Steps
+## Next Step
 
-- [Layered Architecture Details](./layered-design.md) - Deep dive into each layer
-- [Store Layer Design](./store.md) - Understand data access patterns
-- [Development Standards](../development/standards.md) - Follow best practices
+- [Layered Architecture in Detail](./layered-design.md) - Understand the internal architecture of each service

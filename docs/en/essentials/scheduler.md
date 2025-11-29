@@ -1,3 +1,8 @@
+---
+title: Scheduler - Bingo Go Scheduled Tasks and Async Queue
+description: Learn about Bingo Scheduler, an Asynq-based task scheduling service supporting queue jobs, static cron jobs, and dynamic periodic tasks.
+---
+
 # Scheduler
 
 Bingo Scheduler is a task scheduling service built on [Asynq](https://github.com/hibiken/asynq), supporting queue jobs, static periodic tasks, and dynamic periodic tasks.
@@ -439,6 +444,6 @@ func HandleDataSync(ctx context.Context, t *asynq.Task) error {
 - [Asynq Official Documentation](https://github.com/hibiken/asynq) - Underlying task queue implementation
 - [Cron Expression Generator](https://crontab.guru/) - Online cron expression tester
 
-## Next Steps
+## Next Step
 
-- Explore [Bot Service](/en/essentials/bot) for receiving scheduled notifications
+- [Bot Service](./bot.md) - Learn about Telegram/Discord bot integration

@@ -89,8 +89,6 @@ These built-in features are mainly for:
 - Redis 6.0+
 - Docker & Docker Compose (optional)
 
-## Next Steps
+## Next Step
 
 - [Getting Started](./getting-started.md) - Launch a project in 10 minutes
-- [Project Structure](./project-structure.md) - Understand the directory structure
-- [Core Architecture](../essentials/architecture.md) - Deep dive into architectural design

@@ -1,3 +1,8 @@
+---
+title: Microservice Decomposition - Bingo Go Architecture Evolution Guide
+description: Learn when and how to decompose Bingo Go monolithic applications into microservices, including DDD principles, service discovery, distributed transactions, and API gateway patterns.
+---
+
 # Microservice Decomposition
 
 When business complexity increases, you can decompose the monolithic application into multiple independent microservices. This document explains how to perform microservice decomposition.
@@ -381,6 +386,6 @@ func MetricsMiddleware(serviceName string) gin.HandlerFunc {
 5. **Complete monitoring**: Each service needs monitoring and logging
 6. **Version management**: Versioned APIs with backward compatibility
 
-## Next Steps
+## Next Step
 
-Additional documentation for service discovery, distributed tracing, and performance optimization is coming soon.
+Congratulations! You've completed the Bingo documentation. Return to the [Introduction](../guide/what-is-bingo.md) to revisit any topics, or start building your project with confidence.

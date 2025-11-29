@@ -1,3 +1,8 @@
+---
+title: Project Structure - Bingo Go Microservices Directory Organization
+description: Understand the Bingo Go microservices framework project directory structure, including cmd, internal, pkg directories and the responsibilities of each file.
+---
+
 # Project Structure
 
 This document describes the directory structure of a Bingo project and the responsibility of each module.
@@ -151,8 +156,6 @@ log:
 4. **Constants**: Keep magic numbers and strings in dedicated constant files
 5. **Error Handling**: Use custom error types for better error handling
 
-## Next Steps
+## Next Step
 
-- [Layered Architecture](../essentials/layered-design.md) - Understand the three-layer architecture in detail
-- [Core Architecture](../essentials/architecture.md) - Learn the overall system design
-- [Development Standards](../development/standards.md) - Follow development best practices
+- [Develop Your First Feature](./first-feature.md) - Learn layer responsibilities through hands-on practice

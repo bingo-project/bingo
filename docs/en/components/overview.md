@@ -1,315 +1,280 @@
+---
+title: Core Components Overview - Bingo Go Microservices Framework Components
+description: Learn about Bingo Go microservices framework core components, including Bootstrap initialization, Redis caching, Swagger documentation, parameter validation, and error handling.
+---
+
 # Core Components Overview
 
-Bingo comes with a series of out-of-the-box core components. This document introduces the functionality and use cases of each component.
+Bingo includes a set of out-of-the-box core components. This document introduces the functionality and usage of each component.
 
 ## Component List
 
 ### Basic Components
 
-#### Web Framework - Gin
+| Component | Description | Original Package |
+|-----------|-------------|------------------|
+| **Bootstrap** | Application initialization, unified startup flow | `internal/pkg/bootstrap` |
+| **Facade** | Global component access, singleton pattern | `internal/pkg/facade` |
+| **Logger** | Zap-based structured logging | [component-base/log](https://github.com/bingo-project/component-base) |
+| **Database** | GORM database wrapper | [gorm.io/gorm](https://gorm.io) |
+| **Redis** | Redis cache wrapper | [go-redis/redis](https://github.com/redis/go-redis) |
 
-**Purpose**: High-performance HTTP server framework
+### Authentication
 
-**Key Features**:
-- Fast routing
-- Middleware support
-- Parameter binding
-- JSON validation
+| Component | Description | Original Package |
+|-----------|-------------|------------------|
+| **JWT** | JWT authentication | [golang-jwt/jwt](https://github.com/golang-jwt/jwt) |
+| **Casbin** | RBAC permission control | [casbin/casbin](https://github.com/casbin/casbin) |
 
-**Usage Example**:
+### Async Tasks
+
+| Component | Description | Original Package |
+|-----------|-------------|------------------|
+| **Asynq** | Task queue and scheduled tasks | [hibiken/asynq](https://github.com/hibiken/asynq) |
+
+### Other Components
+
+| Component | Description | Original Package |
+|-----------|-------------|------------------|
+| **Swagger** | API documentation generation | [swaggo/swag](https://github.com/swaggo/swag) |
+| **Validator** | Parameter validation | [go-playground/validator](https://github.com/go-playground/validator) |
+| **Snowflake** | Distributed ID generation | [bwmarrin/snowflake](https://github.com/bwmarrin/snowflake) |
+
+## Bootstrap and Facade
+
+Bingo uses Bootstrap for application initialization and Facade for global component access.
+
+### Bootstrap Initialization
+
+`internal/pkg/bootstrap/app.go` defines the unified startup flow:
+
 ```go
-func getUserHandler(c *gin.Context) {
-    userID := c.Param("id")
-    user, err := biz.GetUser(c, userID)
-    c.JSON(200, user)
+// Boot initializes all core components
+func Boot() {
+    InitLog()        // Logging system
+    InitTimezone()   // Timezone settings
+    InitSnowflake()  // Distributed ID
+    InitMail()       // Email service
+    InitCache()      // Cache service
+    InitAES()        // Encryption component
+    InitQueue()      // Task queue
 }
 ```
 
-**Documentation**: [Gin](https://github.com/gin-gonic/gin)
+### Facade Global Access
 
-#### ORM - GORM
+`internal/pkg/facade/facade.go` provides global component instances:
 
-**Purpose**: Object-Relational Mapping for database operations
-
-**Key Features**:
-- Support for MySQL, PostgreSQL, SQLite
-- Hooks and callbacks
-- Association management
-- Query builder
-
-**Usage Example**:
 ```go
+import "bingo/internal/pkg/facade"
+
+// Access configuration
+cfg := facade.Config
+
+// Access Redis
+facade.Redis.Set(ctx, "key", "value", time.Hour)
+
+// Access cache service
+facade.Cache.Set(ctx, "key", value, time.Hour)
+
+// Generate distributed ID
+id := facade.Snowflake.Generate()
+
+// Send email
+facade.Mail.Send(to, subject, body)
+```
+
+### Initialization Order
+
+```
+1. Load config (InitConfig)
+    ↓
+2. Initialize logging (InitLog)
+    ↓
+3. Initialize timezone (InitTimezone)
+    ↓
+4. Initialize distributed ID (InitSnowflake)
+    ↓
+5. Initialize cache (InitCache)
+    ↓
+6. Initialize database (InitDB)
+    ↓
+7. Initialize Store (NewStore)
+```
+
+## Redis
+
+Based on [go-redis](https://github.com/redis/go-redis).
+
+### Usage
+
+```go
+import "bingo/internal/pkg/facade"
+
+// Access Redis client through Facade
+rdb := facade.Redis
+
+// Basic operations
+rdb.Set(ctx, "key", "value", time.Hour)
+val, err := rdb.Get(ctx, "key").Result()
+
+// Cache objects
+type User struct {
+    ID   uint64
+    Name string
+}
+
+// Write to cache
+user := &User{ID: 1, Name: "test"}
+data, _ := json.Marshal(user)
+rdb.Set(ctx, "user:1", data, time.Hour)
+
+// Read from cache
+data, _ := rdb.Get(ctx, "user:1").Bytes()
 var user User
-db.First(&user, "id = ?", userID)
+json.Unmarshal(data, &user)
 ```
 
-**Documentation**: [GORM](https://gorm.io)
+> For detailed usage, refer to the [go-redis documentation](https://redis.uptrace.dev/)
 
-#### Caching - Redis
+## Swagger
 
-**Purpose**: Distributed caching and session management
+API documentation auto-generation based on [swaggo/swag](https://github.com/swaggo/swag).
 
-**Key Features**:
-- Key-value storage
-- Expiration support
-- Pub/Sub messaging
-- Data persistence
+### Annotation Example
 
-**Usage Example**:
 ```go
-val, err := redisClient.Get(ctx, "user:123").Result()
-redisClient.Set(ctx, "user:123", userData, 1*time.Hour)
+// @Summary      Create user
+// @Description  Create a new user account
+// @Tags         User Management
+// @Accept       json
+// @Produce      json
+// @Param        body  body      CreateUserRequest  true  "User information"
+// @Success      200   {object}  UserResponse
+// @Failure      400   {object}  ErrorResponse
+// @Router       /v1/users [post]
+func (ctrl *UserController) Create(c *gin.Context) {
+    // ...
+}
 ```
 
-**Documentation**: [Redis](https://redis.io)
+### Generate Documentation
 
-### Advanced Components
-
-#### Task Queue - Asynq
-
-**Purpose**: Reliable asynchronous task processing
-
-**Key Features**:
-- Task persistence
-- Retry mechanism
-- Priority queues
-- Result tracking
-
-**Use Cases**:
-- Email sending
-- Image processing
-- Data export
-- Batch operations
-
-**Usage Example**:
-```go
-task := asynq.NewTask("send_email", payload)
-info, err := client.Enqueue(task)
-```
-
-**Documentation**: [Asynq](https://github.com/hibiken/asynq)
-
-#### Permission Control - Casbin
-
-**Purpose**: Flexible RBAC (Role-Based Access Control) engine
-
-**Key Features**:
-- Role-based access control
-- Resource-based access control
-- ABAC (Attribute-Based Access Control)
-- Policy management
-
-**Use Cases**:
-- User permissions
-- API access control
-- Resource authorization
-
-**Example Policy**:
-```
-p, admin, /api/users, POST
-p, user, /api/profile, GET
-p, user, /api/profile, PUT
-```
-
-**Documentation**: [Casbin](https://casbin.org)
-
-#### Logging - Zap
-
-**Purpose**: High-performance structured logging
-
-**Key Features**:
-- Structured logging
-- Multiple log levels
-- Log rotation
-- Custom fields
-
-**Usage Example**:
-```go
-logger.Info("user created", zap.String("id", userID), zap.String("email", email))
-```
-
-**Documentation**: [Zap](https://github.com/uber-go/zap)
-
-#### API Documentation - Swagger
-
-**Purpose**: Auto-generate API documentation
-
-**Key Features**:
-- API endpoint documentation
-- Request/response schemas
-- Interactive testing
-- OpenAPI specification
-
-**Usage**:
 ```bash
 # Generate Swagger docs
 make swagger
 
-# Access at http://localhost:8080/swagger/index.html
+# Access documentation
+open http://localhost:8080/swagger/index.html
 ```
 
-**Documentation**: [Swag](https://github.com/swaggo/swag)
+> For detailed annotation syntax, refer to the [swag documentation](https://github.com/swaggo/swag#declarative-comments-format)
 
-#### Configuration Management - Viper
+## Validator
 
-**Purpose**: Configuration file management
+Parameter validation based on [go-playground/validator](https://github.com/go-playground/validator), integrated with the Gin framework.
 
-**Supported Formats**:
-- YAML
-- JSON
-- TOML
-- INI
+### Usage
 
-**Usage Example**:
 ```go
-viper.SetConfigName("config")
-viper.ReadInConfig()
-dbHost := viper.GetString("database.host")
-```
+type CreateUserRequest struct {
+    Username string `json:"username" binding:"required,min=3,max=20"`
+    Email    string `json:"email" binding:"required,email"`
+    Age      int    `json:"age" binding:"gte=18,lte=100"`
+    Password string `json:"password" binding:"required,min=6"`
+}
 
-**Documentation**: [Viper](https://github.com/spf13/viper)
+func (ctrl *UserController) Create(c *gin.Context) {
+    var req CreateUserRequest
 
-#### Authentication - JWT
+    // Gin auto-validation
+    if err := c.ShouldBindJSON(&req); err != nil {
+        core.WriteResponse(c, errno.ErrBind, nil)
+        return
+    }
 
-**Purpose**: Stateless authentication
-
-**Key Features**:
-- Token generation
-- Token validation
-- Claims management
-- Token refresh
-
-**Usage Example**:
-```go
-token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-tokenString, err := token.SignedString(secretKey)
-```
-
-**Documentation**: [golang-jwt](https://github.com/golang-jwt/jwt)
-
-#### Validation - Validator
-
-**Purpose**: Data structure validation
-
-**Key Features**:
-- Tag-based validation
-- Custom validators
-- Cross-field validation
-- Localized error messages
-
-**Usage Example**:
-```go
-type User struct {
-    Email string `validate:"required,email"`
-    Age   int    `validate:"min=18,max=100"`
+    // Validation passed, continue processing
 }
 ```
 
-**Documentation**: [Validator](https://github.com/go-playground/validator)
+### Common Validation Tags
 
-### Development Tools
+| Tag | Description |
+|-----|-------------|
+| `required` | Required field |
+| `min=3` | Minimum length/value |
+| `max=20` | Maximum length/value |
+| `email` | Email format |
+| `url` | URL format |
+| `oneof=a b` | Enum values |
+| `gte=18` | Greater than or equal |
+| `lte=100` | Less than or equal |
 
-#### CLI Tool - bingoctl
+> For a complete list of validation tags, refer to the [validator documentation](https://pkg.go.dev/github.com/go-playground/validator/v10)
 
-**Purpose**: Code generation and project management
+## Error Handling
 
-**Core Features**:
-- Project creation
-- Code generation (CRUD, Models, etc.)
-- Database migration
-- Configuration management
+Unified error handling component located in `internal/pkg/errno`.
 
-**Usage**:
-```bash
-bingoctl create github.com/myorg/myapp
-bingoctl make crud user
+### Define Error Codes
+
+```go
+// internal/pkg/errno/code.go
+var (
+    ErrUserNotFound = errno.New(10001, "User not found")
+    ErrInvalidToken = errno.New(10002, "Invalid token")
+)
 ```
 
-**Documentation**: [bingoctl](https://github.com/bingo-project/bingoctl)
+### Use Error Codes
 
-#### Hot Reload - Air
+```go
+// Return error in Biz layer
+if user == nil {
+    return nil, errno.ErrUserNotFound
+}
 
-**Purpose**: Development-time auto-reload
-
-**Features**:
-- Watch file changes
-- Auto-rebuild
-- Auto-restart
-- Preserve state
-
-**Configuration**:
-```bash
-cp .air.example.toml .air.toml
-air
+// Handle uniformly in Controller layer
+func (ctrl *UserController) Get(c *gin.Context) {
+    user, err := ctrl.biz.Users().Get(c.Request.Context(), id)
+    // Unified error response
+    core.WriteResponse(c, err, user)
+}
 ```
 
-**Documentation**: [Air](https://github.com/cosmtrek/air)
+### Error Response Format
 
-## Integration Patterns
-
-### Common Integration Scenarios
-
-#### Database + Cache Pattern
-```
-Request
-  ↓
-Query Cache
-  ↓ (miss)
-Query Database
-  ↓
-Update Cache
-  ↓
-Response
+```json
+{
+  "code": 10001,
+  "message": "User not found"
+}
 ```
 
-#### Task Queue Pattern
-```
-HTTP Request
-  ↓
-Create Task (Asynq)
-  ↓
-Return Immediately
-  ↓
-Background Worker Processes Task
-```
+## Extending Components
 
-#### Authentication Pattern
-```
-Login Request
-  ↓
-Validate Credentials
-  ↓
-Generate JWT Token
-  ↓
-Return Token
-  ↓
-Client Includes Token in Requests
-  ↓
-Validate Token with Casbin
+### Adding New Global Components
+
+1. Add variable definition in `internal/pkg/facade/facade.go`
+2. Add initialization function in `internal/pkg/bootstrap/`
+3. Call the initialization function in `Boot()`
+
+```go
+// 1. Add variable in facade.go
+var MyComponent *mypackage.Client
+
+// 2. Add initialization in bootstrap/
+func InitMyComponent() {
+    facade.MyComponent = mypackage.NewClient(facade.Config.MyComponent)
+}
+
+// 3. Call in app.go
+func Boot() {
+    // ... other initializations
+    InitMyComponent()
+}
 ```
 
-## Choosing the Right Components
+## Next Step
 
-| Scenario | Recommended Component |
-|----------|----------------------|
-| User authentication | JWT + Casbin |
-| User data storage | GORM + MySQL |
-| Session caching | Redis |
-| Heavy tasks | Asynq |
-| API documentation | Swagger |
-| Configuration management | Viper |
-| Data validation | Validator |
-| Logging | Zap |
-
-## Performance Considerations
-
-1. **Database**: Use connection pooling, optimize queries
-2. **Cache**: Set appropriate TTL, implement cache invalidation
-3. **Task Queue**: Monitor queue depth, adjust worker count
-4. **Logging**: Use appropriate log levels in production
-
-## Next Steps
-
-- [Core Architecture](../essentials/architecture.md) - Understand system design
-- [Layered Architecture](../essentials/layered-design.md) - Learn layer responsibilities
-- [Development Standards](../development/standards.md) - Follow best practices
+- [Development Standards](../development/standards.md) - Code style and best practices

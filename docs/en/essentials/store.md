@@ -1,3 +1,8 @@
+---
+title: Store Package Design - Bingo Go Generic Data Access Layer
+description: Learn the Bingo Go Store package design using generics and composition pattern, including Store[T] implementation, query builder, and transaction handling.
+---
+
 # Store Package Design
 
 ## Overview
@@ -311,9 +316,6 @@ func (ds *datastore) Users() UserStore {
 }
 ```
 
-## Related Content
+## Next Step
 
-- [Layered Architecture in Detail](./layered-design.md) - Understand Store layer's role in three-layer architecture
-- [Overall Architecture](./architecture.md) - Data access design in microservice architecture
-- [Store Naming Convention and Best Practices](../development/standards.md#store-naming-convention) - Development standards
-- [Develop Your First Feature](../guide/first-feature.md) - Practical application example
+- [API Server](./apiserver.md) - Learn about the core API service design and usage
