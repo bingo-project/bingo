@@ -5,6 +5,9 @@ export default defineConfig({
   title: "Bingo",
   description: "Production-grade Go backend scaffold with complete microservice architecture",
 
+  // 使用干净的 URL（无 .html 后缀）
+  cleanUrls: true,
+
   // 重写规则：将 zh/ 映射到根路径
   rewrites: {
     'zh/:rest*': ':rest*'

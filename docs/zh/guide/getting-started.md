@@ -1,3 +1,8 @@
+---
+title: 快速开始 - 10分钟上手 Bingo Go 微服务框架
+description: 使用 bingoctl 快速创建 Bingo Go 微服务项目，10分钟内启动并运行第一个 API。本指南提供完整的安装、配置和运行步骤，帮助你快速开始 Golang 后端开发。
+---
+
 # 快速开始
 
 本指南将帮助你在 10 分钟内启动 Bingo 项目并运行第一个 API。

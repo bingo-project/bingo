@@ -1,3 +1,8 @@
+---
+title: Getting Started - Quick Start with Bingo Go Microservices Framework
+description: Quickly create a Bingo Go microservices project using bingoctl in 10 minutes. Complete guide with installation, configuration and running steps to start Golang backend development.
+---
+
 # Getting Started
 
 This guide will help you launch a Bingo project and run your first API within 10 minutes.

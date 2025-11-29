@@ -37,7 +37,20 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Deploy to server
+      - name: Verify build output
+        run: |
+          echo "📦 Verifying build output..."
+          if [ ! -f "docs/.vitepress/dist/index.html" ]; then
+            echo "❌ Build failed: index.html not found"
+            exit 1
+          fi
+          if [ ! -f "docs/.vitepress/dist/sitemap.xml" ]; then
+            echo "❌ Build failed: sitemap.xml not found"
+            exit 1
+          fi
+          echo "✅ Build verification passed"
+
+      - name: Deploy files to server
         uses: easingthemes/ssh-deploy@main
         with:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -49,18 +62,99 @@ jobs:
           SCRIPT_BEFORE: |
             whoami
             ls -la /var/www/bingo/
-          SCRIPT_AFTER: |
-            echo "Deployment completed!"
-            ls -la /var/www/bingo/docs/
-            # 重启 Nginx（如果需要）
-            # sudo systemctl reload nginx
+
+      - name: Update Nginx configuration
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docs/.vitepress/nginx.conf"
+          target: "/tmp/"
+          strip_components: 2
+
+      - name: Apply Nginx configuration
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # 备份旧配置
+            if [ -f /etc/nginx/sites-available/bingoctl.dev ]; then
+              sudo cp /etc/nginx/sites-available/bingoctl.dev /etc/nginx/sites-available/bingoctl.dev.backup-$(date +%Y%m%d-%H%M%S)
+            fi
+
+            # 更新配置
+            sudo cp /tmp/nginx.conf /etc/nginx/sites-available/bingoctl.dev
+
+            # 测试配置
+            if sudo nginx -t; then
+              echo "✅ Nginx configuration is valid"
+              # 重载 Nginx
+              sudo systemctl reload nginx
+              echo "✅ Nginx reloaded successfully"
+            else
+              echo "❌ Nginx configuration test failed"
+              # 回滚到备份
+              sudo cp /etc/nginx/sites-available/bingoctl.dev.backup-$(date +%Y%m%d-%H%M%S) /etc/nginx/sites-available/bingoctl.dev
+              exit 1
+            fi
+
+            # 清理临时文件
+            rm /tmp/nginx.conf
+
+      - name: Verify deployment
+        if: success()
+        run: |
+          echo "🔍 Verifying deployment..."
+
+          # 等待几秒让服务器更新
+          sleep 5
+
+          # 测试首页
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://bingoctl.dev/)
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Homepage accessible (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Homepage returned HTTP $HTTP_CODE"
+          fi
+
+          # 测试 Clean URL
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://bingoctl.dev/guide/what-is-bingo)
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Clean URLs working (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Clean URL test returned HTTP $HTTP_CODE"
+          fi
+
+          # 测试重定向
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://bingoctl.dev/guide/what-is-bingo.html)
+          if [ "$HTTP_CODE" = "301" ]; then
+            echo "✅ Redirects working (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Redirect test returned HTTP $HTTP_CODE (expected 301)"
+          fi
+
+          # 测试 sitemap
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://bingoctl.dev/sitemap.xml)
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Sitemap accessible (HTTP $HTTP_CODE)"
+          else
+            echo "⚠️ Sitemap returned HTTP $HTTP_CODE"
+          fi
 
       - name: Deployment notification
         if: success()
         run: |
-          echo "✅ Documentation deployed successfully to bingoctl.dev"
+          echo "======================================"
+          echo "✅ Documentation deployed successfully!"
+          echo "======================================"
+          echo "🌐 Website: https://bingoctl.dev"
           echo "📅 Deployed at: $(date)"
           echo "📝 Commit: ${{ github.sha }}"
+          echo "🔗 Clean URLs: Enabled"
+          echo "======================================"
 
       - name: Deployment failed
         if: failure()

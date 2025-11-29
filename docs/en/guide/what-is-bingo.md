@@ -1,3 +1,8 @@
+---
+title: What is Bingo - Production-grade Go Microservices Scaffold Framework
+description: Bingo is a production-grade Go/Golang backend scaffold providing complete microservice architecture, core components and best practices. Pre-integrated with Gin, GORM, Redis, Asynq, supporting code generation and hot reload for scalable backend development.
+---
+
 # What is Bingo
 
 Bingo is a **production-grade Go backend scaffold** that provides a complete microservice architecture, core components, and best practices, helping teams quickly build scalable backend services.

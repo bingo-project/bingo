@@ -1,3 +1,8 @@
+---
+title: Bingo Architecture - Go Microservices Architecture Design Guide
+description: Deep dive into Bingo Go microservices framework architecture design, including service composition, layered architecture, and tech stack. Learn how to build scalable Golang backend systems with Gin, GORM, and Redis.
+---
+
 # Overall Architecture
 
 Bingo adopts a **microservice architecture** with a clear **three-layer design**, enabling teams to build scalable and maintainable backend systems.

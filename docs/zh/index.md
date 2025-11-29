@@ -1,6 +1,12 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+title: Bingo - 生产级 Go 微服务脚手架 | Golang 后端开发框架
+description: Bingo 是一个生产级的 Go/Golang 微服务脚手架框架，提供完整的后端开发解决方案。内置 Gin、GORM、Redis、Asynq 等核心组件，支持微服务架构、代码生成、热重启，帮助团队快速搭建可扩展的 Go 后端服务。
+head:
+  - - meta
+    - name: keywords
+      content: Go微服务,Golang框架,Go脚手架,Golang后端开发,Go微服务框架,Golang中后台,Go后端框架,微服务架构,Bingo,bingoctl,Go开发框架,Golang Web框架
 
 hero:
   name: "Bingo"

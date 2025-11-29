@@ -1,3 +1,8 @@
+---
+title: Bingo 整体架构 - Go 微服务架构设计详解
+description: 深入了解 Bingo Go 微服务框架的整体架构设计，包括服务组成、分层架构、技术栈选型。了解如何使用 Gin、GORM、Redis 构建可扩展的 Golang 后端系统。
+---
+
 # 整体架构
 
 本文介绍 Bingo 的整体架构设计和服务组成。

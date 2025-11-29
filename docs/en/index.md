@@ -1,6 +1,12 @@
 ---
 # https://vitepress.dev/reference/default-theme-home-page
 layout: home
+title: Bingo - Production-grade Go Microservices Scaffold | Golang Backend Framework
+description: Bingo is a production-grade Go/Golang microservices scaffold framework providing complete backend development solutions. Pre-integrated with Gin, GORM, Redis, Asynq and other core components, supporting microservice architecture, code generation, and hot reload to help teams quickly build scalable Go backend services.
+head:
+  - - meta
+    - name: keywords
+      content: Go microservices,Golang framework,Go scaffold,Golang backend,Go microservices framework,Go backend framework,microservice architecture,Bingo,bingoctl,Go development framework,Golang web framework
 
 hero:
   name: "Bingo"

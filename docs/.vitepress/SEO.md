@@ -474,14 +474,23 @@ head: [
 - [x] 注册必应网站管理员
 - [x] 验证必应站点
 
-### Phase 3：内容优化（持续）
-- [ ] 优化所有页面标题和描述
-- [ ] 添加内部链接
-- [ ] 优化关键词布局
+### Phase 3：内容优化（持续）🔄 进行中
+- [x] 优化首页标题和描述（中英文）
+- [x] 优化关键页面的 frontmatter（getting-started, what-is-bingo, architecture）
+- [x] 在首页添加关键词 meta 标签
+- [x] 优化关键词布局（Go微服务、Golang框架、脚手架等）
+- [x] 启用 Clean URLs（修复 Google 索引的 .html/ 问题）✅ 2025-11-29
+- [x] 配置 URL 重定向规则（.html 和 .html/ 自动重定向到 clean URL）
+- [ ] 添加更多内部链接
 - [ ] 完善文档内容
 
-### Phase 4：推广引流（持续）
-- [ ] 优化 GitHub README
+### Phase 4：推广引流（持续）🔄 进行中
+- [x] 优化 GitHub README（添加醒目的文档链接和关键词）
+- [x] 创建百度主动推送脚本 ✅ docs/.vitepress/baidu-push.sh
+- [x] 生成 URL 列表文件 ✅ docs/.vitepress/seo-urls.txt
+- [x] 创建 Google 提交指南 ✅ docs/.vitepress/google-submit.md
+- [x] 创建自动化部署脚本 ✅ docs/.vitepress/deploy.sh
+- [x] 创建 URL 验证脚本 ✅ docs/.vitepress/verify-urls.sh
 - [ ] 发布技术文章（每月 2-4 篇）
 - [ ] 参与社区讨论
 - [ ] 申请收录到 awesome 列表
@@ -497,7 +506,72 @@ head: [
 
 ---
 
-## 八、预期效果
+## 八、SEO 工具和脚本
+
+### 8.1 百度主动推送脚本
+**文件：** `docs/.vitepress/baidu-push.sh`
+
+**功能：**
+- 一键推送所有 URL 到百度搜索资源平台
+- 自动读取 URL 列表并批量提交
+- 返回推送结果统计
+
+**使用步骤：**
+1. 访问 https://ziyuan.baidu.com/ 注册并验证站点
+2. 在「数据引入」→「链接提交」→「API提交」获取 token
+3. 编辑脚本，将 `YOUR_TOKEN` 替换为实际 token
+4. 运行：`bash docs/.vitepress/baidu-push.sh`
+
+**推送频率：**
+- 首次推送：立即执行
+- 更新文档后：重新推送
+- 定期推送：每月 1-2 次
+
+### 8.2 URL 列表文件
+**文件：** `docs/.vitepress/seo-urls.txt`
+
+**内容：**
+- 包含所有 31 个文档页面的完整 URL
+- 格式：每行一个完整 URL（https://bingoctl.dev/...）
+
+**用途：**
+- 百度主动推送
+- Google 批量提交（如需使用 Indexing API）
+- 其他搜索引擎提交
+- 监控页面收录状态
+
+**更新方法：**
+当添加新页面时，需要重新生成此文件：
+```bash
+cd docs/.vitepress/dist
+find . -name "*.html" | sed 's|^\./||' | sed 's|/index\.html$|/|' | sed 's|\.html$||' | sed 's|^|https://bingoctl.dev/|' | sort > ../seo-urls.txt
+```
+
+### 8.3 Google 提交指南
+**文件：** `docs/.vitepress/google-submit.md`
+
+**内容：**
+- Google Search Console 完整使用教程
+- 手动请求索引的详细步骤
+- 重要页面优先级列表
+- 监控和测试方法
+- 常见问题解答
+
+**关键操作：**
+使用「网址检查」工具手动请求索引以下页面：
+1. 首页（中英文）
+2. 快速开始页面
+3. 核心概念页面
+4. 架构说明页面
+
+**注意事项：**
+- 每天有配额限制（约 10-20 个 URL）
+- 每个 URL 请求后需等待几分钟
+- 优先提交高价值页面
+
+---
+
+## 九、预期效果
 ### 短期（1-3 个月）
 + 搜索引擎开始收录主要页面
 + 品牌词搜索出现在前列
@@ -516,7 +590,7 @@ head: [
 
 ---
 
-## 九、常见问题
+## 十、常见问题
 ### Q1: 为什么搜索引擎没收录？
 **可能原因：**
 
@@ -548,7 +622,7 @@ head: [
 
 ---
 
-## 十、工具资源
+## 十一、工具资源
 ### SEO 工具
 + **站长工具：** [https://tool.chinaz.com/](https://tool.chinaz.com/)
 + **爱站网：** [https://www.aizhan.com/](https://www.aizhan.com/)
@@ -568,7 +642,7 @@ head: [
 
 ---
 
-## 十一、联系和反馈
+## 十二、联系和反馈
 如有 SEO 优化相关问题，请通过以下方式联系：
 
 + GitHub Issues
@@ -577,7 +651,17 @@ head: [
 
 ---
 
-**最后更新：** 2025-11-28
+**最后更新：** 2025-11-29
 **维护者：** Bingo Team
-**当前进度：** Phase 1 ✅ 已完成 | Phase 2 🔄 进行中（Google & Bing 已提交）| Phase 5 🔄 进行中（Google Analytics 已启用）
+**当前进度：**
+- Phase 1 ✅ 已完成（基础配置）
+- Phase 2 🔄 进行中（Google & Bing 已提交，待完成百度提交）
+- Phase 3 🔄 进行中（首页和关键页面已优化）
+- Phase 4 🔄 进行中（GitHub README 已优化，推送脚本已创建）
+- Phase 5 🔄 进行中（Google Analytics 已启用）
 
+**下一步行动：**
+1. ⚠️ **立即执行**：访问 Google Search Console 手动请求索引（参考 `google-submit.md`）
+2. ⚠️ **立即执行**：注册百度搜索资源平台并运行 `baidu-push.sh`
+3. 重新构建并部署网站
+4. 1 周后检查收录情况：`site:bingoctl.dev`

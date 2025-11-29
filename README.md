@@ -1,16 +1,33 @@
-# Bingo
+# Bingo - 生产级 Go 微服务脚手架
 
-一个开箱即用的 Go 语言中后台脚手架,基于微服务架构设计,让开发者只需关注业务开发。
+> 一个开箱即用的 Go/Golang 微服务脚手架框架，基于微服务架构设计，让开发者只需关注业务开发。
 
-## 📖 在线文档
+[![Go Version](https://img.shields.io/badge/Go-1.23%2B-00ADD8?logo=go)](https://go.dev)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-- 🌐 **在线文档**: [https://bingoctl.dev](https://bingoctl.dev)
-- 🇨🇳 **中文文档**: [https://bingoctl.dev/zh/](https://bingoctl.dev/zh/)
-- 🇬🇧 **English Docs**: [https://bingoctl.dev/en/](https://bingoctl.dev/en/)
+## 🌐 完整文档
 
-## 项目定位
+📚 **官方文档网站**: [bingoctl.dev](https://bingoctl.dev)
 
-Bingo 是一个**生产级的 Go 中后台脚手架**,提供了完整的微服务架构、核心组件和最佳实践,帮助团队快速搭建可扩展的后端服务。
+**快速导航**:
+- 🚀 [快速开始](https://bingoctl.dev/guide/getting-started) - 10 分钟快速上手
+- 📖 [什么是 Bingo](https://bingoctl.dev/guide/what-is-bingo) - 了解核心特性
+- 🏗️ [整体架构](https://bingoctl.dev/essentials/architecture) - 微服务架构设计
+- 🛠️ [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl) - CLI 工具指南
+- 🇬🇧 [English Documentation](https://bingoctl.dev/en/) - English version
+
+## 🎯 项目定位
+
+**Bingo** 是一个**生产级的 Go/Golang 微服务脚手架框架**，提供完整的：
+- ✅ 微服务架构设计（Controller → Biz → Store 三层架构）
+- ✅ 核心组件预集成（Gin、GORM、Redis、Asynq、Casbin）
+- ✅ 工程化能力（代码生成、热重启、Docker 支持）
+- ✅ 生产级特性（日志、监控、链路追踪）
+- ✅ 最佳实践和完整文档
+
+**适用场景**: 中后台系统、微服务项目、RESTful API、gRPC 服务
+
+🔗 **相关项目**: [bingoctl](https://github.com/bingo-project/bingoctl) - Bingo 项目脚手架工具
 
 ## 核心特性
 
