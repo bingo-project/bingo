@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Bingo",
-  description: "Production-grade Go backend scaffold with complete microservice architecture",
+  description: "A production-ready Go microservice scaffold framework for rapid development",
 
   // 使用干净的 URL（无 .html 后缀）
   cleanUrls: true,
@@ -124,7 +124,7 @@ export default defineConfig({
       label: '中文',
       lang: 'zh-CN',
       title: "Bingo",
-      description: "Bingo 是一个生产级的 Go 中后台脚手架,提供了完整的微服务架构、核心组件和最佳实践,帮助团队快速搭建可扩展的后端服务。",
+      description: "生产级 Go 微服务脚手架，让开发者专注业务",
       themeConfig: {
         nav: [
           { text: '指南', link: '/guide/what-is-bingo' },
@@ -211,7 +211,7 @@ export default defineConfig({
       label: 'English',
       lang: 'en',
       title: "Bingo",
-      description: "Production-grade Go backend scaffold with complete microservice architecture, core components, and best practices",
+      description: "A production-ready Go microservice scaffold framework for rapid development",
       link: '/en/',
       themeConfig: {
         nav: [
@@ -303,7 +303,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'Released under the MIT License.',
+      message: 'Released under the Apache 2.0 License.',
       copyright: 'Copyright © 2025-present Bingo Team'
     },
 
