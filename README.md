@@ -112,7 +112,7 @@ bingoctl create myapp --init-git=false
 bingoctl create myapp -r v1.2.3
 ```
 
-详细的 bingoctl 使用指南请查看 [使用 bingoctl](./docs/guide/using-bingoctl.md)。
+详细的 bingoctl 使用指南请查看 [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl)。
 
 ### 方式二: 克隆 Bingo 仓库
 
@@ -184,41 +184,41 @@ open http://localhost:8080/swagger/index.html
 
 ### 📖 推荐学习路径
 
-**初学者**：[什么是Bingo](./docs/guide/what-is-bingo.md) → [快速开始](./docs/guide/getting-started.md) → [项目结构](./docs/guide/project-structure.md) → [开发第一个功能](./docs/guide/first-feature.md)
+**初学者**：[什么是Bingo](https://bingoctl.dev/guide/what-is-bingo) → [快速开始](https://bingoctl.dev/guide/getting-started) → [项目结构](https://bingoctl.dev/guide/project-structure) → [开发第一个功能](https://bingoctl.dev/guide/first-feature)
 
-**深入学习**：[整体架构](./docs/essentials/architecture.md) → [分层架构详解](./docs/essentials/layered-design.md) → [Store包设计](./docs/essentials/store.md) → [开发规范](./docs/development/standards.md)
+**深入学习**：[整体架构](https://bingoctl.dev/essentials/architecture) → [分层架构详解](https://bingoctl.dev/essentials/layered-design) → [Store包设计](https://bingoctl.dev/essentials/store) → [开发规范](https://bingoctl.dev/development/standards)
 
-**生产部署**：[Docker部署](./docs/deployment/docker.md) → [常见问题排查](./docs/deployment/troubleshooting.md) → [微服务拆分](./docs/advanced/microservices.md)
+**生产部署**：[Docker部署](https://bingoctl.dev/deployment/docker) → [微服务拆分](https://bingoctl.dev/advanced/microservices)
 
 ### 📚 新手入门
 
-- [什么是 Bingo](./docs/guide/what-is-bingo.md) - 了解 Bingo 的定位和特性
-- [快速开始](./docs/guide/getting-started.md) - 10 分钟快速启动项目
-- [使用 bingoctl](./docs/guide/using-bingoctl.md) - CLI 工具完整指南
-- [项目结构](./docs/guide/project-structure.md) - 理解项目目录组织
-- [开发第一个功能](./docs/guide/first-feature.md) - 通过实例学习开发流程
+- [什么是 Bingo](https://bingoctl.dev/guide/what-is-bingo) - 了解 Bingo 的定位和特性
+- [快速开始](https://bingoctl.dev/guide/getting-started) - 10 分钟快速启动项目
+- [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl) - CLI 工具完整指南
+- [项目结构](https://bingoctl.dev/guide/project-structure) - 理解项目目录组织
+- [开发第一个功能](https://bingoctl.dev/guide/first-feature) - 通过实例学习开发流程
 
 ### 🏗️ 核心概念
 
-- [整体架构](./docs/essentials/architecture.md) - 理解微服务架构设计
-- [分层架构详解](./docs/essentials/layered-design.md) - 掌握三层架构模式
-- [Store 包设计](./docs/essentials/store.md) - 数据访问层设计原理
+- [整体架构](https://bingoctl.dev/essentials/architecture) - 理解微服务架构设计
+- [分层架构详解](https://bingoctl.dev/essentials/layered-design) - 掌握三层架构模式
+- [Store 包设计](https://bingoctl.dev/essentials/store) - 数据访问层设计原理
 
 ### 💻 开发指南
 
-- [开发规范](./docs/development/standards.md) - 代码规范和最佳实践
+- [开发规范](https://bingoctl.dev/development/standards) - 代码规范和最佳实践
 
 ### 🧩 组件参考
 
-- [核心组件概览](./docs/components/overview.md) - 了解所有可用组件
+- [核心组件概览](https://bingoctl.dev/components/overview) - 了解所有可用组件
 
 ### 🚀 部署运维
 
-- [Docker 部署](./docs/deployment/docker.md) - 容器化部署指南
+- [Docker 部署](https://bingoctl.dev/deployment/docker) - 容器化部署指南
 
 ### 🔬 进阶主题
 
-- [微服务拆分](./docs/advanced/microservices.md) - 大型项目的微服务拆分
+- [微服务拆分](https://bingoctl.dev/advanced/microservices) - 大型项目的微服务拆分
 
 ## 常用命令
 
@@ -265,7 +265,7 @@ bingo/
 └── scripts/                # 脚本工具
 ```
 
-详细说明请查看 [项目结构文档](./docs/guide/project-structure.md)。
+详细说明请查看 [项目结构文档](https://bingoctl.dev/guide/project-structure)。
 
 ## 贡献指南
 
