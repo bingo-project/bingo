@@ -15,9 +15,9 @@
 1. ✅ 构建 VitePress 文档（启用 Clean URLs）
 2. ✅ 验证构建产物
 3. ✅ 部署文件到服务器
-4. ✅ 更新 Nginx 配置（支持 Clean URLs 和重定向）
-5. ✅ 重载 Nginx 服务
-6. ✅ 验证部署结果（测试 Clean URLs 和重定向）
+4. ✅ 验证部署结果（测试 Clean URLs 和重定向）
+
+**注意：** Nginx 配置**不会**自动更新（权限限制），需要手动更新。参见 `docs/.vitepress/nginx-update.md`。
 
 ## 配置步骤
 
@@ -44,36 +44,11 @@ sudo chown -R deploy:deploy /var/www/bingo
 sudo chmod -R 755 /var/www/bingo
 ```
 
-#### 3. 配置 sudo 规则（必需）
+#### 3. 配置 sudo 规则（可选）
 
-**重要：** 部署流程需要更新 Nginx 配置并重载服务，因此必须配置 sudo 权限。
+**注意：** Nginx 配置现在需要**手动更新**，不再自动部署。因此不需要配置 deploy 用户的 sudo 权限。
 
-```bash
-# 创建 sudo 规则文件
-sudo visudo -f /etc/sudoers.d/deploy
-```
-
-添加以下内容：
-
-```
-# 允许 deploy 用户无密码执行 Nginx 相关命令
-deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl reload nginx
-deploy ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart nginx
-deploy ALL=(ALL) NOPASSWD: /usr/bin/nginx -t
-deploy ALL=(ALL) NOPASSWD: /bin/cp /tmp/nginx.conf /etc/nginx/sites-available/bingoctl.dev
-deploy ALL=(ALL) NOPASSWD: /bin/cp /etc/nginx/sites-available/bingoctl.dev /etc/nginx/sites-available/bingoctl.dev.backup-*
-```
-
-保存并验证配置：
-
-```bash
-sudo visudo -c
-```
-
-**为什么需要这些权限？**
-- 部署流程会自动更新 Nginx 配置以支持 Clean URLs 和重定向规则
-- 每次部署都会备份旧配置并应用新配置
-- 需要重载 Nginx 以使配置生效
+如果将来需要自动化 Nginx 配置更新，可以参考 `docs/.vitepress/nginx-update.md`。
 
 #### 4. 配置 SSH 目录
 

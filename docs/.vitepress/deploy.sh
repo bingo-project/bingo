@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 # Bingo 文档站部署脚本
 # 用途：构建文档并部署到生产服务器
 
@@ -250,7 +250,7 @@ main() {
     verify_build
     create_backup
     deploy_files
-    update_nginx
+    # update_nginx
     verify_deployment
     generate_report
 

@@ -62,47 +62,10 @@ jobs:
           SCRIPT_BEFORE: |
             whoami
             ls -la /var/www/bingo/
-
-      - name: Update Nginx configuration
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docs/.vitepress/nginx.conf"
-          target: "/tmp/"
-          strip_components: 2
-
-      - name: Apply Nginx configuration
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            # 备份旧配置
-            if [ -f /etc/nginx/sites-available/bingoctl.dev ]; then
-              sudo cp /etc/nginx/sites-available/bingoctl.dev /etc/nginx/sites-available/bingoctl.dev.backup-$(date +%Y%m%d-%H%M%S)
-            fi
-
-            # 更新配置
-            sudo cp /tmp/nginx.conf /etc/nginx/sites-available/bingoctl.dev
-
-            # 测试配置
-            if sudo nginx -t; then
-              echo "✅ Nginx configuration is valid"
-              # 重载 Nginx
-              sudo systemctl reload nginx
-              echo "✅ Nginx reloaded successfully"
-            else
-              echo "❌ Nginx configuration test failed"
-              # 回滚到备份
-              sudo cp /etc/nginx/sites-available/bingoctl.dev.backup-$(date +%Y%m%d-%H%M%S) /etc/nginx/sites-available/bingoctl.dev
-              exit 1
-            fi
-
-            # 清理临时文件
-            rm /tmp/nginx.conf
+          SCRIPT_AFTER: |
+            echo "Deployment completed!"
+            ls -la /var/www/bingo/docs/
+            echo "ℹ️  Note: Nginx configuration is NOT auto-updated. Update manually if needed."
 
       - name: Verify deployment
         if: success()
@@ -154,6 +117,7 @@ jobs:
           echo "📅 Deployed at: $(date)"
           echo "📝 Commit: ${{ github.sha }}"
           echo "🔗 Clean URLs: Enabled"
+          echo "ℹ️  Nginx config: Manual update required (if changed)"
           echo "======================================"
 
       - name: Deployment failed
