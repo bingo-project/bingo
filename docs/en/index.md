@@ -10,7 +10,7 @@ head:
 
 hero:
   name: "Bingo"
-  text: "Build scalable Go backends with confidence"
+  text: "A production-ready Go microservice scaffold framework for rapid development"
   tagline: Production-grade • Out-of-the-box • Production-ready
   actions:
     - theme: brand

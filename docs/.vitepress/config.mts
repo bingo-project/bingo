@@ -124,7 +124,7 @@ export default defineConfig({
       label: '中文',
       lang: 'zh-CN',
       title: "Bingo",
-      description: "生产级 Go 微服务脚手架，让开发者专注业务",
+      description: "生产级 Go 脚手架，开箱即用的微服务解决方案",
       themeConfig: {
         nav: [
           { text: '指南', link: '/guide/what-is-bingo' },
