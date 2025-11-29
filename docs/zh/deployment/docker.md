@@ -1,3 +1,8 @@
+---
+title: Docker 部署 - Bingo Go 微服务容器化部署指南
+description: 了解如何使用 Docker 和 Docker Compose 部署 Bingo Go 微服务项目，包括本地开发环境、生产环境配置和多实例部署。
+---
+
 # Docker 部署
 
 本文介绍如何使用 Docker 部署 Bingo 项目。
@@ -333,4 +338,4 @@ mysql:
 
 ## 下一步
 
-有关配置详解、监控调试和常见问题的详细文档正在筹备中，敬请期待！
+- [微服务拆分](../advanced/microservices.md) - 学习如何将单体应用演进为微服务架构

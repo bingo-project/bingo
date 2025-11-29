@@ -1,3 +1,8 @@
+---
+title: API Server 详解 - Bingo Go 微服务核心服务
+description: 深入了解 Bingo API Server 的架构设计，包括 HTTP RESTful API、gRPC 服务间通信、认证授权、性能优化等核心功能。
+---
+
 # API Server 详解
 
 API Server 是 Bingo 微服务架构的核心服务，负责对外提供用户级别的 API 接口。它支持 HTTP、gRPC 和 WebSocket 三种通信协议，可以满足不同场景的业务需求。
@@ -458,6 +463,4 @@ A: WebSocket 功能仍在开发中。我们计划在 v1.2.0 版本发布，敬�
 
 ## 下一步
 
-- [分层架构详解](./layered-design.md) - 理解 API Server 的内部结构
-- [核心组件](../components/overview.md) - 了解依赖的核心组件
-- [部署指南](../deployment/docker.md) - 如何部署 API Server
+- [Scheduler 调度器](./scheduler.md) - 了解定时任务和异步队列服务

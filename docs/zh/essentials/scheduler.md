@@ -1,3 +1,8 @@
+---
+title: Scheduler 调度器 - Bingo 定时任务和异步队列
+description: 了解 Bingo Scheduler 基于 Asynq 的任务调度服务，支持队列任务、静态周期任务（Cron）和动态周期任务的配置和使用。
+---
+
 # Scheduler 调度器
 
 Bingo Scheduler 是基于 [Asynq](https://github.com/hibiken/asynq) 封装的任务调度服务，支持队列任务、静态周期任务和动态周期任务。
@@ -441,4 +446,4 @@ func HandleDataSync(ctx context.Context, t *asynq.Task) error {
 
 ## 下一步
 
-- 学习 [Bot 服务](/essentials/bot) 如何接收定时通知
+- [Bot 机器人服务](./bot.md) - 了解 Telegram/Discord 机器人集成

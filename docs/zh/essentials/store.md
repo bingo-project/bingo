@@ -1,27 +1,32 @@
+---
+title: Store 包设计 - Bingo 数据访问层架构
+description: 深入了解 Bingo Go 微服务框架的 Store 数据访问层设计，包括泛型 Store[T] 实现、查询条件构建器和事务处理。
+---
+
 # Store 包设计
 
 ## 概述
 
 Store 包是 Bingo 数据访问层的核心，通过**泛型**和**组合模式**实现了一个灵活、可扩展的数据访问框架，减少重复代码并提高代码复用率。
 
-> **注意**: 本文档说明的是 `pkg/store` 中的通用 Store[T] 设计，它提供了可复用的数据访问基础。具体业务 Store 实现在 `internal/pkg/store` 中，通过组合 Store[T] 并实现业务特定的扩展接口来实现功能（详见[项目结构](../guide/project-structure.md)）。
+> **说明**：项目中 `internal/apiserver/store` 等服务特定 Store 是遗留的传统实现，未来将统一迁移到泛型 Store[T] 模式。新开发的功能请使用 `internal/pkg/store` 中的泛型模式。
 
 ## 包结构
 
 ```
 pkg/store/
-├── store.go          # 通用 Store[T] 实现
-├── logger.go         # Logger 接口定义
+├── store.go          # 通用泛型 Store[T] 实现
+├── logger/           # Logger 接口定义
 └── where/
     └── where.go      # 查询条件构建器
 
-internal/pkg/store/
-├── store.go          # IStore 接口和应用级实现 (datastore)
-├── logger.go         # 业务日志实现
-└── <model>.go        # 各个业务 Store 实现
+internal/pkg/store/         # 推荐：使用泛型 Store[T]
+├── store.go                # IStore 接口（含 TX 事务方法）
+├── logger.go               # 日志实现
+└── user.go                 # 用户 Store（组合泛型 Store[T]）
 ```
 
-> **注意**: internal/pkg/store 中所有文件必须平铺在同一目录中，避免循环引用。使用命名规范而非目录结构来组织模块。
+> **注意**: `internal/pkg/store` 中所有文件必须平铺在同一目录中，避免循环引用。使用命名规范而非目录结构来组织模块。
 
 ## 命名规范
 
@@ -47,38 +52,44 @@ internal/pkg/store/
 
 ## 核心设计
 
-### 1. 泛型 + 组合模式
-
 通用的 `Store[T]` 实现所有 CRUD 操作，业务特定的 Store 通过组合来扩展：
 
 ```go
-// pkg/store - 通用实现
+// pkg/store/store.go - 泛型实现
 type Store[T any] struct {
     logger  Logger
     storage DBProvider
 }
 
-// internal/pkg/store - 业务扩展
+// internal/pkg/store/user.go - 业务扩展
 type userStore struct {
-    *genericstore.Store[User]
+    *genericstore.Store[model.UserM]  // 组合泛型 Store
 }
 
 type UserStore interface {
-    Create(ctx context.Context, obj *User) error
-    Update(ctx context.Context, obj *User, fields ...string) error
+    Create(ctx context.Context, obj *model.UserM) error
+    Update(ctx context.Context, obj *model.UserM, fields ...string) error
     Delete(ctx context.Context, opts *where.Options) error
-    Get(ctx context.Context, opts *where.Options) (*User, error)
-    List(ctx context.Context, opts *where.Options) (int64, []*User, error)
+    Get(ctx context.Context, opts *where.Options) (*model.UserM, error)
+    List(ctx context.Context, opts *where.Options) (int64, []*model.UserM, error)
 
     UserExpansion  // 业务特定的扩展接口
 }
+
+func NewUserStore(store *datastore) *userStore {
+    return &userStore{
+        Store: genericstore.NewStore[model.UserM](store, NewLogger()),
+    }
+}
 ```
 
-### 2. 条件构建器
+### 条件构建器
 
-使用 `where` 包提供链式 API 构建查询条件：
+使用 `pkg/store/where` 包提供链式 API 构建查询条件：
 
 ```go
+import "bingo/pkg/store/where"
+
 // 分页查询
 opts := where.F("status", "active").P(1, 10)
 
@@ -103,20 +114,25 @@ opts := where.Load("Association")    // 预加载
 - `C(clauses...)` - GORM 子句
 - `Load(associations...)` - 预加载关联
 
-### 3. 事务上下文
+### 事务处理
 
-通过 context 自动处理事务，Store 层透明支持：
+`internal/pkg/store` 的 IStore 支持通过 context 自动处理事务：
 
 ```go
 // internal/pkg/store/store.go
+type IStore interface {
+    DB(ctx context.Context, wheres ...where.Where) *gorm.DB
+    TX(ctx context.Context, fn func(ctx context.Context) error) error
+    // ...
+}
+
+// 事务会自动从 context 中提取
 func (ds *datastore) DB(ctx context.Context, wheres ...where.Where) *gorm.DB {
     db := ds.core
-
     // 自动从上下文提取事务
     if tx, ok := ctx.Value(transactionKey{}).(*gorm.DB); ok {
         db = tx
     }
-
     // 应用查询条件
     for _, whr := range wheres {
         db = whr.Where(db)
@@ -311,9 +327,6 @@ func (ds *datastore) Users() UserStore {
 }
 ```
 
-## 相关内容
+## 下一步
 
-- [分层架构详解](./layered-design.md) - 了解 Store 层在三层架构中的角色
-- [整体架构](./architecture.md) - 微服务架构中的数据访问设计
-- [Store 命名规范和最佳实践](../development/standards.md#store-命名规范) - 开发规范
-- [开发第一个功能](../guide/first-feature.md) - 实战应用示例
+- [API Server](./apiserver.md) - 了解核心 API 服务的设计和使用

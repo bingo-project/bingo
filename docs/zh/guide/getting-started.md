@@ -192,10 +192,7 @@ make clean
 
 ## 下一步
 
-- [使用 bingoctl](./using-bingoctl.md) - 深入了解 bingoctl 的强大功能
-- [开发第一个功能](./first-feature.md) - 通过实例学习 Bingo 开发
 - [项目结构](./project-structure.md) - 理解项目目录组织
-- [分层架构](../essentials/layered-design.md) - 理解三层架构设计
 
 ## 遇到问题?
 

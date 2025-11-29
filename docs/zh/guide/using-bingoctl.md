@@ -1,3 +1,8 @@
+---
+title: 使用 bingoctl - Bingo CLI 工具指南
+description: bingoctl 是 Bingo 框架的官方 CLI 工具，用于快速创建项目、生成 CRUD 代码、数据库迁移等。本指南详细介绍 bingoctl 的安装和使用方法。
+---
+
 # 使用 bingoctl
 
 [bingoctl](https://github.com/bingo-project/bingoctl) 是 Bingo 框架的官方 CLI 工具,用于快速创建项目和生成代码,极大提升开发效率。
@@ -525,9 +530,7 @@ A: 它们是两个不同的工具:
 
 ## 下一步
 
-- [开发第一个功能](./first-feature.md) - 基于生成的代码开发业务逻辑
-- [项目结构](./project-structure.md) - 理解生成的代码结构
-- [分层架构](../essentials/layered-design.md) - 理解各层职责
+- [整体架构](../essentials/architecture.md) - 深入理解微服务架构设计
 
 ## 参考资源
 

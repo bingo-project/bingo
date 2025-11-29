@@ -1,3 +1,8 @@
+---
+title: 项目结构 - Bingo Go 微服务项目目录组织
+description: 了解 Bingo Go 微服务框架的项目目录结构，包括 cmd、internal、pkg 等目录的组织方式和各文件的职责说明。
+---
+
 # 项目结构
 
 本文介绍 Bingo 项目的目录组织和文件职责。
@@ -170,4 +175,3 @@ storage/
 ## 下一步
 
 - [开发第一个功能](./first-feature.md) - 通过实例理解各层职责
-- [分层架构详解](../essentials/layered-design.md) - 理解三层架构设计

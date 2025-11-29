@@ -1,3 +1,8 @@
+---
+title: 开发规范 - Bingo Go 项目代码风格和约定
+description: 了解 Bingo Go 微服务项目的开发规范，包括命名规范、错误处理、日志规范、注释规范、数据库规范和 Git 规范。
+---
+
 # 开发规范
 
 本文定义 Bingo 项目的代码规范和开发约定。
@@ -454,4 +459,4 @@ make swagger
 
 ## 下一步
 
-有关业务开发指南、测试指南和最佳实践的详细文档正在筹备中，敬请期待！
+- [Docker 部署](../deployment/docker.md) - 使用 Docker 部署 Bingo 项目

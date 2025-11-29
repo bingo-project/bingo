@@ -1,3 +1,8 @@
+---
+title: 开发第一个功能 - Bingo Go 开发实战教程
+description: 通过开发一个文章管理功能，学习 Bingo Go 微服务框架的完整开发流程，包括 Model、Store、Biz、Controller 各层的实现。
+---
+
 # 开发第一个功能
 
 通过开发一个简单的"文章管理"功能,快速掌握 Bingo 的开发流程。
@@ -313,5 +318,4 @@ curl http://localhost:8080/v1/articles/1 \
 
 ## 下一步
 
-- [分层架构详解](../essentials/layered-design.md) - 理解为什么要这样分层
-- [开发规范](../development/standards.md) - 代码风格和规范
+- [使用 bingoctl](./using-bingoctl.md) - 使用代码生成器提高开发效率

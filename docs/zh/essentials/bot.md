@@ -1,3 +1,8 @@
+---
+title: Bot 机器人服务 - Bingo Telegram/Discord 集成
+description: 了解 Bingo Bot 多平台机器人服务，支持 Telegram 和 Discord，提供服务管理、通知推送和频道订阅等功能。
+---
+
 # Bot 机器人服务
 
 Bingo Bot 是一个多平台机器人服务，支持 Telegram 和 Discord，提供服务管理、通知推送和频道订阅等功能。
@@ -585,5 +590,4 @@ func (ctrl *ServerController) SendReport(c telebot.Context) error {
 
 ## 下一步
 
-- 了解 [Scheduler 调度器](/essentials/scheduler) 如何发送定时通知
-- 学习 [API Server](/essentials/apiserver) 的接口调用
+- [核心组件概览](../components/overview.md) - 了解框架依赖的核心组件

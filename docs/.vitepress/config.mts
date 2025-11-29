@@ -130,6 +130,14 @@ export default defineConfig({
           { text: '指南', link: '/guide/what-is-bingo' },
           { text: '核心概念', link: '/essentials/architecture' },
           { text: '组件', link: '/components/overview' },
+          {
+            text: '更多',
+            items: [
+              { text: '开发规范', link: '/development/standards' },
+              { text: 'Docker 部署', link: '/deployment/docker' },
+              { text: '微服务拆分', link: '/advanced/microservices' }
+            ]
+          },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
         ],
         sidebar: {
@@ -140,7 +148,8 @@ export default defineConfig({
                 { text: '什么是 Bingo', link: '/guide/what-is-bingo' },
                 { text: '快速开始', link: '/guide/getting-started' },
                 { text: '项目结构', link: '/guide/project-structure' },
-                { text: '开发第一个功能', link: '/guide/first-feature' }
+                { text: '开发第一个功能', link: '/guide/first-feature' },
+                { text: '使用 bingoctl', link: '/guide/using-bingoctl' }
               ]
             }
           ],
@@ -168,6 +177,30 @@ export default defineConfig({
               text: '组件参考',
               items: [
                 { text: '核心组件概览', link: '/components/overview' }
+              ]
+            }
+          ],
+          '/development/': [
+            {
+              text: '开发规范',
+              items: [
+                { text: '代码规范', link: '/development/standards' }
+              ]
+            }
+          ],
+          '/deployment/': [
+            {
+              text: '部署指南',
+              items: [
+                { text: 'Docker 部署', link: '/deployment/docker' }
+              ]
+            }
+          ],
+          '/advanced/': [
+            {
+              text: '进阶主题',
+              items: [
+                { text: '微服务拆分', link: '/advanced/microservices' }
               ]
             }
           ]

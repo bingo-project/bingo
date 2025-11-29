@@ -1,3 +1,8 @@
+---
+title: 分层架构详解 - Bingo Go 微服务三层架构设计
+description: 深入理解 Bingo Go 微服务框架的 Controller → Biz → Store 三层架构设计，了解每层的职责边界、代码组织和最佳实践。
+---
+
 # 分层架构详解
 
 Bingo 采用经典的三层架构设计,本文详细介绍每一层的职责和设计原则。
@@ -420,5 +425,4 @@ func (s *userStore) Create(ctx context.Context, user *model.User) error {
 
 ## 下一步
 
-- [开发第一个功能](../guide/first-feature.md) - 实践分层架构
-- [开发规范](../development/standards.md) - 代码风格和规范
+- [Store 包设计](./store.md) - 深入了解数据访问层的泛型设计
