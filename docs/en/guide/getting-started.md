@@ -7,7 +7,7 @@ description: Quickly create a Bingo Go microservices project using bingoctl in 1
 
 This guide will help you launch a Bingo project and run your first API within 10 minutes.
 
-## Recommended: Create Project with bingoctl
+## Option 1: Create Project with bingoctl (Recommended)
 
 Using the [bingoctl](https://github.com/bingo-project/bingoctl) CLI tool is the fastest way to create a Bingo project.
 
@@ -33,132 +33,107 @@ bingoctl will automatically generate a complete project structure, including:
 - Makefile
 - Example code
 
-### 3. Configure Database Connection
+### 3. Configure Services
 
-Copy the example configuration file:
+Copy example configuration files to project root:
 
 ```bash
-cp .bingoctl.example.yaml .bingoctl.yaml
+cp configs/*.example.yaml .
+# Rename config files (remove .example suffix)
+for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 ```
 
-Edit `.bingoctl.yaml` to configure database connection:
+Edit configuration files to set MySQL and Redis connection:
 
 ```yaml
+# myapp-apiserver.yaml
 mysql:
   host: 127.0.0.1:3306
   username: root
   password: your-password
   database: myapp
+
+redis:
+  host: 127.0.0.1:6379
+  password: ""
 ```
 
-### 4. Start Dependency Services
-
-```bash
-docker-compose -f deployments/docker/docker-compose.yaml up -d
-```
-
-### 5. Generate Your First Module
-
-```bash
-# Generate complete CRUD code for user module
-bingoctl make crud user
-```
-
-This will automatically generate:
-- Model (data model)
-- Store (data access layer)
-- Biz (business logic layer)
-- Controller (HTTP handler layer)
-- Request (request validation)
-
-### 6. Run Service
-
-```bash
-make build
-./myapp-apiserver
-```
-
-### 7. Verify Service
-
-```bash
-# Check service status
-curl http://localhost:8080/health
-
-# Access Swagger documentation
-open http://localhost:8080/swagger/index.html
-```
+After configuration, continue to [Build and Run](#build-and-run) section.
 
 ---
 
-## Alternative: Clone Bingo Repository
+## Option 2: Clone Bingo Repository
 
 If you want to develop based on Bingo source code:
 
 ### 1. Clone Project
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/bingo-project/bingo.git
 cd bingo
 ```
 
-### 2. Configure Environment
+### 2. Configure Services
+
+Copy example configuration files to project root:
 
 ```bash
-# Copy configuration file
-cp configs/bingo-apiserver.example.yaml bingo-apiserver.yaml
-
-# Modify configuration based on your environment
-vim bingo-apiserver.yaml
+cp configs/*.example.yaml .
+# Rename config files (remove .example suffix)
+for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 ```
 
-Main configuration items:
-- Database connection (MySQL)
-- Redis connection
-- JWT secret
+Edit configuration files to set MySQL and Redis connection:
 
-### 3. Start Dependency Services
+```yaml
+# bingo-apiserver.yaml
+mysql:
+  host: 127.0.0.1:3306
+  username: root
+  password: your-password
+  database: bingo
 
-Use Docker Compose to quickly start MySQL and Redis:
-
-```bash
-docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
+redis:
+  host: 127.0.0.1:6379
+  password: ""
 ```
 
-### 4. Database Migration
+After configuration, continue to [Build and Run](#build-and-run) section.
+
+---
+
+## Build and Run
+
+The following steps are the same regardless of which method you used to create the project.
+
+### 1. Build Project
 
 ```bash
-# Build project (output path: ./_output/platforms/<os>/<arch>/)
 make build
-
-# Copy and modify configuration file
-cp configs/{app}-admserver.example.yaml {app}-admserver.yaml
-
-# Build your app ctl
-make build BINS="{app}ctl"
-
-# Execute database migration
-./_output/platforms/{os}/{arch}/{app}ctl migrate up
 ```
 
 > **Note**: `make build` outputs binary files to `./_output/platforms/<os>/<arch>/` directory (e.g., `./_output/platforms/darwin/arm64/`)
 
-### 5. Start Service
-
-**Method 1: Direct Run**
+### 2. Database Migration
 
 ```bash
-make build
-bingo-apiserver -c bingo-apiserver.yaml
+# Execute database migration (choose path based on your OS and architecture)
+./_output/platforms/<os>/<arch>/<app>ctl migrate up
+
+# Example for macOS ARM64 + bingo project:
+./_output/platforms/darwin/arm64/bingoctl migrate up
 ```
 
-**Method 2: Development Mode (Hot Reload)**
+### 3. Run Service
 
 ```bash
-cp .air.example.toml .air.toml
-air
+./_output/platforms/<os>/<arch>/<app>-apiserver
+
+# Example for macOS ARM64 + bingo project:
+./_output/platforms/darwin/arm64/bingo-apiserver
 ```
 
-### 6. Verify Service
+### 4. Verify Service
 
 ```bash
 # Check service status

@@ -7,7 +7,7 @@ description: 使用 bingoctl 快速创建 Bingo Go 微服务项目，10分钟内
 
 本指南将帮助你在 10 分钟内启动 Bingo 项目并运行第一个 API。
 
-## 推荐方式: 使用 bingoctl 创建项目
+## 方式一: 使用 bingoctl 创建项目（推荐）
 
 使用 [bingoctl](https://github.com/bingo-project/bingoctl) CLI 工具是创建 Bingo 项目最快的方式。
 
@@ -33,60 +33,32 @@ bingoctl 会自动生成完整的项目结构,包括:
 - Makefile
 - 示例代码
 
-### 3. 配置数据库连接
+### 3. 配置服务
 
-复制示例配置文件:
+复制示例配置文件到项目根目录:
 
 ```bash
-cp .bingoctl.example.yaml .bingoctl.yaml
+cp configs/*.example.yaml .
+# 重命名配置文件（去掉 .example 后缀）
+for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 ```
 
-编辑 `.bingoctl.yaml` 配置数据库连接:
+编辑配置文件，修改 MySQL 和 Redis 连接信息:
 
 ```yaml
+# myapp-apiserver.yaml
 mysql:
   host: 127.0.0.1:3306
   username: root
   password: your-password
   database: myapp
+
+redis:
+  host: 127.0.0.1:6379
+  password: ""
 ```
 
-### 4. 启动依赖服务
-
-```bash
-docker-compose -f deployments/docker/docker-compose.yaml up -d
-```
-
-### 5. 生成第一个模块
-
-```bash
-# 生成用户模块的完整 CRUD 代码
-bingoctl make crud user
-```
-
-这会自动生成:
-- Model (数据模型)
-- Store (数据访问层)
-- Biz (业务逻辑层)
-- Controller (HTTP 处理层)
-- Request (请求验证)
-
-### 6. 运行服务
-
-```bash
-make build
-./myapp-apiserver
-```
-
-### 7. 验证服务
-
-```bash
-# 检查服务状态
-curl http://localhost:8080/health
-
-# 访问 Swagger 文档
-open http://localhost:8080/swagger/index.html
-```
+完成配置后，继续 [构建和运行](#构建和运行) 部分。
 
 ---
 
@@ -97,68 +69,71 @@ open http://localhost:8080/swagger/index.html
 ### 1. 克隆项目
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/bingo-project/bingo.git
 cd bingo
 ```
 
-### 2. 配置环境
+### 2. 配置服务
+
+复制示例配置文件到项目根目录:
 
 ```bash
-# 复制配置文件
-cp configs/bingo-apiserver.example.yaml bingo-apiserver.yaml
-
-# 根据实际环境修改配置
-vim bingo-apiserver.yaml
+cp configs/*.example.yaml .
+# 重命名配置文件（去掉 .example 后缀）
+for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 ```
 
-主要配置项:
-- 数据库连接(MySQL)
-- Redis 连接
-- JWT 密钥
+编辑配置文件，修改 MySQL 和 Redis 连接信息:
 
-### 3. 启动依赖服务
+```yaml
+# bingo-apiserver.yaml
+mysql:
+  host: 127.0.0.1:3306
+  username: root
+  password: your-password
+  database: bingo
 
-使用 Docker Compose 快速启动 MySQL 和 Redis:
-
-```bash
-docker-compose -f deployments/docker/docker-compose.yaml up -d mysql redis
+redis:
+  host: 127.0.0.1:6379
+  password: ""
 ```
 
-### 4. 数据库迁移
+完成配置后，继续 [构建和运行](#构建和运行) 部分。
 
-```bash
-# 编译项目(输出路径:./_output/platforms/<os>/<arch>/)
-make build
+---
 
-# 复制配置文件,并修改数据库配置
-cp configs/{app}-admserver.example.yaml {app}-admserver.yaml
+## 构建和运行
 
-# Build your app ctl
-make build BINS="{app}ctl"
+无论使用哪种方式创建项目，以下步骤都是相同的。
 
-# 执行数据库迁移
-./_output/platforms/{os}/{arch}/{app}ctl migrate up
-```
-
-> **说明**:`make build` 会将二进制文件输出到 `./_output/platforms/<os>/<arch>/` 目录(如 `./_output/platforms/darwin/arm64/`)
-
-### 5. 启动服务
-
-**方式一:直接运行**
+### 1. 构建项目
 
 ```bash
 make build
-bingo-apiserver -c bingo-apiserver.yaml
 ```
 
-**方式二:开发模式(热重启)**
+> **说明**: `make build` 会将二进制文件输出到 `./_output/platforms/<os>/<arch>/` 目录（如 `./_output/platforms/darwin/arm64/`）
+
+### 2. 数据库迁移
 
 ```bash
-cp .air.example.toml .air.toml
-air
+# 执行数据库迁移（根据你的操作系统和架构选择路径）
+./_output/platforms/<os>/<arch>/<app>ctl migrate up
+
+# 例如 macOS ARM64 + bingo 项目:
+./_output/platforms/darwin/arm64/bingoctl migrate up
 ```
 
-### 6. 验证服务
+### 3. 运行服务
+
+```bash
+./_output/platforms/<os>/<arch>/<app>-apiserver
+
+# 例如 macOS ARM64 + bingo 项目:
+./_output/platforms/darwin/arm64/bingo-apiserver
+```
+
+### 4. 验证服务
 
 ```bash
 # 检查服务状态
