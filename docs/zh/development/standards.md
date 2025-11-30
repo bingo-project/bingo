@@ -459,4 +459,5 @@ make swagger
 
 ## 下一步
 
+- [测试指南](./testing.md) - 了解项目的测试规范和最佳实践
 - [Docker 部署](../deployment/docker.md) - 使用 Docker 部署 Bingo 项目

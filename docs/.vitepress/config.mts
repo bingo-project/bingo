@@ -134,6 +134,7 @@ export default defineConfig({
             text: '更多',
             items: [
               { text: '开发规范', link: '/development/standards' },
+              { text: '测试指南', link: '/development/testing' },
               { text: 'Docker 部署', link: '/deployment/docker' },
               { text: '微服务拆分', link: '/advanced/microservices' }
             ]
@@ -223,6 +224,7 @@ export default defineConfig({
             text: 'More',
             items: [
               { text: 'Development Standards', link: '/en/development/standards' },
+              { text: 'Testing Guide', link: '/en/development/testing' },
               { text: 'Docker Deployment', link: '/en/deployment/docker' },
               { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
             ]
