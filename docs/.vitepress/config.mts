@@ -184,7 +184,8 @@ export default defineConfig({
             {
               text: '开发规范',
               items: [
-                { text: '代码规范', link: '/development/standards' }
+                { text: '代码规范', link: '/development/standards' },
+                { text: '测试指南', link: '/development/testing' }
               ]
             }
           ],
@@ -272,7 +273,8 @@ export default defineConfig({
             {
               text: 'Development Standards',
               items: [
-                { text: 'Coding Standards', link: '/en/development/standards' }
+                { text: 'Coding Standards', link: '/en/development/standards' },
+                { text: 'Testing Guide', link: '/en/development/testing' }
               ]
             }
           ],
