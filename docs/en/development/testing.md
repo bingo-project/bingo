@@ -252,3 +252,8 @@ test:
     - name: Integration Tests
       run: go test -run Integration ./...
 ```
+
+## Next Step
+
+- [Docker Deployment](../deployment/docker.md) - Deploy Bingo projects using Docker
+- [Microservice Decomposition](../advanced/microservices.md) - Learn how to decompose monolith into microservices

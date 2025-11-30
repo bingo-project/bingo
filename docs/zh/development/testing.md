@@ -252,3 +252,8 @@ test:
     - name: Integration Tests
       run: go test -run Integration ./...
 ```
+
+## 下一步
+
+- [Docker 部署](../deployment/docker.md) - 使用 Docker 部署 Bingo 项目
+- [微服务拆分](../advanced/microservices.md) - 了解如何将单体应用拆分为微服务
