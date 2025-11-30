@@ -13,7 +13,7 @@ const (
 
 // SeedOptions is an option struct to support 'seed' sub command.
 type SeedOptions struct {
-	// Options
+	Seeder string
 }
 
 // NewSeedOptions returns an initialized SeedOptions instance.
@@ -37,6 +37,8 @@ func NewCmdSeed() *cobra.Command {
 		},
 	}
 
+	cmd.Flags().StringVarP(&o.Seeder, "seeder", "s", "", "Run specific seeder by signature")
+
 	return cmd
 }
 
@@ -52,6 +54,5 @@ func (o *SeedOptions) Complete(cmd *cobra.Command, args []string) error {
 
 // Run executes a new sub command using the specified options.
 func (o *SeedOptions) Run(args []string) error {
-	// Init data
-	return seeder.DatabaseSeeder{}.Run()
+	return seeder.RunSeeders(o.Seeder)
 }
