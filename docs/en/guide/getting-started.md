@@ -7,19 +7,16 @@ description: Quickly create a Bingo Go microservices project using bingoctl in 1
 
 This guide will help you launch a Bingo project and run your first API within 10 minutes.
 
-## Option 1: Create Project with bingoctl (Recommended)
+## Create Project
+
+### Option 1: Using bingoctl (Recommended)
 
 Using the [bingoctl](https://github.com/bingo-project/bingoctl) CLI tool is the fastest way to create a Bingo project.
 
-### 1. Install bingoctl
-
 ```bash
+# Install bingoctl
 go install github.com/bingo-project/bingoctl@latest
-```
 
-### 2. Create Project
-
-```bash
 # Create a new project
 bingoctl create github.com/myorg/myapp
 
@@ -33,47 +30,18 @@ bingoctl will automatically generate a complete project structure, including:
 - Makefile
 - Example code
 
-### 3. Configure Services
-
-Copy example configuration files to project root:
-
-```bash
-cp configs/*.example.yaml .
-# Rename config files (remove .example suffix)
-for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
-```
-
-Edit configuration files to set MySQL and Redis connection:
-
-```yaml
-# myapp-apiserver.yaml
-mysql:
-  host: 127.0.0.1:3306
-  username: root
-  password: your-password
-  database: myapp
-
-redis:
-  host: 127.0.0.1:6379
-  password: ""
-```
-
-After configuration, continue to [Build and Run](#build-and-run) section.
-
----
-
-## Option 2: Clone Bingo Repository
+### Option 2: Clone Bingo Repository
 
 If you want to develop based on Bingo source code:
-
-### 1. Clone Project
 
 ```bash
 git clone https://github.com/bingo-project/bingo.git
 cd bingo
 ```
 
-### 2. Configure Services
+---
+
+## Configure Services
 
 Copy example configuration files to project root:
 
@@ -86,25 +54,21 @@ for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 Edit configuration files to set MySQL and Redis connection:
 
 ```yaml
-# bingo-apiserver.yaml
+# <app>-apiserver.yaml
 mysql:
   host: 127.0.0.1:3306
   username: root
   password: your-password
-  database: bingo
+  database: your-database
 
 redis:
   host: 127.0.0.1:6379
   password: ""
 ```
 
-After configuration, continue to [Build and Run](#build-and-run) section.
-
 ---
 
 ## Build and Run
-
-The following steps are the same regardless of which method you used to create the project.
 
 ### 1. Build Project
 

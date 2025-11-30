@@ -7,19 +7,16 @@ description: 使用 bingoctl 快速创建 Bingo Go 微服务项目，10分钟内
 
 本指南将帮助你在 10 分钟内启动 Bingo 项目并运行第一个 API。
 
-## 方式一: 使用 bingoctl 创建项目（推荐）
+## 创建项目
+
+### 方式一: 使用 bingoctl（推荐）
 
 使用 [bingoctl](https://github.com/bingo-project/bingoctl) CLI 工具是创建 Bingo 项目最快的方式。
 
-### 1. 安装 bingoctl
-
 ```bash
+# 安装 bingoctl
 go install github.com/bingo-project/bingoctl@latest
-```
 
-### 2. 创建项目
-
-```bash
 # 创建新项目
 bingoctl create github.com/myorg/myapp
 
@@ -33,47 +30,18 @@ bingoctl 会自动生成完整的项目结构,包括:
 - Makefile
 - 示例代码
 
-### 3. 配置服务
-
-复制示例配置文件到项目根目录:
-
-```bash
-cp configs/*.example.yaml .
-# 重命名配置文件（去掉 .example 后缀）
-for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
-```
-
-编辑配置文件，修改 MySQL 和 Redis 连接信息:
-
-```yaml
-# myapp-apiserver.yaml
-mysql:
-  host: 127.0.0.1:3306
-  username: root
-  password: your-password
-  database: myapp
-
-redis:
-  host: 127.0.0.1:6379
-  password: ""
-```
-
-完成配置后，继续 [构建和运行](#构建和运行) 部分。
-
----
-
-## 方式二: 克隆 Bingo 仓库
+### 方式二: 克隆 Bingo 仓库
 
 如果你想基于 Bingo 源码进行开发:
-
-### 1. 克隆项目
 
 ```bash
 git clone https://github.com/bingo-project/bingo.git
 cd bingo
 ```
 
-### 2. 配置服务
+---
+
+## 配置服务
 
 复制示例配置文件到项目根目录:
 
@@ -86,25 +54,21 @@ for f in *.example.yaml; do mv "$f" "${f%.example.yaml}.yaml"; done
 编辑配置文件，修改 MySQL 和 Redis 连接信息:
 
 ```yaml
-# bingo-apiserver.yaml
+# <app>-apiserver.yaml
 mysql:
   host: 127.0.0.1:3306
   username: root
   password: your-password
-  database: bingo
+  database: your-database
 
 redis:
   host: 127.0.0.1:6379
   password: ""
 ```
 
-完成配置后，继续 [构建和运行](#构建和运行) 部分。
-
 ---
 
 ## 构建和运行
-
-无论使用哪种方式创建项目，以下步骤都是相同的。
 
 ### 1. 构建项目
 
