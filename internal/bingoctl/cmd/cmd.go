@@ -8,7 +8,6 @@ import (
 	"github.com/bingo-project/component-base/cli/templates"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/bingoctl/cmd/version"
@@ -39,12 +38,6 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Tool Commands:",
 			Commands: []*cobra.Command{
 				key.NewCmdKey(),
-			},
-		},
-		{
-			Message: "Database Commands:",
-			Commands: []*cobra.Command{
-				db.NewCmdDb(),
 			},
 		},
 		{
