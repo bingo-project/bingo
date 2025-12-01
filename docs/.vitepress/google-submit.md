@@ -28,7 +28,7 @@
 2. `https://bingoctl.dev/guide/what-is-bingo`
 3. `https://bingoctl.dev/guide/getting-started`
 4. `https://bingoctl.dev/essentials/architecture`
-5. `https://bingoctl.dev/guide/using-bingoctl`
+5. `https://bingoctl.dev/guide/using-bingo`
 
 ### 英文页面
 1. `https://bingoctl.dev/en/`

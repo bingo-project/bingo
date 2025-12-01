@@ -1,6 +1,6 @@
 ---
 title: Getting Started - Quick Start with Bingo Go Microservices Framework
-description: Quickly create a Bingo Go microservices project using bingoctl in 10 minutes. Complete guide with installation, configuration and running steps to start Golang backend development.
+description: Quickly create a Bingo Go microservices project using bingo CLI in 10 minutes. Complete guide with installation, configuration and running steps to start Golang backend development.
 ---
 
 # Getting Started
@@ -9,22 +9,22 @@ This guide will help you launch a Bingo project and run your first API within 10
 
 ## Create Project
 
-### Option 1: Using bingoctl (Recommended)
+### Option 1: Using bingo CLI (Recommended)
 
-Using the [bingoctl](https://github.com/bingo-project/bingoctl) CLI tool is the fastest way to create a Bingo project.
+Using the [bingo CLI](https://github.com/bingo-project/bingoctl) tool is the fastest way to create a Bingo project.
 
 ```bash
-# Install bingoctl
-go install github.com/bingo-project/bingoctl@latest
+# Install bingo CLI
+go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # Create a new project
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 
 # Enter project directory
 cd myapp
 ```
 
-bingoctl will automatically generate a complete project structure, including:
+bingo will automatically generate a complete project structure, including:
 - Basic configuration files
 - Docker Compose configuration
 - Makefile
@@ -81,11 +81,8 @@ make build
 ### 2. Database Migration
 
 ```bash
-# Execute database migration (choose path based on your OS and architecture)
-./_output/platforms/<os>/<arch>/<app>ctl migrate up
-
-# Example for macOS ARM64 + bingo project:
-./_output/platforms/darwin/arm64/bingoctl migrate up
+# Execute database migration
+bingo migrate up
 ```
 
 ### 3. Run Service

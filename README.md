@@ -15,7 +15,7 @@ English | [中文](README.zh-CN.md)
 - [Getting Started](https://bingoctl.dev/en/guide/getting-started) - Get up and running in 10 minutes
 - [What is Bingo](https://bingoctl.dev/en/guide/what-is-bingo) - Learn about core features
 - [Architecture](https://bingoctl.dev/en/essentials/architecture) - Microservice architecture design
-- [Using bingoctl](https://bingoctl.dev/en/guide/using-bingoctl) - CLI tool guide
+- [Using bingo CLI](https://bingoctl.dev/en/guide/using-bingo) - CLI tool guide
 - [中文文档](https://bingoctl.dev/) - Chinese documentation
 
 ## Overview
@@ -29,7 +29,7 @@ English | [中文](README.zh-CN.md)
 
 **Use Cases**: Backend systems, microservice projects, RESTful APIs, gRPC services
 
-**Related Project**: [bingoctl](https://github.com/bingo-project/bingoctl) - Bingo project scaffold tool
+**Related Project**: [bingo CLI](https://github.com/bingo-project/bingoctl) - Bingo project scaffold tool
 
 ## Core Features
 
@@ -67,19 +67,19 @@ English | [中文](README.zh-CN.md)
 
 ## Quick Start
 
-### Option 1: Create New Project with bingoctl (Recommended)
+### Option 1: Create New Project with bingo CLI (Recommended)
 
-Use the [bingoctl](https://github.com/bingo-project/bingoctl) CLI tool to quickly create a project:
+Use the [bingo CLI](https://github.com/bingo-project/bingoctl) tool to quickly create a project:
 
 ```bash
-# Install bingoctl
-go install github.com/bingo-project/bingoctl@latest
+# Install bingo CLI
+go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # Create new project (apiserver only)
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 
 # Or create project with all services
-bingoctl create github.com/myorg/myapp --all
+bingo create github.com/myorg/myapp --all
 
 # Enter project directory
 cd myapp
@@ -88,7 +88,7 @@ cd myapp
 docker-compose -f deployments/docker/docker-compose.yaml up -d
 
 # Generate your first module (e.g., user module)
-bingoctl make crud user
+bingo make crud user
 
 # Run service
 make build
@@ -99,22 +99,22 @@ make build
 
 ```bash
 # Create with specific services
-bingoctl create myapp --services apiserver,admserver
+bingo create myapp --services apiserver,admserver
 
 # Add additional services
-bingoctl create myapp --add-service scheduler
+bingo create myapp --add-service scheduler
 
 # Exclude certain services
-bingoctl create myapp --no-service bot
+bingo create myapp --no-service bot
 
 # Control git initialization
-bingoctl create myapp --init-git=false
+bingo create myapp --init-git=false
 
 # Use specific template version
-bingoctl create myapp -r v1.2.3
+bingo create myapp -r v1.2.3
 ```
 
-See [Using bingoctl](https://bingoctl.dev/en/guide/using-bingoctl) for detailed guide.
+See [Using bingo CLI](https://bingoctl.dev/en/guide/using-bingo) for detailed guide.
 
 ### Option 2: Clone Bingo Repository
 

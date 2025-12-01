@@ -89,7 +89,7 @@ _output
 
 # Tools
 .air.toml
-.bingoctl.yaml
+.bingo.yaml
 
 # Config
 bingo-apiserver.yaml

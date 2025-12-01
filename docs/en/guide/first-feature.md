@@ -13,11 +13,11 @@ We'll create a complete CRUD feature for blog posts from start to finish.
 
 ### Step 1: Generate the Basic Code
 
-Use bingoctl to generate the complete code skeleton:
+Use bingo to generate the complete code skeleton:
 
 ```bash
 # Generate CRUD code for post module
-bingoctl make crud post
+bingo make crud post
 ```
 
 This automatically generates:
@@ -355,4 +355,4 @@ func TestCreatePost(t *testing.T) {
 
 ## Next Step
 
-- [Using bingoctl](./using-bingoctl.md) - Boost development efficiency with the code generator
+- [Using bingo CLI](./using-bingo.md) - Boost development efficiency with the code generator

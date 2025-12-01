@@ -17,7 +17,7 @@ https://bingoctl.dev/en/essentials/store
 https://bingoctl.dev/en/guide/first-feature
 https://bingoctl.dev/en/guide/getting-started
 https://bingoctl.dev/en/guide/project-structure
-https://bingoctl.dev/en/guide/using-bingoctl
+https://bingoctl.dev/en/guide/using-bingo
 https://bingoctl.dev/en/guide/what-is-bingo
 https://bingoctl.dev/essentials/apiserver
 https://bingoctl.dev/essentials/architecture
@@ -28,5 +28,5 @@ https://bingoctl.dev/essentials/store
 https://bingoctl.dev/guide/first-feature
 https://bingoctl.dev/guide/getting-started
 https://bingoctl.dev/guide/project-structure
-https://bingoctl.dev/guide/using-bingoctl
+https://bingoctl.dev/guide/using-bingo
 https://bingoctl.dev/guide/what-is-bingo

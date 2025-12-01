@@ -1,22 +1,22 @@
 ---
-title: 使用 bingoctl - Bingo CLI 工具指南
-description: bingoctl 是 Bingo 框架的官方 CLI 工具，用于快速创建项目、生成 CRUD 代码、数据库迁移等。本指南详细介绍 bingoctl 的安装和使用方法。
+title: 使用 bingo CLI - Bingo CLI 工具指南
+description: bingo CLI 是 Bingo 框架的官方 CLI 工具，用于快速创建项目、生成 CRUD 代码、数据库迁移等。本指南详细介绍 bingo CLI 的安装和使用方法。
 ---
 
-# 使用 bingoctl
+# 使用 bingo CLI
 
-[bingoctl](https://github.com/bingo-project/bingoctl) 是 Bingo 框架的官方 CLI 工具,用于快速创建项目和生成代码,极大提升开发效率。
+[bingo CLI](https://github.com/bingo-project/bingoctl) 是 Bingo 框架的官方 CLI 工具,用于快速创建项目和生成代码,极大提升开发效率。
 
 ## 安装
 
 ```bash
-go install github.com/bingo-project/bingoctl@latest
+go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 ```
 
 验证安装:
 
 ```bash
-bingoctl version
+bingo version
 ```
 
 ## 核心功能
@@ -26,7 +26,7 @@ bingoctl version
 一键创建完整的 Bingo 项目脚手架:
 
 ```bash
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 ```
 
 生成的项目包含:
@@ -42,26 +42,26 @@ bingoctl create github.com/myorg/myapp
 
 ```bash
 # 使用默认模块名（与项目名相同）
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 
 # 自定义模块名（-m 选项）
-bingoctl create myapp -m github.com/mycompany/myapp
+bingo create myapp -m github.com/mycompany/myapp
 ```
 
 **模板版本控制**
 
 ```bash
 # 使用推荐版本（默认）
-bingoctl create myapp
+bingo create myapp
 
 # 使用特定版本
-bingoctl create myapp -r v1.2.3
+bingo create myapp -r v1.2.3
 
 # 使用分支（开发版本）
-bingoctl create myapp -r main
+bingo create myapp -r main
 
 # 强制重新下载模板
-bingoctl create myapp -r main --no-cache
+bingo create myapp -r main --no-cache
 ```
 
 **服务选择**
@@ -70,47 +70,47 @@ bingoctl create myapp -r main --no-cache
 
 ```bash
 # 只包含 apiserver（默认）
-bingoctl create myapp
+bingo create myapp
 
 # 创建所有可用服务
-bingoctl create myapp --all
+bingo create myapp --all
 # 或使用简写
-bingoctl create myapp -a
+bingo create myapp -a
 
 # 明确指定服务（多个服务用逗号分隔）
-bingoctl create myapp --services apiserver,admserver,scheduler
+bingo create myapp --services apiserver,admserver,scheduler
 
 # 添加服务到默认的 apiserver
-bingoctl create myapp --add-service scheduler
+bingo create myapp --add-service scheduler
 
 # 排除特定服务
-bingoctl create myapp --no-service bot
+bingo create myapp --no-service bot
 
 # 仅包含骨架，不包含任何服务
-bingoctl create myapp --services none
+bingo create myapp --services none
 ```
 
 **Git 初始化**
 
 ```bash
 # 创建项目并初始化 git 仓库（默认）
-bingoctl create myapp
+bingo create myapp
 
 # 创建项目但不初始化 git
-bingoctl create myapp --init-git=false
+bingo create myapp --init-git=false
 ```
 
 **缓存管理和镜像配置**
 
 ```bash
-# 缓存位置：~/.bingoctl/templates/
+# 缓存位置：~/.bingo/templates/
 
 # 对于 GitHub 访问困难的地区，可以配置镜像
-export BINGOCTL_TEMPLATE_MIRROR=https://ghproxy.com/
-bingoctl create myapp
+export BINGO_TEMPLATE_MIRROR=https://ghproxy.com/
+bingo create myapp
 
 # 或临时设置
-BINGOCTL_TEMPLATE_MIRROR=https://ghproxy.com/ bingoctl create myapp
+BINGO_TEMPLATE_MIRROR=https://ghproxy.com/ bingo create myapp
 ```
 
 ### 2. 代码生成
@@ -132,16 +132,16 @@ BINGOCTL_TEMPLATE_MIRROR=https://ghproxy.com/ bingoctl create myapp
 
 ```bash
 # 为默认服务（通常是 apiserver）生成代码
-bingoctl make model user
+bingo make model user
 
 # 为特定服务自动推断路径
-bingoctl make model user --service admserver
+bingo make model user --service admserver
 
 # 生成完整 CRUD（为指定服务）
-bingoctl make crud order --service admserver
+bingo make crud order --service admserver
 
 # 明确指定目录（优先级最高，覆盖 --service）
-bingoctl make model user -d custom/path
+bingo make model user -d custom/path
 ```
 
 **路径推断规则：**
@@ -154,7 +154,7 @@ bingoctl make model user -d custom/path
 一次性生成所有层的代码:
 
 ```bash
-bingoctl make crud user
+bingo make crud user
 ```
 
 自动生成:
@@ -173,19 +173,19 @@ bingoctl make crud user
 
 ```bash
 # 生成 Model
-bingoctl make model article
+bingo make model article
 
 # 生成 Store 层
-bingoctl make store article
+bingo make store article
 
 # 生成 Biz 层
-bingoctl make biz article
+bingo make biz article
 
 # 生成 Controller 层
-bingoctl make controller article
+bingo make controller article
 
 # 生成 Request 验证
-bingoctl make request article
+bingo make request article
 ```
 
 ### 3. 从数据库生成代码
@@ -194,20 +194,20 @@ bingoctl make request article
 
 ```bash
 # 生成单个表
-bingoctl gen -t users
+bingo gen -t users
 
 # 生成多个表
-bingoctl gen -t users,posts,comments
+bingo gen -t users,posts,comments
 ```
 
-**前提条件**: 需要在 `.bingoctl.yaml` 中配置数据库连接。
+**前提条件**: 需要在 `.bingo.yaml` 中配置数据库连接。
 
 ### 4. 数据库迁移
 
 生成数据库迁移文件:
 
 ```bash
-bingoctl make migration create_users_table
+bingo make migration create_users_table
 ```
 
 生成的迁移文件位于 `internal/apiserver/database/migration/`。
@@ -215,7 +215,7 @@ bingoctl make migration create_users_table
 可选: 从数据库表生成迁移
 
 ```bash
-bingoctl make migration create_posts_table -t posts
+bingo make migration create_posts_table -t posts
 ```
 
 ### 5. 生成服务模块
@@ -224,16 +224,16 @@ bingoctl make migration create_posts_table -t posts
 
 ```bash
 # 生成带 HTTP 服务器的 API 服务
-bingoctl make service api --http --with-store --with-controller
+bingo make service api --http --with-store --with-controller
 
 # 生成带 gRPC 服务器的服务
-bingoctl make service rpc --grpc
+bingo make service rpc --grpc
 
 # 生成同时支持 HTTP 和 gRPC 的服务
-bingoctl make service gateway --http --grpc
+bingo make service gateway --http --grpc
 
 # 生成纯业务处理的 worker 服务
-bingoctl make service worker --no-biz
+bingo make service worker --no-biz
 ```
 
 服务选项:
@@ -250,24 +250,24 @@ bingoctl make service worker --no-biz
 
 ```bash
 # 生成中间件
-bingoctl make middleware auth
+bingo make middleware auth
 
 # 生成定时任务
-bingoctl make job cleanup
+bingo make job cleanup
 
 # 生成数据填充
-bingoctl make seeder users
+bingo make seeder users
 
 # 生成命令行命令
-bingoctl make cmd serve
+bingo make cmd serve
 ```
 
 ## 配置文件
 
-在项目根目录复制示例文件创建 `.bingoctl.yaml`:
+在项目根目录复制示例文件创建 `.bingo.yaml`:
 
 ```bash
-cp .bingoctl.example.yaml .bingoctl.yaml
+cp .bingo.example.yaml .bingo.yaml
 ```
 
 配置文件内容:
@@ -315,23 +315,23 @@ mysql:
 
 ```bash
 # 1. 创建项目
-bingoctl create github.com/myorg/blog
+bingo create github.com/myorg/blog
 cd blog
 
 # 2. 配置数据库
-vim .bingoctl.yaml  # 修改 mysql 配置
+vim .bingo.yaml  # 修改 mysql 配置
 
 # 3. 启动依赖服务
 docker-compose -f deployments/docker/docker-compose.yaml up -d
 
 # 4. 生成用户模块
-bingoctl make crud user
+bingo make crud user
 
 # 5. 生成文章模块
-bingoctl make crud post
+bingo make crud post
 
 # 6. 生成评论模块
-bingoctl make crud comment
+bingo make crud comment
 
 # 7. 运行服务
 make build
@@ -344,23 +344,23 @@ make build
 
 ```bash
 # 1. 配置数据库连接
-vim .bingoctl.yaml
+vim .bingo.yaml
 
 # 2. 从数据库生成 Model
-bingoctl gen -t users,posts,comments,tags
+bingo gen -t users,posts,comments,tags
 
 # 3. 为每个表生成完整的 CRUD 代码
-bingoctl make crud user
-bingoctl make crud post
-bingoctl make crud comment
-bingoctl make crud tag
+bingo make crud user
+bingo make crud post
+bingo make crud comment
+bingo make crud tag
 ```
 
 ### 示例 3: 生成定时任务
 
 ```bash
 # 1. 生成定时任务代码
-bingoctl make job daily_report
+bingo make job daily_report
 
 # 2. 编辑任务逻辑
 vim internal/watcher/watcher/daily_report.go
@@ -372,14 +372,14 @@ vim internal/watcher/watcher/daily_report.go
 
 ```bash
 # 生成一个独立的通知服务
-bingoctl make service notification \
+bingo make service notification \
   --http \
   --with-store \
   --with-controller \
   --with-router
 
 # 生成一个纯 gRPC 服务
-bingoctl make service user-grpc --grpc
+bingo make service user-grpc --grpc
 ```
 
 ## 命令参考
@@ -387,19 +387,19 @@ bingoctl make service user-grpc --grpc
 ### 全局选项
 
 ```bash
--c, --config string   配置文件路径(默认 .bingoctl.yaml)
+-c, --config string   配置文件路径(默认 .bingo.yaml)
 ```
 
 ### create 命令
 
 ```bash
-bingoctl create <package-name>
+bingo create <package-name>
 ```
 
 ### make 命令
 
 ```bash
-bingoctl make <type> <name> [选项]
+bingo make <type> <name> [选项]
 
 选项:
   -d, --directory string   指定生成目录
@@ -424,7 +424,7 @@ bingoctl make <type> <name> [选项]
 ### gen 命令
 
 ```bash
-bingoctl gen -t <table1,table2,...>
+bingo gen -t <table1,table2,...>
 ```
 
 ## 开发工作流
@@ -434,16 +434,16 @@ bingoctl gen -t <table1,table2,...>
 ```
 1. 创建项目
    ↓
-   bingoctl create github.com/myorg/app
+   bingo create github.com/myorg/app
 
 2. 配置数据库
    ↓
-   编辑 .bingoctl.yaml
+   编辑 .bingo.yaml
 
 3. 生成业务模块
    ↓
-   bingoctl make crud user
-   bingoctl make crud post
+   bingo make crud user
+   bingo make crud post
 
 4. 自定义业务逻辑
    ↓
@@ -451,8 +451,8 @@ bingoctl gen -t <table1,table2,...>
 
 5. 添加中间件/任务
    ↓
-   bingoctl make middleware auth
-   bingoctl make job cleanup
+   bingo make middleware auth
+   bingo make job cleanup
 
 6. 运行和测试
    ↓
@@ -466,7 +466,7 @@ bingoctl gen -t <table1,table2,...>
 对于标准的增删改查功能,直接使用 `make crud`:
 
 ```bash
-bingoctl make crud product
+bingo make crud product
 ```
 
 ### 2. 从数据库生成减少手动工作
@@ -474,7 +474,7 @@ bingoctl make crud product
 如果已有数据库设计,使用 `gen` 命令:
 
 ```bash
-bingoctl gen -t products,categories,orders
+bingo gen -t products,categories,orders
 ```
 
 ### 3. 生成后立即测试
@@ -482,7 +482,7 @@ bingoctl gen -t products,categories,orders
 生成代码后立即运行服务验证:
 
 ```bash
-bingoctl make crud user
+bingo make crud user
 make build
 ./app-apiserver
 curl http://localhost:8080/v1/users
@@ -497,22 +497,22 @@ curl http://localhost:8080/v1/users
 
 ### 5. 版本控制配置文件
 
-将 `.bingoctl.yaml` 提交到版本控制:
+将 `.bingo.yaml` 提交到版本控制:
 
 ```bash
-git add .bingoctl.yaml
-git commit -m "feat: add bingoctl config"
+git add .bingo.yaml
+git commit -m "feat: add bingo config"
 ```
 
 ## 常见问题
 
 ### Q: 生成的代码会覆盖我的修改吗?
 
-A: bingoctl 默认不会覆盖已存在的文件。如果文件已存在,会提示你是否覆盖。
+A: bingo 默认不会覆盖已存在的文件。如果文件已存在,会提示你是否覆盖。
 
 ### Q: 如何自定义生成的代码模板?
 
-A: bingoctl 使用内置模板。如需自定义,可以 fork bingoctl 仓库修改模板。
+A: bingo 使用内置模板。如需自定义,可以 fork bingoctl 仓库修改模板。
 
 ### Q: 生成的代码能直接用于生产吗?
 
@@ -522,11 +522,11 @@ A: 生成的代码遵循 Bingo 最佳实践,但仍需根据实际业务场景调
 - 添加错误处理
 - 编写单元测试
 
-### Q: bingoctl 和项目中的 bingoctl 有什么区别?
+### Q: bingo CLI 和项目中的 bingoctl 有什么区别?
 
 A: 它们是两个不同的工具:
-- **bingoctl (CLI 工具)**: 独立的项目脚手架和代码生成工具
-- **cmd/bingoctl (项目组件)**: Bingo 项目内置的命令行工具,用于数据库迁移等
+- **bingo (CLI 工具)**: 独立的项目脚手架和代码生成工具
+- **cmd/bingoctl (项目组件)**: Bingo 项目内置的命令行工具,可扩展自定义命令
 
 ## 下一步
 
@@ -534,5 +534,5 @@ A: 它们是两个不同的工具:
 
 ## 参考资源
 
-- [bingoctl GitHub 仓库](https://github.com/bingo-project/bingoctl)
-- [bingoctl README](https://github.com/bingo-project/bingoctl/blob/main/README.md)
+- [bingo CLI GitHub 仓库](https://github.com/bingo-project/bingoctl)
+- [bingo CLI README](https://github.com/bingo-project/bingoctl/blob/main/README.md)

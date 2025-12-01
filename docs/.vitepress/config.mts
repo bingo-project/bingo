@@ -150,7 +150,7 @@ export default defineConfig({
                 { text: '快速开始', link: '/guide/getting-started' },
                 { text: '项目结构', link: '/guide/project-structure' },
                 { text: '开发第一个功能', link: '/guide/first-feature' },
-                { text: '使用 bingoctl', link: '/guide/using-bingoctl' }
+                { text: '使用 bingo CLI', link: '/guide/using-bingo' }
               ]
             }
           ],
@@ -240,7 +240,7 @@ export default defineConfig({
                 { text: 'Getting Started', link: '/en/guide/getting-started' },
                 { text: 'Project Structure', link: '/en/guide/project-structure' },
                 { text: 'First Feature', link: '/en/guide/first-feature' },
-                { text: 'Using bingoctl', link: '/en/guide/using-bingoctl' }
+                { text: 'Using bingo CLI', link: '/en/guide/using-bingo' }
               ]
             }
           ],

@@ -15,7 +15,7 @@
 - 🚀 [快速开始](https://bingoctl.dev/guide/getting-started) - 10 分钟快速上手
 - 📖 [什么是 Bingo](https://bingoctl.dev/guide/what-is-bingo) - 了解核心特性
 - 🏗️ [整体架构](https://bingoctl.dev/essentials/architecture) - 微服务架构设计
-- 🛠️ [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl) - CLI 工具指南
+- 🛠️ [使用 bingo CLI](https://bingoctl.dev/guide/using-bingo) - CLI 工具指南
 - 🇬🇧 [English Documentation](https://bingoctl.dev/en/) - English version
 
 ## 🎯 项目定位
@@ -29,7 +29,7 @@
 
 **适用场景**: 中后台系统、微服务项目、RESTful API、gRPC 服务
 
-🔗 **相关项目**: [bingoctl](https://github.com/bingo-project/bingoctl) - Bingo 项目脚手架工具
+🔗 **相关项目**: [bingo CLI](https://github.com/bingo-project/bingoctl) - Bingo 项目脚手架工具
 
 ## 核心特性
 
@@ -67,19 +67,19 @@
 
 ## 快速开始
 
-### 方式一: 使用 bingoctl 创建新项目 (推荐)
+### 方式一: 使用 bingo CLI 创建新项目 (推荐)
 
-使用 [bingoctl](https://github.com/bingo-project/bingoctl) CLI 工具快速创建项目:
+使用 [bingo CLI](https://github.com/bingo-project/bingoctl) 工具快速创建项目:
 
 ```bash
-# 安装 bingoctl
-go install github.com/bingo-project/bingoctl@latest
+# 安装 bingo CLI
+go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # 创建新项目（只包含 apiserver）
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 
 # 或创建包含所有服务的项目
-bingoctl create github.com/myorg/myapp --all
+bingo create github.com/myorg/myapp --all
 
 # 进入项目目录
 cd myapp
@@ -88,7 +88,7 @@ cd myapp
 docker-compose -f deployments/docker/docker-compose.yaml up -d
 
 # 生成你的第一个模块 (如用户模块)
-bingoctl make crud user
+bingo make crud user
 
 # 运行服务
 make build
@@ -99,22 +99,22 @@ make build
 
 ```bash
 # 创建并指定特定服务
-bingoctl create myapp --services apiserver,admserver
+bingo create myapp --services apiserver,admserver
 
 # 添加额外的服务
-bingoctl create myapp --add-service scheduler
+bingo create myapp --add-service scheduler
 
 # 排除某些服务
-bingoctl create myapp --no-service bot
+bingo create myapp --no-service bot
 
 # 控制 git 初始化
-bingoctl create myapp --init-git=false
+bingo create myapp --init-git=false
 
 # 使用特定的模板版本
-bingoctl create myapp -r v1.2.3
+bingo create myapp -r v1.2.3
 ```
 
-详细的 bingoctl 使用指南请查看 [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl)。
+详细的 bingo CLI 使用指南请查看 [使用 bingo CLI](https://bingoctl.dev/guide/using-bingo)。
 
 ### 方式二: 克隆 Bingo 仓库
 
@@ -196,7 +196,7 @@ open http://localhost:8080/swagger/index.html
 
 - [什么是 Bingo](https://bingoctl.dev/guide/what-is-bingo) - 了解 Bingo 的定位和特性
 - [快速开始](https://bingoctl.dev/guide/getting-started) - 10 分钟快速启动项目
-- [使用 bingoctl](https://bingoctl.dev/guide/using-bingoctl) - CLI 工具完整指南
+- [使用 bingo CLI](https://bingoctl.dev/guide/using-bingo) - CLI 工具完整指南
 - [项目结构](https://bingoctl.dev/guide/project-structure) - 理解项目目录组织
 - [开发第一个功能](https://bingoctl.dev/guide/first-feature) - 通过实例学习开发流程
 

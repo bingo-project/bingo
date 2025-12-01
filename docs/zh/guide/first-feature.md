@@ -7,18 +7,18 @@ description: 通过开发一个文章管理功能，学习 Bingo Go 微服务框
 
 通过开发一个简单的"文章管理"功能,快速掌握 Bingo 的开发流程。
 
-## 快速开始: 使用 bingoctl (推荐)
+## 快速开始: 使用 bingo CLI (推荐)
 
-如果你使用 [bingoctl](https://github.com/bingo-project/bingoctl),可以一键生成所有代码:
+如果你使用 [bingo CLI](https://github.com/bingo-project/bingoctl),可以一键生成所有代码:
 
 ```bash
 # 生成文章模块的完整 CRUD 代码
-bingoctl make crud article
+bingo make crud article
 ```
 
 这会自动生成 Model、Store、Biz、Controller、Request 的完整代码,并自动注册到相应的接口和路由。
 
-> 想了解更多 bingoctl 功能? 查看 [使用 bingoctl](./using-bingoctl.md)
+> 想了解更多 bingo CLI 功能? 查看 [使用 bingo CLI](./using-bingo.md)
 
 ---
 
@@ -72,7 +72,7 @@ func (Article) TableName() string {
 
 ```bash
 # 生成迁移文件
-bingoctl make migration create create_articles_table
+bingo make migration create create_articles_table
 ```
 
 编辑迁移文件 `internal/bingoctl/database/migration/xxxx_create_articles_table.go`:
@@ -318,4 +318,4 @@ curl http://localhost:8080/v1/articles/1 \
 
 ## 下一步
 
-- [使用 bingoctl](./using-bingoctl.md) - 使用代码生成器提高开发效率
+- [使用 bingo CLI](./using-bingo.md) - 使用代码生成器提高开发效率

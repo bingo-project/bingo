@@ -1,6 +1,6 @@
 ---
 title: 快速开始 - 10分钟上手 Bingo Go 微服务框架
-description: 使用 bingoctl 快速创建 Bingo Go 微服务项目，10分钟内启动并运行第一个 API。本指南提供完整的安装、配置和运行步骤，帮助你快速开始 Golang 后端开发。
+description: 使用 bingo CLI 快速创建 Bingo Go 微服务项目，10分钟内启动并运行第一个 API。本指南提供完整的安装、配置和运行步骤，帮助你快速开始 Golang 后端开发。
 ---
 
 # 快速开始
@@ -9,22 +9,22 @@ description: 使用 bingoctl 快速创建 Bingo Go 微服务项目，10分钟内
 
 ## 创建项目
 
-### 方式一: 使用 bingoctl（推荐）
+### 方式一: 使用 bingo CLI（推荐）
 
-使用 [bingoctl](https://github.com/bingo-project/bingoctl) CLI 工具是创建 Bingo 项目最快的方式。
+使用 [bingo CLI](https://github.com/bingo-project/bingoctl) 工具是创建 Bingo 项目最快的方式。
 
 ```bash
-# 安装 bingoctl
-go install github.com/bingo-project/bingoctl@latest
+# 安装 bingo CLI
+go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # 创建新项目
-bingoctl create github.com/myorg/myapp
+bingo create github.com/myorg/myapp
 
 # 进入项目目录
 cd myapp
 ```
 
-bingoctl 会自动生成完整的项目结构,包括:
+bingo 会自动生成完整的项目结构,包括:
 - 基础配置文件
 - Docker Compose 配置
 - Makefile
@@ -81,11 +81,8 @@ make build
 ### 2. 数据库迁移
 
 ```bash
-# 执行数据库迁移（根据你的操作系统和架构选择路径）
-./_output/platforms/<os>/<arch>/<app>ctl migrate up
-
-# 例如 macOS ARM64 + bingo 项目:
-./_output/platforms/darwin/arm64/bingoctl migrate up
+# 执行数据库迁移
+bingo migrate up
 ```
 
 ### 3. 运行服务
