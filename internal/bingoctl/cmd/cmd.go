@@ -1,23 +1,18 @@
 package cmd
 
 import (
-	"context"
 	"io"
 	"os"
 
-	"github.com/bingo-project/bingoctl/pkg/cmd/migrate"
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/cobra"
 
 	"bingo/internal/bingoctl/cmd/db"
 	"bingo/internal/bingoctl/cmd/key"
 	"bingo/internal/bingoctl/cmd/user"
 	"bingo/internal/bingoctl/cmd/version"
-	"bingo/internal/bingoctl/database/migration"
 	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/store"
 )
 
@@ -50,7 +45,6 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 			Message: "Database Commands:",
 			Commands: []*cobra.Command{
 				db.NewCmdDb(),
-				migrate.NewCmdMigrate(store.S.DB(context.Background()), facade.Config.Server.Mode == gin.ReleaseMode),
 			},
 		},
 		{
@@ -78,9 +72,6 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 func initConfig() {
 	bootstrap.InitConfig("bingoctl.yaml")
 	bootstrap.Boot()
-
-	// Init migration
-	migration.Initialize()
 
 	// Init store
 	_ = store.NewStore(bootstrap.InitDB())
