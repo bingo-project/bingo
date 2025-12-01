@@ -11,8 +11,8 @@ directory:
   middleware: internal/pkg/http/middleware
   request: pkg/api/apiserver/v1
   job: internal/watcher/watcher
-  migration: internal/bingoctl/database/migration
-  seeder: internal/bingoctl/database/seeder
+  migration: internal/pkg/database/migration
+  seeder: internal/pkg/database/seeder
 
 registries:
   router: internal/apiserver/router/api.go
