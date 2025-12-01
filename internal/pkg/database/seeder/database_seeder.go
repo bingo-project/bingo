@@ -1,8 +1,17 @@
 package seeder
 
 import (
+	"gorm.io/gorm"
+
+	"bingo/internal/pkg/store"
+
 	"github.com/gookit/color"
 )
+
+// Init initializes the seeder with database connection.
+func Init(db *gorm.DB) {
+	store.NewStore(db)
+}
 
 // Seeder defines the interface for database seeders.
 type Seeder interface {
