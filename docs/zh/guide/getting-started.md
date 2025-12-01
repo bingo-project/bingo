@@ -1,6 +1,6 @@
 ---
 title: 快速开始 - 10分钟上手 Bingo Go 微服务框架
-description: 使用 bingo CLI 快速创建 Bingo Go 微服务项目，10分钟内启动并运行第一个 API。本指南提供完整的安装、配置和运行步骤，帮助你快速开始 Golang 后端开发。
+description: 使用 Bingo CLI 快速创建 Bingo Go 微服务项目，10分钟内启动并运行第一个 API。本指南提供完整的安装、配置和运行步骤，帮助你快速开始 Golang 后端开发。
 ---
 
 # 快速开始
@@ -9,12 +9,12 @@ description: 使用 bingo CLI 快速创建 Bingo Go 微服务项目，10分钟�
 
 ## 创建项目
 
-### 方式一: 使用 bingo CLI（推荐）
+### 方式一: 使用 Bingo CLI（推荐）
 
-使用 [bingo CLI](https://github.com/bingo-project/bingoctl) 工具是创建 Bingo 项目最快的方式。
+使用 [Bingo CLI](https://github.com/bingo-project/bingoctl) 工具是创建 Bingo 项目最快的方式。
 
 ```bash
-# 安装 bingo CLI
+# 安装 Bingo CLI
 go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # 创建新项目

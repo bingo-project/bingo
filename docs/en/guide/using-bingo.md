@@ -1,11 +1,11 @@
 ---
-title: Using bingo CLI - Bingo Go CLI Tool Guide
-description: Master the bingo CLI tool to create projects, generate CRUD code, database models, migrations, and more. Boost your Bingo Go microservices development efficiency.
+title: Using Bingo CLI - Bingo Go CLI Tool Guide
+description: Master the Bingo CLI tool to create projects, generate CRUD code, database models, migrations, and more. Boost your Bingo Go microservices development efficiency.
 ---
 
-# Using bingo CLI
+# Using Bingo CLI
 
-[bingo CLI](https://github.com/bingo-project/bingoctl) is the official CLI tool for the Bingo framework, used for quickly creating projects and generating code, significantly improving development efficiency.
+[Bingo CLI](https://github.com/bingo-project/bingoctl) is the official CLI tool for the Bingo framework, used for quickly creating projects and generating code, significantly improving development efficiency.
 
 ## Installation
 
@@ -13,10 +13,62 @@ description: Master the bingo CLI tool to create projects, generate CRUD code, d
 go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 ```
 
+> To install an older version (v1.4.x with built-in templates), build from source: `git clone https://github.com/bingo-project/bingoctl && cd bingoctl && git checkout v1.4.7 && go build -o bingo ./cmd/bingoctl`
+> See [CHANGELOG](https://github.com/bingo-project/bingoctl/blob/main/docs/en/CHANGELOG.md) for version history
+
 Verify installation:
 
 ```bash
 bingo version
+```
+
+## Shell Completion
+
+Bingo supports command-line auto-completion for multiple shells.
+
+### Zsh
+
+```bash
+# Temporary (current session)
+source <(bingo completion zsh)
+
+# Permanent
+## Linux
+bingo completion zsh > "${fpath[1]}/_bingo"
+
+## macOS (Homebrew)
+bingo completion zsh > $(brew --prefix)/share/zsh/site-functions/_bingo
+```
+
+> If completion doesn't work, ensure `.zshrc` has: `autoload -U compinit; compinit`
+
+### Bash
+
+```bash
+# Temporary (current session)
+source <(bingo completion bash)
+
+# Permanent
+## Linux
+bingo completion bash > /etc/bash_completion.d/bingo
+
+## macOS (Homebrew)
+bingo completion bash > $(brew --prefix)/etc/bash_completion.d/bingo
+```
+
+> Requires the `bash-completion` package
+
+### Fish
+
+```bash
+bingo completion fish > ~/.config/fish/completions/bingo.fish
+```
+
+### PowerShell
+
+```powershell
+bingo completion powershell > bingo.ps1
+# Add the generated script to your PowerShell profile
 ```
 
 ## Core Features
@@ -98,6 +150,16 @@ bingo create myapp
 
 # Create project without git initialization
 bingo create myapp --init-git=false
+```
+
+**Build Options**
+
+```bash
+# Create project without building (default)
+bingo create myapp
+
+# Create project and run make build
+bingo create myapp --build
 ```
 
 **Cache Management and Mirror Configuration**
@@ -210,12 +272,37 @@ Generate database migration files:
 bingo make migration create_users_table
 ```
 
-Generated migration files are located in `internal/apiserver/database/migration/`.
+Generated migration files are located in `internal/pkg/database/migration/`.
 
 Optional: Generate migration from database table
 
 ```bash
 bingo make migration create_posts_table -t posts
+```
+
+**Run Migrations**
+
+```bash
+bingo migrate <command> [options]
+
+# Options
+-v, --verbose   Show detailed compilation output
+    --rebuild   Force recompile migration program
+-f, --force     Force execution in production environment
+
+# Subcommands
+bingo migrate up          # Run all pending migrations
+bingo migrate rollback    # Rollback the last batch of migrations
+bingo migrate reset       # Rollback all migrations
+bingo migrate refresh     # Rollback all and re-run migrations
+bingo migrate fresh       # Drop all tables and re-run migrations
+```
+
+**Configure Migration Table Name** (optional, in `.bingo.yaml`):
+
+```yaml
+migrate:
+  table: bingo_migration  # Default value
 ```
 
 ### 5. Generate Service Modules
@@ -262,6 +349,24 @@ bingo make seeder users
 bingo make cmd serve
 ```
 
+### 7. Run Database Seeders
+
+Run user-defined seeders to populate the database:
+
+```bash
+bingo db seed [options]
+
+# Options
+-v, --verbose      Show detailed compilation output
+    --rebuild      Force recompile seeder program
+    --seeder       Specify seeder class name to run
+
+# Examples
+bingo db seed                    # Run all seeders
+bingo db seed --seeder=User      # Run only UserSeeder
+bingo db seed -v                 # Show detailed output
+```
+
 ## Configuration File
 
 Copy example file to create `.bingo.yaml` in project root:
@@ -288,8 +393,8 @@ directory:
   controller: internal/apiserver/controller/v1
   middleware: internal/pkg/middleware
   job: internal/watcher/watcher
-  migration: internal/apiserver/database/migration
-  seeder: internal/apiserver/database/seeder
+  migration: internal/pkg/database/migration
+  seeder: internal/pkg/database/seeder
 
 # Registry configuration
 registries:
@@ -335,7 +440,7 @@ bingo make crud comment
 
 # 7. Run service
 make build
-./blog-apiserver
+./_output/platforms/<os>/<arch>/blog-apiserver
 ```
 
 ### Example 2: Generate Code from Existing Database
@@ -456,7 +561,7 @@ Recommended development workflow:
 
 6. Run and test
    ↓
-   make build && ./app-apiserver
+   make build && ./_output/platforms/<os>/<arch>/app-apiserver
 ```
 
 ## Best Practices
@@ -484,7 +589,7 @@ Verify generated code works by running service:
 ```bash
 bingo make crud user
 make build
-./app-apiserver
+./_output/platforms/<os>/<arch>/app-apiserver
 curl http://localhost:8080/v1/users
 ```
 
@@ -522,7 +627,7 @@ A: Generated code follows Bingo best practices but still needs adjustment based 
 - Add error handling
 - Write unit tests
 
-### Q: What's the difference between bingo CLI and bingoctl in the project?
+### Q: What's the difference between Bingo CLI and bingoctl in the project?
 
 A: They are two different tools:
 - **bingo (CLI tool)**: Independent project scaffold and code generation tool
@@ -534,5 +639,5 @@ A: They are two different tools:
 
 ## Reference Resources
 
-- [bingo CLI GitHub Repository](https://github.com/bingo-project/bingoctl)
-- [bingo CLI README](https://github.com/bingo-project/bingoctl/blob/main/README.md)
+- [Bingo CLI GitHub Repository](https://github.com/bingo-project/bingoctl)
+- [Bingo CLI README](https://github.com/bingo-project/bingoctl/blob/main/README.md)

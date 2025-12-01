@@ -1,6 +1,6 @@
 ---
 title: Getting Started - Quick Start with Bingo Go Microservices Framework
-description: Quickly create a Bingo Go microservices project using bingo CLI in 10 minutes. Complete guide with installation, configuration and running steps to start Golang backend development.
+description: Quickly create a Bingo Go microservices project using Bingo CLI in 10 minutes. Complete guide with installation, configuration and running steps to start Golang backend development.
 ---
 
 # Getting Started
@@ -9,12 +9,12 @@ This guide will help you launch a Bingo project and run your first API within 10
 
 ## Create Project
 
-### Option 1: Using bingo CLI (Recommended)
+### Option 1: Using Bingo CLI (Recommended)
 
-Using the [bingo CLI](https://github.com/bingo-project/bingoctl) tool is the fastest way to create a Bingo project.
+Using the [Bingo CLI](https://github.com/bingo-project/bingoctl) tool is the fastest way to create a Bingo project.
 
 ```bash
-# Install bingo CLI
+# Install Bingo CLI
 go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 
 # Create a new project

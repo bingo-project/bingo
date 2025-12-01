@@ -292,7 +292,7 @@ func RegisterRoutes(engine *gin.Engine, postController *postctrl.PostController)
 make build
 
 # Run the service
-./myapp-apiserver
+./_output/platforms/<os>/<arch>/myapp-apiserver
 
 # Test creating a post
 curl -X POST http://localhost:8080/v1/posts \
@@ -355,4 +355,4 @@ func TestCreatePost(t *testing.T) {
 
 ## Next Step
 
-- [Using bingo CLI](./using-bingo.md) - Boost development efficiency with the code generator
+- [Using Bingo CLI](./using-bingo.md) - Boost development efficiency with the code generator

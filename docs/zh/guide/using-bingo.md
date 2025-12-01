@@ -1,11 +1,11 @@
 ---
-title: 使用 bingo CLI - Bingo CLI 工具指南
-description: bingo CLI 是 Bingo 框架的官方 CLI 工具，用于快速创建项目、生成 CRUD 代码、数据库迁移等。本指南详细介绍 bingo CLI 的安装和使用方法。
+title: 使用 Bingo CLI - Bingo CLI 工具指南
+description: Bingo CLI 是 Bingo 框架的官方 CLI 工具，用于快速创建项目、生成 CRUD 代码、数据库迁移等。本指南详细介绍 Bingo CLI 的安装和使用方法。
 ---
 
-# 使用 bingo CLI
+# 使用 Bingo CLI
 
-[bingo CLI](https://github.com/bingo-project/bingoctl) 是 Bingo 框架的官方 CLI 工具,用于快速创建项目和生成代码,极大提升开发效率。
+[Bingo CLI](https://github.com/bingo-project/bingoctl) 是 Bingo 框架的官方 CLI 工具,用于快速创建项目和生成代码,极大提升开发效率。
 
 ## 安装
 
@@ -13,10 +13,62 @@ description: bingo CLI 是 Bingo 框架的官方 CLI 工具，用于快速创建
 go install github.com/bingo-project/bingoctl/cmd/bingo@latest
 ```
 
+> 如需安装旧版本（v1.4.x 内置模板版），需从源码编译：`git clone https://github.com/bingo-project/bingoctl && cd bingoctl && git checkout v1.4.7 && go build -o bingo ./cmd/bingoctl`
+> 查看 [CHANGELOG](https://github.com/bingo-project/bingoctl/blob/main/docs/en/CHANGELOG.md) 获取版本历史
+
 验证安装:
 
 ```bash
 bingo version
+```
+
+## Shell 命令补全
+
+Bingo 支持多种 shell 的命令行自动补全。
+
+### Zsh
+
+```bash
+# 临时生效（当前会话）
+source <(bingo completion zsh)
+
+# 永久生效
+## Linux
+bingo completion zsh > "${fpath[1]}/_bingo"
+
+## macOS (Homebrew)
+bingo completion zsh > $(brew --prefix)/share/zsh/site-functions/_bingo
+```
+
+> 如果补全不生效，确保 `.zshrc` 中有：`autoload -U compinit; compinit`
+
+### Bash
+
+```bash
+# 临时生效（当前会话）
+source <(bingo completion bash)
+
+# 永久生效
+## Linux
+bingo completion bash > /etc/bash_completion.d/bingo
+
+## macOS (Homebrew)
+bingo completion bash > $(brew --prefix)/etc/bash_completion.d/bingo
+```
+
+> 需要安装 `bash-completion` 包
+
+### Fish
+
+```bash
+bingo completion fish > ~/.config/fish/completions/bingo.fish
+```
+
+### PowerShell
+
+```powershell
+bingo completion powershell > bingo.ps1
+# 将生成的脚本添加到 PowerShell profile
 ```
 
 ## 核心功能
@@ -98,6 +150,16 @@ bingo create myapp
 
 # 创建项目但不初始化 git
 bingo create myapp --init-git=false
+```
+
+**构建选项**
+
+```bash
+# 创建项目但不构建（默认）
+bingo create myapp
+
+# 创建项目并运行 make build
+bingo create myapp --build
 ```
 
 **缓存管理和镜像配置**
@@ -210,12 +272,37 @@ bingo gen -t users,posts,comments
 bingo make migration create_users_table
 ```
 
-生成的迁移文件位于 `internal/apiserver/database/migration/`。
+生成的迁移文件位于 `internal/pkg/database/migration/`。
 
 可选: 从数据库表生成迁移
 
 ```bash
 bingo make migration create_posts_table -t posts
+```
+
+**运行迁移**
+
+```bash
+bingo migrate <command> [options]
+
+# 选项
+-v, --verbose   显示详细编译输出
+    --rebuild   强制重新编译迁移程序
+-f, --force     在生产环境强制执行
+
+# 子命令
+bingo migrate up          # 运行所有待执行的迁移
+bingo migrate rollback    # 回滚最后一批迁移
+bingo migrate reset       # 回滚所有迁移
+bingo migrate refresh     # 回滚所有并重新运行迁移
+bingo migrate fresh       # 删除所有表并重新运行迁移
+```
+
+**配置迁移表名**（可选，在 `.bingo.yaml` 中）：
+
+```yaml
+migrate:
+  table: bingo_migration  # 默认值
 ```
 
 ### 5. 生成服务模块
@@ -262,6 +349,24 @@ bingo make seeder users
 bingo make cmd serve
 ```
 
+### 7. 运行数据填充
+
+运行用户定义的 seeder 填充数据库：
+
+```bash
+bingo db seed [options]
+
+# 选项
+-v, --verbose      显示详细编译输出
+    --rebuild      强制重新编译 seeder 程序
+    --seeder       指定要运行的 seeder 类名
+
+# 示例
+bingo db seed                    # 运行所有 seeder
+bingo db seed --seeder=User      # 仅运行 UserSeeder
+bingo db seed -v                 # 显示详细输出
+```
+
 ## 配置文件
 
 在项目根目录复制示例文件创建 `.bingo.yaml`:
@@ -288,8 +393,8 @@ directory:
   controller: internal/apiserver/controller/v1
   middleware: internal/pkg/middleware
   job: internal/watcher/watcher
-  migration: internal/apiserver/database/migration
-  seeder: internal/apiserver/database/seeder
+  migration: internal/pkg/database/migration
+  seeder: internal/pkg/database/seeder
 
 # 注册配置
 registries:
@@ -335,7 +440,7 @@ bingo make crud comment
 
 # 7. 运行服务
 make build
-./blog-apiserver
+./_output/platforms/<os>/<arch>/blog-apiserver
 ```
 
 ### 示例 2: 为现有数据库生成代码
@@ -456,7 +561,7 @@ bingo gen -t <table1,table2,...>
 
 6. 运行和测试
    ↓
-   make build && ./app-apiserver
+   make build && ./_output/platforms/<os>/<arch>/app-apiserver
 ```
 
 ## 最佳实践
@@ -484,7 +589,7 @@ bingo gen -t products,categories,orders
 ```bash
 bingo make crud user
 make build
-./app-apiserver
+./_output/platforms/<os>/<arch>/app-apiserver
 curl http://localhost:8080/v1/users
 ```
 
@@ -522,7 +627,7 @@ A: 生成的代码遵循 Bingo 最佳实践,但仍需根据实际业务场景调
 - 添加错误处理
 - 编写单元测试
 
-### Q: bingo CLI 和项目中的 bingoctl 有什么区别?
+### Q: Bingo CLI 和项目中的 bingoctl 有什么区别?
 
 A: 它们是两个不同的工具:
 - **bingo (CLI 工具)**: 独立的项目脚手架和代码生成工具
@@ -534,5 +639,5 @@ A: 它们是两个不同的工具:
 
 ## 参考资源
 
-- [bingo CLI GitHub 仓库](https://github.com/bingo-project/bingoctl)
-- [bingo CLI README](https://github.com/bingo-project/bingoctl/blob/main/README.md)
+- [Bingo CLI GitHub 仓库](https://github.com/bingo-project/bingoctl)
+- [Bingo CLI README](https://github.com/bingo-project/bingoctl/blob/main/README.md)
