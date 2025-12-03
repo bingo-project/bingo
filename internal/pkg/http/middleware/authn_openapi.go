@@ -9,11 +9,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 	"bingo/pkg/util/ip"
 )
@@ -76,7 +76,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 
 		// 3. Api key 校验
 		ak := cast.ToString(body["access_key"])
-		apiKey, err := store.S.ApiKeys().GetByAK(c, ak)
+		apiKey, err := store.S.ApiKey().GetByAK(c, ak)
 		if err != nil {
 			log.C(c).Infow("api key not found", "ak", ak, "err", err)
 			core.WriteResponse(c, errno.ErrIllegalRequest, nil)

@@ -7,9 +7,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/errno"
 	model "bingo/internal/pkg/model/syscfg"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/syscfg"
 )
 
@@ -32,7 +32,7 @@ func NewConfig(ds store.IStore) *configBiz {
 }
 
 func (b *configBiz) List(ctx context.Context, req *v1.ListConfigRequest) (*v1.ListConfigResponse, error) {
-	count, list, err := b.ds.Configs().List(ctx, req)
+	count, list, err := b.ds.SysConfig().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list configs", "err", err)
 
@@ -54,7 +54,7 @@ func (b *configBiz) Create(ctx context.Context, req *v1.CreateConfigRequest) (*v
 	var configM model.Config
 	_ = copier.Copy(&configM, req)
 
-	err := b.ds.Configs().Create(ctx, &configM)
+	err := b.ds.SysConfig().Create(ctx, &configM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -71,7 +71,7 @@ func (b *configBiz) Create(ctx context.Context, req *v1.CreateConfigRequest) (*v
 }
 
 func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
-	config, err := b.ds.Configs().Get(ctx, ID)
+	config, err := b.ds.SysConfig().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -83,7 +83,7 @@ func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
 }
 
 func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigRequest) (*v1.ConfigInfo, error) {
-	configM, err := b.ds.Configs().Get(ctx, ID)
+	configM, err := b.ds.SysConfig().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -104,7 +104,7 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 		configM.OperatorID = *req.OperatorID
 	}
 
-	if err := b.ds.Configs().Update(ctx, configM); err != nil {
+	if err := b.ds.SysConfig().Update(ctx, configM); err != nil {
 		return nil, err
 	}
 
@@ -115,5 +115,5 @@ func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigReq
 }
 
 func (b *configBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Configs().Delete(ctx, ID)
+	return b.ds.SysConfig().DeleteByID(ctx, ID)
 }

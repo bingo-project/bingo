@@ -6,9 +6,9 @@ import (
 	"bingo/internal/apiserver/controller/v1/common"
 	"bingo/internal/apiserver/controller/v1/file"
 	"bingo/internal/apiserver/middleware"
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 )
 
 func MapCommonRouters(g *gin.Engine) {

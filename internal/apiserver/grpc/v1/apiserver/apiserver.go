@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"bingo/internal/apiserver/biz"
-	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/proto/v1/pb"
 )
 

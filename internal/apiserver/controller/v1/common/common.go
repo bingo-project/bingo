@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 )
 

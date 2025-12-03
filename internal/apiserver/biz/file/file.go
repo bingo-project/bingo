@@ -11,7 +11,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/goutil/fsutil"
 
-	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/store"
 	imageutil "bingo/internal/pkg/util/image"
 	"bingo/pkg/api/apiserver/v1"
 )

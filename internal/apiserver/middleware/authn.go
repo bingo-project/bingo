@@ -5,9 +5,9 @@ import (
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 )
 
@@ -23,7 +23,7 @@ func Authn() gin.HandlerFunc {
 		}
 
 		// User
-		userInfo, _ := store.S.Users().GetByUID(c, payload.Subject)
+		userInfo, _ := store.S.User().GetByUID(c, payload.Subject)
 		if userInfo.ID == 0 {
 			core.WriteResponse(c, errno.ErrTokenInvalid, nil)
 			c.Abort()

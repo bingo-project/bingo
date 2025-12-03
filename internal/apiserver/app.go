@@ -8,8 +8,8 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/bootstrap"
+	"bingo/internal/pkg/store"
 )
 
 // NewAppCommand creates an App object with default parameters.

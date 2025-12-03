@@ -9,7 +9,7 @@ import (
 	"bingo/pkg/store/where"
 )
 
-//go:generate mockgen -destination mock_store.go -package store stx/internal/apiserver/store IStore
+//go:generate mockgen -destination mock_store.go -package store bingo/internal/pkg/store IStore
 
 var (
 	once sync.Once
@@ -29,6 +29,8 @@ type IStore interface {
 	Schedule() ScheduleStore
 	// SysConfig returns the system config store.
 	SysConfig() ConfigStore
+	// AppVersion returns the app version store.
+	AppVersion() AppVersionStore
 
 	// Bot returns the bot store.
 	Bot() BotStore
@@ -39,6 +41,15 @@ type IStore interface {
 
 	// User returns the user store.
 	User() UserStore
+	// UserAccount returns the user account store.
+	UserAccount() UserAccountStore
+	// AuthProvider returns the auth provider store.
+	AuthProvider() AuthProviderStore
+
+	// App returns the app store.
+	App() AppStore
+	// ApiKey returns the API key store.
+	ApiKey() ApiKeyStore
 }
 
 // transactionKey used for context
@@ -120,4 +131,29 @@ func (ds *datastore) BotAdmin() BotAdminStore {
 // User returns the user store.
 func (ds *datastore) User() UserStore {
 	return NewUserStore(ds)
+}
+
+// UserAccount returns the user account store.
+func (ds *datastore) UserAccount() UserAccountStore {
+	return NewUserAccountStore(ds)
+}
+
+// AuthProvider returns the auth provider store.
+func (ds *datastore) AuthProvider() AuthProviderStore {
+	return NewAuthProviderStore(ds)
+}
+
+// App returns the app store.
+func (ds *datastore) App() AppStore {
+	return NewAppStore(ds)
+}
+
+// ApiKey returns the API key store.
+func (ds *datastore) ApiKey() ApiKeyStore {
+	return NewApiKeyStore(ds)
+}
+
+// AppVersion returns the app version store.
+func (ds *datastore) AppVersion() AppVersionStore {
+	return NewAppVersionStore(ds)
 }

@@ -9,9 +9,9 @@ import (
 	gocache "github.com/patrickmn/go-cache"
 	"github.com/smartystreets/goconvey/convey"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/store"
 )
 
 func init() {

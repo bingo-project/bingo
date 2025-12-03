@@ -24,9 +24,11 @@ type ConfigStore interface {
 	ConfigExpansion
 }
 
-// ConfigExpansion 定义了 Config 操作的扩展方法.
+// ConfigExpansion defines additional methods for config operations.
 type ConfigExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListConfigRequest) (int64, []*model.Config, error)
+	GetByID(ctx context.Context, id uint) (*model.Config, error)
+	DeleteByID(ctx context.Context, id uint) error
 	GetObject(ctx context.Context, key model.CfgKey, resp any) error
 	GetServerConfig(ctx context.Context) (*model.ServerConfig, error)
 	UpdateServerConfig(ctx context.Context, data *model.ServerConfig) error
@@ -44,7 +46,20 @@ func NewConfigStore(store *datastore) *configStore {
 	}
 }
 
-// ListWithRequest 根据请求参数列表查询.
+// GetByID retrieves a config by ID.
+func (s *configStore) GetByID(ctx context.Context, id uint) (*model.Config, error) {
+	var ret model.Config
+	err := s.DB(ctx).Where("id = ?", id).First(&ret).Error
+
+	return &ret, err
+}
+
+// DeleteByID deletes a config by ID.
+func (s *configStore) DeleteByID(ctx context.Context, id uint) error {
+	return s.DB(ctx).Where("id = ?", id).Delete(&model.Config{}).Error
+}
+
+// ListWithRequest lists configs based on request parameters.
 func (s *configStore) ListWithRequest(ctx context.Context, req *v1.ListConfigRequest) (int64, []*model.Config, error) {
 	// 构建查询条件
 	opts := where.NewWhere()

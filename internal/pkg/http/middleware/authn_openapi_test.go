@@ -8,11 +8,11 @@ import (
 	"testing"
 	"time"
 
-	"bingo/internal/apiserver/store"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 
 	"github.com/bingo-project/component-base/web/signer"
 
@@ -87,7 +87,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 		}
 
 		Convey("api key not found", func() {
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				return nil, errno.ErrResourceNotFound
 			})
 			defer patches.Reset()
@@ -97,7 +97,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 		})
 
 		Convey("api key disabled", func() {
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				apiKey.Status = model.ApiKeyStatusDisabled
 
 				return apiKey, nil
@@ -109,7 +109,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 		})
 
 		Convey("api key expired", func() {
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				expiredAt := carbon.Now().SubHour().StdTime()
 				apiKey.ExpiredAt = &expiredAt
 
@@ -122,7 +122,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 		})
 
 		Convey("ip not in acl", func() {
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				apiKey.ACL = []string{"100.100.100.100"}
 
 				return apiKey, nil
@@ -134,7 +134,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 		})
 
 		Convey("error signature", func() {
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				return apiKey, nil
 			})
 			defer patches.Reset()
@@ -150,7 +150,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 			body, _ = convertor.ToBytes(params)
 			ctx.Request, _ = http.NewRequest("GET", "/path/to/resource", bytes.NewBuffer(body))
 
-			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKeys(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
+			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
 				return apiKey, nil
 			})
 			defer patches.Reset()

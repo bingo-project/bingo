@@ -9,7 +9,7 @@ import (
 	"bingo/internal/apiserver/biz/file"
 	"bingo/internal/apiserver/biz/syscfg"
 	"bingo/internal/apiserver/biz/user"
-	"bingo/internal/apiserver/store"
+	"bingo/internal/pkg/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.
