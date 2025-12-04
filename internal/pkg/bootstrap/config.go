@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
+	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/facade"
-	genericapiserver "bingo/internal/pkg/server"
 )
 
 var CfgFile string
@@ -18,5 +18,5 @@ func InitConfig(configName string) {
 		configName = DefaultConfigName
 	}
 
-	genericapiserver.LoadConfig(CfgFile, configName, &facade.Config, Boot)
+	core.LoadConfig(CfgFile, configName, &facade.Config, Boot)
 }
