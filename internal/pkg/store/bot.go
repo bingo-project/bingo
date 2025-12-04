@@ -25,6 +25,8 @@ type BotStore interface {
 // BotExpansion 定义了 Bot 操作的扩展方法.
 type BotExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListBotRequest) (int64, []*model.Bot, error)
+	GetByID(ctx context.Context, id uint) (*model.Bot, error)
+	DeleteByID(ctx context.Context, id uint) error
 }
 
 type botStore struct {
@@ -66,4 +68,14 @@ func (s *botStore) ListWithRequest(ctx context.Context, req *v1.ListBotRequest) 
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return count, ret, err
+}
+
+// GetByID retrieves a bot by ID.
+func (s *botStore) GetByID(ctx context.Context, id uint) (*model.Bot, error) {
+	return s.Get(ctx, where.F("id", id))
+}
+
+// DeleteByID deletes a bot by ID.
+func (s *botStore) DeleteByID(ctx context.Context, id uint) error {
+	return s.Delete(ctx, where.F("id", id))
 }

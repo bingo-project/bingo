@@ -25,6 +25,8 @@ type BotChannelStore interface {
 // BotChannelExpansion 定义了 Bot Channel 操作的扩展方法.
 type BotChannelExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListChannelRequest) (int64, []*model.Channel, error)
+	GetByID(ctx context.Context, id uint) (*model.Channel, error)
+	DeleteByID(ctx context.Context, id uint) error
 	DeleteChannel(ctx context.Context, channelID string) error
 }
 
@@ -61,6 +63,16 @@ func (s *botChannelStore) ListWithRequest(ctx context.Context, req *v1.ListChann
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 
 	return count, ret, err
+}
+
+// GetByID retrieves a channel by ID.
+func (s *botChannelStore) GetByID(ctx context.Context, id uint) (*model.Channel, error) {
+	return s.Get(ctx, where.F("id", id))
+}
+
+// DeleteByID deletes a channel by ID.
+func (s *botChannelStore) DeleteByID(ctx context.Context, id uint) error {
+	return s.Delete(ctx, where.F("id", id))
 }
 
 // DeleteChannel 根据 channel_id 删除.

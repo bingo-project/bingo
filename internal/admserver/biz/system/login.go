@@ -13,7 +13,7 @@ import (
 
 func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// Get user
-	user, err := b.ds.Admins().Get(ctx, req.Username)
+	user, err := b.ds.Admin().GetByUsername(ctx, req.Username)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -39,7 +39,7 @@ func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRe
 }
 
 func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {
-	userM, err := b.ds.Admins().Get(ctx, username)
+	userM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return errno.ErrResourceNotFound
 	}
@@ -51,7 +51,7 @@ func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.
 
 	// Update password
 	userM.Password, _ = auth.Encrypt(req.PasswordNew)
-	if err := b.ds.Admins().Update(ctx, userM, "password"); err != nil {
+	if err := b.ds.Admin().Update(ctx, userM, "password"); err != nil {
 		return err
 	}
 

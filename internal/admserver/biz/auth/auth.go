@@ -14,7 +14,7 @@ import (
 	"github.com/spf13/cast"
 	"golang.org/x/oauth2"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/global"
@@ -55,7 +55,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 	}
 
 	// Check exist
-	exist, err := b.ds.Users().IsExist(ctx, user)
+	exist, err := b.ds.User().IsExist(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 	}
 
 	// Create user
-	err = b.ds.Users().Create(ctx, user)
+	err = b.ds.User().Create(ctx, user)
 	if err != nil {
 		// User exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
@@ -90,7 +90,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 
 func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// Get user
-	user, err := b.ds.Users().Get(ctx, req.Username)
+	user, err := b.ds.User().GetByUsername(ctx, req.Username)
 	if err != nil {
 		return nil, errno.ErrUserNotFound
 	}
@@ -118,7 +118,7 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error) {
 	// Get provider
 	provider = strings.ToLower(provider)
-	oauthProvider, err := b.ds.AuthProviders().FirstEnabled(ctx, provider)
+	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -156,10 +156,10 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 		LastLoginType: provider,
 	}
 
-	err = b.ds.Users().CreateWithAccount(ctx, user, account)
+	err = b.ds.User().CreateWithAccount(ctx, user, account)
 
 	// Get user
-	user, err = b.ds.Users().GetByUID(ctx, account.UID)
+	user, err = b.ds.User().GetByUID(ctx, account.UID)
 	if err != nil {
 		return nil, errno.ErrUserNotFound
 	}
@@ -179,7 +179,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 }
 
 func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error) {
-	oauthProvider, err := b.ds.AuthProviders().FirstEnabled(ctx, provider)
+	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -207,14 +207,14 @@ func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProvide
 	}
 
 	// Check exist
-	exist := b.ds.UserAccounts().CheckExist(ctx, provider, account.AccountID)
+	exist := b.ds.UserAccount().CheckExist(ctx, provider, account.AccountID)
 	if exist {
 		return nil, errno.ErrUserAccountAlreadyExist
 	}
 
 	// Create account
 	account.UID = user.UID
-	err = b.ds.UserAccounts().Create(ctx, account)
+	err = b.ds.UserAccount().Create(ctx, account)
 	if err != nil {
 		return
 	}
@@ -248,7 +248,7 @@ func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret 
 }
 
 func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.ChangePasswordRequest) error {
-	userM, err := b.ds.Users().GetByUID(ctx, uid)
+	userM, err := b.ds.User().GetByUID(ctx, uid)
 	if err != nil {
 		return err
 	}
@@ -260,7 +260,7 @@ func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.Change
 
 	// Update password
 	userM.Password, _ = auth.Encrypt(req.PasswordNew)
-	if err := b.ds.Users().Update(ctx, userM); err != nil {
+	if err := b.ds.User().Update(ctx, userM); err != nil {
 		return err
 	}
 

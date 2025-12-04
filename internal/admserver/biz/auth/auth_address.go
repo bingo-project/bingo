@@ -25,7 +25,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.Nonce
 		Nonce:     uuid.New().String(),
 	}
 
-	err = b.ds.UserAccounts().FirstOrCreate(ctx, where, &account)
+	err = b.ds.UserAccount().FirstOrCreate(ctx, where, &account)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.Nonce
 }
 
 func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error) {
-	account, err := b.ds.UserAccounts().GetAccount(ctx, model.AuthProviderWallet, req.Address)
+	account, err := b.ds.UserAccount().GetAccount(ctx, model.AuthProviderWallet, req.Address)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 		LastLoginIP:   ctx.ClientIP(),
 		LastLoginType: account.Provider,
 	}
-	err = b.ds.Users().FirstOrCreate(ctx, &model.UserM{UID: user.UID}, user)
+	err = b.ds.User().FirstOrCreate(ctx, &model.UserM{UID: user.UID}, user)
 	if err != nil {
 		return
 	}

@@ -7,10 +7,10 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
@@ -42,7 +42,7 @@ func NewRole(ds store.IStore) *roleBiz {
 }
 
 func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListRoleResponse, error) {
-	count, list, err := b.ds.Roles().List(ctx, req)
+	count, list, err := b.ds.SysRole().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list roles", "err", err)
 
@@ -64,7 +64,7 @@ func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.Ro
 	var roleM model.RoleM
 	_ = copier.Copy(&roleM, req)
 
-	err := b.ds.Roles().Create(ctx, &roleM)
+	err := b.ds.SysRole().Create(ctx, &roleM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -81,7 +81,7 @@ func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.Ro
 }
 
 func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.RoleInfo, error) {
-	role, err := b.ds.Roles().Get(ctx, roleName)
+	role, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -93,7 +93,7 @@ func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.RoleInfo, error
 }
 
 func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error) {
-	roleM, err := b.ds.Roles().Get(ctx, roleName)
+	roleM, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -105,7 +105,7 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 		roleM.Remark = *req.Remark
 	}
 
-	if err := b.ds.Roles().Update(ctx, roleM); err != nil {
+	if err := b.ds.SysRole().Update(ctx, roleM); err != nil {
 		return nil, err
 	}
 
@@ -120,7 +120,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 		return errno.ErrForbidden
 	}
 
-	return b.ds.Roles().Delete(ctx, roleName)
+	return b.ds.SysRole().DeleteByName(ctx, roleName)
 }
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
@@ -129,13 +129,13 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	}
 
 	// 1. Get apis by ids
-	apis, err := b.ds.Apis().GetByIDs(ctx, apiIDs)
+	apis, err := b.ds.SysApi().GetByIDs(ctx, apiIDs)
 	if err != nil {
 		return err
 	}
 
 	// Get role
-	role, err := b.ds.Roles().Get(ctx, roleName)
+	role, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return err
 	}
@@ -167,7 +167,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 
 func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (ret v1.GetApiIDsResponse, err error) {
 	// Get role
-	role, err := b.ds.Roles().Get(ctx, roleName)
+	role, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return
 	}
@@ -179,7 +179,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 		pathAndMethod = append(pathAndMethod, []string{v[1], v[2]})
 	}
 
-	resp, err := b.ds.Apis().GetIDsByPathAndMethod(ctx, pathAndMethod)
+	resp, err := b.ds.SysApi().GetIDsByPathAndMethod(ctx, pathAndMethod)
 	if err != nil {
 		return
 	}
@@ -192,15 +192,15 @@ func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint)
 		return errno.ErrForbidden
 	}
 
-	roleM, err := b.ds.Roles().Get(ctx, roleName)
+	roleM, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return errno.ErrResourceNotFound
 	}
 
 	// Update menus
-	roleM.Menus, _ = b.ds.Menus().GetByIDs(ctx, menuIDs)
+	roleM.Menus, _ = b.ds.SysMenu().GetByIDs(ctx, menuIDs)
 
-	err = b.ds.Roles().Update(ctx, roleM)
+	err = b.ds.SysRole().UpdateWithMenus(ctx, roleM)
 	if err != nil {
 		return err
 	}
@@ -209,21 +209,21 @@ func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint)
 }
 
 func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {
-	return b.ds.RoleMenus().GetMenuIDsByRoleName(ctx, roleName)
+	return b.ds.SysRoleMenu().GetMenuIDsByRoleName(ctx, roleName)
 }
 
 func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
 	var menus []*model.MenuM
 	if roleName == global.RoleRoot {
-		menus, _ = b.ds.Menus().AllEnabled(ctx)
+		menus, _ = b.ds.SysMenu().AllEnabled(ctx)
 	} else {
 		// Auto-fill parent menu
-		menuIDs, _ := b.ds.RoleMenus().GetMenuIDsByRoleNameWithParent(ctx, roleName)
-		menus, _ = b.ds.Menus().GetByIDs(ctx, menuIDs)
+		menuIDs, _ := b.ds.SysRoleMenu().GetMenuIDsByRoleNameWithParent(ctx, roleName)
+		menus, _ = b.ds.SysMenu().GetByIDs(ctx, menuIDs)
 	}
 
 	// Get menus
-	tree, err := b.ds.Menus().Tree(ctx, menus)
+	tree, err := b.ds.SysMenu().Tree(ctx, menus)
 	if err != nil {
 		return nil, err
 	}
@@ -240,7 +240,7 @@ func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.M
 }
 
 func (b *roleBiz) All(ctx context.Context) ([]*v1.RoleInfo, error) {
-	list, err := b.ds.Roles().All(ctx)
+	list, err := b.ds.SysRole().All(ctx)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list roles", "err", err)
 

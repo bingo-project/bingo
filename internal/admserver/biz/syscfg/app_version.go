@@ -7,7 +7,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	model "bingo/internal/pkg/model/syscfg"
 	v1 "bingo/pkg/api/apiserver/v1/syscfg"
@@ -32,7 +32,7 @@ func NewAppVersion(ds store.IStore) *appVersionBiz {
 }
 
 func (b *appVersionBiz) List(ctx context.Context, req *v1.ListAppVersionRequest) (*v1.ListAppVersionResponse, error) {
-	count, list, err := b.ds.AppVersions().List(ctx, req)
+	count, list, err := b.ds.AppVersion().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apps", "err", err)
 
@@ -54,7 +54,7 @@ func (b *appVersionBiz) Create(ctx context.Context, req *v1.CreateAppVersionRequ
 	var appM model.AppVersion
 	_ = copier.Copy(&appM, req)
 
-	err := b.ds.AppVersions().Create(ctx, &appM)
+	err := b.ds.AppVersion().Create(ctx, &appM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -71,7 +71,7 @@ func (b *appVersionBiz) Create(ctx context.Context, req *v1.CreateAppVersionRequ
 }
 
 func (b *appVersionBiz) Get(ctx context.Context, ID uint) (*v1.AppVersionInfo, error) {
-	app, err := b.ds.AppVersions().Get(ctx, ID)
+	app, err := b.ds.AppVersion().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -83,7 +83,7 @@ func (b *appVersionBiz) Get(ctx context.Context, ID uint) (*v1.AppVersionInfo, e
 }
 
 func (b *appVersionBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAppVersionRequest) (*v1.AppVersionInfo, error) {
-	appM, err := b.ds.AppVersions().Get(ctx, ID)
+	appM, err := b.ds.AppVersion().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -107,7 +107,7 @@ func (b *appVersionBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAppVe
 		appM.Enabled = *req.Enabled
 	}
 
-	if err := b.ds.AppVersions().Update(ctx, appM); err != nil {
+	if err := b.ds.AppVersion().Update(ctx, appM); err != nil {
 		return nil, err
 	}
 
@@ -118,5 +118,5 @@ func (b *appVersionBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAppVe
 }
 
 func (b *appVersionBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.AppVersions().Delete(ctx, ID)
+	return b.ds.AppVersion().DeleteByID(ctx, ID)
 }

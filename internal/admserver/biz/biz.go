@@ -11,7 +11,7 @@ import (
 	"bingo/internal/admserver/biz/syscfg"
 	"bingo/internal/admserver/biz/system"
 	"bingo/internal/admserver/biz/user"
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.

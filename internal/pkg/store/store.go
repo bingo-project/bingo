@@ -31,6 +31,14 @@ type IStore interface {
 	SysConfig() ConfigStore
 	// AppVersion returns the app version store.
 	AppVersion() AppVersionStore
+	// SysRole returns the system role store.
+	SysRole() SysRoleStore
+	// SysApi returns the system API store.
+	SysApi() SysApiStore
+	// SysMenu returns the system menu store.
+	SysMenu() SysMenuStore
+	// SysRoleMenu returns the system role-menu store.
+	SysRoleMenu() SysRoleMenuStore
 
 	// Bot returns the bot store.
 	Bot() BotStore
@@ -156,4 +164,24 @@ func (ds *datastore) ApiKey() ApiKeyStore {
 // AppVersion returns the app version store.
 func (ds *datastore) AppVersion() AppVersionStore {
 	return NewAppVersionStore(ds)
+}
+
+// SysRole returns the system role store.
+func (ds *datastore) SysRole() SysRoleStore {
+	return NewSysRoleStore(ds)
+}
+
+// SysApi returns the system API store.
+func (ds *datastore) SysApi() SysApiStore {
+	return NewSysApiStore(ds)
+}
+
+// SysMenu returns the system menu store.
+func (ds *datastore) SysMenu() SysMenuStore {
+	return NewSysMenuStore(ds)
+}
+
+// SysRoleMenu returns the system role-menu store.
+func (ds *datastore) SysRoleMenu() SysRoleMenuStore {
+	return NewSysRoleMenuStore(ds)
 }

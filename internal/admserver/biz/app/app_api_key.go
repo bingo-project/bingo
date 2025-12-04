@@ -9,7 +9,7 @@ import (
 	"github.com/golang-module/carbon/v2"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
 	"bingo/pkg/api/apiserver/v1"
@@ -34,7 +34,7 @@ func NewApiKey(ds store.IStore) *apiKeyBiz {
 }
 
 func (b *apiKeyBiz) List(ctx context.Context, req *v1.ListApiKeyRequest) (*v1.ListApiKeyResponse, error) {
-	count, list, err := b.ds.ApiKeys().List(ctx, req)
+	count, list, err := b.ds.ApiKey().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list apiKeys", "err", err)
 
@@ -55,7 +55,7 @@ func (b *apiKeyBiz) List(ctx context.Context, req *v1.ListApiKeyRequest) (*v1.Li
 func (b *apiKeyBiz) Create(ctx context.Context, req *v1.CreateApiKeyRequest) (*v1.ApiKeyInfo, error) {
 
 	// Check app
-	app, err := b.ds.Apps().GetByAppID(ctx, req.AppID)
+	app, err := b.ds.App().GetByAppID(ctx, req.AppID)
 	if err != nil {
 		return nil, errno.ErrAppNotFound
 	}
@@ -70,7 +70,7 @@ func (b *apiKeyBiz) Create(ctx context.Context, req *v1.CreateApiKeyRequest) (*v
 		ExpiredAt:   pointer.Of(carbon.Parse(req.ExpiredAt).StdTime()),
 	}
 
-	err = b.ds.ApiKeys().Create(ctx, &apiKeyM)
+	err = b.ds.ApiKey().Create(ctx, &apiKeyM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -87,7 +87,7 @@ func (b *apiKeyBiz) Create(ctx context.Context, req *v1.CreateApiKeyRequest) (*v
 }
 
 func (b *apiKeyBiz) Get(ctx context.Context, ID uint) (*v1.ApiKeyInfo, error) {
-	apiKey, err := b.ds.ApiKeys().Get(ctx, ID)
+	apiKey, err := b.ds.ApiKey().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -99,7 +99,7 @@ func (b *apiKeyBiz) Get(ctx context.Context, ID uint) (*v1.ApiKeyInfo, error) {
 }
 
 func (b *apiKeyBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiKeyRequest) (*v1.ApiKeyInfo, error) {
-	apiKeyM, err := b.ds.ApiKeys().Get(ctx, ID)
+	apiKeyM, err := b.ds.ApiKey().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -120,7 +120,7 @@ func (b *apiKeyBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiKeyReq
 		apiKeyM.ExpiredAt = pointer.Of(carbon.Parse(*req.ExpiredAt).StdTime())
 	}
 
-	if err := b.ds.ApiKeys().Update(ctx, apiKeyM); err != nil {
+	if err := b.ds.ApiKey().Update(ctx, apiKeyM); err != nil {
 		return nil, err
 	}
 
@@ -131,5 +131,5 @@ func (b *apiKeyBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiKeyReq
 }
 
 func (b *apiKeyBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.ApiKeys().Delete(ctx, ID)
+	return b.ds.ApiKey().DeleteByID(ctx, ID)
 }

@@ -7,9 +7,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
@@ -39,7 +39,7 @@ func NewAdmin(ds store.IStore) *adminBiz {
 }
 
 func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListAdminResponse, error) {
-	count, list, err := b.ds.Admins().List(ctx, req)
+	count, list, err := b.ds.Admin().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list admins", "err", err)
 
@@ -63,13 +63,13 @@ func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.
 
 	// Create roles & current role
 	if len(req.RoleNames) > 0 {
-		adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
+		adminM.Roles, _ = b.ds.SysRole().GetByNames(ctx, req.RoleNames)
 		if len(adminM.Roles) > 0 {
 			adminM.RoleName = adminM.Roles[0].Name
 		}
 	}
 
-	err := b.ds.Admins().Create(ctx, &adminM)
+	err := b.ds.Admin().Create(ctx, &adminM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -86,7 +86,7 @@ func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.
 }
 
 func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, error) {
-	admin, err := b.ds.Admins().GetUserInfo(ctx, username)
+	admin, err := b.ds.Admin().GetUserInfo(ctx, username)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -98,7 +98,7 @@ func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, err
 }
 
 func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAdminRequest) (*v1.AdminInfo, error) {
-	adminM, err := b.ds.Admins().Get(ctx, username)
+	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -126,7 +126,7 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	// Update roles & current role
 	adminM.RoleName = ""
 	if len(req.RoleNames) > 0 {
-		roles, _ := b.ds.Roles().GetByNames(ctx, req.RoleNames)
+		roles, _ := b.ds.SysRole().GetByNames(ctx, req.RoleNames)
 		if len(adminM.Roles) > 0 {
 			adminM.RoleName = roles[0].Name
 		}
@@ -137,7 +137,7 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 		adminM.Password, _ = auth.Encrypt(*req.Password)
 	}
 
-	if err := b.ds.Admins().Update(ctx, adminM); err != nil {
+	if err := b.ds.Admin().Update(ctx, adminM); err != nil {
 		return nil, err
 	}
 
@@ -148,20 +148,20 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 }
 
 func (b *adminBiz) Delete(ctx context.Context, username string) error {
-	return b.ds.Admins().Delete(ctx, username)
+	return b.ds.Admin().DeleteByUsername(ctx, username)
 }
 
 func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRolesRequest) (*v1.AdminInfo, error) {
-	adminM, err := b.ds.Admins().Get(ctx, username)
+	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
 
 	// Update roles & current role
 	adminM.RoleName = req.RoleNames[0]
-	adminM.Roles, _ = b.ds.Roles().GetByNames(ctx, req.RoleNames)
+	adminM.Roles, _ = b.ds.SysRole().GetByNames(ctx, req.RoleNames)
 
-	err = b.ds.Admins().UpdateWithRoles(ctx, adminM)
+	err = b.ds.Admin().UpdateWithRoles(ctx, adminM)
 	if err != nil {
 		return nil, err
 	}
@@ -173,20 +173,20 @@ func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRol
 }
 
 func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.SwitchRoleRequest) (*v1.AdminInfo, error) {
-	adminM, err := b.ds.Admins().Get(ctx, username)
+	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
 
 	// Check if the user has the role
-	hasRole := b.ds.Admins().HasRole(ctx, adminM, req.RoleName)
+	hasRole := b.ds.Admin().HasRole(ctx, adminM, req.RoleName)
 	if !hasRole {
 		return nil, errno.ErrResourceNotFound
 	}
 
 	// Update roles & current role
 	adminM.RoleName = req.RoleName
-	err = b.ds.Admins().Update(ctx, adminM, "role_name")
+	err = b.ds.Admin().Update(ctx, adminM, "role_name")
 	if err != nil {
 		return nil, err
 	}

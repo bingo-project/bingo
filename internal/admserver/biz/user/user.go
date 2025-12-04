@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/apiserver/v1"
@@ -35,7 +35,7 @@ func New(ds store.IStore) *userBiz {
 }
 
 func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserResponse, error) {
-	count, list, err := b.ds.Users().List(ctx, req)
+	count, list, err := b.ds.User().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list users", "err", err)
 
@@ -57,7 +57,7 @@ func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (err er
 	var userM model.UserM
 	_ = copier.Copy(&userM, req)
 
-	err = b.ds.Users().Create(ctx, &userM)
+	err = b.ds.User().Create(ctx, &userM)
 	if err == nil {
 		// User exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
@@ -71,7 +71,7 @@ func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (err er
 }
 
 func (b *userBiz) Get(ctx context.Context, username string) (*v1.UserInfo, error) {
-	user, err := b.ds.Users().Get(ctx, username)
+	user, err := b.ds.User().GetByUsername(ctx, username)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.ErrUserNotFound
@@ -87,7 +87,7 @@ func (b *userBiz) Get(ctx context.Context, username string) (*v1.UserInfo, error
 }
 
 func (b *userBiz) Update(ctx context.Context, username string, req *v1.UpdateUserRequest) error {
-	userM, err := b.ds.Users().Get(ctx, username)
+	userM, err := b.ds.User().GetByUsername(ctx, username)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func (b *userBiz) Update(ctx context.Context, username string, req *v1.UpdateUse
 		userM.Phone = *req.Phone
 	}
 
-	if err := b.ds.Users().Update(ctx, userM); err != nil {
+	if err := b.ds.User().Update(ctx, userM); err != nil {
 		return err
 	}
 
@@ -112,5 +112,5 @@ func (b *userBiz) Update(ctx context.Context, username string, req *v1.UpdateUse
 }
 
 func (b *userBiz) Delete(ctx context.Context, username string) error {
-	return b.ds.Users().Delete(ctx, username)
+	return b.ds.User().DeleteByUsername(ctx, username)
 }

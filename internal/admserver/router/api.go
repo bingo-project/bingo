@@ -1,6 +1,8 @@
 package router
 
 import (
+	"context"
+
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
@@ -9,7 +11,7 @@ import (
 	"bingo/internal/admserver/controller/v1/system"
 	"bingo/internal/admserver/controller/v1/user"
 	"bingo/internal/admserver/middleware"
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 )
 
@@ -18,7 +20,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1 := g.Group("/v1")
 
 	// Authz
-	authz, err := auth.NewAuthz(store.S.DB())
+	authz, err := auth.NewAuthz(store.S.DB(context.Background()))
 	if err != nil {
 		log.Fatalw("auth.NewAuthz error", "err", err)
 	}

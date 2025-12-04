@@ -9,7 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 	"golang.org/x/oauth2"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
 	"bingo/pkg/api/apiserver/v1"
@@ -35,7 +35,7 @@ func NewAuthProvider(ds store.IStore) *authProviderBiz {
 }
 
 func (b *authProviderBiz) List(ctx context.Context, req *v1.ListAuthProviderRequest) (*v1.ListAuthProviderResponse, error) {
-	count, list, err := b.ds.AuthProviders().List(ctx, req)
+	count, list, err := b.ds.AuthProvider().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list authProviders", "err", err)
 
@@ -57,7 +57,7 @@ func (b *authProviderBiz) Create(ctx context.Context, req *v1.CreateAuthProvider
 	var authProviderM model.AuthProvider
 	_ = copier.Copy(&authProviderM, req)
 
-	err := b.ds.AuthProviders().Create(ctx, &authProviderM)
+	err := b.ds.AuthProvider().Create(ctx, &authProviderM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -74,7 +74,7 @@ func (b *authProviderBiz) Create(ctx context.Context, req *v1.CreateAuthProvider
 }
 
 func (b *authProviderBiz) Get(ctx context.Context, ID uint) (*v1.AuthProviderInfo, error) {
-	authProvider, err := b.ds.AuthProviders().Get(ctx, ID)
+	authProvider, err := b.ds.AuthProvider().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -86,7 +86,7 @@ func (b *authProviderBiz) Get(ctx context.Context, ID uint) (*v1.AuthProviderInf
 }
 
 func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAuthProviderRequest) (*v1.AuthProviderInfo, error) {
-	authProviderM, err := b.ds.AuthProviders().Get(ctx, ID)
+	authProviderM, err := b.ds.AuthProvider().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -125,7 +125,7 @@ func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAut
 		authProviderM.Info = *req.Info
 	}
 
-	if err := b.ds.AuthProviders().Update(ctx, authProviderM); err != nil {
+	if err := b.ds.AuthProvider().Update(ctx, authProviderM); err != nil {
 		return nil, err
 	}
 
@@ -136,11 +136,11 @@ func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAut
 }
 
 func (b *authProviderBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.AuthProviders().Delete(ctx, ID)
+	return b.ds.AuthProvider().DeleteByID(ctx, ID)
 }
 
 func (b *authProviderBiz) FindEnabled(ctx context.Context) (ret []*v1.AuthProviderBrief, err error) {
-	list, err := b.ds.AuthProviders().FindEnabled(ctx)
+	list, err := b.ds.AuthProvider().FindEnabled(ctx)
 	if err != nil {
 		return nil, err
 	}

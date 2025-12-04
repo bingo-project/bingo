@@ -24,7 +24,6 @@ COPY internal/ internal/
 RUN CGO_ENABLED=0 GOOS=${OS:-linux} GOARCH=${ARCH:-amd64} go build -a ./cmd/bingo-apiserver
 
 FROM alpine:3.22
-LABEL maintainer="<brooksyang@outlook.com>"
 
 WORKDIR /opt/bingo
 

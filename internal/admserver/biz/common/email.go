@@ -8,7 +8,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/random"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/global"

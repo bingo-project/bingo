@@ -8,7 +8,7 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/model"
 )
 
@@ -39,7 +39,7 @@ func InitSystemAPI(g *gin.Engine) {
 	for _, item := range data {
 		// Create API.
 		where := &model.ApiM{Method: item.Method, Path: item.Path}
-		err := store.S.Apis().FirstOrCreate(context.Background(), where, &item)
+		err := store.S.SysApi().FirstOrCreate(context.Background(), where, &item)
 		if err != nil {
 			log.Debugw("InitSystemAPI error", "err", err)
 

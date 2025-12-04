@@ -7,9 +7,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/admserver/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 )
 
@@ -36,7 +36,7 @@ func NewMenu(ds store.IStore) *menuBiz {
 }
 
 func (b *menuBiz) List(ctx context.Context, req *v1.ListMenuRequest) (*v1.ListMenuResponse, error) {
-	count, list, err := b.ds.Menus().List(ctx, req)
+	count, list, err := b.ds.SysMenu().ListWithRequest(ctx, req)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list menus", "err", err)
 
@@ -58,7 +58,7 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 	var menuM model.MenuM
 	_ = copier.Copy(&menuM, req)
 
-	err := b.ds.Menus().Create(ctx, &menuM)
+	err := b.ds.SysMenu().Create(ctx, &menuM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -75,7 +75,7 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 }
 
 func (b *menuBiz) Get(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
-	menu, err := b.ds.Menus().Get(ctx, ID)
+	menu, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -87,7 +87,7 @@ func (b *menuBiz) Get(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
 }
 
 func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest) (*v1.MenuInfo, error) {
-	menuM, err := b.ds.Menus().Get(ctx, ID)
+	menuM, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
@@ -128,7 +128,7 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 		menuM.Redirect = *req.Redirect
 	}
 
-	if err := b.ds.Menus().Update(ctx, menuM); err != nil {
+	if err := b.ds.SysMenu().Update(ctx, menuM); err != nil {
 		return nil, err
 	}
 
@@ -139,11 +139,11 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 }
 
 func (b *menuBiz) Delete(ctx context.Context, ID uint) error {
-	return b.ds.Menus().Delete(ctx, ID)
+	return b.ds.SysMenu().DeleteByID(ctx, ID)
 }
 
 func (b *menuBiz) All(ctx context.Context) ([]*v1.MenuInfo, error) {
-	list, err := b.ds.Menus().All(ctx)
+	list, err := b.ds.SysMenu().All(ctx)
 	if err != nil {
 		log.C(ctx).Errorw("Failed to list menus", "err", err)
 
@@ -162,12 +162,12 @@ func (b *menuBiz) All(ctx context.Context) ([]*v1.MenuInfo, error) {
 }
 
 func (b *menuBiz) Tree(ctx context.Context) (ret []*v1.MenuInfo, err error) {
-	all, err := b.ds.Menus().All(ctx)
+	all, err := b.ds.SysMenu().All(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	tree, err := b.ds.Menus().Tree(ctx, all)
+	tree, err := b.ds.SysMenu().Tree(ctx, all)
 	if err != nil {
 		return
 	}
@@ -184,13 +184,13 @@ func (b *menuBiz) Tree(ctx context.Context) (ret []*v1.MenuInfo, err error) {
 }
 
 func (b *menuBiz) ToggleHidden(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
-	menuM, err := b.ds.Menus().Get(ctx, ID)
+	menuM, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound
 	}
 
 	menuM.Hidden = !menuM.Hidden
-	if err := b.ds.Menus().Update(ctx, menuM, "hidden"); err != nil {
+	if err := b.ds.SysMenu().Update(ctx, menuM, "hidden"); err != nil {
 		return nil, err
 	}
 

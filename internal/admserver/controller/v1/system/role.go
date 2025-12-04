@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/biz"
-	"bingo/internal/admserver/store"
+	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/pkg/api/apiserver/v1"
