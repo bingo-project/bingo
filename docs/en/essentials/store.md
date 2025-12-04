@@ -9,7 +9,7 @@ description: Learn the Bingo Go Store package design using generics and composit
 
 The Store package is the core of Bingo's data access layer. It implements a flexible and extensible data access framework through **generics** and **composition pattern**, reducing code duplication and improving code reusability.
 
-> **Note**: This document describes the universal `Store[T]` design in `pkg/store`, which provides reusable data access foundation. Business-specific Store implementations are in `internal/pkg/store`, extending Store[T] through composition and implementing business-specific extension interfaces (see [Project Structure](../guide/project-structure.md)).
+All services (apiserver, admserver, etc.) use the unified generic Store[T] pattern in `internal/pkg/store` for data access.
 
 ## Package Structure
 
