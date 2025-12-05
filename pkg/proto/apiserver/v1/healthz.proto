@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package apiserver.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "bingo/pkg/proto/apiserver/v1/pb";
+
+message HealthzRequest {}
+
+message HealthzReply {
+  string status = 1;
+  string ip = 2;
+  google.protobuf.Timestamp ts = 3;
+}

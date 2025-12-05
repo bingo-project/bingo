@@ -19,12 +19,13 @@ gen.ca: ## 生成 CA 文件.
 .PHONY: gen.protoc
 gen.protoc: tools.verify.protoc-gen-go ## 编译 protobuf 文件.
 	@echo "===========> Generate protobuf files"
-	@mkdir -p $(APIROOT)/pb
 	@protoc \
-		--proto_path=$(APIROOT) \
-		--go_out=paths=source_relative:$(APIROOT)/pb \
-		--go-grpc_out=paths=source_relative:$(APIROOT)/pb \
-		$(shell find $(APIROOT) -name *.proto)
+		--proto_path=$(ROOT_DIR)/third_party \
+		--proto_path=$(PROTOROOT) \
+		--go_out=$(ROOT_DIR) --go_opt=module=bingo \
+		--go-grpc_out=$(ROOT_DIR) --go-grpc_opt=module=bingo \
+		--grpc-gateway_out=$(ROOT_DIR) --grpc-gateway_opt=module=bingo \
+		$(shell find $(PROTOROOT) -name "*.proto")
 
 .PHONY: gen.deps
 gen.deps: tools.verify ## 安装依赖，例如：生成需要的代码等.

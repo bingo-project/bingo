@@ -25,7 +25,7 @@ $(shell mkdir -p $(TMP_DIR))
 endif
 
 # Protobuf 文件存放路径
-APIROOT=$(ROOT_DIR)/pkg/proto/v1
+PROTOROOT=$(ROOT_DIR)/pkg/proto
 
 # ==============================================================================
 # 定义版本相关变量

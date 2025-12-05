@@ -50,17 +50,28 @@ func Assemble(cfg *config.Config, opts ...AssemblerOption) *Runner {
 
 	var servers []Server
 
-	// HTTP Server (first to start, last to stop)
-	if cfg.HTTP != nil && cfg.HTTP.Enabled && ac.ginEngine != nil {
-		servers = append(servers, NewHTTPServer(cfg.HTTP, ac.ginEngine))
-	}
-
-	// gRPC Server
+	// gRPC Server (must start before gateway)
 	if cfg.GRPC != nil && cfg.GRPC.Enabled && ac.grpcServer != nil {
 		servers = append(servers, NewGRPCServer(cfg.GRPC, ac.grpcServer))
 	}
 
-	// WebSocket Server (last to start, first to stop)
+	// HTTP Server: standalone mode or gateway mode
+	if cfg.HTTP != nil && cfg.HTTP.Enabled {
+		switch cfg.HTTP.Mode {
+		case "gateway":
+			// Gateway mode: proxy HTTP to gRPC
+			if cfg.GRPC != nil && cfg.GRPC.Enabled {
+				servers = append(servers, NewGatewayServer(cfg.HTTP, cfg.GRPC.Addr))
+			}
+		default:
+			// Standalone mode: direct HTTP handling
+			if ac.ginEngine != nil {
+				servers = append(servers, NewHTTPServer(cfg.HTTP, ac.ginEngine))
+			}
+		}
+	}
+
+	// WebSocket Server
 	if cfg.WebSocket != nil && cfg.WebSocket.Enabled {
 		adapter := ac.rpcAdapter
 		if adapter == nil {

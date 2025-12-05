@@ -12,7 +12,7 @@ import (
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/proto/v1/pb"
+	v1 "bingo/pkg/proto/apiserver/v1/pb"
 )
 
 type ApiServerController struct {

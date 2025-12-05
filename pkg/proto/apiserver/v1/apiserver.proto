@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package apiserver.v1;
+
+import "google/api/annotations.proto";
+import "apiserver/v1/healthz.proto";
+import "apiserver/v1/version.proto";
+
+option go_package = "bingo/pkg/proto/apiserver/v1/pb";
+
+service ApiServer {
+  rpc Healthz (HealthzRequest) returns (HealthzReply) {
+    option (google.api.http) = {
+      get: "/v1/healthz"
+    };
+  }
+  rpc Version (VersionRequest) returns (VersionReply) {
+    option (google.api.http) = {
+      get: "/v1/version"
+    };
+  }
+}
