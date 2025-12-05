@@ -55,15 +55,15 @@ func TestHub_Login(t *testing.T) {
 
 	// Login
 	hub.Login <- &ws.LoginEvent{
-		Client: client,
-		UserID: "user-123",
-		AppID:  1,
+		Client:   client,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
 	}
 	time.Sleep(10 * time.Millisecond)
 
 	// Verify user is tracked
 	assert.Equal(t, 1, hub.UserCount())
-	assert.NotNil(t, hub.GetUserClient(1, "user-123"))
+	assert.NotNil(t, hub.GetUserClient(ws.PlatformIOS, "user-123"))
 }
 
 func TestHub_Broadcast(t *testing.T) {

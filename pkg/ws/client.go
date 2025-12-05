@@ -6,6 +6,7 @@ package ws
 import (
 	"context"
 	"encoding/json"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -44,17 +45,22 @@ type Client struct {
 	Send chan []byte
 
 	// Client info
-	Addr          string
-	AppID         uint32
-	UserID        string
-	FirstTime     uint64
-	HeartbeatTime uint64
-	LoginTime     uint64
+	Addr           string
+	Platform       string
+	UserID         string
+	FirstTime      int64
+	HeartbeatTime  int64
+	LoginTime      int64
+	TokenExpiresAt int64
+
+	// Subscribed topics (managed by Hub, read-only for Client)
+	topics     map[string]bool
+	topicsLock sync.RWMutex
 }
 
 // NewClient creates a new WebSocket client.
 func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jsonrpc.Adapter) *Client {
-	now := uint64(time.Now().Unix())
+	now := time.Now().Unix()
 	return &Client{
 		hub:           hub,
 		conn:          conn,
@@ -145,7 +151,7 @@ func (c *Client) handleMessage(data []byte) {
 
 	// Handle heartbeat specially
 	if req.Method == "heartbeat" {
-		c.Heartbeat(uint64(time.Now().Unix()))
+		c.Heartbeat(time.Now().Unix())
 		c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]string{"status": "ok"}))
 		return
 	}
@@ -175,18 +181,23 @@ func (c *Client) SendJSON(v any) {
 }
 
 // Heartbeat updates the heartbeat time.
-func (c *Client) Heartbeat(currentTime uint64) {
+func (c *Client) Heartbeat(currentTime int64) {
 	c.HeartbeatTime = currentTime
 }
 
 // IsHeartbeatTimeout returns true if heartbeat has timed out.
-func (c *Client) IsHeartbeatTimeout(currentTime uint64) bool {
+func (c *Client) IsHeartbeatTimeout(currentTime int64) bool {
 	return c.HeartbeatTime+heartbeatTimeout <= currentTime
 }
 
+// IsAuthenticated returns true if the client has logged in.
+func (c *Client) IsAuthenticated() bool {
+	return c.UserID != "" && c.Platform != "" && c.LoginTime > 0
+}
+
 // Login sets the user info for this client.
-func (c *Client) Login(appID uint32, userID string, loginTime uint64) {
-	c.AppID = appID
+func (c *Client) Login(platform, userID string, loginTime int64) {
+	c.Platform = platform
 	c.UserID = userID
 	c.LoginTime = loginTime
 	c.Heartbeat(loginTime)

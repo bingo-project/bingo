@@ -5,7 +5,6 @@ package ws
 
 import (
 	"context"
-	"fmt"
 	"sync"
 )
 
@@ -28,9 +27,10 @@ type Hub struct {
 
 // LoginEvent represents a user login event.
 type LoginEvent struct {
-	Client *Client
-	UserID string
-	AppID  uint32
+	Client         *Client
+	UserID         string
+	Platform       string
+	TokenExpiresAt int64
 }
 
 // NewHub creates a new Hub instance.
@@ -96,7 +96,7 @@ func (h *Hub) handleUnregister(client *Client) {
 	// Also remove from users if logged in
 	h.userLock.Lock()
 	defer h.userLock.Unlock()
-	key := userKey(client.AppID, client.UserID)
+	key := userKey(client.Platform, client.UserID)
 	if c, ok := h.users[key]; ok && c == client {
 		delete(h.users, key)
 	}
@@ -107,12 +107,13 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 
 	// Update client info
 	client.UserID = event.UserID
-	client.AppID = event.AppID
+	client.Platform = event.Platform
+	client.TokenExpiresAt = event.TokenExpiresAt
 
 	// Add to users map
 	h.userLock.Lock()
 	defer h.userLock.Unlock()
-	key := userKey(event.AppID, event.UserID)
+	key := userKey(event.Platform, event.UserID)
 	h.users[key] = client
 }
 
@@ -144,12 +145,12 @@ func (h *Hub) UserCount() int {
 }
 
 // GetUserClient returns the client for a user.
-func (h *Hub) GetUserClient(appID uint32, userID string) *Client {
+func (h *Hub) GetUserClient(platform, userID string) *Client {
 	h.userLock.RLock()
 	defer h.userLock.RUnlock()
-	return h.users[userKey(appID, userID)]
+	return h.users[userKey(platform, userID)]
 }
 
-func userKey(appID uint32, userID string) string {
-	return fmt.Sprintf("%d_%s", appID, userID)
+func userKey(platform, userID string) string {
+	return platform + "_" + userID
 }
