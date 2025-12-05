@@ -864,10 +864,21 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 
 ## 验收标准
 
-- [ ] `pkg/errorsx.JSONRPCCode()` 通过单元测试
-- [ ] `pkg/jsonrpc` 消息编解码通过单元测试
-- [ ] WebSocket 连接可以成功调用 `user.login` 方法
-- [ ] 配置 `websocket.enabled=false` 时不启动 WebSocket 服务
-- [ ] 配置 `http.mode=gateway` 时使用 gRPC-Gateway
-- [ ] 三种协议使用相同的认证逻辑
-- [ ] 三种协议返回相同格式的错误响应
+- [x] `pkg/errorsx.JSONRPCCode()` 通过单元测试
+- [x] `pkg/jsonrpc` 消息编解码通过单元测试
+- [x] WebSocket 连接可以成功调用业务方法
+- [x] 配置 `websocket.enabled=false` 时不启动 WebSocket 服务
+- [x] 配置 `http.mode=gateway` 时使用 gRPC-Gateway
+- [x] 三种协议使用相同的认证逻辑
+- [x] 三种协议返回相同格式的错误响应
+
+## 实施记录
+
+| 阶段 | 完成日期 | Commit |
+|-----|---------|--------|
+| Phase 1: JSON-RPC 基础设施 | 2024-12 | `0d56eaf` |
+| Phase 2: JSON-RPC 适配器 | 2024-12 | `0d56eaf` |
+| Phase 3: WebSocket Handler | 2024-12 | `408e693` |
+| Phase 4: Config-driven 服务组装 | 2024-12 | `6de4b10` |
+| Phase 5: gRPC-Gateway | 2024-12 | `dba9b6b` |
+| Phase 6: 统一认证 | 2024-12 | `7b1da9f` |
