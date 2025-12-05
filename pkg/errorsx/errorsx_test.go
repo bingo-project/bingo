@@ -118,3 +118,28 @@ func TestErrorX_FromError_WithGRPCErrorDetails(t *testing.T) {
 	assert.Equal(t, "name", errx.Metadata["field"])
 	assert.Equal(t, "required", errx.Metadata["type"])
 }
+
+func TestErrorX_JSONRPCCode(t *testing.T) {
+	tests := []struct {
+		name     string
+		httpCode int
+		expected int
+	}{
+		{"BadRequest maps to InvalidParams", 400, -32602},
+		{"Unauthorized maps to Unauthenticated", 401, -32001},
+		{"Forbidden maps to PermissionDenied", 403, -32003},
+		{"NotFound maps to NotFound", 404, -32004},
+		{"Conflict maps to Conflict", 409, -32009},
+		{"TooManyRequests maps to TooManyRequests", 429, -32029},
+		{"InternalServerError maps to InternalError", 500, -32603},
+		{"ServiceUnavailable maps to ServiceUnavailable", 503, -32053},
+		{"Unknown code defaults to InternalError", 999, -32603},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			errx := errorsx.New(tt.httpCode, "TestReason", "test message")
+			assert.Equal(t, tt.expected, errx.JSONRPCCode())
+		})
+	}
+}
