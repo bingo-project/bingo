@@ -96,14 +96,24 @@ func TestNewErrorResponse_WithMetadata(t *testing.T) {
 	assert.Equal(t, "email", resp.Error.Data["field"])
 }
 
-func TestNewNotification(t *testing.T) {
-	params := map[string]int{"count": 5}
-	resp := jsonrpc.NewNotification("update", params)
+func TestNewStreamResponse(t *testing.T) {
+	result := map[string]int{"count": 5}
+	resp := jsonrpc.NewStreamResponse(1, "data.chunk", result)
 
 	assert.Equal(t, jsonrpc.Version, resp.JSONRPC)
-	assert.Equal(t, "update", resp.Method)
-	assert.Equal(t, params, resp.Result)
-	assert.Nil(t, resp.ID)
+	assert.Equal(t, 1, resp.ID)
+	assert.Equal(t, "data.chunk", resp.Method)
+	assert.Equal(t, result, resp.Result)
+	assert.Nil(t, resp.Error)
+}
+
+func TestNewPush(t *testing.T) {
+	data := map[string]string{"userId": "123"}
+	push := jsonrpc.NewPush("user.online", data)
+
+	assert.Equal(t, jsonrpc.Version, push.JSONRPC)
+	assert.Equal(t, "user.online", push.Method)
+	assert.Equal(t, data, push.Data)
 }
 
 func TestResponse_Marshal(t *testing.T) {

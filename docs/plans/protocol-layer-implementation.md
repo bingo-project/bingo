@@ -137,11 +137,22 @@ func NewErrorResponse(id any, err error) *Response {
     }
 }
 
-// NewNotification 创建服务端推送（无 id）
-func NewNotification(method string, params any) *Response {
+// NewStreamResponse 创建流式响应（有 id，带 method 标识）
+func NewStreamResponse(id any, method string, result any) *Response {
     return &Response{
         JSONRPC: Version,
-        Result:  params,
+        Method:  method,
+        Result:  result,
+        ID:      id,
+    }
+}
+
+// NewPush 创建服务端主动推送（无 id，不关联请求）
+func NewPush(method string, data any) *Push {
+    return &Push{
+        JSONRPC: Version,
+        Method:  method,
+        Data:    data,
     }
 }
 ```

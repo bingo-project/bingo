@@ -1,5 +1,5 @@
-// ABOUTME: JSON-RPC 2.0 response constructors.
-// ABOUTME: Creates success responses, error responses, and notifications.
+// ABOUTME: JSON-RPC 2.0 response and push message constructors.
+// ABOUTME: Creates success responses, error responses, stream responses, and push messages.
 
 package jsonrpc
 
@@ -29,11 +29,21 @@ func NewErrorResponse(id any, err error) *Response {
 	}
 }
 
-// NewNotification creates a server push notification (no id).
-func NewNotification(method string, params any) *Response {
+// NewStreamResponse creates a response for streaming scenarios with method identifier.
+func NewStreamResponse(id any, method string, result any) *Response {
 	return &Response{
 		JSONRPC: Version,
 		Method:  method,
-		Result:  params,
+		Result:  result,
+		ID:      id,
+	}
+}
+
+// NewPush creates a server-initiated push message (not tied to any request).
+func NewPush(method string, data any) *Push {
+	return &Push{
+		JSONRPC: Version,
+		Method:  method,
+		Data:    data,
 	}
 }

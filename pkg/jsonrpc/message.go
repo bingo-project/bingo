@@ -37,3 +37,10 @@ type Error struct {
 func (r *Request) IsNotification() bool {
 	return r.ID == nil
 }
+
+// Push represents a server-initiated push message (no ID, not tied to a request).
+type Push struct {
+	JSONRPC string `json:"jsonrpc"`
+	Method  string `json:"method"`
+	Data    any    `json:"data,omitempty"`
+}

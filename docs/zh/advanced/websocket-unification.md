@@ -207,11 +207,22 @@ func NewErrorResponse(id interface{}, err error) *Response {
     }
 }
 
-// NewNotification 创建服务端推送（无 id）
-func NewNotification(method string, params interface{}) *Response {
+// NewStreamResponse 创建流式响应（有 id，带 method 标识）
+func NewStreamResponse(id any, method string, result any) *Response {
     return &Response{
         JSONRPC: Version,
-        Result:  params, // Notification 使用 result 字段传递数据
+        Method:  method,
+        Result:  result,
+        ID:      id,
+    }
+}
+
+// NewPush 创建服务端主动推送（无 id，不关联请求）
+func NewPush(method string, data any) *Push {
+    return &Push{
+        JSONRPC: Version,
+        Method:  method,
+        Data:    data,
     }
 }
 ```
@@ -680,22 +691,22 @@ func Push(userID string, method string, params interface{}) error {
         return errno.ErrUserNotFound
     }
 
-    // Notification: 无 id 字段
-    msg := jsonrpc.NewNotification(method, params)
+    // Push: 服务端主动推送，无 id 字段
+    msg := jsonrpc.NewPush(method, params)
     client.SendJSON(msg)
     return nil
 }
 
 // Broadcast 广播消息
 func Broadcast(method string, params interface{}) {
-    msg := jsonrpc.NewNotification(method, params)
+    msg := jsonrpc.NewPush(method, params)
     msgBytes, _ := json.Marshal(msg)
     ClientManager.Broadcast <- msgBytes
 }
 
 // PushToApp 向指定 App 的所有用户推送
 func PushToApp(appID uint32, method string, params interface{}) {
-    msg := jsonrpc.NewNotification(method, params)
+    msg := jsonrpc.NewPush(method, params)
     msgBytes, _ := json.Marshal(msg)
     ClientManager.BroadcastToApp(appID, msgBytes)
 }
