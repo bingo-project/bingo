@@ -11,30 +11,45 @@ import (
 	"github.com/gorilla/websocket"
 
 	"bingo/internal/pkg/auth"
+	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  4096,
-	WriteBufferSize: 4096,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-}
-
 // Handler handles WebSocket connections.
 type Handler struct {
-	hub     *ws.Hub
-	adapter *jsonrpc.Adapter
-	authn   *auth.Authenticator
+	hub      *ws.Hub
+	adapter  *jsonrpc.Adapter
+	authn    *auth.Authenticator
+	upgrader websocket.Upgrader
 }
 
 // NewHandler creates a new WebSocket handler.
-func NewHandler(hub *ws.Hub, adapter *jsonrpc.Adapter) *Handler {
-	return &Handler{
+func NewHandler(hub *ws.Hub, adapter *jsonrpc.Adapter, cfg *config.WebSocket) *Handler {
+	h := &Handler{
 		hub:     hub,
 		adapter: adapter,
 		authn:   auth.New(),
+	}
+
+	h.upgrader = websocket.Upgrader{
+		ReadBufferSize:  4096,
+		WriteBufferSize: 4096,
+		CheckOrigin:     h.checkOrigin(cfg),
+	}
+
+	return h
+}
+
+// checkOrigin returns an origin checker function based on config.
+func (h *Handler) checkOrigin(cfg *config.WebSocket) func(r *http.Request) bool {
+	return func(r *http.Request) bool {
+		if cfg == nil || cfg.AllowAllOrigins() {
+			return true
+		}
+		origin := r.Header.Get("Origin")
+		return cfg.IsOriginAllowed(origin)
 	}
 }
 
@@ -48,7 +63,7 @@ func (h *Handler) ServeWS(c *gin.Context) {
 	ctx, _ = h.authn.AuthenticateWebSocket(ctx, c.Request)
 
 	// 3. Upgrade connection
-	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	conn, err := h.upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}

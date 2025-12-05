@@ -7,9 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/reflection"
 
-	"bingo/internal/apiserver/router"
 	"bingo/internal/apiserver/server"
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
@@ -43,11 +41,7 @@ func initGinEngine() *gin.Engine {
 	return g
 }
 
-// initGRPCServer initializes the gRPC server with services.
+// initGRPCServer initializes the gRPC server with services and TLS support.
 func initGRPCServer() *grpc.Server {
-	opts := RegisterInterceptor()
-	srv := grpc.NewServer(opts...)
-	router.GRPC(srv)
-	reflection.Register(srv)
-	return srv
+	return NewGRPCWithConfig(facade.Config.GRPC).Server
 }

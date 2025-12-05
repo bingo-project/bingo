@@ -11,6 +11,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"bingo/internal/pkg/config"
@@ -21,14 +22,16 @@ import (
 type GatewayServer struct {
 	server   *http.Server
 	httpCfg  *config.HTTP
+	grpcCfg  *config.GRPC
 	grpcAddr string
 }
 
 // NewGatewayServer creates a new gRPC-Gateway server.
-func NewGatewayServer(httpCfg *config.HTTP, grpcAddr string) *GatewayServer {
+func NewGatewayServer(httpCfg *config.HTTP, grpcCfg *config.GRPC) *GatewayServer {
 	return &GatewayServer{
 		httpCfg:  httpCfg,
-		grpcAddr: grpcAddr,
+		grpcCfg:  grpcCfg,
+		grpcAddr: grpcCfg.Addr,
 	}
 }
 
@@ -41,11 +44,8 @@ func (s *GatewayServer) Name() string {
 func (s *GatewayServer) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux()
 
-	// NOTE: Using insecure credentials for local gRPC communication.
-	// This is acceptable when gateway and gRPC server run on the same host.
-	// For production with remote gRPC backends, configure TLS credentials.
-	// TODO: Add TLS configuration support via config.GRPC.TLS
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	// Build dial options based on gRPC TLS config
+	opts := s.buildDialOptions()
 
 	// Register all service handlers
 	if err := pb.RegisterApiServerHandlerFromEndpoint(ctx, mux, s.grpcAddr, opts); err != nil {
@@ -82,4 +82,21 @@ func (s *GatewayServer) Shutdown(ctx context.Context) error {
 		return s.server.Shutdown(ctx)
 	}
 	return nil
+}
+
+// buildDialOptions creates gRPC dial options based on TLS config.
+func (s *GatewayServer) buildDialOptions() []grpc.DialOption {
+	// Use TLS if gRPC server has TLS enabled
+	if s.grpcCfg != nil && s.grpcCfg.TLS != nil && s.grpcCfg.TLS.Enabled {
+		creds, err := credentials.NewClientTLSFromFile(s.grpcCfg.TLS.CertFile, "")
+		if err != nil {
+			log.Warnw("Failed to load TLS credentials, falling back to insecure", "err", err)
+			return []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+		}
+		log.Infow("gRPC-Gateway using TLS to connect to gRPC backend")
+		return []grpc.DialOption{grpc.WithTransportCredentials(creds)}
+	}
+
+	// Default to insecure for local development
+	return []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 }

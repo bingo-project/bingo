@@ -61,7 +61,7 @@ func Assemble(cfg *config.Config, opts ...AssemblerOption) *Runner {
 		case "gateway":
 			// Gateway mode: proxy HTTP to gRPC
 			if cfg.GRPC != nil && cfg.GRPC.Enabled {
-				servers = append(servers, NewGatewayServer(cfg.HTTP, cfg.GRPC.Addr))
+				servers = append(servers, NewGatewayServer(cfg.HTTP, cfg.GRPC))
 			}
 		default:
 			// Standalone mode: direct HTTP handling

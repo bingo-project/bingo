@@ -34,8 +34,8 @@ func NewWebSocketServer(cfg *config.WebSocket, adapter *jsonrpc.Adapter) *WebSoc
 	engine := gin.New()
 	engine.Use(gin.Recovery())
 
-	// Create handler
-	handler := ws.NewHandler(hub, adapter)
+	// Create handler with config for origin validation
+	handler := ws.NewHandler(hub, adapter, cfg)
 
 	// Register WebSocket route
 	engine.GET("/ws", handler.ServeWS)
