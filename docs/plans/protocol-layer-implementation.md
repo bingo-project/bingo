@@ -281,16 +281,27 @@ git checkout feature/ws -- pkg/ws/server/client_hub.go
 git show feature/ws:pkg/ws/server/client.go > pkg/ws/server/client.go.bak
 ```
 
-### 3.2 新建 WebSocket Handler 目录
+### 3.2 统一 Handler 目录结构
+
+迁移后的目录结构：
 
 ```
 internal/apiserver/handler/
-└── ws/
-    ├── handler.go  # WebSocket 连接处理（新建）
-    └── router.go   # 方法注册（新建）
+├── http/           # HTTP 控制器（从 controller/v1/ 迁移）
+│   ├── auth/
+│   ├── common/
+│   └── file/
+├── grpc/           # gRPC Handler（从 grpc/v1/apiserver/ 迁移）
+└── ws/             # WebSocket Handler
+    ├── handler.go
+    └── router.go
 ```
 
-**注意**：`controller/` 和 `grpc/` 目录保持不变，不做迁移。
+**迁移步骤**：
+1. 创建 `handler/http/`，移动 `controller/v1/` 内容（去掉 v1 层级）
+2. 创建 `handler/grpc/`，移动 `grpc/v1/apiserver/` 内容（去掉 v1 层级）
+3. 更新所有 import 路径
+4. 删除旧目录 `controller/`、`grpc/`
 
 ### 3.3 重构 Client
 
@@ -882,6 +893,7 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 - [x] 配置 `http.mode=gateway` 时使用 gRPC-Gateway
 - [x] 三种协议使用相同的认证逻辑
 - [x] 三种协议返回相同格式的错误响应
+- [ ] Handler 目录结构统一（controller/, grpc/ 迁移到 handler/）
 
 ## 实施记录
 
