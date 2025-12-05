@@ -132,7 +132,7 @@ func (h *Hub) shutdown() {
 	// Close anonymous connections
 	h.anonymousLock.Lock()
 	for client := range h.anonymous {
-		close(client.Send)
+		h.safeCloseSend(client)
 		delete(h.anonymous, client)
 	}
 	h.anonymousLock.Unlock()
@@ -140,10 +140,17 @@ func (h *Hub) shutdown() {
 	// Close authenticated connections
 	h.clientsLock.Lock()
 	for client := range h.clients {
-		close(client.Send)
+		h.safeCloseSend(client)
 		delete(h.clients, client)
 	}
 	h.clientsLock.Unlock()
+}
+
+// safeCloseSend closes the client's Send channel safely using sync.Once.
+func (h *Hub) safeCloseSend(client *Client) {
+	client.closeOnce.Do(func() {
+		close(client.Send)
+	})
 }
 
 func (h *Hub) handleRegister(client *Client) {
@@ -156,9 +163,9 @@ func (h *Hub) handleUnregister(client *Client) {
 	// Remove from anonymous
 	h.anonymousLock.Lock()
 	if _, ok := h.anonymous[client]; ok {
-		close(client.Send)
 		delete(h.anonymous, client)
 		h.anonymousLock.Unlock()
+		h.safeCloseSend(client)
 		return
 	}
 	h.anonymousLock.Unlock()
@@ -166,7 +173,6 @@ func (h *Hub) handleUnregister(client *Client) {
 	// Remove from clients
 	h.clientsLock.Lock()
 	if _, ok := h.clients[client]; ok {
-		close(client.Send)
 		delete(h.clients, client)
 	}
 	h.clientsLock.Unlock()
@@ -180,6 +186,8 @@ func (h *Hub) handleUnregister(client *Client) {
 		}
 		h.userLock.Unlock()
 	}
+
+	h.safeCloseSend(client)
 }
 
 func (h *Hub) handleLogin(event *LoginEvent) {
@@ -299,6 +307,48 @@ func (h *Hub) PushToTopic(topic, method string, data any) {
 		select {
 		case client.Send <- msg:
 		default:
+		}
+	}
+}
+
+// PushToUser sends a message to a specific user on a specific platform.
+func (h *Hub) PushToUser(platform, userID, method string, data any) {
+	client := h.GetUserClient(platform, userID)
+	if client == nil {
+		return
+	}
+
+	push := jsonrpc.NewPush(method, data)
+	msg, err := json.Marshal(push)
+	if err != nil {
+		return
+	}
+
+	select {
+	case client.Send <- msg:
+	default:
+	}
+}
+
+// PushToUserAllPlatforms sends a message to a user on all connected platforms.
+func (h *Hub) PushToUserAllPlatforms(userID, method string, data any) {
+	push := jsonrpc.NewPush(method, data)
+	msg, err := json.Marshal(push)
+	if err != nil {
+		return
+	}
+
+	suffix := "_" + userID
+
+	h.userLock.RLock()
+	defer h.userLock.RUnlock()
+
+	for key, client := range h.users {
+		if len(key) > len(suffix) && key[len(key)-len(suffix):] == suffix {
+			select {
+			case client.Send <- msg:
+			default:
+			}
 		}
 	}
 }

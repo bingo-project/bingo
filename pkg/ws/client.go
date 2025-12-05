@@ -42,7 +42,8 @@ type Client struct {
 	ctx     context.Context
 
 	// Send channel for outbound messages
-	Send chan []byte
+	Send      chan []byte
+	closeOnce sync.Once
 
 	// Client info
 	Addr           string

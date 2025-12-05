@@ -302,6 +302,53 @@ func TestHub_PushToTopic(t *testing.T) {
 	assert.Contains(t, string(msg), "hello")
 }
 
+func TestHub_PushToUser(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	client := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: time.Now().Unix()}
+	hub.Register <- client
+	hub.Login <- &ws.LoginEvent{Client: client, UserID: "user-123", Platform: ws.PlatformIOS}
+	time.Sleep(10 * time.Millisecond)
+
+	hub.PushToUser(ws.PlatformIOS, "user-123", "order.created", map[string]string{"order_id": "123"})
+	time.Sleep(10 * time.Millisecond)
+
+	assert.Equal(t, 1, len(client.Send))
+	msg := <-client.Send
+	assert.Contains(t, string(msg), "order.created")
+}
+
+func TestHub_PushToUserAllPlatforms(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	// Same user on two platforms
+	client1 := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: time.Now().Unix()}
+	client2 := &ws.Client{Addr: "client2", Send: make(chan []byte, 10), FirstTime: time.Now().Unix()}
+
+	hub.Register <- client1
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user-123", Platform: ws.PlatformIOS}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user-123", Platform: ws.PlatformWeb}
+	time.Sleep(10 * time.Millisecond)
+
+	hub.PushToUserAllPlatforms("user-123", "security.alert", map[string]string{"message": "new login"})
+	time.Sleep(10 * time.Millisecond)
+
+	// Both clients should receive
+	assert.Equal(t, 1, len(client1.Send))
+	assert.Equal(t, 1, len(client2.Send))
+}
+
 func TestHub_Unsubscribe(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
