@@ -5,8 +5,11 @@ package ws
 
 import (
 	"context"
+	"encoding/json"
 	"sync"
 	"time"
+
+	"bingo/pkg/jsonrpc"
 )
 
 // Hub maintains the set of active clients and manages their lifecycle.
@@ -162,8 +165,9 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 	client.Platform = event.Platform
 	client.TokenExpiresAt = event.TokenExpiresAt
 
-	// Add to users map
+	// Check for existing session
 	h.userLock.Lock()
+	oldClient := h.users[key]
 	h.users[key] = client
 	h.userLock.Unlock()
 
@@ -171,6 +175,29 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 	h.clientsLock.Lock()
 	h.clients[client] = true
 	h.clientsLock.Unlock()
+
+	// Kick old client if exists
+	if oldClient != nil && oldClient != client {
+		h.kickClient(oldClient, "您的账号已在其他设备登录")
+	}
+}
+
+func (h *Hub) kickClient(client *Client, reason string) {
+	// Send kick notification
+	push := jsonrpc.NewPush("session.kicked", map[string]string{
+		"reason": reason,
+	})
+	data, _ := json.Marshal(push)
+
+	select {
+	case client.Send <- data:
+	default:
+	}
+
+	// Kick after delay
+	time.AfterFunc(100*time.Millisecond, func() {
+		h.Unregister <- client
+	})
 }
 
 func (h *Hub) handleBroadcast(message []byte) {

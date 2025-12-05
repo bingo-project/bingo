@@ -143,6 +143,59 @@ func TestHub_AnonymousToAuthenticated(t *testing.T) {
 	assert.Equal(t, 1, hub.UserCount())
 }
 
+func TestHub_KickPreviousSession(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	// First client logs in
+	client1 := &ws.Client{
+		Addr:      "client1",
+		Send:      make(chan []byte, 10),
+		FirstTime: time.Now().Unix(),
+	}
+	hub.Register <- client1
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{
+		Client:   client1,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
+	}
+	time.Sleep(10 * time.Millisecond)
+
+	// Second client logs in with same user/platform
+	client2 := &ws.Client{
+		Addr:      "client2",
+		Send:      make(chan []byte, 10),
+		FirstTime: time.Now().Unix(),
+	}
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{
+		Client:   client2,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
+	}
+	time.Sleep(150 * time.Millisecond) // Wait for kick delay
+
+	// First client should receive kick notification
+	select {
+	case msg := <-client1.Send:
+		assert.Contains(t, string(msg), "session.kicked")
+	default:
+		t.Error("client1 should receive kick notification")
+	}
+
+	// Only client2 should remain
+	assert.Equal(t, 1, hub.ClientCount())
+	assert.Equal(t, 1, hub.UserCount())
+	assert.Equal(t, client2, hub.GetUserClient(ws.PlatformIOS, "user-123"))
+}
+
 func TestHub_AnonymousTimeout(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
