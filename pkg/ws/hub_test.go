@@ -230,6 +230,80 @@ func TestHub_AnonymousTimeout(t *testing.T) {
 	assert.Equal(t, 0, hub.AnonymousCount())
 }
 
+func TestHub_Subscribe(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr:      "127.0.0.1:8080",
+		Send:      make(chan []byte, 10),
+		FirstTime: time.Now().Unix(),
+	}
+	hub.Register <- client
+	hub.Login <- &ws.LoginEvent{
+		Client:   client,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
+	}
+	time.Sleep(10 * time.Millisecond)
+
+	// Subscribe to topics
+	result := make(chan []string, 1)
+	hub.Subscribe <- &ws.SubscribeEvent{
+		Client: client,
+		Topics: []string{"group:123", "room:lobby"},
+		Result: result,
+	}
+
+	subscribed := <-result
+	assert.ElementsMatch(t, []string{"group:123", "room:lobby"}, subscribed)
+
+	// Verify topic count
+	assert.Equal(t, 2, hub.TopicCount())
+}
+
+func TestHub_Unsubscribe(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr:      "127.0.0.1:8080",
+		Send:      make(chan []byte, 10),
+		FirstTime: time.Now().Unix(),
+	}
+	hub.Register <- client
+	hub.Login <- &ws.LoginEvent{
+		Client:   client,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
+	}
+	time.Sleep(10 * time.Millisecond)
+
+	// Subscribe
+	result := make(chan []string, 1)
+	hub.Subscribe <- &ws.SubscribeEvent{
+		Client: client,
+		Topics: []string{"group:123", "room:lobby"},
+		Result: result,
+	}
+	<-result
+
+	// Unsubscribe one topic
+	hub.Unsubscribe <- &ws.UnsubscribeEvent{
+		Client: client,
+		Topics: []string{"group:123"},
+	}
+	time.Sleep(10 * time.Millisecond)
+
+	assert.Equal(t, 1, hub.TopicCount())
+}
+
 func TestHub_GracefulShutdown(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 

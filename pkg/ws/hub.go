@@ -28,11 +28,17 @@ type Hub struct {
 	users    map[string]*Client
 	userLock sync.RWMutex
 
+	// Topic subscriptions
+	topics     map[string]map[*Client]bool
+	topicsLock sync.RWMutex
+
 	// Channels for events
-	Register   chan *Client
-	Unregister chan *Client
-	Login      chan *LoginEvent
-	Broadcast  chan []byte
+	Register    chan *Client
+	Unregister  chan *Client
+	Login       chan *LoginEvent
+	Broadcast   chan []byte
+	Subscribe   chan *SubscribeEvent
+	Unsubscribe chan *UnsubscribeEvent
 }
 
 // LoginEvent represents a user login event.
@@ -43,6 +49,19 @@ type LoginEvent struct {
 	TokenExpiresAt int64
 }
 
+// SubscribeEvent represents a topic subscription event.
+type SubscribeEvent struct {
+	Client *Client
+	Topics []string
+	Result chan []string
+}
+
+// UnsubscribeEvent represents a topic unsubscription event.
+type UnsubscribeEvent struct {
+	Client *Client
+	Topics []string
+}
+
 // NewHub creates a new Hub with default config.
 func NewHub() *Hub {
 	return NewHubWithConfig(DefaultHubConfig())
@@ -51,14 +70,17 @@ func NewHub() *Hub {
 // NewHubWithConfig creates a new Hub with custom config.
 func NewHubWithConfig(cfg *HubConfig) *Hub {
 	return &Hub{
-		config:     cfg,
-		anonymous:  make(map[*Client]bool),
-		clients:    make(map[*Client]bool),
-		users:      make(map[string]*Client),
-		Register:   make(chan *Client, 256),
-		Unregister: make(chan *Client, 256),
-		Login:      make(chan *LoginEvent, 256),
-		Broadcast:  make(chan []byte, 256),
+		config:      cfg,
+		anonymous:   make(map[*Client]bool),
+		clients:     make(map[*Client]bool),
+		users:       make(map[string]*Client),
+		topics:      make(map[string]map[*Client]bool),
+		Register:    make(chan *Client, 256),
+		Unregister:  make(chan *Client, 256),
+		Login:       make(chan *LoginEvent, 256),
+		Broadcast:   make(chan []byte, 256),
+		Subscribe:   make(chan *SubscribeEvent, 256),
+		Unsubscribe: make(chan *UnsubscribeEvent, 256),
 	}
 }
 
@@ -92,6 +114,15 @@ func (h *Hub) Run(ctx context.Context) {
 
 		case message := <-h.Broadcast:
 			h.handleBroadcast(message)
+
+		case event := <-h.Subscribe:
+			subscribed := h.doSubscribe(event.Client, event.Topics)
+			if event.Result != nil {
+				event.Result <- subscribed
+			}
+
+		case event := <-h.Unsubscribe:
+			h.doUnsubscribe(event.Client, event.Topics)
 		}
 	}
 }
@@ -243,6 +274,54 @@ func (h *Hub) GetUserClient(platform, userID string) *Client {
 
 func userKey(platform, userID string) string {
 	return platform + "_" + userID
+}
+
+// TopicCount returns the number of topics with subscribers.
+func (h *Hub) TopicCount() int {
+	h.topicsLock.RLock()
+	defer h.topicsLock.RUnlock()
+	return len(h.topics)
+}
+
+func (h *Hub) doSubscribe(client *Client, topics []string) []string {
+	h.topicsLock.Lock()
+	defer h.topicsLock.Unlock()
+
+	var subscribed []string
+	for _, topic := range topics {
+		if h.topics[topic] == nil {
+			h.topics[topic] = make(map[*Client]bool)
+		}
+		h.topics[topic][client] = true
+
+		client.topicsLock.Lock()
+		if client.topics == nil {
+			client.topics = make(map[string]bool)
+		}
+		client.topics[topic] = true
+		client.topicsLock.Unlock()
+
+		subscribed = append(subscribed, topic)
+	}
+	return subscribed
+}
+
+func (h *Hub) doUnsubscribe(client *Client, topics []string) {
+	h.topicsLock.Lock()
+	defer h.topicsLock.Unlock()
+
+	for _, topic := range topics {
+		if clients, ok := h.topics[topic]; ok {
+			delete(clients, client)
+			if len(clients) == 0 {
+				delete(h.topics, topic)
+			}
+		}
+
+		client.topicsLock.Lock()
+		delete(client.topics, topic)
+		client.topicsLock.Unlock()
+	}
 }
 
 func (h *Hub) cleanupAnonymous() {
