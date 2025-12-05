@@ -883,6 +883,7 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 | Phase 5: gRPC-Gateway | 2024-12 | `dba9b6b` |
 | Phase 6: 统一认证 | 2024-12 | `7b1da9f` |
 | Code Review 修复 | 2024-12 | `2d1a8ef` |
+| 配置增强 (Origin/TLS) | 2024-12 | `58b1078` |
 
 ## Code Review
 
@@ -892,14 +893,14 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 
 | 问题 | 严重性 | 修复内容 |
 |------|--------|----------|
-| Gateway 使用不安全凭证 | 关键 | 添加 TLS 文档说明和 TODO |
+| Gateway 使用不安全凭证 | 关键 | 添加 TLS 配置支持 |
 | Hub.Run() 无法优雅停止 | 关键 | 添加 context 支持 |
 | Send channel 资源泄漏 | 重要 | 在 unregister 时关闭 channel |
 | JSON marshal 错误被忽略 | 重要 | 正确处理并返回错误响应 |
 | handleMessage 无 panic recovery | 重要 | 添加 defer recover |
+| WebSocket Origin 验证 | 重要 | 添加 allowedOrigins 配置 |
+| gRPC TLS 支持 | 重要 | 添加 TLS 配置 (secure/insecure) |
 
 ### 待改进项（非阻塞）
 
-- [ ] WebSocket Origin 验证配置化
-- [ ] Gateway TLS 配置支持
 - [ ] 类型系统迁移到 proto.Message（已有 TODO）
