@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"bingo/internal/pkg/config"
+	middleware "bingo/internal/pkg/middleware/http"
 	pb "bingo/pkg/proto/apiserver/v1/pb"
 )
 
@@ -54,7 +55,7 @@ func (s *GatewayServer) Run(ctx context.Context) error {
 
 	s.server = &http.Server{
 		Addr:    s.httpCfg.Addr,
-		Handler: mux,
+		Handler: middleware.CorsHandler(mux),
 	}
 
 	log.Infow("Starting gRPC-Gateway server", "addr", s.httpCfg.Addr, "grpc_backend", s.grpcAddr)

@@ -17,20 +17,37 @@ func NoCache(c *gin.Context) {
 	c.Next()
 }
 
-// Cors add cors headers.
+// Cors adds CORS headers for Gin handlers.
+// Note: CorsHandler provides the same functionality for net/http handlers.
 func Cors(c *gin.Context) {
-	if c.Request.Method != "OPTIONS" {
-		c.Next()
-
-		return
-	}
-
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
 	c.Header("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
-	c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
-	c.Header("Content-Type", "application/json")
-	c.AbortWithStatus(http.StatusOK)
+
+	if c.Request.Method == "OPTIONS" {
+		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
+		c.AbortWithStatus(http.StatusOK)
+		return
+	}
+
+	c.Next()
+}
+
+// CorsHandler wraps an http.Handler with CORS headers.
+// Note: Cors provides the same functionality for Gin handlers.
+func CorsHandler(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	})
 }
 
 // Secure is a middleware function that appends security
