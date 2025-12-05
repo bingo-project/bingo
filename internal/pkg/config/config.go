@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	Server  *Server          `mapstructure:"server" json:"server" yaml:"server"`
-	GRPC    *GRPC            `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
-	Bot     *Bot             `mapstructure:"bot" json:"bot" yaml:"bot"`
+	Server    *Server          `mapstructure:"server" json:"server" yaml:"server"`
+	GRPC      *GRPC            `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
+	WebSocket *WebSocket       `mapstructure:"websocket" json:"websocket" yaml:"websocket"`
+	Bot       *Bot             `mapstructure:"bot" json:"bot" yaml:"bot"`
 	JWT     *JWT             `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	Feature *Feature         `mapstructure:"feature" json:"feature" yaml:"feature"`
 	Mysql   *db.MySQLOptions `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
