@@ -894,6 +894,7 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 - [x] 三种协议使用相同的认证逻辑
 - [x] 三种协议返回相同格式的错误响应
 - [x] Handler 目录结构统一（controller/, grpc/ 迁移到 handler/）
+- [ ] Server 包提取到 internal/pkg/server（支持多服务复用）
 
 ## 实施记录
 

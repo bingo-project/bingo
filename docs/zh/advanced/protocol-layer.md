@@ -35,6 +35,14 @@
 ## 目录结构
 
 ```
+internal/pkg/server/        # 通用服务基础设施（可复用）
+├── server.go               # Server 接口, Runner
+├── http.go                 # HTTP Server
+├── grpc.go                 # gRPC Server
+├── gateway.go              # gRPC-Gateway Server
+├── websocket.go            # WebSocket Server
+└── assembler.go            # 配置驱动组装
+
 internal/apiserver/
 ├── biz/                    # 业务逻辑（协议无关）
 │   ├── biz.go              # interface 定义
@@ -44,13 +52,18 @@ internal/apiserver/
 ├── handler/                # 协议处理器（可插拔）
 │   ├── http/               # 独立 HTTP（Gin）
 │   ├── grpc/               # gRPC Handler
-│   ├── gateway/            # gRPC-Gateway（可选）
 │   └── ws/                 # WebSocket (JSON-RPC 2.0)
 │
-├── server/                 # 服务组装
-│   └── server.go           # 根据配置组装协议
-│
 └── store/                  # 数据访问
+
+pkg/ws/                     # WebSocket 基础设施
+├── hub.go                  # 连接管理
+└── client.go               # 客户端连接
+
+pkg/jsonrpc/                # JSON-RPC 2.0 支持
+├── message.go              # 消息类型
+├── response.go             # 响应构造
+└── adapter.go              # 方法路由适配器
 
 pkg/proto/                  # Proto 定义（数据层）
 ├── user/v1/
@@ -59,6 +72,8 @@ pkg/proto/                  # Proto 定义（数据层）
 └── common/
     └── error.proto         # 统一错误类型（可选）
 ```
+
+**说明**：`internal/pkg/server/` 是通用的服务基础设施，可被所有服务复用（apiserver、admserver 等）。
 
 ## 配置驱动
 
@@ -83,34 +98,84 @@ server:
 
 ## 服务启动逻辑
 
+### Server 接口
+
 ```go
-// internal/apiserver/server/server.go
-func Run(cfg *config.Config, biz biz.IBiz) error {
-    var servers []Server
+// internal/pkg/server/server.go
 
-    // gRPC（如果启用）
-    if cfg.Server.GRPC.Enabled {
-        servers = append(servers, grpc.NewServer(cfg, biz))
-    }
+// Server 可插拔服务器接口
+type Server interface {
+    Run(ctx context.Context) error      // 启动（阻塞直到 ctx 取消）
+    Shutdown(ctx context.Context) error // 优雅关闭
+    Name() string                       // 服务名称（用于日志）
+}
 
-    // HTTP
-    if cfg.Server.HTTP.Enabled {
-        switch cfg.Server.HTTP.Mode {
-        case "gateway":
-            servers = append(servers, gateway.NewServer(cfg))
-        default:
-            servers = append(servers, http.NewServer(cfg, biz))
-        }
-    }
+// Runner 管理多个服务的生命周期
+type Runner struct {
+    servers []Server
+}
 
-    // WebSocket
-    if cfg.Server.WebSocket.Enabled {
-        servers = append(servers, ws.NewServer(cfg, biz))
-    }
+func (r *Runner) Run(ctx context.Context) error    // 并发启动，任一失败触发全部关闭
+func (r *Runner) Shutdown(ctx context.Context) error // 逆序关闭
+```
 
-    return runAll(servers)
+### Assembler 组装
+
+```go
+// internal/pkg/server/assembler.go
+
+// Option 模式配置
+func WithGinEngine(engine *gin.Engine) AssemblerOption      // HTTP
+func WithGRPCServer(server *grpc.Server) AssemblerOption    // gRPC
+func WithWebSocket(engine *gin.Engine, hub *ws.Hub) AssemblerOption // WebSocket
+
+// 根据配置组装
+func Assemble(cfg *config.Config, opts ...AssemblerOption) *Runner
+```
+
+### 调用示例
+
+```go
+// internal/apiserver/apiserver.go
+
+func Run(cfg *config.Config) error {
+    // 1. 初始化依赖
+    bizInstance := biz.NewBiz(store.S)
+
+    // 2. HTTP
+    httpEngine := gin.New()
+    router.MapHTTPRouters(httpEngine, bizInstance)
+
+    // 3. gRPC
+    grpcSrv := grpc.NewServer()
+    router.MapGRPCRouters(grpcSrv, bizInstance)
+
+    // 4. WebSocket
+    hub := ws.NewHub()
+    adapter := jsonrpc.NewAdapter()
+    router.RegisterWSHandlers(adapter, bizInstance)
+    wsHandler := wshandler.NewHandler(hub, adapter, cfg.WebSocket)
+    wsEngine := gin.New()
+    wsEngine.GET("/ws", wsHandler.ServeWS)
+
+    // 5. 组装并运行
+    runner := server.Assemble(cfg,
+        server.WithGinEngine(httpEngine),
+        server.WithGRPCServer(grpcSrv),
+        server.WithWebSocket(wsEngine, hub),
+    )
+
+    ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+    defer stop()
+
+    return runner.Run(ctx)
 }
 ```
+
+**设计原则**：
+- **依赖注入**：Handler 由调用方创建，Server 只管生命周期
+- **单一职责**：`internal/pkg/server` 不依赖任何业务代码
+- **可复用**：所有服务（apiserver、admserver 等）共用同一套基础设施
 
 ## Handler 实现
 
