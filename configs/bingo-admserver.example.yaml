@@ -1,13 +1,24 @@
-# RESTful Server
-server:
+# Application
+app:
   name: bingo
-  mode: debug # server mode: release, debug, test，默认 release
-  addr: :18080
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
 
+# HTTP Server
+http:
+  enabled: true
+  addr: :18080
+  ginMode: debug # gin mode: release, debug, test
+  mode: standalone # protocol mode: standalone, gateway
+
 # gRPC Server
 grpc:
+  enabled: true
+  addr: :18090
+
+# WebSocket Server
+websocket:
+  enabled: false
   addr: :18081
 
 # MySQL

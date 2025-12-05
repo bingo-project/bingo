@@ -1,9 +1,8 @@
 apiVersion: v1
 
-# bingoctl
-server:
+# Application
+app:
   name: bingo
-  mode: debug # server mode: release, debug, test，默认 release
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
 

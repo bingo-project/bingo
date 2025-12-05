@@ -1,10 +1,14 @@
-# Bot server
-server:
+# Application
+app:
   name: bingo
-  mode: debug # server mode: release, debug, test，默认 release
-  addr: :18080
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
+
+# HTTP Server (for bot webhook)
+http:
+  enabled: false
+  addr: :18080
+  ginMode: debug
 
 # bot Server
 bot:

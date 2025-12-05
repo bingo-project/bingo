@@ -7,5 +7,5 @@ import (
 )
 
 func InitAES() {
-	facade.AES = crypt.NewAES(facade.Config.Server.Key)
+	facade.AES = crypt.NewAES(facade.Config.App.Key)
 }

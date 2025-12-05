@@ -81,7 +81,7 @@ func (o *GenerateOptions) writeNewEnvironmentFileWith(key string) error {
 		return err
 	}
 
-	newContent := strings.Replace(string(content), "key: "+facade.Config.Server.Key, "key: "+key, 1)
+	newContent := strings.Replace(string(content), "key: "+facade.Config.App.Key, "key: "+key, 1)
 
 	err = os.WriteFile(path, []byte(newContent), 0600)
 	if err != nil {

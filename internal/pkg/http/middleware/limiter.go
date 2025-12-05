@@ -97,7 +97,7 @@ func GetLimiterContext(c *gin.Context, key string, formatted string) (limiter.Co
 
 	// Create a store with the redis client.
 	store, err := redisStore.NewStoreWithOptions(facade.Redis, limiter.StoreOptions{
-		Prefix: facade.Config.Server.Name + ":limiter",
+		Prefix: facade.Config.App.Name + ":limiter",
 	})
 	if err != nil {
 		return context, err

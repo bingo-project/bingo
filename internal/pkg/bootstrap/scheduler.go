@@ -20,7 +20,7 @@ func InitScheduler() {
 	}
 
 	// Timezone
-	location, err := time.LoadLocation(facade.Config.Server.Timezone)
+	location, err := time.LoadLocation(facade.Config.App.Timezone)
 	if err != nil {
 		log.Fatalf(err.Error())
 	}

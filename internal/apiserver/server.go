@@ -25,9 +25,9 @@ func NewHttp() *httpAPIServer {
 	g := bootstrap.InitGin()
 	installRouters(g)
 
-	srv := &http.Server{Addr: facade.Config.Server.Addr, Handler: g}
+	srv := &http.Server{Addr: facade.Config.HTTP.Addr, Handler: g}
 
-	return &httpAPIServer{insecureServer: srv, insecureAddress: facade.Config.Server.Addr}
+	return &httpAPIServer{insecureServer: srv, insecureAddress: facade.Config.HTTP.Addr}
 }
 
 func (s *httpAPIServer) Run() {

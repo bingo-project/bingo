@@ -5,5 +5,5 @@ import (
 )
 
 func InitTimezone() {
-	facade.Config.Server.SetTimezone()
+	facade.Config.App.SetTimezone()
 }

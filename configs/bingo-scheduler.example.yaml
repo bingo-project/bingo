@@ -1,10 +1,14 @@
-# Scheduler Server
-server:
+# Application
+app:
   name: bingo
-  mode: debug # server mode: release, debug, test，默认 release
-  addr: :8080
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
+
+# HTTP Server (for queue dashboard)
+http:
+  enabled: true
+  addr: :8080
+  ginMode: debug
 
 # MySQL
 mysql:

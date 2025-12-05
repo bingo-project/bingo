@@ -11,7 +11,7 @@ import (
 )
 
 func InitGin() *gin.Engine {
-	gin.SetMode(facade.Config.Server.Mode)
+	gin.SetMode(facade.Config.HTTP.GinMode)
 
 	g := gin.New()
 

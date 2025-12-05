@@ -1,3 +1,6 @@
+// ABOUTME: Root configuration structure for the application.
+// ABOUTME: Aggregates all configuration sections including app, protocols, and services.
+
 package config
 
 import (
@@ -8,16 +11,17 @@ import (
 )
 
 type Config struct {
-	Server    *Server          `mapstructure:"server" json:"server" yaml:"server"`
+	App       *App             `mapstructure:"app" json:"app" yaml:"app"`
+	HTTP      *HTTP            `mapstructure:"http" json:"http" yaml:"http"`
 	GRPC      *GRPC            `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
 	WebSocket *WebSocket       `mapstructure:"websocket" json:"websocket" yaml:"websocket"`
 	Bot       *Bot             `mapstructure:"bot" json:"bot" yaml:"bot"`
-	JWT     *JWT             `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
-	Feature *Feature         `mapstructure:"feature" json:"feature" yaml:"feature"`
-	Mysql   *db.MySQLOptions `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Redis   *Redis           `mapstructure:"redis" json:"redis" yaml:"redis"`
-	Log     *log.Options     `mapstructure:"log" json:"log" yaml:"log"`
-	Mail    *mail.Options    `mapstructure:"mail" json:"mail" yaml:"mail"`
-	Code    Code             `mapstructure:"code" json:"code" yaml:"code"`
-	OpenAPI OpenAPI          `mapstructure:"openapi" json:"openapi" yaml:"openapi"`
+	JWT       *JWT             `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Feature   *Feature         `mapstructure:"feature" json:"feature" yaml:"feature"`
+	Mysql     *db.MySQLOptions `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Redis     *Redis           `mapstructure:"redis" json:"redis" yaml:"redis"`
+	Log       *log.Options     `mapstructure:"log" json:"log" yaml:"log"`
+	Mail      *mail.Options    `mapstructure:"mail" json:"mail" yaml:"mail"`
+	Code      Code             `mapstructure:"code" json:"code" yaml:"code"`
+	OpenAPI   OpenAPI          `mapstructure:"openapi" json:"openapi" yaml:"openapi"`
 }
