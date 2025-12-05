@@ -6,7 +6,7 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	auth2 "bingo/internal/apiserver/controller/v1/auth"
+	auth2 "bingo/internal/apiserver/handler/http/auth"
 	"bingo/internal/apiserver/middleware"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"

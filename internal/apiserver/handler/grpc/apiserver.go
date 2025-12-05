@@ -1,4 +1,7 @@
-package apiserver
+// ABOUTME: gRPC handler for apiserver service.
+// ABOUTME: Implements health check and version endpoints for gRPC protocol.
+
+package grpc
 
 import (
 	"context"

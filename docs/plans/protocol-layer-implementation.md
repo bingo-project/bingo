@@ -639,8 +639,8 @@ import (
     "bingo/internal/apiserver/config"
     "bingo/internal/apiserver/handler/gateway"
     "bingo/internal/apiserver/handler/ws"
-    grpchandler "bingo/internal/apiserver/grpc"
-    httphandler "bingo/internal/apiserver/controller"
+    grpchandler "bingo/internal/apiserver/handler/grpc"
+    httphandler "bingo/internal/apiserver/handler/http"
 )
 
 // Assemble 根据配置组装服务运行器
@@ -893,7 +893,7 @@ func (a *Authenticator) WSVerify(ctx context.Context, tokenStr string) (context.
 - [x] 配置 `http.mode=gateway` 时使用 gRPC-Gateway
 - [x] 三种协议使用相同的认证逻辑
 - [x] 三种协议返回相同格式的错误响应
-- [ ] Handler 目录结构统一（controller/, grpc/ 迁移到 handler/）
+- [x] Handler 目录结构统一（controller/, grpc/ 迁移到 handler/）
 
 ## 实施记录
 
