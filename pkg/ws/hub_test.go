@@ -433,10 +433,12 @@ func TestHub_UnsubscribeAllOnDisconnect(t *testing.T) {
 
 	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
 	go hub.Run(ctx)
+	time.Sleep(10 * time.Millisecond) // Wait for hub to start
 
 	now := time.Now().Unix()
 	client := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: now, HeartbeatTime: now}
 	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
 	hub.Login <- &ws.LoginEvent{Client: client, UserID: "user-123", Platform: ws.PlatformIOS}
 	time.Sleep(10 * time.Millisecond)
 
@@ -448,7 +450,7 @@ func TestHub_UnsubscribeAllOnDisconnect(t *testing.T) {
 
 	// Disconnect
 	hub.Unregister <- client
-	time.Sleep(10 * time.Millisecond)
+	time.Sleep(50 * time.Millisecond) // Increase wait time
 
 	// Topics should be cleaned up
 	assert.Equal(t, 0, hub.TopicCount())
