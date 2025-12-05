@@ -1,0 +1,105 @@
+swagger: "2.0"
+info:
+  title: Bingo API
+  description: Bingo API Server
+  version: "1.0"
+  contact:
+    name: Bingo Project
+    url: https://github.com/bingo-project/bingo
+tags:
+  - name: ApiServer
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /v1/healthz:
+    get:
+      summary: 健康检查
+      description: 检查服务是否正常运行
+      operationId: ApiServer_Healthz
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1HealthzReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - 系统
+  /v1/version:
+    get:
+      summary: 版本信息
+      description: 获取服务版本信息
+      operationId: ApiServer_Version
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1VersionReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - 系统
+definitions:
+  protobufAny:
+    type: object
+    properties:
+      '@type':
+        type: string
+    additionalProperties: {}
+  rpcStatus:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      details:
+        type: array
+        items:
+          type: object
+          $ref: '#/definitions/protobufAny'
+  v1HealthzReply:
+    type: object
+    properties:
+      status:
+        type: string
+      ip:
+        type: string
+      ts:
+        type: string
+        format: date-time
+  v1VersionReply:
+    type: object
+    properties:
+      gitVersion:
+        type: string
+      gitCommit:
+        type: string
+      gitTreeState:
+        type: string
+      buildDate:
+        type: string
+      goVersion:
+        type: string
+      compiler:
+        type: string
+      platform:
+        type: string
+securityDefinitions:
+  BearerAuth:
+    type: apiKey
+    description: 'Bearer Token 认证，格式: Bearer {token}'
+    name: Authorization
+    in: header
+security:
+  - BearerAuth: []
