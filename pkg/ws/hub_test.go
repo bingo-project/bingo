@@ -388,6 +388,45 @@ func TestHub_Unsubscribe(t *testing.T) {
 	assert.Equal(t, 1, hub.TopicCount())
 }
 
+func TestHub_TokenExpiration(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	cfg := &ws.HubConfig{
+		AnonymousTimeout: 10 * time.Second,
+		AnonymousCleanup: 2 * time.Second,
+		HeartbeatTimeout: 60 * time.Second,
+		HeartbeatCleanup: 50 * time.Millisecond, // Fast for testing
+		PingPeriod:       54 * time.Second,
+		PongWait:         60 * time.Second,
+	}
+
+	hub := ws.NewHubWithConfig(cfg)
+	go hub.Run(ctx)
+
+	now := time.Now().Unix()
+	client := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: now, HeartbeatTime: now}
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+
+	// Login with token that expires immediately
+	hub.Login <- &ws.LoginEvent{
+		Client:         client,
+		UserID:         "user-123",
+		Platform:       ws.PlatformIOS,
+		TokenExpiresAt: time.Now().Unix() - 1, // Already expired
+	}
+	time.Sleep(150 * time.Millisecond)
+
+	// Should receive session.expired notification
+	select {
+	case msg := <-client.Send:
+		assert.Contains(t, string(msg), "session.expired")
+	default:
+		t.Error("Should receive session.expired notification")
+	}
+}
+
 func TestHub_GracefulShutdown(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 

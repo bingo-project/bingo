@@ -418,14 +418,64 @@ func (h *Hub) cleanupInactiveClients() {
 
 	h.clientsLock.RLock()
 	var inactive []*Client
+	var expired []*Client
+
 	for client := range h.clients {
+		// Check heartbeat timeout
 		if client.HeartbeatTime+heartbeatTimeout <= now {
 			inactive = append(inactive, client)
+			continue
+		}
+
+		// Check token expiration
+		if client.TokenExpiresAt > 0 && client.TokenExpiresAt <= now {
+			expired = append(expired, client)
 		}
 	}
 	h.clientsLock.RUnlock()
 
+	// Kick inactive clients
 	for _, client := range inactive {
 		h.Unregister <- client
 	}
+
+	// Notify and kick expired clients
+	for _, client := range expired {
+		h.expireClient(client)
+	}
+}
+
+func (h *Hub) expireClient(client *Client) {
+	// Remove from clients map first to prevent duplicate expiration
+	h.clientsLock.Lock()
+	if _, ok := h.clients[client]; !ok {
+		h.clientsLock.Unlock()
+		return // Already removed
+	}
+	delete(h.clients, client)
+	h.clientsLock.Unlock()
+
+	// Remove from users map
+	if client.UserID != "" && client.Platform != "" {
+		h.userLock.Lock()
+		key := userKey(client.Platform, client.UserID)
+		if c, ok := h.users[key]; ok && c == client {
+			delete(h.users, key)
+		}
+		h.userLock.Unlock()
+	}
+
+	push := jsonrpc.NewPush("session.expired", map[string]string{
+		"reason": "Token 已过期，请重新登录",
+	})
+	data, _ := json.Marshal(push)
+
+	select {
+	case client.Send <- data:
+	default:
+	}
+
+	time.AfterFunc(100*time.Millisecond, func() {
+		h.safeCloseSend(client)
+	})
 }
