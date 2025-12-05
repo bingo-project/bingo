@@ -283,6 +283,26 @@ func (h *Hub) TopicCount() int {
 	return len(h.topics)
 }
 
+// PushToTopic sends a message to all subscribers of a topic.
+func (h *Hub) PushToTopic(topic, method string, data any) {
+	push := jsonrpc.NewPush(method, data)
+	msg, err := json.Marshal(push)
+	if err != nil {
+		return
+	}
+
+	h.topicsLock.RLock()
+	clients := h.topics[topic]
+	h.topicsLock.RUnlock()
+
+	for client := range clients {
+		select {
+		case client.Send <- msg:
+		default:
+		}
+	}
+}
+
 func (h *Hub) doSubscribe(client *Client, topics []string) []string {
 	h.topicsLock.Lock()
 	defer h.topicsLock.Unlock()

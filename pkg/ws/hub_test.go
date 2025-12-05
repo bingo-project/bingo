@@ -265,6 +265,43 @@ func TestHub_Subscribe(t *testing.T) {
 	assert.Equal(t, 2, hub.TopicCount())
 }
 
+func TestHub_PushToTopic(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	// Create and login two clients
+	client1 := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: time.Now().Unix()}
+	client2 := &ws.Client{Addr: "client2", Send: make(chan []byte, 10), FirstTime: time.Now().Unix()}
+
+	hub.Register <- client1
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user1", Platform: ws.PlatformIOS}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user2", Platform: ws.PlatformWeb}
+	time.Sleep(10 * time.Millisecond)
+
+	// Subscribe client1 to topic
+	result := make(chan []string, 1)
+	hub.Subscribe <- &ws.SubscribeEvent{Client: client1, Topics: []string{"group:123"}, Result: result}
+	<-result
+
+	// Push to topic
+	hub.PushToTopic("group:123", "message.new", map[string]string{"content": "hello"})
+	time.Sleep(10 * time.Millisecond)
+
+	// Only client1 should receive
+	assert.Equal(t, 1, len(client1.Send))
+	assert.Equal(t, 0, len(client2.Send))
+
+	msg := <-client1.Send
+	assert.Contains(t, string(msg), "message.new")
+	assert.Contains(t, string(msg), "hello")
+}
+
 func TestHub_Unsubscribe(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
