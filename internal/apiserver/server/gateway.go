@@ -41,6 +41,10 @@ func (s *GatewayServer) Name() string {
 func (s *GatewayServer) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux()
 
+	// NOTE: Using insecure credentials for local gRPC communication.
+	// This is acceptable when gateway and gRPC server run on the same host.
+	// For production with remote gRPC backends, configure TLS credentials.
+	// TODO: Add TLS configuration support via config.GRPC.TLS
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	// Register all service handlers

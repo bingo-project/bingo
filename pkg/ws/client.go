@@ -125,6 +125,16 @@ func (c *Client) WritePump() {
 }
 
 func (c *Client) handleMessage(data []byte) {
+	// Recover from panics in message handling
+	defer func() {
+		if r := recover(); r != nil {
+			log.Errorw("Panic in handleMessage", "addr", c.Addr, "panic", r)
+			resp := jsonrpc.NewErrorResponse(nil,
+				errorsx.New(500, "InternalError", "Message handler crashed"))
+			c.sendJSON(resp)
+		}
+	}()
+
 	var req jsonrpc.Request
 	if err := json.Unmarshal(data, &req); err != nil {
 		resp := jsonrpc.NewErrorResponse(nil,

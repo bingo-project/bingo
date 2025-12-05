@@ -58,8 +58,8 @@ func (s *WebSocketServer) Name() string {
 
 // Run starts the WebSocket server and blocks until context is cancelled or error occurs.
 func (s *WebSocketServer) Run(ctx context.Context) error {
-	// Start hub in background
-	go s.hub.Run()
+	// Start hub in background with context for graceful shutdown
+	go s.hub.Run(ctx)
 
 	log.Infow("Starting WebSocket server", "addr", s.cfg.Addr)
 

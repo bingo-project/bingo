@@ -4,6 +4,7 @@
 package ws_test
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -13,8 +14,11 @@ import (
 )
 
 func TestHub_RegisterAndUnregister(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	hub := ws.NewHub()
-	go hub.Run()
+	go hub.Run(ctx)
 
 	// Create mock client
 	client := &ws.Client{
@@ -34,8 +38,11 @@ func TestHub_RegisterAndUnregister(t *testing.T) {
 }
 
 func TestHub_Login(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	hub := ws.NewHub()
-	go hub.Run()
+	go hub.Run(ctx)
 
 	client := &ws.Client{
 		Addr: "127.0.0.1:8080",
@@ -60,8 +67,11 @@ func TestHub_Login(t *testing.T) {
 }
 
 func TestHub_Broadcast(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	hub := ws.NewHub()
-	go hub.Run()
+	go hub.Run(ctx)
 
 	client1 := &ws.Client{Addr: "client1", Send: make(chan []byte, 10)}
 	client2 := &ws.Client{Addr: "client2", Send: make(chan []byte, 10)}
@@ -77,4 +87,31 @@ func TestHub_Broadcast(t *testing.T) {
 	// Both clients should receive
 	assert.Equal(t, 1, len(client1.Send))
 	assert.Equal(t, 1, len(client2.Send))
+}
+
+func TestHub_GracefulShutdown(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	hub := ws.NewHub()
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr: "127.0.0.1:8080",
+		Send: make(chan []byte, 10),
+	}
+
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+	assert.Equal(t, 1, hub.ClientCount())
+
+	// Cancel context to trigger shutdown
+	cancel()
+	time.Sleep(10 * time.Millisecond)
+
+	// Verify client is cleaned up
+	assert.Equal(t, 0, hub.ClientCount())
+
+	// Verify Send channel is closed
+	_, ok := <-client.Send
+	assert.False(t, ok, "Send channel should be closed")
 }

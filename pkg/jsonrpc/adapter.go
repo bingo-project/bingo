@@ -70,9 +70,17 @@ func (a *Adapter) Handle(ctx context.Context, req *Request) *Response {
 	}
 
 	// Convert response to map for JSON serialization
-	data, _ := json.Marshal(resp)
+	data, err := json.Marshal(resp)
+	if err != nil {
+		return NewErrorResponse(req.ID,
+			errorsx.New(500, "InternalError", "Failed to serialize response: %s", err.Error()))
+	}
+
 	var result any
-	json.Unmarshal(data, &result)
+	if err := json.Unmarshal(data, &result); err != nil {
+		return NewErrorResponse(req.ID,
+			errorsx.New(500, "InternalError", "Failed to process response: %s", err.Error()))
+	}
 
 	return NewResponse(req.ID, result)
 }

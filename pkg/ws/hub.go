@@ -4,6 +4,7 @@
 package ws
 
 import (
+	"context"
 	"fmt"
 	"sync"
 )
@@ -44,10 +45,14 @@ func NewHub() *Hub {
 	}
 }
 
-// Run starts the hub's event loop.
-func (h *Hub) Run() {
+// Run starts the hub's event loop. It blocks until context is cancelled.
+func (h *Hub) Run(ctx context.Context) {
 	for {
 		select {
+		case <-ctx.Done():
+			h.shutdown()
+			return
+
 		case client := <-h.Register:
 			h.handleRegister(client)
 
@@ -63,6 +68,17 @@ func (h *Hub) Run() {
 	}
 }
 
+// shutdown closes all client connections on hub shutdown.
+func (h *Hub) shutdown() {
+	h.clientsLock.Lock()
+	defer h.clientsLock.Unlock()
+
+	for client := range h.clients {
+		close(client.Send)
+		delete(h.clients, client)
+	}
+}
+
 func (h *Hub) handleRegister(client *Client) {
 	h.clientsLock.Lock()
 	defer h.clientsLock.Unlock()
@@ -72,6 +88,7 @@ func (h *Hub) handleRegister(client *Client) {
 func (h *Hub) handleUnregister(client *Client) {
 	h.clientsLock.Lock()
 	if _, ok := h.clients[client]; ok {
+		close(client.Send) // Signal WritePump to exit
 		delete(h.clients, client)
 	}
 	h.clientsLock.Unlock()
