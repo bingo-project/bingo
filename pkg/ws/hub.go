@@ -10,11 +10,17 @@ import (
 
 // Hub maintains the set of active clients and manages their lifecycle.
 type Hub struct {
-	// Registered clients
+	config *HubConfig
+
+	// Anonymous connections (not yet logged in)
+	anonymous     map[*Client]bool
+	anonymousLock sync.RWMutex
+
+	// Authenticated connections
 	clients     map[*Client]bool
 	clientsLock sync.RWMutex
 
-	// Logged-in users (key: appID_userID)
+	// Logged-in users (key: platform_userID)
 	users    map[string]*Client
 	userLock sync.RWMutex
 
@@ -33,9 +39,16 @@ type LoginEvent struct {
 	TokenExpiresAt int64
 }
 
-// NewHub creates a new Hub instance.
+// NewHub creates a new Hub with default config.
 func NewHub() *Hub {
+	return NewHubWithConfig(DefaultHubConfig())
+}
+
+// NewHubWithConfig creates a new Hub with custom config.
+func NewHubWithConfig(cfg *HubConfig) *Hub {
 	return &Hub{
+		config:     cfg,
+		anonymous:  make(map[*Client]bool),
 		clients:    make(map[*Client]bool),
 		users:      make(map[string]*Client),
 		Register:   make(chan *Client, 256),
@@ -70,40 +83,67 @@ func (h *Hub) Run(ctx context.Context) {
 
 // shutdown closes all client connections on hub shutdown.
 func (h *Hub) shutdown() {
-	h.clientsLock.Lock()
-	defer h.clientsLock.Unlock()
+	// Close anonymous connections
+	h.anonymousLock.Lock()
+	for client := range h.anonymous {
+		close(client.Send)
+		delete(h.anonymous, client)
+	}
+	h.anonymousLock.Unlock()
 
+	// Close authenticated connections
+	h.clientsLock.Lock()
 	for client := range h.clients {
 		close(client.Send)
 		delete(h.clients, client)
 	}
+	h.clientsLock.Unlock()
 }
 
 func (h *Hub) handleRegister(client *Client) {
-	h.clientsLock.Lock()
-	defer h.clientsLock.Unlock()
-	h.clients[client] = true
+	h.anonymousLock.Lock()
+	defer h.anonymousLock.Unlock()
+	h.anonymous[client] = true
 }
 
 func (h *Hub) handleUnregister(client *Client) {
+	// Remove from anonymous
+	h.anonymousLock.Lock()
+	if _, ok := h.anonymous[client]; ok {
+		close(client.Send)
+		delete(h.anonymous, client)
+		h.anonymousLock.Unlock()
+		return
+	}
+	h.anonymousLock.Unlock()
+
+	// Remove from clients
 	h.clientsLock.Lock()
 	if _, ok := h.clients[client]; ok {
-		close(client.Send) // Signal WritePump to exit
+		close(client.Send)
 		delete(h.clients, client)
 	}
 	h.clientsLock.Unlock()
 
 	// Also remove from users if logged in
-	h.userLock.Lock()
-	defer h.userLock.Unlock()
-	key := userKey(client.Platform, client.UserID)
-	if c, ok := h.users[key]; ok && c == client {
-		delete(h.users, key)
+	if client.UserID != "" && client.Platform != "" {
+		h.userLock.Lock()
+		key := userKey(client.Platform, client.UserID)
+		if c, ok := h.users[key]; ok && c == client {
+			delete(h.users, key)
+		}
+		h.userLock.Unlock()
 	}
 }
 
 func (h *Hub) handleLogin(event *LoginEvent) {
 	client := event.Client
+	key := userKey(event.Platform, event.UserID)
+
+	// Remove from anonymous
+	h.anonymousLock.Lock()
+	delete(h.anonymous, client)
+	h.anonymousLock.Unlock()
 
 	// Update client info
 	client.UserID = event.UserID
@@ -112,9 +152,13 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 
 	// Add to users map
 	h.userLock.Lock()
-	defer h.userLock.Unlock()
-	key := userKey(event.Platform, event.UserID)
 	h.users[key] = client
+	h.userLock.Unlock()
+
+	// Add to clients
+	h.clientsLock.Lock()
+	h.clients[client] = true
+	h.clientsLock.Unlock()
 }
 
 func (h *Hub) handleBroadcast(message []byte) {
@@ -130,7 +174,14 @@ func (h *Hub) handleBroadcast(message []byte) {
 	}
 }
 
-// ClientCount returns the number of connected clients.
+// AnonymousCount returns the number of anonymous connections.
+func (h *Hub) AnonymousCount() int {
+	h.anonymousLock.RLock()
+	defer h.anonymousLock.RUnlock()
+	return len(h.anonymous)
+}
+
+// ClientCount returns the number of authenticated clients.
 func (h *Hub) ClientCount() int {
 	h.clientsLock.RLock()
 	defer h.clientsLock.RUnlock()

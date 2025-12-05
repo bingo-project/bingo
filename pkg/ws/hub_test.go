@@ -26,15 +26,15 @@ func TestHub_RegisterAndUnregister(t *testing.T) {
 		Send: make(chan []byte, 10),
 	}
 
-	// Register client
+	// Register client (goes to anonymous)
 	hub.Register <- client
 	time.Sleep(10 * time.Millisecond)
-	assert.Equal(t, 1, hub.ClientCount())
+	assert.Equal(t, 1, hub.AnonymousCount())
 
 	// Unregister client
 	hub.Unregister <- client
 	time.Sleep(10 * time.Millisecond)
-	assert.Equal(t, 0, hub.ClientCount())
+	assert.Equal(t, 0, hub.AnonymousCount())
 }
 
 func TestHub_Login(t *testing.T) {
@@ -80,6 +80,11 @@ func TestHub_Broadcast(t *testing.T) {
 	hub.Register <- client2
 	time.Sleep(10 * time.Millisecond)
 
+	// Login both clients to make them authenticated
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user1", Platform: ws.PlatformIOS}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user2", Platform: ws.PlatformWeb}
+	time.Sleep(10 * time.Millisecond)
+
 	// Broadcast message
 	hub.Broadcast <- []byte("hello")
 	time.Sleep(10 * time.Millisecond)
@@ -87,6 +92,55 @@ func TestHub_Broadcast(t *testing.T) {
 	// Both clients should receive
 	assert.Equal(t, 1, len(client1.Send))
 	assert.Equal(t, 1, len(client2.Send))
+}
+
+func TestHub_AnonymousCount(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr: "127.0.0.1:8080",
+		Send: make(chan []byte, 10),
+	}
+
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+
+	// Client is in anonymous state
+	assert.Equal(t, 1, hub.AnonymousCount())
+	assert.Equal(t, 0, hub.ClientCount())
+}
+
+func TestHub_AnonymousToAuthenticated(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr: "127.0.0.1:8080",
+		Send: make(chan []byte, 10),
+	}
+
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+	assert.Equal(t, 1, hub.AnonymousCount())
+
+	// Login moves client from anonymous to authenticated
+	hub.Login <- &ws.LoginEvent{
+		Client:   client,
+		UserID:   "user-123",
+		Platform: ws.PlatformIOS,
+	}
+	time.Sleep(10 * time.Millisecond)
+
+	assert.Equal(t, 0, hub.AnonymousCount())
+	assert.Equal(t, 1, hub.ClientCount())
+	assert.Equal(t, 1, hub.UserCount())
 }
 
 func TestHub_GracefulShutdown(t *testing.T) {
@@ -102,14 +156,14 @@ func TestHub_GracefulShutdown(t *testing.T) {
 
 	hub.Register <- client
 	time.Sleep(10 * time.Millisecond)
-	assert.Equal(t, 1, hub.ClientCount())
+	assert.Equal(t, 1, hub.AnonymousCount())
 
 	// Cancel context to trigger shutdown
 	cancel()
 	time.Sleep(10 * time.Millisecond)
 
 	// Verify client is cleaned up
-	assert.Equal(t, 0, hub.ClientCount())
+	assert.Equal(t, 0, hub.AnonymousCount())
 
 	// Verify Send channel is closed
 	_, ok := <-client.Send
