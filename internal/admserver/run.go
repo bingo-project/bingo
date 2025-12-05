@@ -1,35 +1,130 @@
+// ABOUTME: Application entry point for admserver.
+// ABOUTME: Initializes HTTP, gRPC, and WebSocket servers based on configuration.
+
 package admserver
 
 import (
-	"os"
+	"context"
 	"os/signal"
 	"syscall"
 
 	"github.com/bingo-project/component-base/log"
+	"github.com/gin-gonic/gin"
+	gm "github.com/grpc-ecosystem/go-grpc-middleware"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/reflection"
+
+	"bingo/internal/admserver/biz"
+	wshandler "bingo/internal/admserver/handler/ws"
+	"bingo/internal/admserver/router"
+	"bingo/internal/pkg/bootstrap"
+	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/grpc/interceptor"
+	"bingo/internal/pkg/server"
+	"bingo/internal/pkg/store"
+	"bingo/pkg/jsonrpc"
+	"bingo/pkg/ws"
 )
 
-// run 函数是实际的业务代码入口函数.
-// kill 默认会发送 syscall.SIGTERM 信号
-// kill -2 发送 syscall.SIGINT 信号，我们常用的 CTRL + C 就是触发系统 SIGINT 信号
-// kill -9 发送 syscall.SIGKILL 信号，但是不能被捕获，所以不需要添加它.
+// run starts all enabled servers based on configuration.
 func run() error {
-	// 启动 http 服务
-	httpServer := NewHttp()
-	httpServer.Run()
+	// Create context that listens for interrupt signals
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
 
-	// 启动 grpc 服务
-	grpcServer := NewGRPC()
-	grpcServer.Run()
+	// Initialize servers
+	ginEngine := initGinEngine()
+	grpcServer := initGRPCServer(facade.Config.GRPC)
+	wsEngine, wsHub := initWebSocket()
 
-	// 等待中断信号优雅地关闭服务器（10 秒超时)。
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	log.Infow("Shutting down server ...")
+	// Assemble servers based on configuration
+	runner := server.Assemble(
+		&facade.Config,
+		server.WithGinEngine(ginEngine),
+		server.WithGRPCServer(grpcServer),
+		server.WithWebSocket(wsEngine, wsHub),
+	)
 
-	// 停止服务
-	httpServer.Close()
-	grpcServer.Close()
+	// Run all servers
+	return runner.Run(ctx)
+}
 
-	return nil
+// initGinEngine initializes the Gin engine with routes.
+func initGinEngine() *gin.Engine {
+	g := bootstrap.InitGin()
+
+	// Swagger
+	if facade.Config.Feature.ApiDoc {
+		router.MapSwagRouters(g)
+	}
+
+	// Queue dashboard
+	if facade.Config.Feature.QueueDash {
+		router.MapQueueRouters(g)
+	}
+
+	// Common router
+	router.MapCommonRouters(g)
+
+	// System
+	router.MapApiRouters(g)
+
+	// Init System API
+	router.InitSystemAPI(g)
+
+	return g
+}
+
+// initGRPCServer initializes the gRPC server with services and TLS support.
+func initGRPCServer(cfg *config.GRPC) *grpc.Server {
+	opts := []grpc.ServerOption{
+		grpc.UnaryInterceptor(gm.ChainUnaryServer(
+			interceptor.RequestID,
+			interceptor.ClientIP,
+			interceptor.Logger,
+			interceptor.Recovery,
+		)),
+	}
+
+	// Add TLS credentials if enabled
+	if cfg != nil && cfg.TLS != nil && cfg.TLS.Enabled {
+		creds, err := credentials.NewServerTLSFromFile(cfg.TLS.CertFile, cfg.TLS.KeyFile)
+		if err != nil {
+			log.Fatalw("Failed to load TLS credentials", "err", err)
+		}
+		opts = append(opts, grpc.Creds(creds))
+		log.Infow("gRPC TLS enabled", "cert", cfg.TLS.CertFile)
+	}
+
+	srv := grpc.NewServer(opts...)
+
+	// Register gRPC routes
+	router.GRPC(srv)
+
+	// Enable reflection for grpcurl debugging
+	reflection.Register(srv)
+
+	return srv
+}
+
+// initWebSocket initializes the WebSocket engine and hub.
+func initWebSocket() (*gin.Engine, *ws.Hub) {
+	// Create hub
+	hub := ws.NewHub()
+
+	// Create JSON-RPC adapter and register handlers
+	adapter := jsonrpc.NewAdapter()
+	bizInstance := biz.NewBiz(store.S)
+	wshandler.RegisterHandlers(adapter, bizInstance)
+
+	// Create Gin engine for WebSocket
+	engine := bootstrap.InitGin()
+
+	// Register WebSocket route
+	handler := wshandler.NewHandler(hub, adapter, facade.Config.WebSocket)
+	engine.GET("/ws", handler.ServeWS)
+
+	return engine, hub
 }

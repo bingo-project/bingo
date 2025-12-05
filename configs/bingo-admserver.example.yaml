@@ -15,11 +15,20 @@ http:
 grpc:
   enabled: true
   addr: :18090
+  # TLS configuration (optional)
+  # tls:
+  #   enabled: true
+  #   certFile: "/path/to/server.crt"
+  #   keyFile: "/path/to/server.key"
 
 # WebSocket Server
 websocket:
   enabled: false
   addr: :18081
+  # Allowed origins for WebSocket connections (empty = allow all)
+  # allowedOrigins:
+  #   - "https://example.com"
+  #   - "https://app.example.com"
 
 # MySQL
 mysql:
