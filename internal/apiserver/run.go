@@ -21,7 +21,7 @@ import (
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/grpc/interceptor"
+	"bingo/internal/pkg/middleware/grpc"
 	"bingo/internal/pkg/server"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/jsonrpc"

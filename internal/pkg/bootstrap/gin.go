@@ -7,7 +7,7 @@ import (
 
 	middleware2 "bingo/internal/apiserver/middleware"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/http/middleware"
+	"bingo/internal/pkg/middleware/http"
 )
 
 func InitGin() *gin.Engine {
