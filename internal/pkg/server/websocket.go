@@ -1,4 +1,4 @@
-// ABOUTME: WebSocket server implementation for apiserver.
+// ABOUTME: WebSocket server implementation.
 // ABOUTME: Implements Server interface with WebSocket support via Gin.
 
 package server
@@ -11,43 +11,27 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/handler/ws"
 	"bingo/internal/pkg/config"
-	"bingo/pkg/jsonrpc"
-	pkgws "bingo/pkg/ws"
+	"bingo/pkg/ws"
 )
 
 // WebSocketServer implements Server interface for WebSocket protocol.
 type WebSocketServer struct {
-	server  *http.Server
-	cfg     *config.WebSocket
-	hub     *pkgws.Hub
-	adapter *jsonrpc.Adapter
+	server *http.Server
+	cfg    *config.WebSocket
+	hub    *ws.Hub
 }
 
 // NewWebSocketServer creates a new WebSocket server.
-func NewWebSocketServer(cfg *config.WebSocket, adapter *jsonrpc.Adapter) *WebSocketServer {
-	hub := pkgws.NewHub()
-
-	// Create Gin engine for WebSocket
-	gin.SetMode(gin.ReleaseMode)
-	engine := gin.New()
-	engine.Use(gin.Recovery())
-
-	// Create handler with config for origin validation
-	handler := ws.NewHandler(hub, adapter, cfg)
-
-	// Register WebSocket route
-	engine.GET("/ws", handler.ServeWS)
-
+// The caller is responsible for creating the Gin engine with routes and the Hub.
+func NewWebSocketServer(cfg *config.WebSocket, engine *gin.Engine, hub *ws.Hub) *WebSocketServer {
 	return &WebSocketServer{
 		server: &http.Server{
 			Addr:    cfg.Addr,
 			Handler: engine,
 		},
-		cfg:     cfg,
-		hub:     hub,
-		adapter: adapter,
+		cfg: cfg,
+		hub: hub,
 	}
 }
 
@@ -86,11 +70,6 @@ func (s *WebSocketServer) Shutdown(ctx context.Context) error {
 }
 
 // Hub returns the WebSocket hub for external access.
-func (s *WebSocketServer) Hub() *pkgws.Hub {
+func (s *WebSocketServer) Hub() *ws.Hub {
 	return s.hub
-}
-
-// Adapter returns the JSON-RPC adapter for handler registration.
-func (s *WebSocketServer) Adapter() *jsonrpc.Adapter {
-	return s.adapter
 }

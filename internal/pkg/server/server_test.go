@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/internal/apiserver/server"
+	"bingo/internal/pkg/server"
 )
 
 type mockServer struct {

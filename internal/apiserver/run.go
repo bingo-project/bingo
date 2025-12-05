@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 
-	"bingo/internal/apiserver/server"
+	"bingo/internal/pkg/server"
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/facade"
 )

@@ -8,16 +8,17 @@ import (
 	"google.golang.org/grpc"
 
 	"bingo/internal/pkg/config"
-	"bingo/pkg/jsonrpc"
+	"bingo/pkg/ws"
 )
 
 // AssemblerOption configures the assembler.
 type AssemblerOption func(*assemblerConfig)
 
 type assemblerConfig struct {
-	ginEngine   *gin.Engine
-	grpcServer  *grpc.Server
-	rpcAdapter  *jsonrpc.Adapter
+	ginEngine  *gin.Engine
+	grpcServer *grpc.Server
+	wsEngine   *gin.Engine
+	wsHub      *ws.Hub
 }
 
 // WithGinEngine sets the Gin engine for HTTP server.
@@ -34,10 +35,12 @@ func WithGRPCServer(server *grpc.Server) AssemblerOption {
 	}
 }
 
-// WithJSONRPCAdapter sets the JSON-RPC adapter for WebSocket.
-func WithJSONRPCAdapter(adapter *jsonrpc.Adapter) AssemblerOption {
+// WithWebSocket sets the Gin engine and Hub for WebSocket server.
+// The caller is responsible for creating the engine with routes registered.
+func WithWebSocket(engine *gin.Engine, hub *ws.Hub) AssemblerOption {
 	return func(c *assemblerConfig) {
-		c.rpcAdapter = adapter
+		c.wsEngine = engine
+		c.wsHub = hub
 	}
 }
 
@@ -72,12 +75,8 @@ func Assemble(cfg *config.Config, opts ...AssemblerOption) *Runner {
 	}
 
 	// WebSocket Server
-	if cfg.WebSocket != nil && cfg.WebSocket.Enabled {
-		adapter := ac.rpcAdapter
-		if adapter == nil {
-			adapter = jsonrpc.NewAdapter()
-		}
-		servers = append(servers, NewWebSocketServer(cfg.WebSocket, adapter))
+	if cfg.WebSocket != nil && cfg.WebSocket.Enabled && ac.wsEngine != nil && ac.wsHub != nil {
+		servers = append(servers, NewWebSocketServer(cfg.WebSocket, ac.wsEngine, ac.wsHub))
 	}
 
 	return NewRunner(servers...)
