@@ -143,6 +143,40 @@ func TestHub_AnonymousToAuthenticated(t *testing.T) {
 	assert.Equal(t, 1, hub.UserCount())
 }
 
+func TestHub_AnonymousTimeout(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Use short timeout for testing
+	cfg := &ws.HubConfig{
+		AnonymousTimeout: 50 * time.Millisecond,
+		AnonymousCleanup: 20 * time.Millisecond,
+		HeartbeatTimeout: 60 * time.Second,
+		HeartbeatCleanup: 30 * time.Second,
+		PingPeriod:       54 * time.Second,
+		PongWait:         60 * time.Second,
+	}
+
+	hub := ws.NewHubWithConfig(cfg)
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		Addr:      "127.0.0.1:8080",
+		Send:      make(chan []byte, 10),
+		FirstTime: time.Now().Unix(),
+	}
+
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+	assert.Equal(t, 1, hub.AnonymousCount())
+
+	// Wait for timeout + cleanup
+	time.Sleep(100 * time.Millisecond)
+
+	// Should be cleaned up
+	assert.Equal(t, 0, hub.AnonymousCount())
+}
+
 func TestHub_GracefulShutdown(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 

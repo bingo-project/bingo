@@ -6,6 +6,7 @@ package ws
 import (
 	"context"
 	"sync"
+	"time"
 )
 
 // Hub maintains the set of active clients and manages their lifecycle.
@@ -60,11 +61,22 @@ func NewHubWithConfig(cfg *HubConfig) *Hub {
 
 // Run starts the hub's event loop. It blocks until context is cancelled.
 func (h *Hub) Run(ctx context.Context) {
+	anonymousTicker := time.NewTicker(h.config.AnonymousCleanup)
+	heartbeatTicker := time.NewTicker(h.config.HeartbeatCleanup)
+	defer anonymousTicker.Stop()
+	defer heartbeatTicker.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
 			h.shutdown()
 			return
+
+		case <-anonymousTicker.C:
+			h.cleanupAnonymous()
+
+		case <-heartbeatTicker.C:
+			h.cleanupInactiveClients()
 
 		case client := <-h.Register:
 			h.handleRegister(client)
@@ -204,4 +216,40 @@ func (h *Hub) GetUserClient(platform, userID string) *Client {
 
 func userKey(platform, userID string) string {
 	return platform + "_" + userID
+}
+
+func (h *Hub) cleanupAnonymous() {
+	now := time.Now().Unix()
+	timeout := int64(h.config.AnonymousTimeout.Seconds())
+
+	h.anonymousLock.RLock()
+	var inactive []*Client
+	for client := range h.anonymous {
+		if client.FirstTime+timeout <= now {
+			inactive = append(inactive, client)
+		}
+	}
+	h.anonymousLock.RUnlock()
+
+	for _, client := range inactive {
+		h.Unregister <- client
+	}
+}
+
+func (h *Hub) cleanupInactiveClients() {
+	now := time.Now().Unix()
+	heartbeatTimeout := int64(h.config.HeartbeatTimeout.Seconds())
+
+	h.clientsLock.RLock()
+	var inactive []*Client
+	for client := range h.clients {
+		if client.HeartbeatTime+heartbeatTimeout <= now {
+			inactive = append(inactive, client)
+		}
+	}
+	h.clientsLock.RUnlock()
+
+	for _, client := range inactive {
+		h.Unregister <- client
+	}
 }
