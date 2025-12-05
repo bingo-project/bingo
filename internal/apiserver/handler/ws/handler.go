@@ -10,7 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/contextx"
 	"bingo/pkg/jsonrpc"
@@ -21,7 +20,6 @@ import (
 type Handler struct {
 	hub      *ws.Hub
 	adapter  *jsonrpc.Adapter
-	authn    *auth.Authenticator
 	upgrader websocket.Upgrader
 }
 
@@ -30,7 +28,6 @@ func NewHandler(hub *ws.Hub, adapter *jsonrpc.Adapter, cfg *config.WebSocket) *H
 	h := &Handler{
 		hub:     hub,
 		adapter: adapter,
-		authn:   auth.New(),
 	}
 
 	h.upgrader = websocket.Upgrader{
@@ -59,31 +56,19 @@ func (h *Handler) ServeWS(c *gin.Context) {
 	ctx := context.Background()
 	ctx = contextx.WithRequestID(ctx, c.GetHeader("X-Request-ID"))
 
-	// 2. Authenticate using unified authenticator
-	ctx, _ = h.authn.AuthenticateWebSocket(ctx, c.Request)
-
-	// 3. Upgrade connection
+	// 2. Upgrade connection (no authentication at connect time)
 	conn, err := h.upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		return
 	}
 
-	// 4. Create client
+	// 3. Create anonymous client
 	client := ws.NewClient(h.hub, conn, ctx, h.adapter)
 
-	// 5. Register with hub
+	// 4. Register with hub (as anonymous)
 	h.hub.Register <- client
 
-	// 6. If authenticated, also login
-	if auth.IsAuthenticated(ctx) {
-		h.hub.Login <- &ws.LoginEvent{
-			Client: client,
-			UserID: contextx.UserID(ctx),
-			AppID:  0, // Default app ID
-		}
-	}
-
-	// 7. Start read/write pumps
+	// 5. Start read/write pumps
 	go client.WritePump()
 	go client.ReadPump()
 }

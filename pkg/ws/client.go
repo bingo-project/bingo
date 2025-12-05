@@ -150,14 +150,42 @@ func (c *Client) handleMessage(data []byte) {
 		return
 	}
 
-	// Handle heartbeat specially
+	// Update heartbeat for any message
+	c.Heartbeat(time.Now().Unix())
+
+	// Handle heartbeat
 	if req.Method == "heartbeat" {
-		c.Heartbeat(time.Now().Unix())
-		c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]string{"status": "ok"}))
+		c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
+			"status":      "ok",
+			"server_time": time.Now().Unix(),
+		}))
 		return
 	}
 
-	// Route through adapter
+	// Handle login (allowed without authentication)
+	if req.Method == "login" {
+		c.handleLogin(&req)
+		return
+	}
+
+	// Require authentication for other methods
+	if !c.IsAuthenticated() {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(401, "Unauthorized", "Login required")))
+		return
+	}
+
+	// Handle subscribe/unsubscribe
+	if req.Method == "subscribe" {
+		c.handleSubscribe(&req)
+		return
+	}
+	if req.Method == "unsubscribe" {
+		c.handleUnsubscribe(&req)
+		return
+	}
+
+	// Route through adapter for business methods
 	resp := c.adapter.Handle(c.ctx, &req)
 	c.sendJSON(resp)
 }
@@ -202,4 +230,124 @@ func (c *Client) Login(platform, userID string, loginTime int64) {
 	c.UserID = userID
 	c.LoginTime = loginTime
 	c.Heartbeat(loginTime)
+}
+
+func (c *Client) handleLogin(req *jsonrpc.Request) {
+	// Parse params
+	var params struct {
+		Type     string `json:"type"`
+		Username string `json:"username"`
+		Password string `json:"password"`
+		Platform string `json:"platform"`
+		Token    string `json:"token"`
+	}
+
+	paramsBytes, _ := json.Marshal(req.Params)
+	if err := json.Unmarshal(paramsBytes, &params); err != nil {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidParams", "Invalid login params")))
+		return
+	}
+
+	var platform string
+	var userID string
+	var tokenExpiresAt int64
+
+	switch params.Type {
+	case "token":
+		// TODO: Implement token parsing
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(501, "NotImplemented", "Token login not yet implemented")))
+		return
+
+	case "password":
+		if !IsValidPlatform(params.Platform) {
+			c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+				errorsx.New(400, "InvalidPlatform", "Invalid platform")))
+			return
+		}
+		platform = params.Platform
+		// TODO: Validate username/password against actual auth service
+		userID = params.Username
+		tokenExpiresAt = time.Now().Add(7 * 24 * time.Hour).Unix()
+
+	default:
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidLoginType", "Type must be 'token' or 'password'")))
+		return
+	}
+
+	// Send login event to hub
+	c.hub.Login <- &LoginEvent{
+		Client:         c,
+		UserID:         userID,
+		Platform:       platform,
+		TokenExpiresAt: tokenExpiresAt,
+	}
+
+	// Return success response
+	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
+		"user_id":    userID,
+		"platform":   platform,
+		"expires_at": tokenExpiresAt,
+	}))
+}
+
+func (c *Client) handleSubscribe(req *jsonrpc.Request) {
+	var params struct {
+		Topics []string `json:"topics"`
+	}
+
+	paramsBytes, _ := json.Marshal(req.Params)
+	if err := json.Unmarshal(paramsBytes, &params); err != nil {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidParams", "Invalid subscribe params")))
+		return
+	}
+
+	if len(params.Topics) == 0 {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidParams", "Topics required")))
+		return
+	}
+
+	result := make(chan []string, 1)
+	c.hub.Subscribe <- &SubscribeEvent{
+		Client: c,
+		Topics: params.Topics,
+		Result: result,
+	}
+
+	subscribed := <-result
+	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
+		"subscribed": subscribed,
+	}))
+}
+
+func (c *Client) handleUnsubscribe(req *jsonrpc.Request) {
+	var params struct {
+		Topics []string `json:"topics"`
+	}
+
+	paramsBytes, _ := json.Marshal(req.Params)
+	if err := json.Unmarshal(paramsBytes, &params); err != nil {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidParams", "Invalid unsubscribe params")))
+		return
+	}
+
+	if len(params.Topics) == 0 {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(400, "InvalidParams", "Topics required")))
+		return
+	}
+
+	c.hub.Unsubscribe <- &UnsubscribeEvent{
+		Client: c,
+		Topics: params.Topics,
+	}
+
+	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
+		"unsubscribed": params.Topics,
+	}))
 }
