@@ -177,7 +177,7 @@ func (h *Hub) handleUnregister(client *Client) {
 	}
 	h.clientsLock.Unlock()
 
-	// Also remove from users if logged in
+	// Remove from users if logged in
 	if client.UserID != "" && client.Platform != "" {
 		h.userLock.Lock()
 		key := userKey(client.Platform, client.UserID)
@@ -187,7 +187,23 @@ func (h *Hub) handleUnregister(client *Client) {
 		h.userLock.Unlock()
 	}
 
+	// Unsubscribe from all topics
+	h.unsubscribeAll(client)
+
 	h.safeCloseSend(client)
+}
+
+func (h *Hub) unsubscribeAll(client *Client) {
+	client.topicsLock.RLock()
+	topics := make([]string, 0, len(client.topics))
+	for topic := range client.topics {
+		topics = append(topics, topic)
+	}
+	client.topicsLock.RUnlock()
+
+	if len(topics) > 0 {
+		h.doUnsubscribe(client, topics)
+	}
 }
 
 func (h *Hub) handleLogin(event *LoginEvent) {

@@ -427,6 +427,33 @@ func TestHub_TokenExpiration(t *testing.T) {
 	}
 }
 
+func TestHub_UnsubscribeAllOnDisconnect(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	hub := ws.NewHubWithConfig(ws.DefaultHubConfig())
+	go hub.Run(ctx)
+
+	now := time.Now().Unix()
+	client := &ws.Client{Addr: "client1", Send: make(chan []byte, 10), FirstTime: now, HeartbeatTime: now}
+	hub.Register <- client
+	hub.Login <- &ws.LoginEvent{Client: client, UserID: "user-123", Platform: ws.PlatformIOS}
+	time.Sleep(10 * time.Millisecond)
+
+	// Subscribe to topics
+	result := make(chan []string, 1)
+	hub.Subscribe <- &ws.SubscribeEvent{Client: client, Topics: []string{"group:123", "room:456"}, Result: result}
+	<-result
+	assert.Equal(t, 2, hub.TopicCount())
+
+	// Disconnect
+	hub.Unregister <- client
+	time.Sleep(10 * time.Millisecond)
+
+	// Topics should be cleaned up
+	assert.Equal(t, 0, hub.TopicCount())
+}
+
 func TestHub_GracefulShutdown(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
