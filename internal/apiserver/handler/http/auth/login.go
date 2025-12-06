@@ -6,7 +6,6 @@ import (
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"
 )
@@ -122,7 +121,7 @@ func (ctrl *AuthController) BindProvider(c *gin.Context) {
 		return
 	}
 
-	user, _ := contextx.UserInfo[*model.UserM](c.Request.Context())
+	user, _ := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
 
 	provider := c.Param("provider")
 	resp, err := ctrl.b.Auth().Bind(c, provider, &req, user)

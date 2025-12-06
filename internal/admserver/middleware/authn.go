@@ -3,10 +3,12 @@ package middleware
 import (
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/store"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"
 )
 
@@ -22,16 +24,19 @@ func Authn() gin.HandlerFunc {
 		}
 
 		// Admin
-		userInfo, _ := store.S.Admin().GetUserInfo(c, payload.Subject)
-		if userInfo.ID == 0 {
+		adminM, _ := store.S.Admin().GetUserInfo(c, payload.Subject)
+		if adminM.ID == 0 {
 			core.WriteResponse(c, errno.ErrTokenInvalid, nil)
 			c.Abort()
 
 			return
 		}
 
-		ctx := contextx.WithUserInfo(c.Request.Context(), userInfo)
-		ctx = contextx.WithUserID(ctx, userInfo.Username)
+		var adminInfo v1.AdminInfo
+		_ = copier.Copy(&adminInfo, adminM)
+
+		ctx := contextx.WithUserInfo(c.Request.Context(), adminInfo)
+		ctx = contextx.WithUserID(ctx, adminInfo.Username)
 		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}

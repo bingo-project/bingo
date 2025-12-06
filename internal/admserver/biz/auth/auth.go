@@ -32,7 +32,7 @@ type AuthBiz interface {
 	LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error)
 
 	LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error)
-	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error)
+	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error)
 
 	ChangePassword(ctx context.Context, uid string, r *v1.ChangePasswordRequest) error
 }
@@ -178,7 +178,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	return resp, nil
 }
 
-func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *model.UserM) (ret *v1.UserAccountInfo, err error) {
+func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error) {
 	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
 	if err != nil {
 		return nil, errno.ErrResourceNotFound

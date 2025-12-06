@@ -7,7 +7,7 @@ import (
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/model"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"
 )
 
@@ -27,7 +27,7 @@ func Authz(a Author) gin.HandlerFunc {
 		act := c.Request.Method
 
 		// System admin
-		admin, ok := contextx.UserInfo[*model.AdminM](ctx)
+		admin, ok := contextx.UserInfo[v1.AdminInfo](ctx)
 		if !ok {
 			core.WriteResponse(c, errno.ErrUnauthorized, nil)
 

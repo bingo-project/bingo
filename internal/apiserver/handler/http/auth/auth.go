@@ -97,7 +97,7 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 func (ctrl *AuthController) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
-	user, ok := contextx.UserInfo[v1.UserInfo](c.Request.Context())
+	user, ok := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
 	if !ok {
 		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
 
