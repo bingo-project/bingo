@@ -213,12 +213,26 @@ func (h *UserHandler) Login(c *gin.Context) {
 
 ### WebSocket Handler
 
-WebSocket 采用 JSON-RPC 2.0 规范，详见 [WebSocket 统一方案](websocket-unification.md)。
+WebSocket 采用 JSON-RPC 2.0 规范和中间件架构，详见 [WebSocket 设计与实现](websocket.md)。
 
 ```go
-func RegisterUserHandlers(a *adapter.Adapter, biz biz.IBiz) {
-    adapter.Register(a, "user.login", biz.User().Login, &pb.LoginRequest{})
-    adapter.Register(a, "user.get", biz.User().Get, &pb.GetUserRequest{})
+// internal/apiserver/router/ws.go
+
+func RegisterWSHandlers(router *ws.Router) {
+    h := wshandler.NewHandler(store.S)
+
+    // 全局中间件
+    router.Use(middleware.Recovery, middleware.RequestID, middleware.Logger)
+
+    // 公开方法
+    public := router.Group()
+    public.Handle("auth.login", middleware.LoginStateUpdater(
+        ws.WrapParamsHandler(h.Login, func() *v1.LoginRequest { return &v1.LoginRequest{} }),
+    ))
+
+    // 需要认证的方法
+    private := router.Group(middleware.Auth)
+    private.Handle("auth.user-info", ws.WrapBizHandler(h.UserInfo))
 }
 ```
 
@@ -254,7 +268,7 @@ func RegisterUserHandlers(a *adapter.Adapter, biz biz.IBiz) {
 
 ## 相关文档
 
-- [WebSocket 统一方案](websocket-unification.md) - JSON-RPC 2.0 消息格式、适配器实现
+- [WebSocket 设计与实现](websocket.md) - JSON-RPC 2.0 消息格式、中间件架构、连接管理
 - [gRPC-Gateway 集成](grpc-gateway.md) - Gateway 模式配置与使用
 - [统一错误处理](unified-error-handling.md) - 三协议错误格式统一
 - [认证中间件迁移](auth-middleware-migration.md) - 统一认证实现

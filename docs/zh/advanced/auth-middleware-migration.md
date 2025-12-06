@@ -818,6 +818,6 @@ func NewGRPCServer(retriever mw.UserRetriever, authz *auth.Authz) *grpc.Server {
 4. **可测试性** - Biz 层只依赖 `context.Context`，易于单元测试
 5. **灵活性** - 通过 selector 轻松配置白名单
 
-## 下一步
+## 相关文档
 
-- [WebSocket 统一方案](./websocket-unification.md) - WebSocket 与 HTTP/gRPC 完整统一方案
+- [WebSocket 设计与实现](websocket.md) - WebSocket 完整设计方案
