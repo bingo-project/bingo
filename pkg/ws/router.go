@@ -93,3 +93,32 @@ func (r *Router) Methods() []string {
 	}
 	return methods
 }
+
+// Group is a collection of handlers with shared middleware.
+type Group struct {
+	router      *Router
+	middlewares []Middleware
+}
+
+// Group creates a new handler group with additional middleware.
+func (r *Router) Group(middlewares ...Middleware) *Group {
+	return &Group{
+		router:      r,
+		middlewares: middlewares,
+	}
+}
+
+// Use adds middleware to this group.
+func (g *Group) Use(middlewares ...Middleware) *Group {
+	g.middlewares = append(g.middlewares, middlewares...)
+	return g
+}
+
+// Handle registers a handler in this group.
+func (g *Group) Handle(method string, handler Handler, middlewares ...Middleware) {
+	// Combine group middlewares with handler-specific middlewares
+	all := make([]Middleware, 0, len(g.middlewares)+len(middlewares))
+	all = append(all, g.middlewares...)
+	all = append(all, middlewares...)
+	g.router.Handle(method, handler, all...)
+}

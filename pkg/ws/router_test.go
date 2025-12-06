@@ -127,3 +127,113 @@ func TestRouter_Methods(t *testing.T) {
 	assert.Contains(t, methods, "method.a")
 	assert.Contains(t, methods, "method.b")
 }
+
+func TestRouter_Group(t *testing.T) {
+	r := NewRouter()
+
+	var globalCalled, groupCalled bool
+
+	r.Use(func(next Handler) Handler {
+		return func(mc *MiddlewareContext) *jsonrpc.Response {
+			globalCalled = true
+			return next(mc)
+		}
+	})
+
+	g := r.Group(func(next Handler) Handler {
+		return func(mc *MiddlewareContext) *jsonrpc.Response {
+			groupCalled = true
+			return next(mc)
+		}
+	})
+
+	g.Handle("group.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	})
+
+	mc := &MiddlewareContext{
+		Ctx:     context.Background(),
+		Request: &jsonrpc.Request{ID: 1, Method: "group.method"},
+		Method:  "group.method",
+	}
+
+	r.Dispatch(mc)
+
+	assert.True(t, globalCalled, "global middleware should be called")
+	assert.True(t, groupCalled, "group middleware should be called")
+}
+
+func TestRouter_GroupIsolation(t *testing.T) {
+	r := NewRouter()
+
+	var authCalled bool
+	authMiddleware := func(next Handler) Handler {
+		return func(mc *MiddlewareContext) *jsonrpc.Response {
+			authCalled = true
+			return next(mc)
+		}
+	}
+
+	// Public group (no auth)
+	public := r.Group()
+	public.Handle("public.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+		return jsonrpc.NewResponse(mc.Request.ID, "public")
+	})
+
+	// Private group (with auth)
+	private := r.Group(authMiddleware)
+	private.Handle("private.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+		return jsonrpc.NewResponse(mc.Request.ID, "private")
+	})
+
+	// Call public method
+	authCalled = false
+	mc := &MiddlewareContext{
+		Ctx:     context.Background(),
+		Request: &jsonrpc.Request{ID: 1, Method: "public.method"},
+		Method:  "public.method",
+	}
+	r.Dispatch(mc)
+	assert.False(t, authCalled, "auth should not be called for public method")
+
+	// Call private method
+	mc.Method = "private.method"
+	mc.Request.Method = "private.method"
+	r.Dispatch(mc)
+	assert.True(t, authCalled, "auth should be called for private method")
+}
+
+func TestGroup_Use(t *testing.T) {
+	r := NewRouter()
+
+	var order []string
+
+	g := r.Group()
+	g.Use(func(next Handler) Handler {
+		return func(mc *MiddlewareContext) *jsonrpc.Response {
+			order = append(order, "group-mw-1")
+			return next(mc)
+		}
+	})
+	g.Use(func(next Handler) Handler {
+		return func(mc *MiddlewareContext) *jsonrpc.Response {
+			order = append(order, "group-mw-2")
+			return next(mc)
+		}
+	})
+
+	g.Handle("test", func(mc *MiddlewareContext) *jsonrpc.Response {
+		order = append(order, "handler")
+		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	})
+
+	mc := &MiddlewareContext{
+		Ctx:     context.Background(),
+		Request: &jsonrpc.Request{ID: 1, Method: "test"},
+		Method:  "test",
+	}
+
+	r.Dispatch(mc)
+
+	assert.Equal(t, []string{"group-mw-1", "group-mw-2", "handler"}, order)
+}
