@@ -1,5 +1,6 @@
 // ABOUTME: Context utilities for storing and retrieving request-scoped values.
 // ABOUTME: Provides type-safe context keys for user info, access tokens, and request IDs.
+
 package contextx
 
 import (
@@ -8,6 +9,8 @@ import (
 
 // 定义用于上下文的键.
 type (
+	// userInfoKey struct{}
+	userInfoKey struct{}
 	// usernameKey 定义用户名的上下文键.
 	usernameKey struct{}
 	// userIDKey 定义用户 ID 的上下文键.
@@ -17,6 +20,17 @@ type (
 	// requestIDKey 定义请求 ID 的上下文键.
 	requestIDKey struct{}
 )
+
+// WithUserInfo 将用户信息存放到上下文中.
+func WithUserInfo[T any](ctx context.Context, userInfo T) context.Context {
+	return context.WithValue(ctx, userInfoKey{}, userInfo)
+}
+
+// UserInfo 从上下文中提取用户信息.
+func UserInfo[T any](ctx context.Context) (T, bool) {
+	val, ok := ctx.Value(userInfoKey{}).(T)
+	return val, ok
+}
 
 // WithUserID 将用户 ID 存放到上下文中.
 func WithUserID(ctx context.Context, userID string) context.Context {
