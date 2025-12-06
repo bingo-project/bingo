@@ -10,11 +10,11 @@ import (
 	"bingo/pkg/jsonrpc"
 )
 
-// requestIDKey is the context key for request ID.
-type requestIDKey struct{}
+// RequestIDKey is the context key for request ID.
+type RequestIDKey struct{}
 
-// userIDKey is the context key for user ID.
-type userIDKey struct{}
+// UserIDKey is the context key for user ID.
+type UserIDKey struct{}
 
 // MiddlewareContext contains all information needed by middleware.
 type MiddlewareContext struct {
@@ -30,7 +30,7 @@ func (mc *MiddlewareContext) RequestID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
-	rid, _ := mc.Ctx.Value(requestIDKey{}).(string)
+	rid, _ := mc.Ctx.Value(RequestIDKey{}).(string)
 	return rid
 }
 
@@ -39,7 +39,7 @@ func (mc *MiddlewareContext) UserID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
-	uid, _ := mc.Ctx.Value(userIDKey{}).(string)
+	uid, _ := mc.Ctx.Value(UserIDKey{}).(string)
 	return uid
 }
 

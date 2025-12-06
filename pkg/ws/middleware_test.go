@@ -15,7 +15,7 @@ import (
 
 func TestMiddlewareContext_RequestID(t *testing.T) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, requestIDKey{}, "test-123")
+	ctx = context.WithValue(ctx, RequestIDKey{}, "test-123")
 
 	mc := &MiddlewareContext{
 		Ctx:       ctx,
@@ -29,7 +29,7 @@ func TestMiddlewareContext_RequestID(t *testing.T) {
 
 func TestMiddlewareContext_UserID(t *testing.T) {
 	ctx := context.Background()
-	ctx = context.WithValue(ctx, userIDKey{}, "user-456")
+	ctx = context.WithValue(ctx, UserIDKey{}, "user-456")
 
 	mc := &MiddlewareContext{
 		Ctx:       ctx,
