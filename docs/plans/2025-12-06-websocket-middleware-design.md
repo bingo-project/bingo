@@ -497,3 +497,27 @@ pkg/ws/
 - 对外 JSON-RPC 协议无变化
 - 现有客户端无需修改
 - 内部重构，渐进式迁移
+
+## 实现状态
+
+已完成：
+- [x] 核心类型 (MiddlewareContext, Handler, Middleware, Chain)
+- [x] Router 及 Group 分组支持
+- [x] 内置中间件 (Recovery, RequestID, Auth, Logger, RateLimit)
+- [x] Hub 管理 API (GetClient, GetClientsByUser, KickClient, KickUser, Stats)
+- [x] Client 路由集成 (WithRouter 选项)
+- [x] 内置 Handler (HeartbeatHandler, SubscribeHandler, UnsubscribeHandler)
+- [x] apiserver 迁移到 Router 架构
+- [x] 集成测试
+
+待实现：
+- [ ] Metrics 中间件（需要 Prometheus 依赖）
+- [ ] 连接数限制 (MaxConnectionsPerIP, MaxConnectionsPerUser)
+- [ ] BanThreshold 自动断开
+
+关键文件：
+- `pkg/ws/middleware.go` - 核心类型
+- `pkg/ws/router.go` - Router 和 Group
+- `pkg/ws/handlers.go` - 内置 Handler
+- `pkg/ws/middleware/*.go` - 内置中间件
+- `internal/apiserver/router/ws.go` - 路由注册
