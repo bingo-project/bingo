@@ -9,9 +9,9 @@ import (
 	"github.com/golang-module/carbon/v2"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 )
 

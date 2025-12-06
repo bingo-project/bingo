@@ -5,9 +5,9 @@ import (
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 )
 

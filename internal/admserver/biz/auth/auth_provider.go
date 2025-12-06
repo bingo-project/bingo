@@ -9,9 +9,9 @@ import (
 	"github.com/jinzhu/copier"
 	"golang.org/x/oauth2"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 )
 

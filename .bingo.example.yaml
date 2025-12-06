@@ -7,8 +7,8 @@ directory:
   model: internal/pkg/model
   store: internal/apiserver/store
   biz: internal/apiserver/biz
-  controller: internal/apiserver/controller/v1
-  middleware: internal/pkg/http/middleware
+  controller: internal/apiserver/handler/http
+  middleware: internal/pkg/middleware/http
   request: pkg/api/apiserver/v1
   job: internal/watcher/watcher
   migration: internal/pkg/database/migration

@@ -1,4 +1,4 @@
-package syscfg
+package app
 
 import (
 	"github.com/bingo-project/component-base/log"
@@ -6,44 +6,44 @@ import (
 	"github.com/spf13/cast"
 
 	"bingo/internal/admserver/biz"
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	v1 "bingo/pkg/api/apiserver/v1/syscfg"
+	"bingo/internal/pkg/store"
+	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
-type ConfigController struct {
+type ApiKeyController struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewConfigController(ds store.IStore, a *auth.Authz) *ConfigController {
-	return &ConfigController{a: a, b: biz.NewBiz(ds)}
+func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
+	return &ApiKeyController{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
-// @Summary    List configs
+// @Summary    List apiKeys
 // @Security   Bearer
-// @Tags       Config
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 query	    v1.ListConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListConfigResponse
+// @Param      request	 query	    v1.ListApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ListApiKeyResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs [GET].
-func (ctrl *ConfigController) List(c *gin.Context) {
-	log.C(c).Infow("List config function called")
+// @Router    /v1/api-keys [GET]
+func (ctrl *ApiKeyController) List(c *gin.Context) {
+	log.C(c).Infow("List apiKey function called")
 
-	var req v1.ListConfigRequest
+	var req v1.ListApiKeyRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
-	resp, err := ctrl.b.Configs().List(c, &req)
+	resp, err := ctrl.b.ApiKeys().List(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -54,28 +54,28 @@ func (ctrl *ConfigController) List(c *gin.Context) {
 }
 
 // Create
-// @Summary    Create config
+// @Summary    Create apiKey
 // @Security   Bearer
-// @Tags       Config
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 body	    v1.CreateConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Param      request	 body	    v1.CreateApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs [POST].
-func (ctrl *ConfigController) Create(c *gin.Context) {
-	log.C(c).Infow("Create config function called")
+// @Router    /v1/api-keys [POST]
+func (ctrl *ApiKeyController) Create(c *gin.Context) {
+	log.C(c).Infow("Create apiKey function called")
 
-	var req v1.CreateConfigRequest
+	var req v1.CreateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
 		return
 	}
 
-	// Create config
-	resp, err := ctrl.b.Configs().Create(c, &req)
+	// Create apiKey
+	resp, err := ctrl.b.ApiKeys().Create(c, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -86,46 +86,46 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 }
 
 // Get
-// @Summary    Get config info
+// @Summary    Get apiKey info
 // @Security   Bearer
-// @Tags       Config
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [GET].
-func (ctrl *ConfigController) Get(c *gin.Context) {
-	log.C(c).Infow("Get config function called")
+// @Router    /v1/api-keys/{id} [GET]
+func (ctrl *ApiKeyController) Get(c *gin.Context) {
+	log.C(c).Infow("Get apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	config, err := ctrl.b.Configs().Get(c, ID)
+	apiKey, err := ctrl.b.ApiKeys().Get(c, ID)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, config)
+	core.WriteResponse(c, nil, apiKey)
 }
 
 // Update
-// @Summary    Update config info
+// @Summary    Update apiKey info
 // @Security   Bearer
-// @Tags       Config
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Param      request	 body	    v1.UpdateConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Param      request	 body	    v1.UpdateApiKeyRequest	 true  "Param"
+// @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [PUT].
-func (ctrl *ConfigController) Update(c *gin.Context) {
-	log.C(c).Infow("Update config function called")
+// @Router    /v1/api-keys/{id} [PUT]
+func (ctrl *ApiKeyController) Update(c *gin.Context) {
+	log.C(c).Infow("Update apiKey function called")
 
-	var req v1.UpdateConfigRequest
+	var req v1.UpdateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
 
@@ -133,7 +133,7 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 	}
 
 	ID := cast.ToUint(c.Param("id"))
-	resp, err := ctrl.b.Configs().Update(c, ID, &req)
+	resp, err := ctrl.b.ApiKeys().Update(c, ID, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 
@@ -144,21 +144,21 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary    Delete config
+// @Summary    Delete apiKey
 // @Security   Bearer
-// @Tags       Config
+// @Tags       App
 // @Accept     application/json
 // @Produce    json
 // @Param      id	    path	    string            true  "ID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [DELETE].
-func (ctrl *ConfigController) Delete(c *gin.Context) {
-	log.C(c).Infow("Delete config function called")
+// @Router    /v1/api-keys/{id} [DELETE]
+func (ctrl *ApiKeyController) Delete(c *gin.Context) {
+	log.C(c).Infow("Delete apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	if err := ctrl.b.Configs().Delete(c, ID); err != nil {
+	if err := ctrl.b.ApiKeys().Delete(c, ID); err != nil {
 		core.WriteResponse(c, err, nil)
 
 		return

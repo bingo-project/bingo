@@ -9,9 +9,9 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 )
 

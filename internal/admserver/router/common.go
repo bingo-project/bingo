@@ -3,12 +3,13 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/admserver/controller/v1/common"
-	"bingo/internal/admserver/controller/v1/file"
+	"bingo/internal/admserver/handler/http/common"
+	"bingo/internal/admserver/handler/http/file"
+
 	"bingo/internal/admserver/middleware"
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/store"
 )
 
 func MapCommonRouters(g *gin.Engine) {

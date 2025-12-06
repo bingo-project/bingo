@@ -7,9 +7,9 @@ import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 )
 
