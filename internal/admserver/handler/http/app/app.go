@@ -1,14 +1,14 @@
 package app
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/biz"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
@@ -31,13 +31,13 @@ func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
 // @Success	   200		{object}	v1.ListAppResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/apps [GET]
+// @Router    /v1/apps [GET].
 func (ctrl *AppController) List(c *gin.Context) {
 	log.C(c).Infow("List app function called")
 
 	var req v1.ListAppRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -62,13 +62,13 @@ func (ctrl *AppController) List(c *gin.Context) {
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/apps [POST]
+// @Router    /v1/apps [POST].
 func (ctrl *AppController) Create(c *gin.Context) {
 	log.C(c).Infow("Create app function called")
 
 	var req v1.CreateAppRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -94,7 +94,7 @@ func (ctrl *AppController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/apps/{appid} [GET]
+// @Router    /v1/apps/{appid} [GET].
 func (ctrl *AppController) Get(c *gin.Context) {
 	log.C(c).Infow("Get app function called")
 
@@ -120,13 +120,13 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.AppInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/apps/{appid} [PUT]
+// @Router    /v1/apps/{appid} [PUT].
 func (ctrl *AppController) Update(c *gin.Context) {
 	log.C(c).Infow("Update app function called")
 
 	var req v1.UpdateAppRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -152,7 +152,7 @@ func (ctrl *AppController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/apps/{appid} [DELETE]
+// @Router    /v1/apps/{appid} [DELETE].
 func (ctrl *AppController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete app function called")
 

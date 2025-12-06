@@ -1,10 +1,11 @@
 package auth
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/core"
+	"bingo/internal/pkg/log"
+
 	_ "bingo/pkg/api/apiserver/v1"
 )
 

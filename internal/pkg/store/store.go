@@ -60,7 +60,7 @@ type IStore interface {
 	ApiKey() ApiKeyStore
 }
 
-// transactionKey used for context
+// transactionKey used for context.
 type transactionKey struct{}
 
 type datastore struct {
@@ -76,6 +76,7 @@ func NewStore(db *gorm.DB) *datastore {
 	once.Do(func() {
 		S = &datastore{core: db}
 	})
+
 	return S
 }
 
@@ -92,6 +93,7 @@ func (ds *datastore) DB(ctx context.Context, wheres ...where.Where) *gorm.DB {
 	for _, whr := range wheres {
 		db = whr.Where(db)
 	}
+
 	return db
 }
 
@@ -101,6 +103,7 @@ func (ds *datastore) TX(ctx context.Context, fn func(ctx context.Context) error)
 	return ds.core.WithContext(ctx).Transaction(
 		func(tx *gorm.DB) error {
 			ctx = context.WithValue(ctx, transactionKey{}, tx)
+
 			return fn(ctx)
 		},
 	)

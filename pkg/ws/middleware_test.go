@@ -62,6 +62,7 @@ func TestMiddlewareChain(t *testing.T) {
 			order = append(order, "m1-before")
 			resp := next(c)
 			order = append(order, "m1-after")
+
 			return resp
 		}
 	}
@@ -71,12 +72,14 @@ func TestMiddlewareChain(t *testing.T) {
 			order = append(order, "m2-before")
 			resp := next(c)
 			order = append(order, "m2-after")
+
 			return resp
 		}
 	}
 
 	handler := func(c *Context) *jsonrpc.Response {
 		order = append(order, "handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 

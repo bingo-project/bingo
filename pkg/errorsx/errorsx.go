@@ -44,12 +44,14 @@ func (err *ErrorX) Error() string {
 // WithMessage 设置错误的 Message 字段.
 func (err *ErrorX) WithMessage(format string, args ...any) *ErrorX {
 	err.Message = fmt.Sprintf(format, args...)
+
 	return err
 }
 
 // WithMetadata 设置元数据.
 func (err *ErrorX) WithMetadata(md map[string]string) *ErrorX {
 	err.Metadata = md
+
 	return err
 }
 
@@ -65,6 +67,7 @@ func (err *ErrorX) KV(kvs ...string) *ErrorX {
 			err.Metadata[kvs[i]] = kvs[i+1]
 		}
 	}
+
 	return err
 }
 
@@ -88,6 +91,7 @@ func (err *ErrorX) Is(target error) bool {
 	if errx := new(ErrorX); errors.As(target, &errx) {
 		return errx.Code == err.Code && errx.Reason == err.Reason
 	}
+
 	return false
 }
 
@@ -96,6 +100,7 @@ func Code(err error) int {
 	if err == nil {
 		return http.StatusOK //nolint:mnd
 	}
+
 	return FromError(err).Code
 }
 
@@ -104,6 +109,7 @@ func Reason(err error) string {
 	if err == nil {
 		return ErrInternal.Reason
 	}
+
 	return FromError(err).Reason
 }
 
@@ -136,6 +142,7 @@ func FromError(err error) *ErrorX {
 	for _, detail := range gs.Details() {
 		if typed, ok := detail.(*errdetails.ErrorInfo); ok {
 			ret.Reason = typed.Reason
+
 			return ret.WithMetadata(typed.Metadata)
 		}
 	}

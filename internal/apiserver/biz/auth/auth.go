@@ -19,7 +19,7 @@ import (
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
@@ -225,7 +225,7 @@ func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProvide
 	return &resp, err
 }
 
-// GetUserInfo todo::other provider
+// GetUserInfo todo::other provider.
 func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret *model.UserAccount, err error) {
 	// Get User info
 	client := github.NewClient(nil).WithAuthToken(token)

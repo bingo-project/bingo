@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/slice"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
+
+	"bingo/internal/pkg/log"
 )
 
 var (

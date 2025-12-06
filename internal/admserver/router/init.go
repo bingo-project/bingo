@@ -4,10 +4,10 @@ import (
 	"context"
 	"strings"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gin-gonic/gin"
 
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 )

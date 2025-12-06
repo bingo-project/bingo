@@ -4,7 +4,6 @@
 package admserver
 
 import (
-	"github.com/bingo-project/component-base/log"
 	gm "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -12,6 +11,7 @@ import (
 
 	"bingo/internal/admserver/router"
 	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/log"
 	interceptor "bingo/internal/pkg/middleware/grpc"
 )
 

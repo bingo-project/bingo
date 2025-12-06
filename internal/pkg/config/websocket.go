@@ -25,5 +25,6 @@ func (w *WebSocket) IsOriginAllowed(origin string) bool {
 			return true
 		}
 	}
+
 	return false
 }

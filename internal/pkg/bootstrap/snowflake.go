@@ -1,10 +1,10 @@
 package bootstrap
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/snowflake"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 )
 
 func InitSnowflake() {

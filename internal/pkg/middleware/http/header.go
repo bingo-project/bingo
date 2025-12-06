@@ -27,6 +27,7 @@ func Cors(c *gin.Context) {
 	if c.Request.Method == "OPTIONS" {
 		c.Header("Allow", "HEAD,GET,POST,PUT,PATCH,DELETE,OPTIONS")
 		c.AbortWithStatus(http.StatusOK)
+
 		return
 	}
 
@@ -43,6 +44,7 @@ func CorsHandler(h http.Handler) http.Handler {
 
 		if r.Method == "OPTIONS" {
 			w.WriteHeader(http.StatusOK)
+
 			return
 		}
 

@@ -5,10 +5,10 @@ package core
 import (
 	"net/http"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/pkg/errorsx"
 )
 

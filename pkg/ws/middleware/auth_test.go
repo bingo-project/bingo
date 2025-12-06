@@ -85,6 +85,7 @@ func TestAuth_SetsUserIDInContext(t *testing.T) {
 
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		capturedUserID = c.UserID()
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 

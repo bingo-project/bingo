@@ -28,6 +28,7 @@ func NewChannel(c *Options) *zap.Logger {
 	logLevel := new(zapcore.Level)
 	if err := logLevel.UnmarshalText([]byte(channel.Level)); err != nil {
 		fmt.Println("init log level error")
+
 		return nil
 	}
 
@@ -40,7 +41,7 @@ func NewChannel(c *Options) *zap.Logger {
 	return logger
 }
 
-// Get encoder
+// Get encoder.
 func getEncoder() zapcore.Encoder {
 	encoderConfig := zap.NewProductionEncoderConfig()
 	encoderConfig.EncodeTime = customTimeEncoder
@@ -54,12 +55,12 @@ func getEncoder() zapcore.Encoder {
 	return zapcore.NewJSONEncoder(encoderConfig)
 }
 
-// Custom time encoder
+// Custom time encoder.
 func customTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(t.Format("2006-01-02 15:04:05"))
 }
 
-// Get log writer
+// Get log writer.
 func getLogWriter() zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
 		Filename:   channel.Path,

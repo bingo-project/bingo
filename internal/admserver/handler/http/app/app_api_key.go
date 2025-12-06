@@ -1,15 +1,15 @@
 package app
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
 	"bingo/internal/admserver/biz"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
@@ -32,13 +32,13 @@ func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
 // @Success	   200		{object}	v1.ListApiKeyResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/api-keys [GET]
+// @Router    /v1/api-keys [GET].
 func (ctrl *ApiKeyController) List(c *gin.Context) {
 	log.C(c).Infow("List apiKey function called")
 
 	var req v1.ListApiKeyRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -63,13 +63,13 @@ func (ctrl *ApiKeyController) List(c *gin.Context) {
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/api-keys [POST]
+// @Router    /v1/api-keys [POST].
 func (ctrl *ApiKeyController) Create(c *gin.Context) {
 	log.C(c).Infow("Create apiKey function called")
 
 	var req v1.CreateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -95,7 +95,7 @@ func (ctrl *ApiKeyController) Create(c *gin.Context) {
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/api-keys/{id} [GET]
+// @Router    /v1/api-keys/{id} [GET].
 func (ctrl *ApiKeyController) Get(c *gin.Context) {
 	log.C(c).Infow("Get apiKey function called")
 
@@ -121,13 +121,13 @@ func (ctrl *ApiKeyController) Get(c *gin.Context) {
 // @Success	   200		{object}	v1.ApiKeyInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/api-keys/{id} [PUT]
+// @Router    /v1/api-keys/{id} [PUT].
 func (ctrl *ApiKeyController) Update(c *gin.Context) {
 	log.C(c).Infow("Update apiKey function called")
 
 	var req v1.UpdateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -153,7 +153,7 @@ func (ctrl *ApiKeyController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/api-keys/{id} [DELETE]
+// @Router    /v1/api-keys/{id} [DELETE].
 func (ctrl *ApiKeyController) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete apiKey function called")
 

@@ -3,11 +3,11 @@ package scheduler
 import (
 	"fmt"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
 	"bingo/internal/pkg/bootstrap"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 )
 

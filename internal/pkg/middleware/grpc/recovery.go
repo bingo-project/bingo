@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"github.com/bingo-project/component-base/log"
 	"google.golang.org/grpc"
+
+	"bingo/internal/pkg/log"
 )
 
 // Recovery catch panic & recover.

@@ -1,14 +1,14 @@
 package user
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/biz"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
 
@@ -70,7 +70,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 
 	var req v1.CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}

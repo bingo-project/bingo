@@ -3,11 +3,10 @@ package system
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/pkg/api/apiserver/v1"
+	"bingo/internal/pkg/log"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 // Login returns a JWT token.
@@ -26,7 +25,7 @@ func (ctrl *AdminController) Login(c *gin.Context) {
 
 	var req v1.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -58,7 +57,7 @@ func (ctrl *AdminController) ChangePassword(c *gin.Context) {
 
 	var req v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}

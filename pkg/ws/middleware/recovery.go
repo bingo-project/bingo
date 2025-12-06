@@ -26,6 +26,7 @@ func RecoveryWithLogger(logger ws.Logger) ws.Middleware {
 						errorsx.New(500, "InternalError", "Internal server error"))
 				}
 			}()
+
 			return next(c)
 		}
 	}

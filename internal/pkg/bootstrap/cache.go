@@ -4,10 +4,10 @@ import (
 	"sync"
 
 	"github.com/bingo-project/component-base/cache"
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/redis"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 )
 
 var (

@@ -4,8 +4,7 @@
 package config
 
 import (
-	"github.com/bingo-project/component-base/log"
-
+	"bingo/internal/pkg/log"
 	"bingo/pkg/db"
 	"bingo/pkg/mail"
 )

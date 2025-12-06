@@ -17,6 +17,7 @@ func NewResponse(id any, result any) *Response {
 // NewErrorResponse creates an error response from an error.
 func NewErrorResponse(id any, err error) *Response {
 	e := errorsx.FromError(err)
+
 	return &Response{
 		JSONRPC: Version,
 		Error: &Error{

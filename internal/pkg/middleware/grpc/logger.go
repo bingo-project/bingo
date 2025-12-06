@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"google.golang.org/grpc"
+
+	"bingo/internal/pkg/log"
 )
 
 func Logger(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {

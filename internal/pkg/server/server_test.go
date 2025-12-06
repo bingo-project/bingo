@@ -15,11 +15,11 @@ import (
 )
 
 type mockServer struct {
-	name           string
-	runCalled      atomic.Bool
-	stopCalled     atomic.Bool
-	runErr         error
-	shutdownOrder  *[]string
+	name          string
+	runCalled     atomic.Bool
+	stopCalled    atomic.Bool
+	runErr        error
+	shutdownOrder *[]string
 }
 
 func (m *mockServer) Run(ctx context.Context) error {
@@ -28,6 +28,7 @@ func (m *mockServer) Run(ctx context.Context) error {
 		return m.runErr
 	}
 	<-ctx.Done()
+
 	return nil
 }
 
@@ -36,6 +37,7 @@ func (m *mockServer) Shutdown(ctx context.Context) error {
 	if m.shutdownOrder != nil {
 		*m.shutdownOrder = append(*m.shutdownOrder, m.name)
 	}
+
 	return nil
 }
 

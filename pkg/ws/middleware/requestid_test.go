@@ -18,6 +18,7 @@ func TestRequestID_UsesClientID(t *testing.T) {
 
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		capturedRequestID = c.RequestID()
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
@@ -39,6 +40,7 @@ func TestRequestID_GeneratesIfMissing(t *testing.T) {
 
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		capturedRequestID = c.RequestID()
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
@@ -61,6 +63,7 @@ func TestRequestID_NumericID(t *testing.T) {
 
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		capturedRequestID = c.RequestID()
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 

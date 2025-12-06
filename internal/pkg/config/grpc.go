@@ -5,8 +5,8 @@ package config
 
 // GRPC holds gRPC server configuration.
 type GRPC struct {
-	Enabled bool     `mapstructure:"enabled" json:"enabled" yaml:"enabled"`
-	Addr    string   `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Enabled bool       `mapstructure:"enabled" json:"enabled" yaml:"enabled"`
+	Addr    string     `mapstructure:"addr" json:"addr" yaml:"addr"`
 	TLS     *TLSConfig `mapstructure:"tls" json:"tls" yaml:"tls"`
 }
 

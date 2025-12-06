@@ -4,11 +4,11 @@
 package auth
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/core"
+	"bingo/internal/pkg/log"
 	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 )

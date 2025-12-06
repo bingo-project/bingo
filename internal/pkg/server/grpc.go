@@ -7,10 +7,10 @@ import (
 	"context"
 	"net"
 
-	"github.com/bingo-project/component-base/log"
 	"google.golang.org/grpc"
 
 	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/log"
 )
 
 // GRPCServer implements Server interface for gRPC protocol.
@@ -32,7 +32,7 @@ func (s *GRPCServer) Name() string {
 	return "grpc"
 }
 
-// Run starts the gRPC server and blocks until context is cancelled or error occurs.
+// Run starts the gRPC server and blocks until context is canceled or error occurs.
 func (s *GRPCServer) Run(ctx context.Context) error {
 	listen, err := net.Listen("tcp", s.cfg.Addr)
 	if err != nil {
@@ -72,6 +72,7 @@ func (s *GRPCServer) Shutdown(ctx context.Context) error {
 		return nil
 	case <-ctx.Done():
 		s.server.Stop()
+
 		return ctx.Err()
 	}
 }

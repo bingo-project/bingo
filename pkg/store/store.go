@@ -54,6 +54,7 @@ func (s *Store[T]) db(ctx context.Context, wheres ...where.Where) *gorm.DB {
 			dbInstance = whr.Where(dbInstance)
 		}
 	}
+
 	return dbInstance
 }
 
@@ -66,8 +67,10 @@ func (s *Store[T]) DB(ctx context.Context, wheres ...where.Where) *gorm.DB {
 func (s *Store[T]) Create(ctx context.Context, obj *T) error {
 	if err := s.db(ctx).Create(obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to insert object into database", "object", obj)
+
 		return err
 	}
+
 	return nil
 }
 
@@ -75,8 +78,10 @@ func (s *Store[T]) Create(ctx context.Context, obj *T) error {
 func (s *Store[T]) Update(ctx context.Context, obj *T, fields ...string) error {
 	if err := s.db(ctx).Select(fields).Save(obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to update object in database", "object", obj)
+
 		return err
 	}
+
 	return nil
 }
 
@@ -85,6 +90,7 @@ func (s *Store[T]) Delete(ctx context.Context, opts *where.Options) error {
 	err := s.db(ctx, opts).Delete(new(T)).Error
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		s.logger.Error(ctx, err, "Failed to delete object from database", "conditions", opts)
+
 		return err
 	}
 
@@ -96,6 +102,7 @@ func (s *Store[T]) Get(ctx context.Context, opts *where.Options) (*T, error) {
 	var obj T
 	if err := s.db(ctx, opts).First(&obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to retrieve object from database", "conditions", opts)
+
 		return nil, err
 	}
 
@@ -126,6 +133,7 @@ func (s *Store[T]) Last(ctx context.Context, opts *where.Options) (*T, error) {
 	var obj T
 	if err := s.db(ctx, opts).Last(&obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to retrieve object from database", "conditions", opts)
+
 		return nil, err
 	}
 
@@ -136,6 +144,7 @@ func (s *Store[T]) Last(ctx context.Context, opts *where.Options) (*T, error) {
 func (s *Store[T]) CreateInBatch(ctx context.Context, objs []*T, batchSize int) error {
 	if err := s.db(ctx).CreateInBatches(objs, batchSize).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to insert objects into database in batch", "count", len(objs))
+
 		return err
 	}
 
@@ -152,6 +161,7 @@ func (s *Store[T]) Upsert(ctx context.Context, obj *T, fields ...string) error {
 
 	if err := s.db(ctx).Clauses(do).Create(obj).Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to upsert object in database", "object", obj)
+
 		return err
 	}
 
@@ -163,6 +173,7 @@ func (s *Store[T]) CreateIfNotExist(ctx context.Context, obj *T) error {
 	db := s.db(ctx).Clauses(clause.OnConflict{DoNothing: true}).Create(obj)
 	if err := db.Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to insert object into database if not exists", "object", obj)
+
 		return err
 	}
 
@@ -174,6 +185,7 @@ func (s *Store[T]) FirstOrCreate(ctx context.Context, where any, obj *T) error {
 	db := s.db(ctx).Where(where).Attrs(obj).FirstOrCreate(obj)
 	if err := db.Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to find or create object in database", "condition", where, "object", obj)
+
 		return err
 	}
 
@@ -232,6 +244,7 @@ func (s *Store[T]) DeleteInBatch(ctx context.Context, ids []uint) error {
 	db := s.db(ctx).Where("id IN (?)", ids).Delete(new(T))
 	if err := db.Error; err != nil {
 		s.logger.Error(ctx, err, "Failed to delete objects in batch", "count", len(ids))
+
 		return err
 	}
 

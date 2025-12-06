@@ -1,8 +1,9 @@
 package discord
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/discordgo"
+
+	"bingo/internal/pkg/log"
 )
 
 var (

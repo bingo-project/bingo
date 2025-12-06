@@ -18,6 +18,7 @@ func TestRouter_Handle(t *testing.T) {
 	called := false
 	r.Handle("test.method", func(c *Context) *jsonrpc.Response {
 		called = true
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
@@ -56,6 +57,7 @@ func TestRouter_GlobalMiddleware(t *testing.T) {
 	r.Use(func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			middlewareCalled = true
+
 			return next(c)
 		}
 	})
@@ -83,6 +85,7 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 	globalMw := func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			order = append(order, "global")
+
 			return next(c)
 		}
 	}
@@ -90,6 +93,7 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 	handlerMw := func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			order = append(order, "handler-mw")
+
 			return next(c)
 		}
 	}
@@ -97,6 +101,7 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 	r.Use(globalMw)
 	r.Handle("test", func(c *Context) *jsonrpc.Response {
 		order = append(order, "handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}, handlerMw)
 
@@ -136,6 +141,7 @@ func TestRouter_Group(t *testing.T) {
 	r.Use(func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			globalCalled = true
+
 			return next(c)
 		}
 	})
@@ -143,6 +149,7 @@ func TestRouter_Group(t *testing.T) {
 	g := r.Group(func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			groupCalled = true
+
 			return next(c)
 		}
 	})
@@ -170,6 +177,7 @@ func TestRouter_GroupIsolation(t *testing.T) {
 	authMiddleware := func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			authCalled = true
+
 			return next(c)
 		}
 	}
@@ -212,18 +220,21 @@ func TestGroup_Use(t *testing.T) {
 	g.Use(func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			order = append(order, "group-mw-1")
+
 			return next(c)
 		}
 	})
 	g.Use(func(next Handler) Handler {
 		return func(c *Context) *jsonrpc.Response {
 			order = append(order, "group-mw-2")
+
 			return next(c)
 		}
 	})
 
 	g.Handle("test", func(c *Context) *jsonrpc.Response {
 		order = append(order, "handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 

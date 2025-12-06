@@ -3,7 +3,7 @@
 
 package ws
 
-// Platform constants
+// Platform constants.
 const (
 	PlatformWeb     = "web"
 	PlatformIOS     = "ios"
@@ -19,5 +19,6 @@ func IsValidPlatform(p string) bool {
 	case PlatformWeb, PlatformIOS, PlatformAndroid, PlatformH5, PlatformMiniApp, PlatformDesktop:
 		return true
 	}
+
 	return false
 }

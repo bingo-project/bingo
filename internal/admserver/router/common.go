@@ -5,7 +5,6 @@ import (
 
 	"bingo/internal/admserver/handler/http/common"
 	"bingo/internal/admserver/handler/http/file"
-
 	"bingo/internal/admserver/middleware"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"

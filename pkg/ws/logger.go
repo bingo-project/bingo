@@ -6,8 +6,9 @@ package ws
 import (
 	"context"
 
-	"github.com/bingo-project/component-base/log"
 	"go.uber.org/zap"
+
+	"bingo/internal/pkg/log"
 )
 
 // callerSkip adjusts the caller frame to show the actual calling code instead of this wrapper.

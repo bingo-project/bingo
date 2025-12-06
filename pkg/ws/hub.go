@@ -114,10 +114,11 @@ func NewHubWithConfig(cfg *HubConfig, opts ...HubOption) *Hub {
 	for _, opt := range opts {
 		opt(h)
 	}
+
 	return h
 }
 
-// Run starts the hub's event loop. It blocks until context is cancelled.
+// Run starts the hub's event loop. It blocks until context is canceled.
 func (h *Hub) Run(ctx context.Context) {
 	anonymousTicker := time.NewTicker(h.config.AnonymousCleanup)
 	heartbeatTicker := time.NewTicker(h.config.HeartbeatCleanup)
@@ -128,6 +129,7 @@ func (h *Hub) Run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			h.shutdown()
+
 			return
 
 		case <-anonymousTicker.C:
@@ -221,15 +223,14 @@ func (h *Hub) handleUnregister(client *Client) {
 		h.anonymousLock.Unlock()
 		h.safeCloseSend(client)
 		h.logger.Debugw("WebSocket anonymous client disconnected", "addr", client.Addr)
+
 		return
 	}
 	h.anonymousLock.Unlock()
 
 	// Remove from clients
 	h.clientsLock.Lock()
-	if _, ok := h.clients[client]; ok {
-		delete(h.clients, client)
-	}
+	delete(h.clients, client)
 	h.clientsLock.Unlock()
 
 	// Remove from users if logged in
@@ -335,6 +336,7 @@ func (h *Hub) handleBroadcast(message []byte) {
 func (h *Hub) AnonymousCount() int {
 	h.anonymousLock.RLock()
 	defer h.anonymousLock.RUnlock()
+
 	return len(h.anonymous)
 }
 
@@ -342,6 +344,7 @@ func (h *Hub) AnonymousCount() int {
 func (h *Hub) ClientCount() int {
 	h.clientsLock.RLock()
 	defer h.clientsLock.RUnlock()
+
 	return len(h.clients)
 }
 
@@ -349,6 +352,7 @@ func (h *Hub) ClientCount() int {
 func (h *Hub) UserCount() int {
 	h.userLock.RLock()
 	defer h.userLock.RUnlock()
+
 	return len(h.users)
 }
 
@@ -356,6 +360,7 @@ func (h *Hub) UserCount() int {
 func (h *Hub) GetUserClient(platform, userID string) *Client {
 	h.userLock.RLock()
 	defer h.userLock.RUnlock()
+
 	return h.users[userKey(platform, userID)]
 }
 
@@ -363,6 +368,7 @@ func (h *Hub) GetUserClient(platform, userID string) *Client {
 func (h *Hub) GetClient(clientID string) *Client {
 	h.clientsByIDLock.RLock()
 	defer h.clientsByIDLock.RUnlock()
+
 	return h.clientsByID[clientID]
 }
 
@@ -378,6 +384,7 @@ func (h *Hub) GetClientsByUser(userID string) []*Client {
 			clients = append(clients, client)
 		}
 	}
+
 	return clients
 }
 
@@ -388,6 +395,7 @@ func (h *Hub) KickClient(clientID string, reason string) bool {
 		return false
 	}
 	h.kickClient(client, reason)
+
 	return true
 }
 
@@ -397,6 +405,7 @@ func (h *Hub) KickUser(userID string, reason string) int {
 	for _, client := range clients {
 		h.kickClient(client, reason)
 	}
+
 	return len(clients)
 }
 
@@ -440,6 +449,7 @@ func userKey(platform, userID string) string {
 func (h *Hub) TopicCount() int {
 	h.topicsLock.RLock()
 	defer h.topicsLock.RUnlock()
+
 	return len(h.topics)
 }
 
@@ -527,6 +537,7 @@ func (h *Hub) doSubscribe(client *Client, topics []string) []string {
 	}
 
 	h.logger.Debugw("WebSocket client subscribed", "addr", client.Addr, "user_id", client.UserID, "topics", subscribed)
+
 	return subscribed
 }
 
@@ -580,6 +591,7 @@ func (h *Hub) cleanupInactiveClients() {
 		// Check heartbeat timeout
 		if client.HeartbeatTime+heartbeatTimeout <= now {
 			inactive = append(inactive, client)
+
 			continue
 		}
 
@@ -606,6 +618,7 @@ func (h *Hub) expireClient(client *Client) {
 	h.clientsLock.Lock()
 	if _, ok := h.clients[client]; !ok {
 		h.clientsLock.Unlock()
+
 		return // Already removed
 	}
 	delete(h.clients, client)

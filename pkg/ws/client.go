@@ -111,6 +111,7 @@ func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, opts ...Clie
 	for _, opt := range opts {
 		opt(c)
 	}
+
 	return c
 }
 
@@ -125,6 +126,7 @@ func (c *Client) ReadPump() {
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
 	c.conn.SetPongHandler(func(string) error {
 		c.conn.SetReadDeadline(time.Now().Add(pongWait))
+
 		return nil
 	})
 
@@ -156,6 +158,7 @@ func (c *Client) WritePump() {
 			c.conn.SetWriteDeadline(time.Now().Add(c.hub.config.WriteWait))
 			if !ok {
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+
 				return
 			}
 
@@ -178,6 +181,7 @@ func (c *Client) handleMessage(data []byte) {
 		resp := jsonrpc.NewErrorResponse(nil,
 			errorsx.New(400, "ParseError", "Invalid JSON: %s", err.Error()))
 		c.sendJSON(resp)
+
 		return
 	}
 
@@ -189,6 +193,7 @@ func (c *Client) handleMessage(data []byte) {
 		resp := jsonrpc.NewErrorResponse(req.ID,
 			errorsx.New(500, "InternalError", "Router not configured"))
 		c.sendJSON(resp)
+
 		return
 	}
 
@@ -207,6 +212,7 @@ func (c *Client) sendJSON(v any) {
 	data, err := json.Marshal(v)
 	if err != nil {
 		c.hub.logger.Errorw("JSON marshal error", "err", err)
+
 		return
 	}
 
@@ -250,6 +256,7 @@ func (c *Client) ParseToken(token string) (*TokenInfo, error) {
 	if c.tokenParser == nil {
 		return nil, errorsx.New(500, "InternalError", "Token parser not configured")
 	}
+
 	return c.tokenParser(token)
 }
 

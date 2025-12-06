@@ -14,7 +14,7 @@ import (
 
 // Server is the interface for pluggable servers.
 type Server interface {
-	// Run starts the server (blocks until context is cancelled or error).
+	// Run starts the server (blocks until context is canceled or error).
 	Run(ctx context.Context) error
 	// Shutdown gracefully shuts down the server.
 	Shutdown(ctx context.Context) error
@@ -56,6 +56,7 @@ func (r *Runner) Run(ctx context.Context) error {
 		<-ctx.Done()
 		shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer shutdownCancel()
+
 		return r.Shutdown(shutdownCtx)
 	})
 

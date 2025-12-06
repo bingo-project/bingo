@@ -5,10 +5,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/internal/bot/discord"
 	"bingo/internal/bot/telegram"
+	"bingo/internal/pkg/log"
 )
 
 func run() error {
@@ -20,7 +19,7 @@ func run() error {
 
 	// 等待中断信号优雅地关闭服务器（10 秒超时)。
 	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-quit
 	log.Infow("Shutting down server ...")
 

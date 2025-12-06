@@ -4,13 +4,13 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type AppBiz interface {

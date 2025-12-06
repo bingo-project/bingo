@@ -4,12 +4,12 @@ import (
 	"context"
 	"strings"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 
+	"bingo/internal/pkg/log"
 	"bingo/pkg/auth"
 	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"

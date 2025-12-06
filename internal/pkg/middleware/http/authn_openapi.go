@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/web/signer"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
@@ -12,6 +11,7 @@ import (
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
@@ -25,7 +25,7 @@ import (
 // - 3.1 是否可用
 // - 3.2 是否过期
 // - 3.3 IP 是否在白名单中
-// 4. 签名校验
+// 4. 签名校验.
 func AuthnOpenAPI() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 是否开启校验

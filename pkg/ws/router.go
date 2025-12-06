@@ -39,6 +39,7 @@ func (r *Router) Use(middlewares ...Middleware) *Router {
 	for _, entry := range r.handlers {
 		entry.compiled = nil
 	}
+
 	return r
 }
 
@@ -59,6 +60,7 @@ func (r *Router) Dispatch(c *Context) *jsonrpc.Response {
 	entry, ok := r.handlers[c.Method]
 	if !ok {
 		r.mu.RUnlock()
+
 		return jsonrpc.NewErrorResponse(c.Request.ID,
 			errorsx.New(404, "MethodNotFound", "Method not found: %s", c.Method))
 	}
@@ -92,6 +94,7 @@ func (r *Router) Methods() []string {
 	for method := range r.handlers {
 		methods = append(methods, method)
 	}
+
 	return methods
 }
 
@@ -112,6 +115,7 @@ func (r *Router) Group(middlewares ...Middleware) *Group {
 // Use adds middleware to this group.
 func (g *Group) Use(middlewares ...Middleware) *Group {
 	g.middlewares = append(g.middlewares, middlewares...)
+
 	return g
 }
 

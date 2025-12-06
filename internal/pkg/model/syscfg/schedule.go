@@ -16,7 +16,7 @@ func (*Schedule) TableName() string {
 	return "sys_schedule"
 }
 
-// ScheduleStatus 1-enabled, 2-disabled
+// ScheduleStatus 1-enabled, 2-disabled.
 type ScheduleStatus int
 
 const (

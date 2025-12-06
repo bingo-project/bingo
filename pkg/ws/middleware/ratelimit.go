@@ -37,6 +37,7 @@ func (s *RateLimiterStore) get(client *ws.Client, method string, limit float64) 
 	if methods, ok := s.limiters[client]; ok {
 		if limiter, ok := methods[method]; ok {
 			s.mu.RUnlock()
+
 			return limiter
 		}
 	}

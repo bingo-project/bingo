@@ -3,10 +3,10 @@ package bootstrap
 import (
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/hibiken/asynq"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	"bingo/internal/scheduler/biz/syscfg"
 )

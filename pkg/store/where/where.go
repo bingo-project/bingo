@@ -146,6 +146,7 @@ func (whr *Options) O(offset int) *Options {
 		offset = 0
 	}
 	whr.Offset = offset
+
 	return whr
 }
 
@@ -155,6 +156,7 @@ func (whr *Options) L(limit int) *Options {
 		limit = defaultLimit // Ensure defaultLimit is defined elsewhere
 	}
 	whr.Limit = limit
+
 	return whr
 }
 
@@ -168,12 +170,14 @@ func (whr *Options) P(page int, pageSize int) *Options {
 	}
 	whr.Offset = (page - 1) * pageSize
 	whr.Limit = pageSize
+
 	return whr
 }
 
 // C adds conditions to the query.
 func (whr *Options) C(conds ...clause.Expression) *Options {
 	whr.Clauses = append(whr.Clauses, conds...)
+
 	return whr
 }
 
@@ -181,6 +185,7 @@ func (whr *Options) C(conds ...clause.Expression) *Options {
 // This method appends a new Query instance to the Queries slice.
 func (whr *Options) Q(query interface{}, args ...interface{}) *Options {
 	whr.Queries = append(whr.Queries, Query{Query: query, Args: args})
+
 	return whr
 }
 
@@ -189,6 +194,7 @@ func (whr *Options) T(ctx context.Context) *Options {
 	if registeredTenant.Key != "" && registeredTenant.ValueFunc != nil {
 		whr.F(registeredTenant.Key, registeredTenant.ValueFunc(ctx))
 	}
+
 	return whr
 }
 
@@ -229,6 +235,7 @@ func (whr *Options) Where(db *gorm.DB) *gorm.DB {
 		conds := db.Statement.BuildCondition(query.Query, query.Args...)
 		whr.Clauses = append(whr.Clauses, conds...)
 	}
+
 	return db.Where(whr.Filters).Clauses(whr.Clauses...).Offset(whr.Offset).Limit(whr.Limit)
 }
 

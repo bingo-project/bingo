@@ -42,6 +42,7 @@ func SubscribeHandler(c *Context) *jsonrpc.Response {
 	}
 
 	subscribed := <-result
+
 	return jsonrpc.NewResponse(c.Request.ID, map[string]any{
 		"subscribed": subscribed,
 	})

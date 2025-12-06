@@ -44,5 +44,6 @@ func ExtractBearerToken(auth string) string {
 	if len(auth) > len(prefix) && strings.EqualFold(auth[:len(prefix)], prefix) {
 		return auth[len(prefix):]
 	}
+
 	return ""
 }

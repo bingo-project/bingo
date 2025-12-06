@@ -8,10 +8,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/log"
 	"bingo/pkg/ws"
 )
 
@@ -40,7 +40,7 @@ func (s *WebSocketServer) Name() string {
 	return "websocket"
 }
 
-// Run starts the WebSocket server and blocks until context is cancelled or error occurs.
+// Run starts the WebSocket server and blocks until context is canceled or error occurs.
 func (s *WebSocketServer) Run(ctx context.Context) error {
 	// Start hub in background with context for graceful shutdown
 	go s.hub.Run(ctx)
@@ -66,6 +66,7 @@ func (s *WebSocketServer) Run(ctx context.Context) error {
 // Shutdown gracefully shuts down the WebSocket server.
 func (s *WebSocketServer) Shutdown(ctx context.Context) error {
 	log.Infow("Shutting down WebSocket server", "addr", s.cfg.Addr)
+
 	return s.server.Shutdown(ctx)
 }
 

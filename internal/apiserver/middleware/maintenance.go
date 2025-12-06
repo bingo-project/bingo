@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	model "bingo/internal/pkg/model/syscfg"
 	"bingo/internal/pkg/store"
 )

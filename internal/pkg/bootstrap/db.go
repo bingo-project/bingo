@@ -1,10 +1,10 @@
 package bootstrap
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"gorm.io/gorm"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 	"bingo/pkg/db"
 )
 

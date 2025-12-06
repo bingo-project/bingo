@@ -4,15 +4,15 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"golang.org/x/oauth2"
 
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type AuthProviderBiz interface {

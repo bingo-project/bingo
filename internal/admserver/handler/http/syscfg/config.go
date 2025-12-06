@@ -1,13 +1,13 @@
 package syscfg
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
 	"bingo/internal/admserver/biz"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/syscfg"
 	"bingo/pkg/auth"
@@ -38,7 +38,7 @@ func (ctrl *ConfigController) List(c *gin.Context) {
 
 	var req v1.ListConfigRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -69,7 +69,7 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 
 	var req v1.CreateConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -127,7 +127,7 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 
 	var req v1.UpdateConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}

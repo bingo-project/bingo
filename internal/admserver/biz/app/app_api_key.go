@@ -4,15 +4,15 @@ import (
 	"context"
 	"regexp"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/pointer"
 	"github.com/golang-module/carbon/v2"
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type ApiKeyBiz interface {
@@ -53,7 +53,6 @@ func (b *apiKeyBiz) List(ctx context.Context, req *v1.ListApiKeyRequest) (*v1.Li
 }
 
 func (b *apiKeyBiz) Create(ctx context.Context, req *v1.CreateApiKeyRequest) (*v1.ApiKeyInfo, error) {
-
 	// Check app
 	app, err := b.ds.App().GetByAppID(ctx, req.AppID)
 	if err != nil {

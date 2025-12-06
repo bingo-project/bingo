@@ -20,5 +20,6 @@ func (err *ErrorX) JSONRPCCode() int {
 	if code, ok := httpToJSONRPC[err.Code]; ok {
 		return code
 	}
+
 	return -32603 // Default to Internal error
 }

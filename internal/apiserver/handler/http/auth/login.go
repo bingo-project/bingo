@@ -3,12 +3,11 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"
 )
 
@@ -28,7 +27,7 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 
 	var req v1.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -60,7 +59,7 @@ func (ctrl *AuthController) GetAuthCode(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -85,7 +84,7 @@ func (ctrl *AuthController) LoginByProvider(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -118,7 +117,7 @@ func (ctrl *AuthController) BindProvider(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}

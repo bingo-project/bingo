@@ -28,6 +28,7 @@ func WithUserInfo[T any](ctx context.Context, userInfo T) context.Context {
 // UserInfo 从上下文中提取用户信息.
 func UserInfo[T any](ctx context.Context) (T, bool) {
 	val, ok := ctx.Value(userInfoKey{}).(T)
+
 	return val, ok
 }
 
@@ -39,6 +40,7 @@ func WithUserID(ctx context.Context, userID string) context.Context {
 // UserID 从上下文中提取用户 ID.
 func UserID(ctx context.Context) string {
 	userID, _ := ctx.Value(userIDKey{}).(string)
+
 	return userID
 }
 
@@ -50,6 +52,7 @@ func WithUsername(ctx context.Context, username string) context.Context {
 // Username User 从上下文中提取用户名.
 func Username(ctx context.Context) string {
 	username, _ := ctx.Value(usernameKey{}).(string)
+
 	return username
 }
 
@@ -61,6 +64,7 @@ func WithAccessToken(ctx context.Context, accessToken string) context.Context {
 // AccessToken 从上下文中提取访问令牌.
 func AccessToken(ctx context.Context) string {
 	accessToken, _ := ctx.Value(accessTokenKey{}).(string)
+
 	return accessToken
 }
 
@@ -72,6 +76,7 @@ func WithRequestID(ctx context.Context, requestID string) context.Context {
 // RequestID 从上下文中提取请求 ID.
 func RequestID(ctx context.Context) string {
 	requestID, _ := ctx.Value(requestIDKey{}).(string)
+
 	return requestID
 }
 
@@ -83,6 +88,7 @@ func WithClientIP(ctx context.Context, clientIP string) context.Context {
 // ClientIP 从上下文中提取客户端 IP.
 func ClientIP(ctx context.Context) string {
 	clientIP, _ := ctx.Value(clientIPKey{}).(string)
+
 	return clientIP
 }
 
@@ -94,6 +100,7 @@ func WithTask(ctx context.Context, task string) context.Context {
 // Task 从上下文中提取任务名.
 func Task(ctx context.Context) string {
 	task, _ := ctx.Value(taskKey{}).(string)
+
 	return task
 }
 
@@ -105,6 +112,7 @@ func WithObject(ctx context.Context, object string) context.Context {
 // Object 从上下文中提取操作对象.
 func Object(ctx context.Context) string {
 	object, _ := ctx.Value(objectKey{}).(string)
+
 	return object
 }
 
@@ -116,5 +124,6 @@ func WithInstance(ctx context.Context, instance string) context.Context {
 // Instance 从上下文中提取实例标识.
 func Instance(ctx context.Context) string {
 	instance, _ := ctx.Value(instanceKey{}).(string)
+
 	return instance
 }

@@ -3,11 +3,11 @@ package telegram
 import (
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"gopkg.in/telebot.v3"
 
 	"bingo/internal/bot/telegram/middleware"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 )
 
 type TelegramServer struct {

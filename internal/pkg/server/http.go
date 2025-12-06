@@ -8,10 +8,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/log"
 )
 
 // HTTPServer implements Server interface for HTTP protocol.
@@ -39,7 +39,7 @@ func (s *HTTPServer) Name() string {
 	return "http"
 }
 
-// Run starts the HTTP server and blocks until context is cancelled or error occurs.
+// Run starts the HTTP server and blocks until context is canceled or error occurs.
 func (s *HTTPServer) Run(ctx context.Context) error {
 	log.Infow("Starting HTTP server", "addr", s.cfg.Addr)
 
@@ -62,5 +62,6 @@ func (s *HTTPServer) Run(ctx context.Context) error {
 // Shutdown gracefully shuts down the HTTP server.
 func (s *HTTPServer) Shutdown(ctx context.Context) error {
 	log.Infow("Shutting down HTTP server", "addr", s.cfg.Addr)
+
 	return s.server.Shutdown(ctx)
 }

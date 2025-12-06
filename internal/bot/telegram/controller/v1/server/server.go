@@ -1,7 +1,6 @@
 package server
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/spf13/cast"
@@ -9,6 +8,7 @@ import (
 
 	"bingo/internal/bot/biz"
 	mw "bingo/internal/bot/telegram/middleware"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model/bot"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1/bot"

@@ -26,6 +26,7 @@ func RequestID(next ws.Handler) ws.Handler {
 		}
 
 		c.Context = contextx.WithRequestID(c.Context, requestID)
+
 		return next(c)
 	}
 }

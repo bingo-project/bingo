@@ -1,14 +1,14 @@
 package common
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/pkg/core"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type CommonController struct {

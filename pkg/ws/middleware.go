@@ -32,6 +32,7 @@ func (c *Context) RequestID() string {
 	if c.Context == nil {
 		return ""
 	}
+
 	return contextx.RequestID(c.Context)
 }
 
@@ -40,6 +41,7 @@ func (c *Context) UserID() string {
 	if c.Context == nil {
 		return ""
 	}
+
 	return contextx.UserID(c.Context)
 }
 
@@ -48,6 +50,7 @@ func (c *Context) BindParams(v any) error {
 	if len(c.Request.Params) == 0 {
 		return nil
 	}
+
 	return json.Unmarshal(c.Request.Params, v)
 }
 
@@ -56,6 +59,7 @@ func (c *Context) BindValidate(v any) error {
 	if err := c.BindParams(v); err != nil {
 		return err
 	}
+
 	return validate.Struct(v)
 }
 
@@ -81,6 +85,7 @@ func Chain(middlewares ...Middleware) Middleware {
 		for i := len(middlewares) - 1; i >= 0; i-- {
 			next = middlewares[i](next)
 		}
+
 		return next
 	}
 }

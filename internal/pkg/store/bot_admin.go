@@ -75,5 +75,6 @@ func (s *botAdminStore) IsAdmin(ctx context.Context, userID string) (bool, error
 	}
 
 	roles := []model.Role{model.RoleRoot, model.RoleAdmin}
+
 	return slices.Contains(roles, admin.Role), nil
 }

@@ -3,9 +3,8 @@ package migration
 import (
 	"time"
 
-	"gorm.io/gorm"
-
 	"github.com/bingo-project/bingoctl/pkg/migrate"
+	"gorm.io/gorm"
 
 	"bingo/internal/pkg/model"
 )

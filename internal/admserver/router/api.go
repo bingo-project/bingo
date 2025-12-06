@@ -3,7 +3,6 @@ package router
 import (
 	"context"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/handler/http/app"
@@ -11,6 +10,7 @@ import (
 	"bingo/internal/admserver/handler/http/system"
 	"bingo/internal/admserver/handler/http/user"
 	"bingo/internal/admserver/middleware"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/auth"
 )

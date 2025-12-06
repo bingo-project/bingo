@@ -13,7 +13,7 @@ import (
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/global"
 	"bingo/internal/pkg/model"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error) {

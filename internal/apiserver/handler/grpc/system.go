@@ -7,12 +7,12 @@ import (
 	"context"
 	"net"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/version"
 	"github.com/jinzhu/copier"
 	"google.golang.org/grpc/peer"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/proto/apiserver/v1/pb"
 )
 

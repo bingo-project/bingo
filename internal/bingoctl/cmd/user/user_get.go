@@ -77,7 +77,7 @@ func (o *GetOptions) Complete(cmd *cobra.Command, args []string) error {
 // Validate makes sure there is no discrepancy in command options.
 func (o *GetOptions) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return cmdutil.UsageErrorf(cmd, getUsageErrStr)
+		return cmdutil.UsageErrorf(cmd, "%s", getUsageErrStr)
 	}
 
 	return nil

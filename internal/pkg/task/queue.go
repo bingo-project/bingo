@@ -3,9 +3,10 @@ package task
 import (
 	"context"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/hibiken/asynq"
+
+	"bingo/internal/pkg/log"
 )
 
 type queue struct {

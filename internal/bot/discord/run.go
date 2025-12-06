@@ -1,10 +1,10 @@
 package discord
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/discordgo"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 )
 
 type DiscordServer struct {

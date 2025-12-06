@@ -4,9 +4,8 @@
 package ws
 
 import (
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/jsonrpc"
@@ -19,7 +18,7 @@ func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
 
 	var req v1.LoginRequest
 	if err := c.BindValidate(&req); err != nil {
-		return c.Error(errno.ErrBind.SetMessage(err.Error()))
+		return c.Error(errno.ErrBind.SetMessage("%s", err.Error()))
 	}
 
 	resp, err := h.b.Auth().Login(c, &req)

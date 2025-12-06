@@ -54,7 +54,7 @@ func NewCmdEncrypt() *cobra.Command {
 // Validate makes sure there is no discrepancy in command options.
 func (o *EncryptOptions) Validate(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
-		return cmdutil.UsageErrorf(cmd, encryptUsageErrStr)
+		return cmdutil.UsageErrorf(cmd, "%s", encryptUsageErrStr)
 	}
 
 	return nil

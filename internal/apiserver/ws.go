@@ -102,6 +102,7 @@ func tokenParser(tokenStr string) (*ws.TokenInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &ws.TokenInfo{
 		UserID:    payload.Subject,
 		ExpiresAt: payload.ExpiresAt.Unix(),

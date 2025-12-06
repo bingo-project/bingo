@@ -30,12 +30,14 @@ func TestFullMiddlewareChain(t *testing.T) {
 		func(next ws.Handler) ws.Handler {
 			return func(c *ws.Context) *jsonrpc.Response {
 				order = append(order, "recovery")
+
 				return middleware.Recovery(next)(c)
 			}
 		},
 		func(next ws.Handler) ws.Handler {
 			return func(c *ws.Context) *jsonrpc.Response {
 				order = append(order, "requestid")
+
 				return middleware.RequestID(next)(c)
 			}
 		},
@@ -44,6 +46,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 	// Public handler
 	router.Handle("public.test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
@@ -51,6 +54,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 	private := router.Group(middleware.Auth)
 	private.Handle("private.test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "private-handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
@@ -103,6 +107,7 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 				order = append(order, "before-"+string(rune('0'+n)))
 				resp := next(c)
 				order = append(order, "after-"+string(rune('0'+n)))
+
 				return resp
 			}
 		})
@@ -110,6 +115,7 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 
 	router.Handle("test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
+
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
@@ -185,6 +191,7 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 	router.Use(func(next ws.Handler) ws.Handler {
 		return func(c *ws.Context) *jsonrpc.Response {
 			publicMiddlewareCalled = true
+
 			return next(c)
 		}
 	})
@@ -199,6 +206,7 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 	private := router.Group(func(next ws.Handler) ws.Handler {
 		return func(c *ws.Context) *jsonrpc.Response {
 			privateMiddlewareCalled = true
+
 			return next(c)
 		}
 	})

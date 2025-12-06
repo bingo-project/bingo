@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
+	"bingo/internal/pkg/log"
 	"bingo/pkg/auth"
 )
 
@@ -21,6 +21,7 @@ type responseBodyWriter struct {
 // 重写 Write 方法来捕获数据.
 func (w responseBodyWriter) Write(b []byte) (int, error) {
 	w.body.Write(b)
+
 	return w.ResponseWriter.Write(b)
 }
 

@@ -1,10 +1,10 @@
 package scheduler
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/hibiken/asynq"
 
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 	"bingo/internal/scheduler/job"
 	"bingo/internal/scheduler/middleware"
 	"bingo/internal/scheduler/scheduler"

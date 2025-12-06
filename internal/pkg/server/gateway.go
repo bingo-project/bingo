@@ -8,13 +8,13 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"bingo/internal/pkg/config"
+	"bingo/internal/pkg/log"
 	middleware "bingo/internal/pkg/middleware/http"
 	pb "bingo/pkg/proto/apiserver/v1/pb"
 )
@@ -41,7 +41,7 @@ func (s *GatewayServer) Name() string {
 	return "grpc-gateway"
 }
 
-// Run starts the gRPC-Gateway server and blocks until context is cancelled.
+// Run starts the gRPC-Gateway server and blocks until context is canceled.
 func (s *GatewayServer) Run(ctx context.Context) error {
 	mux := runtime.NewServeMux()
 
@@ -82,6 +82,7 @@ func (s *GatewayServer) Shutdown(ctx context.Context) error {
 	if s.server != nil {
 		return s.server.Shutdown(ctx)
 	}
+
 	return nil
 }
 
@@ -92,9 +93,11 @@ func (s *GatewayServer) buildDialOptions() []grpc.DialOption {
 		creds, err := credentials.NewClientTLSFromFile(s.grpcCfg.TLS.CertFile, "")
 		if err != nil {
 			log.Warnw("Failed to load TLS credentials, falling back to insecure", "err", err)
+
 			return []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 		}
 		log.Infow("gRPC-Gateway using TLS to connect to gRPC backend")
+
 		return []grpc.DialOption{grpc.WithTransportCredentials(creds)}
 	}
 

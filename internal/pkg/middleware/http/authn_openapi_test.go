@@ -8,20 +8,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/agiledragon/gomonkey/v2"
+	"github.com/bingo-project/component-base/web/signer"
+	"github.com/duke-git/lancet/v2/convertor"
+	"github.com/duke-git/lancet/v2/pointer"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-module/carbon/v2"
+	"github.com/google/uuid"
+
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 
-	"github.com/bingo-project/component-base/web/signer"
-
-	"github.com/agiledragon/gomonkey/v2"
-	"github.com/duke-git/lancet/v2/convertor"
-	"github.com/duke-git/lancet/v2/pointer"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-module/carbon/v2"
-	"github.com/google/uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

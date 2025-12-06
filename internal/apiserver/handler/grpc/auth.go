@@ -6,10 +6,10 @@ package grpc
 import (
 	"context"
 
-	"github.com/bingo-project/component-base/log"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"bingo/internal/pkg/errno"
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	apiv1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"

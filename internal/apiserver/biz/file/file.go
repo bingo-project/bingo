@@ -5,15 +5,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/goutil/fsutil"
 
+	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	imageutil "bingo/internal/pkg/util/image"
-	"bingo/pkg/api/apiserver/v1"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 type FileBiz interface {

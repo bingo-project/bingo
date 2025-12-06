@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/pkg/api/apiserver/v1"
+	"bingo/internal/pkg/log"
+	v1 "bingo/pkg/api/apiserver/v1"
 )
 
 // Nonce
@@ -25,7 +25,7 @@ func (ctrl *AuthController) Nonce(c *gin.Context) {
 
 	var req v1.AddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
@@ -56,7 +56,7 @@ func (ctrl *AuthController) LoginByAddress(c *gin.Context) {
 
 	var req v1.LoginByAddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage(err.Error()), nil)
+		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
 
 		return
 	}
