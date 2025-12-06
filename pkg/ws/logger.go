@@ -79,6 +79,11 @@ func (nopLogger) Warnw(string, ...any)               {}
 func (nopLogger) Errorw(string, ...any)              {}
 func (nopLogger) WithContext(context.Context) Logger { return nopLogger{} }
 
+// DefaultLogger returns the default logger implementation.
+func DefaultLogger() Logger {
+	return defaultLogger{}
+}
+
 // NopLogger returns a logger that discards all output.
 func NopLogger() Logger {
 	return nopLogger{}

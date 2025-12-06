@@ -6,36 +6,39 @@ package middleware
 import (
 	"time"
 
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )
 
-// Logger logs request details after handling.
-func Logger(next ws.Handler) ws.Handler {
-	return func(c *ws.Context) *jsonrpc.Response {
-		resp := next(c)
+// LoggerWithLogger logs request details after handling using the provided logger.
+func LoggerWithLogger(logger ws.Logger) ws.Middleware {
+	return func(next ws.Handler) ws.Handler {
+		return func(c *ws.Context) *jsonrpc.Response {
+			resp := next(c)
 
-		fields := []any{
-			"method", c.Method,
-			"latency", time.Since(c.StartTime),
-		}
-
-		if c.Client != nil {
-			fields = append(fields, "client_id", c.Client.ID, "client_addr", c.Client.Addr)
-			if c.Client.UserID != "" {
-				fields = append(fields, "user_id", c.Client.UserID)
+			fields := []any{
+				"method", c.Method,
+				"latency", time.Since(c.StartTime),
 			}
-		}
 
-		if resp.Error != nil {
-			fields = append(fields, "error", resp.Error.Reason)
-			log.C(c.Context).Warnw("WebSocket request failed", fields...)
-		} else {
-			log.C(c.Context).Infow("WebSocket request", fields...)
-		}
+			if c.Client != nil {
+				fields = append(fields, "client_id", c.Client.ID, "client_addr", c.Client.Addr)
+				if c.Client.UserID != "" {
+					fields = append(fields, "user_id", c.Client.UserID)
+				}
+			}
 
-		return resp
+			if resp.Error != nil {
+				fields = append(fields, "error", resp.Error.Reason)
+				logger.WithContext(c.Context).Warnw("WebSocket request failed", fields...)
+			} else {
+				logger.WithContext(c.Context).Infow("WebSocket request", fields...)
+			}
+
+			return resp
+		}
 	}
 }
+
+// Logger logs request details after handling.
+var Logger = LoggerWithLogger(ws.DefaultLogger())
