@@ -15,6 +15,7 @@ import (
 // Hub maintains the set of active clients and manages their lifecycle.
 type Hub struct {
 	config *HubConfig
+	logger Logger
 
 	// Anonymous connections (not yet logged in)
 	anonymous     map[*Client]bool
@@ -62,15 +63,26 @@ type UnsubscribeEvent struct {
 	Topics []string
 }
 
+// HubOption is a functional option for configuring Hub.
+type HubOption func(*Hub)
+
+// WithLogger sets a custom logger for the hub.
+func WithLogger(l Logger) HubOption {
+	return func(h *Hub) {
+		h.logger = l
+	}
+}
+
 // NewHub creates a new Hub with default config.
-func NewHub() *Hub {
-	return NewHubWithConfig(DefaultHubConfig())
+func NewHub(opts ...HubOption) *Hub {
+	return NewHubWithConfig(DefaultHubConfig(), opts...)
 }
 
 // NewHubWithConfig creates a new Hub with custom config.
-func NewHubWithConfig(cfg *HubConfig) *Hub {
-	return &Hub{
+func NewHubWithConfig(cfg *HubConfig, opts ...HubOption) *Hub {
+	h := &Hub{
 		config:      cfg,
+		logger:      defaultLogger{},
 		anonymous:   make(map[*Client]bool),
 		clients:     make(map[*Client]bool),
 		users:       make(map[string]*Client),
@@ -82,6 +94,10 @@ func NewHubWithConfig(cfg *HubConfig) *Hub {
 		Subscribe:   make(chan *SubscribeEvent, 256),
 		Unsubscribe: make(chan *UnsubscribeEvent, 256),
 	}
+	for _, opt := range opts {
+		opt(h)
+	}
+	return h
 }
 
 // Run starts the hub's event loop. It blocks until context is cancelled.
@@ -157,6 +173,7 @@ func (h *Hub) handleRegister(client *Client) {
 	h.anonymousLock.Lock()
 	defer h.anonymousLock.Unlock()
 	h.anonymous[client] = true
+	h.logger.Debugw("WebSocket client connected", "addr", client.Addr)
 }
 
 func (h *Hub) handleUnregister(client *Client) {
@@ -166,6 +183,7 @@ func (h *Hub) handleUnregister(client *Client) {
 		delete(h.anonymous, client)
 		h.anonymousLock.Unlock()
 		h.safeCloseSend(client)
+		h.logger.Debugw("WebSocket anonymous client disconnected", "addr", client.Addr)
 		return
 	}
 	h.anonymousLock.Unlock()
@@ -191,6 +209,7 @@ func (h *Hub) handleUnregister(client *Client) {
 	h.unsubscribeAll(client)
 
 	h.safeCloseSend(client)
+	h.logger.Infow("WebSocket client disconnected", "addr", client.Addr, "user_id", client.UserID, "platform", client.Platform)
 }
 
 func (h *Hub) unsubscribeAll(client *Client) {
@@ -231,6 +250,8 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 	h.clients[client] = true
 	h.clientsLock.Unlock()
 
+	h.logger.Infow("WebSocket client logged in", "addr", client.Addr, "user_id", event.UserID, "platform", event.Platform)
+
 	// Kick old client if exists
 	if oldClient != nil && oldClient != client {
 		h.kickClient(oldClient, "您的账号已在其他设备登录")
@@ -238,6 +259,8 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 }
 
 func (h *Hub) kickClient(client *Client, reason string) {
+	h.logger.Infow("WebSocket client kicked", "addr", client.Addr, "user_id", client.UserID, "platform", client.Platform, "reason", reason)
+
 	// Send kick notification
 	push := jsonrpc.NewPush("session.kicked", map[string]string{
 		"reason": reason,
@@ -389,6 +412,8 @@ func (h *Hub) doSubscribe(client *Client, topics []string) []string {
 
 		subscribed = append(subscribed, topic)
 	}
+
+	h.logger.Debugw("WebSocket client subscribed", "addr", client.Addr, "user_id", client.UserID, "topics", subscribed)
 	return subscribed
 }
 
@@ -408,6 +433,8 @@ func (h *Hub) doUnsubscribe(client *Client, topics []string) {
 		delete(client.topics, topic)
 		client.topicsLock.Unlock()
 	}
+
+	h.logger.Debugw("WebSocket client unsubscribed", "addr", client.Addr, "user_id", client.UserID, "topics", topics)
 }
 
 func (h *Hub) cleanupAnonymous() {
@@ -480,6 +507,8 @@ func (h *Hub) expireClient(client *Client) {
 		}
 		h.userLock.Unlock()
 	}
+
+	h.logger.Infow("WebSocket client token expired", "addr", client.Addr, "user_id", client.UserID, "platform", client.Platform)
 
 	push := jsonrpc.NewPush("session.expired", map[string]string{
 		"reason": "Token 已过期，请重新登录",

@@ -11,8 +11,6 @@ import (
 
 	"github.com/gorilla/websocket"
 
-	"github.com/bingo-project/component-base/log"
-
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 )
@@ -92,8 +90,9 @@ func (c *Client) ReadPump() {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
-				log.Errorw("WebSocket read error", "addr", c.Addr, "err", err)
+				c.hub.logger.Errorw("WebSocket read error", "addr", c.Addr, "err", err)
 			}
+
 			break
 		}
 
@@ -132,10 +131,13 @@ func (c *Client) WritePump() {
 }
 
 func (c *Client) handleMessage(data []byte) {
+	logger := c.hub.logger.WithContext(c.ctx)
+
 	// Recover from panics in message handling
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorw("Panic in handleMessage", "addr", c.Addr, "panic", r)
+			logger.Errorw("Panic in handleMessage", "addr", c.Addr, "panic", r)
+
 			resp := jsonrpc.NewErrorResponse(nil,
 				errorsx.New(500, "InternalError", "Message handler crashed"))
 			c.sendJSON(resp)
@@ -149,6 +151,9 @@ func (c *Client) handleMessage(data []byte) {
 		c.sendJSON(resp)
 		return
 	}
+
+	// Log message received
+	logger.Debugw("WebSocket message received", "method", req.Method, "id", req.ID, "addr", c.Addr)
 
 	// Update heartbeat for any message
 	c.Heartbeat(time.Now().Unix())
@@ -170,8 +175,10 @@ func (c *Client) handleMessage(data []byte) {
 
 	// Require authentication for other methods
 	if !c.IsAuthenticated() {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(401, "Unauthorized", "Login required")))
+		resp := jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(401, "Unauthorized", "Login required"))
+		logger.Warnw("WebSocket unauthorized request", "method", req.Method, "id", req.ID, "addr", c.Addr)
+		c.sendJSON(resp)
 		return
 	}
 
@@ -187,20 +194,25 @@ func (c *Client) handleMessage(data []byte) {
 
 	// Route through adapter for business methods
 	resp := c.adapter.Handle(c.ctx, &req)
+	if resp.Error != nil {
+		logger.Warnw("WebSocket request failed", "method", req.Method, "id", req.ID, "error", resp.Error.Reason)
+	} else {
+		logger.Debugw("WebSocket request succeeded", "method", req.Method, "id", req.ID)
+	}
 	c.sendJSON(resp)
 }
 
 func (c *Client) sendJSON(v any) {
 	data, err := json.Marshal(v)
 	if err != nil {
-		log.Errorw("JSON marshal error", "err", err)
+		c.hub.logger.Errorw("JSON marshal error", "err", err)
 		return
 	}
 
 	select {
 	case c.Send <- data:
 	default:
-		log.Warnw("Client send buffer full", "addr", c.Addr)
+		c.hub.logger.Warnw("Client send buffer full", "addr", c.Addr)
 	}
 }
 

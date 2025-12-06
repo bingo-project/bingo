@@ -21,7 +21,7 @@ import (
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/middleware/grpc"
+	interceptor "bingo/internal/pkg/middleware/grpc"
 	"bingo/internal/pkg/server"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/jsonrpc"
@@ -117,7 +117,7 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	// Create JSON-RPC adapter and register handlers
 	adapter := jsonrpc.NewAdapter()
 	bizInstance := biz.NewBiz(store.S)
-	wshandler.RegisterHandlers(adapter, bizInstance)
+	router.RegisterHandlers(adapter, bizInstance)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGin()

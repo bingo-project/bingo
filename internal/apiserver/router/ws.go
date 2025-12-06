@@ -1,7 +1,7 @@
 // ABOUTME: WebSocket method registration for JSON-RPC.
 // ABOUTME: Maps JSON-RPC methods to Biz layer handlers.
 
-package ws
+package router
 
 import (
 	"bingo/internal/apiserver/biz"
