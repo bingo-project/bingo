@@ -29,6 +29,10 @@ type Hub struct {
 	users    map[string]*Client
 	userLock sync.RWMutex
 
+	// Clients by ID for quick lookup
+	clientsByID     map[string]*Client
+	clientsByIDLock sync.RWMutex
+
 	// Topic subscriptions
 	topics     map[string]map[*Client]bool
 	topicsLock sync.RWMutex
@@ -86,6 +90,7 @@ func NewHubWithConfig(cfg *HubConfig, opts ...HubOption) *Hub {
 		anonymous:   make(map[*Client]bool),
 		clients:     make(map[*Client]bool),
 		users:       make(map[string]*Client),
+		clientsByID: make(map[string]*Client),
 		topics:      make(map[string]map[*Client]bool),
 		Register:    make(chan *Client, 256),
 		Unregister:  make(chan *Client, 256),
@@ -171,12 +176,27 @@ func (h *Hub) safeCloseSend(client *Client) {
 
 func (h *Hub) handleRegister(client *Client) {
 	h.anonymousLock.Lock()
-	defer h.anonymousLock.Unlock()
 	h.anonymous[client] = true
-	h.logger.Debugw("WebSocket client connected", "addr", client.Addr)
+	h.anonymousLock.Unlock()
+
+	// Track by ID
+	if client.ID != "" {
+		h.clientsByIDLock.Lock()
+		h.clientsByID[client.ID] = client
+		h.clientsByIDLock.Unlock()
+	}
+
+	h.logger.Debugw("WebSocket client connected", "addr", client.Addr, "id", client.ID)
 }
 
 func (h *Hub) handleUnregister(client *Client) {
+	// Remove from clientsByID
+	if client.ID != "" {
+		h.clientsByIDLock.Lock()
+		delete(h.clientsByID, client.ID)
+		h.clientsByIDLock.Unlock()
+	}
+
 	// Remove from anonymous
 	h.anonymousLock.Lock()
 	if _, ok := h.anonymous[client]; ok {
@@ -317,6 +337,79 @@ func (h *Hub) GetUserClient(platform, userID string) *Client {
 	h.userLock.RLock()
 	defer h.userLock.RUnlock()
 	return h.users[userKey(platform, userID)]
+}
+
+// GetClient returns a client by ID.
+func (h *Hub) GetClient(clientID string) *Client {
+	h.clientsByIDLock.RLock()
+	defer h.clientsByIDLock.RUnlock()
+	return h.clientsByID[clientID]
+}
+
+// GetClientsByUser returns all clients for a user across all platforms.
+func (h *Hub) GetClientsByUser(userID string) []*Client {
+	h.userLock.RLock()
+	defer h.userLock.RUnlock()
+
+	var clients []*Client
+	suffix := "_" + userID
+	for key, client := range h.users {
+		if len(key) > len(suffix) && key[len(key)-len(suffix):] == suffix {
+			clients = append(clients, client)
+		}
+	}
+	return clients
+}
+
+// KickClient disconnects a client by ID.
+func (h *Hub) KickClient(clientID string, reason string) bool {
+	client := h.GetClient(clientID)
+	if client == nil {
+		return false
+	}
+	h.kickClient(client, reason)
+	return true
+}
+
+// KickUser disconnects all clients for a user.
+func (h *Hub) KickUser(userID string, reason string) int {
+	clients := h.GetClientsByUser(userID)
+	for _, client := range clients {
+		h.kickClient(client, reason)
+	}
+	return len(clients)
+}
+
+// HubStats contains hub statistics.
+type HubStats struct {
+	TotalConnections      int64
+	AuthenticatedConns    int64
+	AnonymousConns        int64
+	ConnectionsByPlatform map[string]int
+}
+
+// Stats returns current hub statistics.
+func (h *Hub) Stats() *HubStats {
+	h.anonymousLock.RLock()
+	anonymous := int64(len(h.anonymous))
+	h.anonymousLock.RUnlock()
+
+	h.clientsLock.RLock()
+	authenticated := int64(len(h.clients))
+	byPlatform := make(map[string]int)
+	for client := range h.clients {
+		if client.Platform != "" {
+			byPlatform[client.Platform]++
+		}
+	}
+	h.clientsLock.RUnlock()
+
+	return &HubStats{
+		TotalConnections:      anonymous + authenticated,
+		AuthenticatedConns:    authenticated,
+		AnonymousConns:        anonymous,
+		ConnectionsByPlatform: byPlatform,
+	}
 }
 
 func userKey(platform, userID string) string {

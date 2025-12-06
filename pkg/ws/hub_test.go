@@ -482,3 +482,171 @@ func TestHub_GracefulShutdown(t *testing.T) {
 	_, ok := <-client.Send
 	assert.False(t, ok, "Send channel should be closed")
 }
+
+func TestHub_GetClient(t *testing.T) {
+	hub := ws.NewHub()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go hub.Run(ctx)
+
+	// Create and register client
+	client := &ws.Client{
+		ID:   "test-client-id",
+		Send: make(chan []byte, 256),
+	}
+	hub.Register <- client
+	time.Sleep(10 * time.Millisecond)
+
+	// Get by ID
+	found := hub.GetClient("test-client-id")
+	assert.Equal(t, client, found)
+
+	// Not found
+	notFound := hub.GetClient("unknown")
+	assert.Nil(t, notFound)
+}
+
+func TestHub_GetClientsByUser(t *testing.T) {
+	hub := ws.NewHub()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go hub.Run(ctx)
+
+	// Create clients for same user on different platforms
+	client1 := &ws.Client{
+		ID:   "c1",
+		Addr: "client1",
+		Send: make(chan []byte, 256),
+	}
+	client2 := &ws.Client{
+		ID:   "c2",
+		Addr: "client2",
+		Send: make(chan []byte, 256),
+	}
+
+	hub.Register <- client1
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user-123", Platform: ws.PlatformWeb}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user-123", Platform: ws.PlatformIOS}
+	time.Sleep(10 * time.Millisecond)
+
+	clients := hub.GetClientsByUser("user-123")
+	assert.Len(t, clients, 2)
+}
+
+func TestHub_Stats(t *testing.T) {
+	hub := ws.NewHub()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go hub.Run(ctx)
+
+	// Create anonymous client
+	anonClient := &ws.Client{
+		ID:   "anon",
+		Addr: "anon",
+		Send: make(chan []byte, 256),
+	}
+	hub.Register <- anonClient
+	time.Sleep(10 * time.Millisecond)
+
+	// Create authenticated clients
+	client1 := &ws.Client{
+		ID:   "c1",
+		Addr: "client1",
+		Send: make(chan []byte, 256),
+	}
+	client2 := &ws.Client{
+		ID:   "c2",
+		Addr: "client2",
+		Send: make(chan []byte, 256),
+	}
+	hub.Register <- client1
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user1", Platform: ws.PlatformWeb}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user2", Platform: ws.PlatformIOS}
+	time.Sleep(10 * time.Millisecond)
+
+	stats := hub.Stats()
+
+	assert.Equal(t, int64(1), stats.AnonymousConns)
+	assert.Equal(t, int64(2), stats.AuthenticatedConns)
+	assert.Equal(t, int64(3), stats.TotalConnections)
+	assert.Equal(t, 1, stats.ConnectionsByPlatform[ws.PlatformWeb])
+	assert.Equal(t, 1, stats.ConnectionsByPlatform[ws.PlatformIOS])
+}
+
+func TestHub_KickClient(t *testing.T) {
+	hub := ws.NewHub()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go hub.Run(ctx)
+
+	client := &ws.Client{
+		ID:   "test-client",
+		Addr: "client1",
+		Send: make(chan []byte, 256),
+	}
+	hub.Register <- client
+	hub.Login <- &ws.LoginEvent{Client: client, UserID: "user-123", Platform: ws.PlatformWeb}
+	time.Sleep(10 * time.Millisecond)
+
+	assert.Equal(t, 1, hub.ClientCount())
+
+	// Kick client
+	kicked := hub.KickClient("test-client", "test kick")
+	assert.True(t, kicked)
+
+	// Should receive kick notification
+	time.Sleep(20 * time.Millisecond)
+	select {
+	case msg := <-client.Send:
+		assert.Contains(t, string(msg), "session.kicked")
+	default:
+		t.Error("Should receive kick notification")
+	}
+
+	// Wait for kick to complete
+	time.Sleep(200 * time.Millisecond)
+	assert.Equal(t, 0, hub.ClientCount())
+}
+
+func TestHub_KickUser(t *testing.T) {
+	hub := ws.NewHub()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go hub.Run(ctx)
+
+	// User on multiple platforms
+	client1 := &ws.Client{
+		ID:   "c1",
+		Addr: "client1",
+		Send: make(chan []byte, 256),
+	}
+	client2 := &ws.Client{
+		ID:   "c2",
+		Addr: "client2",
+		Send: make(chan []byte, 256),
+	}
+
+	hub.Register <- client1
+	hub.Register <- client2
+	time.Sleep(10 * time.Millisecond)
+
+	hub.Login <- &ws.LoginEvent{Client: client1, UserID: "user-123", Platform: ws.PlatformWeb}
+	hub.Login <- &ws.LoginEvent{Client: client2, UserID: "user-123", Platform: ws.PlatformIOS}
+	time.Sleep(10 * time.Millisecond)
+
+	assert.Equal(t, 2, hub.ClientCount())
+
+	// Kick all user's connections
+	kicked := hub.KickUser("user-123", "account suspended")
+	assert.Equal(t, 2, kicked)
+
+	// Wait for kicks to complete
+	time.Sleep(200 * time.Millisecond)
+	assert.Equal(t, 0, hub.ClientCount())
+}
