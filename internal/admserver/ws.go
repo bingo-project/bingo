@@ -79,7 +79,7 @@ func serveWS(c *gin.Context, hub *ws.Hub, router *ws.Router, upgrader websocket.
 	}
 
 	// Create anonymous client with router, token parser, and context updater
-	client := ws.NewClient(hub, conn, ctx, nil,
+	client := ws.NewClient(hub, conn, ctx,
 		ws.WithRouter(router),
 		ws.WithTokenParser(tokenParser),
 		ws.WithContextUpdater(contextUpdater),

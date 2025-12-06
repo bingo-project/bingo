@@ -152,11 +152,10 @@ func Run(cfg *config.Config) error {
 
     // 4. WebSocket
     hub := ws.NewHub()
-    adapter := jsonrpc.NewAdapter()
-    router.RegisterWSHandlers(adapter, bizInstance)
-    wsHandler := wshandler.NewHandler(hub, adapter, cfg.WebSocket)
+    wsRouter := ws.NewRouter()
+    router.RegisterWSHandlers(wsRouter)
     wsEngine := gin.New()
-    wsEngine.GET("/ws", wsHandler.ServeWS)
+    wsEngine.GET("/ws", wshandler.ServeWS(hub, wsRouter))
 
     // 5. 组装并运行
     runner := server.Assemble(cfg,

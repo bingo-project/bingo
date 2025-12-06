@@ -49,7 +49,6 @@ type ContextUpdater func(ctx context.Context, userID string) context.Context
 type Client struct {
 	hub            *Hub
 	conn           *websocket.Conn
-	adapter        *jsonrpc.Adapter
 	router         *Router
 	ctx            context.Context
 	tokenParser    TokenParser
@@ -99,7 +98,7 @@ func WithRouter(r *Router) ClientOption {
 }
 
 // NewClient creates a new WebSocket client.
-func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jsonrpc.Adapter, opts ...ClientOption) *Client {
+func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, opts ...ClientOption) *Client {
 	now := time.Now().Unix()
 	addr := ""
 	if conn != nil {
@@ -108,7 +107,6 @@ func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jso
 	c := &Client{
 		hub:           hub,
 		conn:          conn,
-		adapter:       adapter,
 		ctx:           ctx,
 		Send:          make(chan []byte, 256),
 		ID:            uuid.New().String(),
@@ -181,19 +179,6 @@ func (c *Client) WritePump() {
 }
 
 func (c *Client) handleMessage(data []byte) {
-	logger := c.hub.logger.WithContext(c.ctx)
-
-	// Recover from panics in message handling (only for legacy path)
-	defer func() {
-		if r := recover(); r != nil {
-			logger.Errorw("Panic in handleMessage", "addr", c.Addr, "panic", r)
-
-			resp := jsonrpc.NewErrorResponse(nil,
-				errorsx.New(500, "InternalError", "Message handler crashed"))
-			c.sendJSON(resp)
-		}
-	}()
-
 	var req jsonrpc.Request
 	if err := json.Unmarshal(data, &req); err != nil {
 		resp := jsonrpc.NewErrorResponse(nil,
@@ -205,64 +190,22 @@ func (c *Client) handleMessage(data []byte) {
 	// Update heartbeat for any message
 	c.Heartbeat(time.Now().Unix())
 
-	// Use router if available
-	if c.router != nil {
-		mc := &Context{
-			Context:   c.ctx,
-			Request:   &req,
-			Client:    c,
-			Method:    req.Method,
-			StartTime: time.Now(),
-		}
-		resp := c.router.Dispatch(mc)
-		c.sendJSON(resp)
-		return
-	}
-
-	// Legacy path: direct handling without router
-	logger.Debugw("WebSocket message received", "method", req.Method, "id", req.ID, "addr", c.Addr)
-
-	// Handle heartbeat
-	if req.Method == "heartbeat" {
-		c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
-			"status":      "ok",
-			"server_time": time.Now().Unix(),
-		}))
-		return
-	}
-
-	// Handle login (allowed without authentication)
-	if req.Method == "login" || req.Method == "auth.login" {
-		c.handleLogin(&req)
-		return
-	}
-
-	// Require authentication for other methods
-	if !c.IsAuthenticated() {
+	// Router is required
+	if c.router == nil {
 		resp := jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(401, "Unauthorized", "Login required"))
-		logger.Warnw("WebSocket unauthorized request", "method", req.Method, "id", req.ID, "addr", c.Addr)
+			errorsx.New(500, "InternalError", "Router not configured"))
 		c.sendJSON(resp)
 		return
 	}
 
-	// Handle subscribe/unsubscribe
-	if req.Method == "subscribe" {
-		c.handleSubscribe(&req)
-		return
+	ctx := &Context{
+		Context:   c.ctx,
+		Request:   &req,
+		Client:    c,
+		Method:    req.Method,
+		StartTime: time.Now(),
 	}
-	if req.Method == "unsubscribe" {
-		c.handleUnsubscribe(&req)
-		return
-	}
-
-	// Route through adapter for business methods
-	resp := c.adapter.Handle(c.ctx, &req)
-	if resp.Error != nil {
-		logger.Warnw("WebSocket request failed", "method", req.Method, "id", req.ID, "error", resp.Error.Reason)
-	} else {
-		logger.Debugw("WebSocket request succeeded", "method", req.Method, "id", req.ID)
-	}
+	resp := c.router.Dispatch(ctx)
 	c.sendJSON(resp)
 }
 
@@ -331,143 +274,4 @@ func (c *Client) NotifyLogin(userID, platform string, tokenExpiresAt int64) {
 		Platform:       platform,
 		TokenExpiresAt: tokenExpiresAt,
 	}
-}
-
-func (c *Client) handleLogin(req *jsonrpc.Request) {
-	logger := c.hub.logger.WithContext(c.ctx)
-
-	// Parse params to get platform
-	var params struct {
-		Platform string `json:"platform"`
-	}
-	paramsBytes, _ := json.Marshal(req.Params)
-	if err := json.Unmarshal(paramsBytes, &params); err != nil {
-		logger.Warnw("WebSocket login invalid params", "addr", c.Addr, "error", err.Error())
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidParams", "Invalid login params")))
-
-		return
-	}
-
-	if !IsValidPlatform(params.Platform) {
-		logger.Warnw("WebSocket login invalid platform", "addr", c.Addr, "platform", params.Platform)
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidPlatform", "Invalid platform: %s", params.Platform)))
-
-		return
-	}
-
-	// Route to auth.login handler via adapter
-	loginReq := &jsonrpc.Request{
-		JSONRPC: req.JSONRPC,
-		Method:  "auth.login",
-		Params:  req.Params,
-		ID:      req.ID,
-	}
-	resp := c.adapter.Handle(c.ctx, loginReq)
-	if resp.Error != nil {
-		logger.Warnw("WebSocket login failed", "addr", c.Addr, "error", resp.Error.Reason)
-		c.sendJSON(resp)
-		return
-	}
-
-	// Extract token from response
-	resultBytes, _ := json.Marshal(resp.Result)
-	var loginResp struct {
-		AccessToken string `json:"accessToken"`
-	}
-	if err := json.Unmarshal(resultBytes, &loginResp); err != nil {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(500, "InternalError", "Failed to parse login response")))
-		return
-	}
-
-	// Parse token to get user info
-	if c.tokenParser == nil {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(500, "InternalError", "Token parser not configured")))
-		return
-	}
-
-	tokenInfo, err := c.tokenParser(loginResp.AccessToken)
-	if err != nil {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(401, "InvalidToken", "Failed to parse token: %s", err.Error())))
-		return
-	}
-
-	// Update client context with user info
-	if c.contextUpdater != nil {
-		c.ctx = c.contextUpdater(c.ctx, tokenInfo.UserID)
-	}
-
-	// Send login event to hub
-	c.hub.Login <- &LoginEvent{
-		Client:         c,
-		UserID:         tokenInfo.UserID,
-		Platform:       params.Platform,
-		TokenExpiresAt: tokenInfo.ExpiresAt,
-	}
-
-	// Return the original login response (contains token for client to store)
-	c.sendJSON(resp)
-}
-
-func (c *Client) handleSubscribe(req *jsonrpc.Request) {
-	var params struct {
-		Topics []string `json:"topics"`
-	}
-
-	paramsBytes, _ := json.Marshal(req.Params)
-	if err := json.Unmarshal(paramsBytes, &params); err != nil {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidParams", "Invalid subscribe params")))
-		return
-	}
-
-	if len(params.Topics) == 0 {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidParams", "Topics required")))
-		return
-	}
-
-	result := make(chan []string, 1)
-	c.hub.Subscribe <- &SubscribeEvent{
-		Client: c,
-		Topics: params.Topics,
-		Result: result,
-	}
-
-	subscribed := <-result
-	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
-		"subscribed": subscribed,
-	}))
-}
-
-func (c *Client) handleUnsubscribe(req *jsonrpc.Request) {
-	var params struct {
-		Topics []string `json:"topics"`
-	}
-
-	paramsBytes, _ := json.Marshal(req.Params)
-	if err := json.Unmarshal(paramsBytes, &params); err != nil {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidParams", "Invalid unsubscribe params")))
-		return
-	}
-
-	if len(params.Topics) == 0 {
-		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidParams", "Topics required")))
-		return
-	}
-
-	c.hub.Unsubscribe <- &UnsubscribeEvent{
-		Client: c,
-		Topics: params.Topics,
-	}
-
-	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
-		"unsubscribed": params.Topics,
-	}))
 }

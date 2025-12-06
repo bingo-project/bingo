@@ -559,8 +559,7 @@ pkg/ws/
 
 pkg/jsonrpc/
 ├── message.go          # Request/Response 类型
-├── response.go         # 响应构造函数
-└── adapter.go          # 旧适配器（兼容）
+└── response.go         # 响应构造函数
 
 internal/apiserver/
 ├── ws.go               # WebSocket 初始化
