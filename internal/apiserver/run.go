@@ -24,7 +24,6 @@ import (
 	interceptor "bingo/internal/pkg/middleware/grpc"
 	"bingo/internal/pkg/server"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )
 
@@ -106,16 +105,16 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	// Create hub
 	hub := ws.NewHub()
 
-	// Create JSON-RPC adapter and register handlers
-	adapter := jsonrpc.NewAdapter()
+	// Create router and register handlers
+	wsRouter := ws.NewRouter()
 	bizInstance := biz.NewBiz(store.S)
-	router.RegisterWSHandlers(adapter, bizInstance)
+	router.RegisterWSHandlers(wsRouter, bizInstance)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGinForWebSocket()
 
 	// Register WebSocket route
-	handler := wshandler.NewHandler(hub, adapter, facade.Config.WebSocket)
+	handler := wshandler.NewHandler(hub, wsRouter, facade.Config.WebSocket)
 	engine.GET("/ws", handler.ServeWS)
 
 	return engine, hub

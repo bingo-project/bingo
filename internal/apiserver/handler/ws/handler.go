@@ -13,22 +13,21 @@ import (
 
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/contextx"
-	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )
 
 // Handler handles WebSocket connections.
 type Handler struct {
 	hub      *ws.Hub
-	adapter  *jsonrpc.Adapter
+	router   *ws.Router
 	upgrader websocket.Upgrader
 }
 
 // NewHandler creates a new WebSocket handler.
-func NewHandler(hub *ws.Hub, adapter *jsonrpc.Adapter, cfg *config.WebSocket) *Handler {
+func NewHandler(hub *ws.Hub, router *ws.Router, cfg *config.WebSocket) *Handler {
 	h := &Handler{
-		hub:     hub,
-		adapter: adapter,
+		hub:    hub,
+		router: router,
 	}
 
 	h.upgrader = websocket.Upgrader{
@@ -86,8 +85,9 @@ func (h *Handler) ServeWS(c *gin.Context) {
 		return
 	}
 
-	// 3. Create anonymous client with token parser and context updater
-	client := ws.NewClient(h.hub, conn, ctx, h.adapter,
+	// 3. Create anonymous client with router, token parser, and context updater
+	client := ws.NewClient(h.hub, conn, ctx, nil,
+		ws.WithRouter(h.router),
 		ws.WithTokenParser(tokenParser),
 		ws.WithContextUpdater(contextUpdater),
 	)
