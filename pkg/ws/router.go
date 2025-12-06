@@ -53,13 +53,13 @@ func (r *Router) Handle(method string, handler Handler, middlewares ...Middlewar
 }
 
 // Dispatch routes a request to its handler.
-func (r *Router) Dispatch(mc *Context) *jsonrpc.Response {
+func (r *Router) Dispatch(c *Context) *jsonrpc.Response {
 	r.mu.RLock()
-	entry, ok := r.handlers[mc.Method]
+	entry, ok := r.handlers[c.Method]
 	if !ok {
 		r.mu.RUnlock()
-		return jsonrpc.NewErrorResponse(mc.Request.ID,
-			errorsx.New(404, "MethodNotFound", "Method not found: %s", mc.Method))
+		return jsonrpc.NewErrorResponse(c.Request.ID,
+			errorsx.New(404, "MethodNotFound", "Method not found: %s", c.Method))
 	}
 
 	// Compile handler chain if not cached
@@ -80,7 +80,7 @@ func (r *Router) Dispatch(mc *Context) *jsonrpc.Response {
 	compiled := entry.compiled
 	r.mu.RUnlock()
 
-	return compiled(mc)
+	return compiled(c)
 }
 
 // Methods returns all registered method names.

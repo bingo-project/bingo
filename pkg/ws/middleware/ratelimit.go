@@ -66,32 +66,32 @@ func (cl *clientLimiters) remove(client *ws.Client) {
 // RateLimit limits request rate per client per method.
 func RateLimit(cfg *RateLimitConfig) ws.Middleware {
 	return func(next ws.Handler) ws.Handler {
-		return func(mc *ws.Context) *jsonrpc.Response {
-			if mc.Client == nil {
-				return next(mc)
+		return func(c *ws.Context) *jsonrpc.Response {
+			if c.Client == nil {
+				return next(c)
 			}
 
 			// Get limit for this method
 			limit := cfg.Default
 			if cfg.Methods != nil {
-				if methodLimit, ok := cfg.Methods[mc.Method]; ok {
+				if methodLimit, ok := cfg.Methods[c.Method]; ok {
 					limit = methodLimit
 				}
 			}
 
 			// No limit
 			if limit == 0 {
-				return next(mc)
+				return next(c)
 			}
 
 			// Check rate limit
-			limiter := limiters.get(mc.Client, mc.Method, limit)
+			limiter := limiters.get(c.Client, c.Method, limit)
 			if !limiter.Allow() {
-				return jsonrpc.NewErrorResponse(mc.Request.ID,
+				return jsonrpc.NewErrorResponse(c.Request.ID,
 					errorsx.New(429, "TooManyRequests", "Rate limit exceeded"))
 			}
 
-			return next(mc)
+			return next(c)
 		}
 	}
 }

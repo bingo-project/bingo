@@ -15,18 +15,18 @@ import (
 
 // Recovery catches panics and returns an error response.
 func Recovery(next ws.Handler) ws.Handler {
-	return func(mc *ws.Context) (resp *jsonrpc.Response) {
+	return func(c *ws.Context) (resp *jsonrpc.Response) {
 		defer func() {
 			if r := recover(); r != nil {
-				log.C(mc.Ctx).Errorw("WebSocket panic recovered",
-					"method", mc.Method,
+				log.C(c.Ctx).Errorw("WebSocket panic recovered",
+					"method", c.Method,
 					"panic", r,
 					"stack", string(debug.Stack()),
 				)
-				resp = jsonrpc.NewErrorResponse(mc.Request.ID,
+				resp = jsonrpc.NewErrorResponse(c.Request.ID,
 					errorsx.New(500, "InternalError", "Internal server error"))
 			}
 		}()
-		return next(mc)
+		return next(c)
 	}
 }

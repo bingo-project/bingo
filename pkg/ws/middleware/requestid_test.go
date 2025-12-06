@@ -16,20 +16,20 @@ import (
 func TestRequestID_UsesClientID(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		capturedRequestID = mc.RequestID()
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		capturedRequestID = c.RequestID()
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: "client-123", Method: "test"},
 		Method:  "test",
 	}
 
-	wrapped(mc)
+	wrapped(c)
 
 	assert.Equal(t, "client-123", capturedRequestID)
 }
@@ -37,20 +37,20 @@ func TestRequestID_UsesClientID(t *testing.T) {
 func TestRequestID_GeneratesIfMissing(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		capturedRequestID = mc.RequestID()
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		capturedRequestID = c.RequestID()
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{Method: "test"}, // No ID
 		Method:  "test",
 	}
 
-	wrapped(mc)
+	wrapped(c)
 
 	assert.NotEmpty(t, capturedRequestID)
 	assert.Len(t, capturedRequestID, 36) // UUID length
@@ -59,20 +59,20 @@ func TestRequestID_GeneratesIfMissing(t *testing.T) {
 func TestRequestID_NumericID(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		capturedRequestID = mc.RequestID()
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		capturedRequestID = c.RequestID()
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 42, Method: "test"},
 		Method:  "test",
 	}
 
-	wrapped(mc)
+	wrapped(c)
 
 	assert.Equal(t, "42", capturedRequestID)
 }

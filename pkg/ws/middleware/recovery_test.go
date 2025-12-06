@@ -14,19 +14,19 @@ import (
 )
 
 func TestRecovery(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
+	handler := func(c *ws.Context) *jsonrpc.Response {
 		panic("test panic")
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "InternalError", resp.Error.Reason)
@@ -35,38 +35,38 @@ func TestRecovery(t *testing.T) {
 }
 
 func TestRecovery_NoError(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.Nil(t, resp.Error)
 	assert.Equal(t, "ok", resp.Result)
 }
 
 func TestRecovery_PanicWithError(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
+	handler := func(c *ws.Context) *jsonrpc.Response {
 		panic(assert.AnError)
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "InternalError", resp.Error.Reason)

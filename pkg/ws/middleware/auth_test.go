@@ -14,8 +14,8 @@ import (
 )
 
 func TestAuth_Authenticated(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Auth(handler)
@@ -25,56 +25,56 @@ func TestAuth_Authenticated(t *testing.T) {
 	client.Platform = "web"
 	client.LoginTime = 1000
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.Nil(t, resp.Error)
 	assert.Equal(t, "ok", resp.Result)
 }
 
 func TestAuth_Unauthenticated(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Auth(handler)
 
 	client := &ws.Client{} // Not logged in
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "Unauthorized", resp.Error.Reason)
 }
 
 func TestAuth_NilClient(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Auth(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "Unauthorized", resp.Error.Reason)
@@ -83,9 +83,9 @@ func TestAuth_NilClient(t *testing.T) {
 func TestAuth_SetsUserIDInContext(t *testing.T) {
 	var capturedUserID string
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		capturedUserID = mc.UserID()
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		capturedUserID = c.UserID()
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Auth(handler)
@@ -95,14 +95,14 @@ func TestAuth_SetsUserIDInContext(t *testing.T) {
 	client.Platform = "web"
 	client.LoginTime = 1000
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
 	}
 
-	wrapped(mc)
+	wrapped(c)
 
 	assert.Equal(t, "user-456", capturedUserID)
 }

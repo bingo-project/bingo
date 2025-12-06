@@ -15,7 +15,7 @@ import (
 )
 
 func TestHeartbeatHandler(t *testing.T) {
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  &Client{HeartbeatTime: 0},
@@ -23,7 +23,7 @@ func TestHeartbeatHandler(t *testing.T) {
 	}
 
 	before := time.Now().Unix()
-	resp := HeartbeatHandler(mc)
+	resp := HeartbeatHandler(c)
 	after := time.Now().Unix()
 
 	assert.Nil(t, resp.Error)
@@ -51,14 +51,14 @@ func TestSubscribeHandler(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
 		Method:  "subscribe",
 	}
 
-	resp := SubscribeHandler(mc)
+	resp := SubscribeHandler(c)
 
 	assert.Nil(t, resp.Error)
 	result := resp.Result.(map[string]any)
@@ -73,14 +73,14 @@ func TestSubscribeHandler_InvalidParams(t *testing.T) {
 		hub: hub,
 	}
 
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
 		Method:  "subscribe",
 	}
 
-	resp := SubscribeHandler(mc)
+	resp := SubscribeHandler(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, -32602, resp.Error.Code) // JSON-RPC Invalid Params
@@ -94,14 +94,14 @@ func TestSubscribeHandler_EmptyTopics(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
 		Method:  "subscribe",
 	}
 
-	resp := SubscribeHandler(mc)
+	resp := SubscribeHandler(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, -32602, resp.Error.Code) // JSON-RPC Invalid Params
@@ -123,14 +123,14 @@ func TestUnsubscribeHandler(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,
 		Method:  "unsubscribe",
 	}
 
-	resp := UnsubscribeHandler(mc)
+	resp := UnsubscribeHandler(c)
 
 	assert.Nil(t, resp.Error)
 	result := resp.Result.(map[string]any)
@@ -145,14 +145,14 @@ func TestUnsubscribeHandler_InvalidParams(t *testing.T) {
 		hub: hub,
 	}
 
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
 		Method:  "unsubscribe",
 	}
 
-	resp := UnsubscribeHandler(mc)
+	resp := UnsubscribeHandler(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, -32602, resp.Error.Code) // JSON-RPC Invalid Params
@@ -166,14 +166,14 @@ func TestUnsubscribeHandler_EmptyTopics(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
-	mc := &Context{
+	c := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,
 		Method:  "unsubscribe",
 	}
 
-	resp := UnsubscribeHandler(mc)
+	resp := UnsubscribeHandler(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, -32602, resp.Error.Code) // JSON-RPC Invalid Params

@@ -14,26 +14,26 @@ import (
 
 // Logger logs request details after handling.
 func Logger(next ws.Handler) ws.Handler {
-	return func(mc *ws.Context) *jsonrpc.Response {
-		resp := next(mc)
+	return func(c *ws.Context) *jsonrpc.Response {
+		resp := next(c)
 
 		fields := []any{
-			"method", mc.Method,
-			"latency", time.Since(mc.StartTime),
+			"method", c.Method,
+			"latency", time.Since(c.StartTime),
 		}
 
-		if mc.Client != nil {
-			fields = append(fields, "client_id", mc.Client.ID, "client_addr", mc.Client.Addr)
-			if mc.Client.UserID != "" {
-				fields = append(fields, "user_id", mc.Client.UserID)
+		if c.Client != nil {
+			fields = append(fields, "client_id", c.Client.ID, "client_addr", c.Client.Addr)
+			if c.Client.UserID != "" {
+				fields = append(fields, "user_id", c.Client.UserID)
 			}
 		}
 
 		if resp.Error != nil {
 			fields = append(fields, "error", resp.Error.Reason)
-			log.C(mc.Ctx).Warnw("WebSocket request failed", fields...)
+			log.C(c.Ctx).Warnw("WebSocket request failed", fields...)
 		} else {
-			log.C(mc.Ctx).Infow("WebSocket request", fields...)
+			log.C(c.Ctx).Infow("WebSocket request", fields...)
 		}
 
 		return resp

@@ -18,8 +18,8 @@ func TestRateLimit_Allows(t *testing.T) {
 		Default: 10, // 10 requests per second
 	}
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RateLimit(cfg)(handler)
@@ -27,14 +27,14 @@ func TestRateLimit_Allows(t *testing.T) {
 	client := &ws.Client{
 		Addr: "127.0.0.1:12345",
 	}
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.Nil(t, resp.Error)
 	assert.Equal(t, "ok", resp.Result)
@@ -48,8 +48,8 @@ func TestRateLimit_Blocks(t *testing.T) {
 		Default: 1, // 1 request per second
 	}
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RateLimit(cfg)(handler)
@@ -57,7 +57,7 @@ func TestRateLimit_Blocks(t *testing.T) {
 	client := &ws.Client{
 		Addr: "127.0.0.1:12346",
 	}
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
@@ -65,15 +65,15 @@ func TestRateLimit_Blocks(t *testing.T) {
 	}
 
 	// First request should succeed (uses burst token)
-	resp := wrapped(mc)
+	resp := wrapped(c)
 	assert.Nil(t, resp.Error)
 
 	// Second request also succeeds (burst = limit + 1 = 2)
-	resp = wrapped(mc)
+	resp = wrapped(c)
 	assert.Nil(t, resp.Error)
 
 	// Third request should fail (burst exhausted)
-	resp = wrapped(mc)
+	resp = wrapped(c)
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "TooManyRequests", resp.Error.Reason)
 
@@ -89,8 +89,8 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 		},
 	}
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RateLimit(cfg)(handler)
@@ -100,7 +100,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 	}
 
 	// Heartbeat should always succeed
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  client,
@@ -108,7 +108,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 	}
 
 	for i := 0; i < 10; i++ {
-		resp := wrapped(mc)
+		resp := wrapped(c)
 		assert.Nil(t, resp.Error, "heartbeat %d should succeed", i)
 	}
 
@@ -121,13 +121,13 @@ func TestRateLimit_NilClient(t *testing.T) {
 		Default: 1,
 	}
 
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := RateLimit(cfg)(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,
@@ -135,6 +135,6 @@ func TestRateLimit_NilClient(t *testing.T) {
 	}
 
 	// Should pass through without rate limiting
-	resp := wrapped(mc)
+	resp := wrapped(c)
 	assert.Nil(t, resp.Error)
 }

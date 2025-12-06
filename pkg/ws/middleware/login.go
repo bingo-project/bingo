@@ -25,24 +25,24 @@ type loginResponse struct {
 // It validates platform, and after successful login, parses the access token
 // from response and notifies the hub.
 func LoginStateUpdater(next ws.Handler) ws.Handler {
-	return func(mc *ws.Context) *jsonrpc.Response {
+	return func(c *ws.Context) *jsonrpc.Response {
 		// Parse platform from request params
 		var params loginParams
-		if len(mc.Request.Params) > 0 {
-			_ = json.Unmarshal(mc.Request.Params, &params)
+		if len(c.Request.Params) > 0 {
+			_ = json.Unmarshal(c.Request.Params, &params)
 		}
 
 		// Validate platform
 		if !ws.IsValidPlatform(params.Platform) {
-			return jsonrpc.NewErrorResponse(mc.Request.ID,
+			return jsonrpc.NewErrorResponse(c.Request.ID,
 				errorsx.New(400, "InvalidPlatform", "Invalid platform: %s", params.Platform))
 		}
 
 		// Call next handler
-		resp := next(mc)
+		resp := next(c)
 
 		// Only process successful responses
-		if resp.Error != nil || mc.Client == nil {
+		if resp.Error != nil || c.Client == nil {
 			return resp
 		}
 
@@ -54,16 +54,16 @@ func LoginStateUpdater(next ws.Handler) ws.Handler {
 		}
 
 		// Parse token using client's token parser
-		tokenInfo, err := mc.Client.ParseToken(loginResp.AccessToken)
+		tokenInfo, err := c.Client.ParseToken(loginResp.AccessToken)
 		if err != nil {
 			return resp
 		}
 
 		// Update client context
-		mc.Client.UpdateContext(tokenInfo.UserID)
+		c.Client.UpdateContext(tokenInfo.UserID)
 
 		// Notify hub about login
-		mc.Client.NotifyLogin(tokenInfo.UserID, params.Platform, tokenInfo.ExpiresAt)
+		c.Client.NotifyLogin(tokenInfo.UserID, params.Platform, tokenInfo.ExpiresAt)
 
 		return resp
 	}

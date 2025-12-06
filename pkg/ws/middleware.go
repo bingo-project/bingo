@@ -27,32 +27,32 @@ type Context struct {
 }
 
 // RequestID returns the request ID from context.
-func (mc *Context) RequestID() string {
-	if mc.Ctx == nil {
+func (c *Context) RequestID() string {
+	if c.Ctx == nil {
 		return ""
 	}
-	return contextx.RequestID(mc.Ctx)
+	return contextx.RequestID(c.Ctx)
 }
 
 // UserID returns the user ID from context.
-func (mc *Context) UserID() string {
-	if mc.Ctx == nil {
+func (c *Context) UserID() string {
+	if c.Ctx == nil {
 		return ""
 	}
-	return contextx.UserID(mc.Ctx)
+	return contextx.UserID(c.Ctx)
 }
 
 // BindParams unmarshals the request params into the given struct.
-func (mc *Context) BindParams(v any) error {
-	if len(mc.Request.Params) == 0 {
+func (c *Context) BindParams(v any) error {
+	if len(c.Request.Params) == 0 {
 		return nil
 	}
-	return json.Unmarshal(mc.Request.Params, v)
+	return json.Unmarshal(c.Request.Params, v)
 }
 
 // BindValidate unmarshals and validates the request params.
-func (mc *Context) BindValidate(v any) error {
-	if err := mc.BindParams(v); err != nil {
+func (c *Context) BindValidate(v any) error {
+	if err := c.BindParams(v); err != nil {
 		return err
 	}
 	return validate.Struct(v)

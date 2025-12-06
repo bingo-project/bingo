@@ -201,7 +201,7 @@ func (r *Router) Handle(method string, handler Handler, middlewares ...Middlewar
 func (r *Router) Group(middlewares ...Middleware) *Group
 
 // Dispatch 分发请求
-func (r *Router) Dispatch(mc *Context) *jsonrpc.Response
+func (r *Router) Dispatch(c *Context) *jsonrpc.Response
 ```
 
 ### Handler 注册示例
@@ -259,10 +259,10 @@ type Context struct {
 }
 
 // BindParams 解析请求参数到结构体
-func (mc *Context) BindParams(v any) error
+func (c *Context) BindParams(v any) error
 
 // BindValidate 解析并验证请求参数
-func (mc *Context) BindValidate(v any) error
+func (c *Context) BindValidate(v any) error
 ```
 
 ### Handler 实现示例
@@ -270,32 +270,32 @@ func (mc *Context) BindValidate(v any) error
 ```go
 // internal/apiserver/handler/ws/auth.go
 
-func (h *Handler) Login(mc *ws.Context) *jsonrpc.Response {
+func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
     var req v1.LoginRequest
-    if err := mc.BindValidate(&req); err != nil {
-        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrBind.SetMessage(err.Error()))
+    if err := c.BindValidate(&req); err != nil {
+        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrBind.SetMessage(err.Error()))
     }
 
-    resp, err := h.b.Auth().Login(mc.Ctx, &req)
+    resp, err := h.b.Auth().Login(c.Ctx, &req)
     if err != nil {
-        return jsonrpc.NewErrorResponse(mc.Request.ID, err)
+        return jsonrpc.NewErrorResponse(c.Request.ID, err)
     }
 
-    return jsonrpc.NewResponse(mc.Request.ID, resp)
+    return jsonrpc.NewResponse(c.Request.ID, resp)
 }
 
-func (h *Handler) UserInfo(mc *ws.Context) *jsonrpc.Response {
-    uid := mc.UserID()
+func (h *Handler) UserInfo(c *ws.Context) *jsonrpc.Response {
+    uid := c.UserID()
     if uid == "" {
-        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrTokenInvalid)
+        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrTokenInvalid)
     }
 
-    user, err := store.S.User().GetByUID(mc.Ctx, uid)
+    user, err := store.S.User().GetByUID(c.Ctx, uid)
     if err != nil {
-        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrUserNotFound)
+        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrUserNotFound)
     }
 
-    return jsonrpc.NewResponse(mc.Request.ID, &v1.UserInfo{...})
+    return jsonrpc.NewResponse(c.Request.ID, &v1.UserInfo{...})
 }
 ```
 

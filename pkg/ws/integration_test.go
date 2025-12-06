@@ -28,30 +28,30 @@ func TestFullMiddlewareChain(t *testing.T) {
 	var order []string
 	router.Use(
 		func(next ws.Handler) ws.Handler {
-			return func(mc *ws.Context) *jsonrpc.Response {
+			return func(c *ws.Context) *jsonrpc.Response {
 				order = append(order, "recovery")
-				return middleware.Recovery(next)(mc)
+				return middleware.Recovery(next)(c)
 			}
 		},
 		func(next ws.Handler) ws.Handler {
-			return func(mc *ws.Context) *jsonrpc.Response {
+			return func(c *ws.Context) *jsonrpc.Response {
 				order = append(order, "requestid")
-				return middleware.RequestID(next)(mc)
+				return middleware.RequestID(next)(c)
 			}
 		},
 	)
 
 	// Public handler
-	router.Handle("public.test", func(mc *ws.Context) *jsonrpc.Response {
+	router.Handle("public.test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
 	// Private handler with auth middleware
 	private := router.Group(middleware.Auth)
-	private.Handle("private.test", func(mc *ws.Context) *jsonrpc.Response {
+	private.Handle("private.test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "private-handler")
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
 	// Test public method - should pass through all middlewares
@@ -60,7 +60,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 		Send: make(chan []byte, 256),
 	}
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Client:    client,
@@ -68,15 +68,15 @@ func TestFullMiddlewareChain(t *testing.T) {
 		StartTime: time.Now(),
 	}
 
-	resp := router.Dispatch(mc)
+	resp := router.Dispatch(c)
 	assert.Nil(t, resp.Error)
 	assert.Equal(t, []string{"recovery", "requestid", "handler"}, order)
 
 	// Test private method without auth - should be rejected
 	order = nil
-	mc.Method = "private.test"
-	mc.Request.Method = "private.test"
-	resp = router.Dispatch(mc)
+	c.Method = "private.test"
+	c.Request.Method = "private.test"
+	resp = router.Dispatch(c)
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "Unauthorized", resp.Error.Reason)
 
@@ -85,7 +85,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 	client.UserID = "user-1"
 	client.Platform = "web"
 	client.LoginTime = 1000
-	resp = router.Dispatch(mc)
+	resp = router.Dispatch(c)
 	assert.Nil(t, resp.Error)
 	assert.Contains(t, order, "private-handler")
 }
@@ -99,28 +99,28 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 	for i := 1; i <= 3; i++ {
 		n := i // capture
 		router.Use(func(next ws.Handler) ws.Handler {
-			return func(mc *ws.Context) *jsonrpc.Response {
+			return func(c *ws.Context) *jsonrpc.Response {
 				order = append(order, "before-"+string(rune('0'+n)))
-				resp := next(mc)
+				resp := next(c)
 				order = append(order, "after-"+string(rune('0'+n)))
 				return resp
 			}
 		})
 	}
 
-	router.Handle("test", func(mc *ws.Context) *jsonrpc.Response {
+	router.Handle("test", func(c *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
 	}
 
-	router.Dispatch(mc)
+	router.Dispatch(c)
 
 	// Verify onion execution: before1 -> before2 -> before3 -> handler -> after3 -> after2 -> after1
 	expected := []string{
@@ -139,8 +139,8 @@ func TestRateLimitIntegration(t *testing.T) {
 		Default: 1,
 	}))
 
-	router.Handle("test", func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	router.Handle("test", func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	})
 
 	client := &ws.Client{
@@ -148,7 +148,7 @@ func TestRateLimitIntegration(t *testing.T) {
 		Send: make(chan []byte, 256),
 	}
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,
@@ -157,15 +157,15 @@ func TestRateLimitIntegration(t *testing.T) {
 	}
 
 	// First request should pass
-	resp := router.Dispatch(mc)
+	resp := router.Dispatch(c)
 	assert.Nil(t, resp.Error)
 
 	// Second request should pass (burst allows 2)
-	resp = router.Dispatch(mc)
+	resp = router.Dispatch(c)
 	assert.Nil(t, resp.Error)
 
 	// Third request should be rate limited
-	resp = router.Dispatch(mc)
+	resp = router.Dispatch(c)
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "TooManyRequests", resp.Error.Reason)
 
@@ -180,31 +180,31 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 
 	// Global middleware
 	router.Use(func(next ws.Handler) ws.Handler {
-		return func(mc *ws.Context) *jsonrpc.Response {
+		return func(c *ws.Context) *jsonrpc.Response {
 			publicMiddlewareCalled = true
-			return next(mc)
+			return next(c)
 		}
 	})
 
 	// Public group (no additional middleware)
 	public := router.Group()
-	public.Handle("public.test", func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "public")
+	public.Handle("public.test", func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "public")
 	})
 
 	// Private group with additional middleware
 	private := router.Group(func(next ws.Handler) ws.Handler {
-		return func(mc *ws.Context) *jsonrpc.Response {
+		return func(c *ws.Context) *jsonrpc.Response {
 			privateMiddlewareCalled = true
-			return next(mc)
+			return next(c)
 		}
 	})
-	private.Handle("private.test", func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "private")
+	private.Handle("private.test", func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "private")
 	})
 
 	// Test public method - only global middleware should be called
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Method:    "public.test",
@@ -213,16 +213,16 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 
 	publicMiddlewareCalled = false
 	privateMiddlewareCalled = false
-	router.Dispatch(mc)
+	router.Dispatch(c)
 	assert.True(t, publicMiddlewareCalled, "global middleware should be called")
 	assert.False(t, privateMiddlewareCalled, "private middleware should NOT be called for public method")
 
 	// Test private method - both middlewares should be called
-	mc.Method = "private.test"
-	mc.Request.Method = "private.test"
+	c.Method = "private.test"
+	c.Request.Method = "private.test"
 	publicMiddlewareCalled = false
 	privateMiddlewareCalled = false
-	router.Dispatch(mc)
+	router.Dispatch(c)
 	assert.True(t, publicMiddlewareCalled, "global middleware should be called")
 	assert.True(t, privateMiddlewareCalled, "private middleware should be called for private method")
 }

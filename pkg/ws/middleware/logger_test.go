@@ -16,20 +16,20 @@ import (
 )
 
 func TestLogger_Success(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Logger(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.Nil(t, resp.Error)
 	// Logger should not modify the response
@@ -37,29 +37,29 @@ func TestLogger_Success(t *testing.T) {
 }
 
 func TestLogger_Error(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewErrorResponse(mc.Request.ID,
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewErrorResponse(c.Request.ID,
 			errorsx.New(400, "BadRequest", "test error"))
 	}
 
 	wrapped := Logger(handler)
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "BadRequest", resp.Error.Reason)
 }
 
 func TestLogger_WithClient(t *testing.T) {
-	handler := func(mc *ws.Context) *jsonrpc.Response {
-		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	handler := func(c *ws.Context) *jsonrpc.Response {
+		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
 	wrapped := Logger(handler)
@@ -69,7 +69,7 @@ func TestLogger_WithClient(t *testing.T) {
 		UserID: "user-123",
 	}
 
-	mc := &ws.Context{
+	c := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,
@@ -77,7 +77,7 @@ func TestLogger_WithClient(t *testing.T) {
 		StartTime: time.Now(),
 	}
 
-	resp := wrapped(mc)
+	resp := wrapped(c)
 
 	assert.Nil(t, resp.Error)
 	assert.Equal(t, "ok", resp.Result)
