@@ -4,7 +4,7 @@
 package middleware
 
 import (
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"

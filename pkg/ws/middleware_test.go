@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 )

@@ -8,8 +8,8 @@ import (
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/core"
+	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 )
 

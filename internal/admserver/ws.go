@@ -14,8 +14,8 @@ import (
 	"bingo/internal/admserver/router"
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/facade"
+	"bingo/pkg/contextx"
 	"bingo/pkg/ws"
 	"bingo/pkg/ws/middleware"
 )

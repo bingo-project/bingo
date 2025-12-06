@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )

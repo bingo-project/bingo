@@ -7,7 +7,7 @@ import (
 	"context"
 	"net/http"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 )
 
 // AuthenticateWebSocket authenticates a WebSocket connection from HTTP request.

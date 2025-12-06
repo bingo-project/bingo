@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 )
 

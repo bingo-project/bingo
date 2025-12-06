@@ -51,7 +51,7 @@ gRPC-Gateway                 gRPC Server             WS Handler
 
 ### 1.1 Context Key 定义
 
-创建 `internal/pkg/contextx/contextx.go`：
+创建 `pkg/contextx/contextx.go`：
 
 ```go
 package contextx
@@ -125,7 +125,7 @@ func ClientIP(ctx context.Context) string {
 
 ### 1.2 用户信息模型
 
-创建 `internal/pkg/contextx/user.go`：
+创建 `pkg/contextx/user.go`：
 
 ```go
 package contextx
@@ -171,7 +171,7 @@ package grpc
 import (
 	"context"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 )
 
 // UserRetriever 用户信息获取接口
@@ -194,8 +194,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/errno"
+	"bingo/pkg/contextx"
 	"bingo/pkg/token"
 )
 
@@ -362,7 +362,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 )
 
 // RequestIDInterceptor 请求 ID 拦截器
@@ -409,7 +409,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 )
 
 // ClientIPInterceptor 客户端 IP 拦截器
@@ -470,7 +470,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 )
 
 // LoggerInterceptor 日志拦截器
@@ -794,8 +794,8 @@ func NewGRPCServer(retriever mw.UserRetriever, authz *auth.Authz) *grpc.Server {
 
 ### 需要创建的文件
 
-- `internal/pkg/contextx/contextx.go`
-- `internal/pkg/contextx/user.go`
+- `pkg/contextx/contextx.go`
+- `pkg/contextx/user.go`
 - `internal/pkg/middleware/grpc/authn.go`
 - `internal/pkg/middleware/grpc/requestid.go`
 - `internal/pkg/middleware/grpc/clientip.go`

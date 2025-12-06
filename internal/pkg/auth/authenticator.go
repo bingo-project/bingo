@@ -9,7 +9,7 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 
-	"bingo/internal/pkg/contextx"
+	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 )
 
