@@ -143,14 +143,18 @@ WebSocket Message
 ```go
 // pkg/ws/middleware.go
 
-// Context 中间件上下文
+// Context 中间件上下文，嵌入 context.Context 可直接传递给 Biz 层
 type Context struct {
-    Ctx       context.Context   // 请求上下文
-    Request   *jsonrpc.Request  // JSON-RPC 请求
-    Client    *Client           // WebSocket 客户端
-    Method    string            // 方法名
-    StartTime time.Time         // 请求开始时间
+    context.Context               // 嵌入标准 context，可直接传递给下层
+    Request   *jsonrpc.Request    // JSON-RPC 请求
+    Client    *Client             // WebSocket 客户端
+    Method    string              // 方法名
+    StartTime time.Time           // 请求开始时间
 }
+
+// 响应辅助方法
+func (c *Context) JSON(data any) *jsonrpc.Response   // 返回成功响应
+func (c *Context) Error(err error) *jsonrpc.Response // 返回错误响应
 
 // Handler 消息处理函数
 type Handler func(*Context) *jsonrpc.Response
@@ -249,13 +253,13 @@ func RegisterWSHandlers(router *ws.Router) {
 // Handler 消息处理函数
 type Handler func(*Context) *jsonrpc.Response
 
-// Context 包含请求的所有信息
+// Context 包含请求的所有信息，嵌入 context.Context 可直接传递给 Biz 层
 type Context struct {
-    Ctx       context.Context   // 请求上下文
-    Request   *jsonrpc.Request  // JSON-RPC 请求
-    Client    *Client           // WebSocket 客户端
-    Method    string            // 方法名
-    StartTime time.Time         // 请求开始时间
+    context.Context               // 嵌入标准 context
+    Request   *jsonrpc.Request    // JSON-RPC 请求
+    Client    *Client             // WebSocket 客户端
+    Method    string              // 方法名
+    StartTime time.Time           // 请求开始时间
 }
 
 // BindParams 解析请求参数到结构体
@@ -263,6 +267,12 @@ func (c *Context) BindParams(v any) error
 
 // BindValidate 解析并验证请求参数
 func (c *Context) BindValidate(v any) error
+
+// JSON 返回成功响应
+func (c *Context) JSON(data any) *jsonrpc.Response
+
+// Error 返回错误响应
+func (c *Context) Error(err error) *jsonrpc.Response
 ```
 
 ### Handler 实现示例
@@ -273,29 +283,29 @@ func (c *Context) BindValidate(v any) error
 func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
     var req v1.LoginRequest
     if err := c.BindValidate(&req); err != nil {
-        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrBind.SetMessage(err.Error()))
+        return c.Error(errno.ErrBind.SetMessage(err.Error()))
     }
 
-    resp, err := h.b.Auth().Login(c.Ctx, &req)
+    resp, err := h.b.Auth().Login(c, &req)  // ws.Context 嵌入 context.Context，可直接传递
     if err != nil {
-        return jsonrpc.NewErrorResponse(c.Request.ID, err)
+        return c.Error(err)
     }
 
-    return jsonrpc.NewResponse(c.Request.ID, resp)
+    return c.JSON(resp)
 }
 
 func (h *Handler) UserInfo(c *ws.Context) *jsonrpc.Response {
     uid := c.UserID()
     if uid == "" {
-        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrTokenInvalid)
+        return c.Error(errno.ErrTokenInvalid)
     }
 
-    user, err := store.S.User().GetByUID(c.Ctx, uid)
+    user, err := store.S.User().GetByUID(c, uid)
     if err != nil {
-        return jsonrpc.NewErrorResponse(c.Request.ID, errno.ErrUserNotFound)
+        return c.Error(errno.ErrUserNotFound)
     }
 
-    return jsonrpc.NewResponse(c.Request.ID, &v1.UserInfo{...})
+    return c.JSON(&v1.UserInfo{...})
 }
 ```
 

@@ -28,7 +28,7 @@ func TestRateLimit_Allows(t *testing.T) {
 		Addr: "127.0.0.1:12345",
 	}
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
@@ -58,7 +58,7 @@ func TestRateLimit_Blocks(t *testing.T) {
 		Addr: "127.0.0.1:12346",
 	}
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
@@ -101,7 +101,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 
 	// Heartbeat should always succeed
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  client,
 		Method:  "heartbeat",
@@ -128,7 +128,7 @@ func TestRateLimit_NilClient(t *testing.T) {
 	wrapped := RateLimit(cfg)(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,
 		Method:  "test",

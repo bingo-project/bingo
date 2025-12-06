@@ -14,12 +14,12 @@ import (
 
 // Healthz returns server health status.
 func (h *Handler) Healthz(c *ws.Context) *jsonrpc.Response {
-	status, err := h.b.Servers().Status(c.Ctx)
+	status, err := h.b.Servers().Status(c)
 	if err != nil {
-		return jsonrpc.NewErrorResponse(c.Request.ID, err)
+		return c.Error(err)
 	}
 
-	return jsonrpc.NewResponse(c.Request.ID, map[string]any{
+	return c.JSON(map[string]any{
 		"status":     status,
 		"serverTime": time.Now().Unix(),
 	})
@@ -27,5 +27,5 @@ func (h *Handler) Healthz(c *ws.Context) *jsonrpc.Response {
 
 // Version returns server version info.
 func (h *Handler) Version(c *ws.Context) *jsonrpc.Response {
-	return jsonrpc.NewResponse(c.Request.ID, version.Get())
+	return c.JSON(version.Get())
 }

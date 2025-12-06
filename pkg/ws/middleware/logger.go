@@ -31,9 +31,9 @@ func Logger(next ws.Handler) ws.Handler {
 
 		if resp.Error != nil {
 			fields = append(fields, "error", resp.Error.Reason)
-			log.C(c.Ctx).Warnw("WebSocket request failed", fields...)
+			log.C(c.Context).Warnw("WebSocket request failed", fields...)
 		} else {
-			log.C(c.Ctx).Infow("WebSocket request", fields...)
+			log.C(c.Context).Infow("WebSocket request", fields...)
 		}
 
 		return resp

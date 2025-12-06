@@ -22,7 +22,7 @@ func TestRouter_Handle(t *testing.T) {
 	})
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test.method"},
 		Method:  "test.method",
 	}
@@ -38,7 +38,7 @@ func TestRouter_MethodNotFound(t *testing.T) {
 	r := NewRouter()
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unknown"},
 		Method:  "unknown",
 	}
@@ -65,7 +65,7 @@ func TestRouter_GlobalMiddleware(t *testing.T) {
 	})
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
@@ -101,7 +101,7 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 	}, handlerMw)
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
@@ -152,7 +152,7 @@ func TestRouter_Group(t *testing.T) {
 	})
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "group.method"},
 		Method:  "group.method",
 	}
@@ -189,7 +189,7 @@ func TestRouter_GroupIsolation(t *testing.T) {
 	// Call public method
 	authCalled = false
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "public.method"},
 		Method:  "public.method",
 	}
@@ -228,7 +228,7 @@ func TestGroup_Use(t *testing.T) {
 	})
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}

@@ -18,8 +18,9 @@ import (
 var validate = validator.New()
 
 // Context contains all information needed by middleware.
+// It embeds context.Context so it can be passed directly to business layer methods.
 type Context struct {
-	Ctx       context.Context
+	context.Context
 	Request   *jsonrpc.Request
 	Client    *Client
 	Method    string
@@ -28,18 +29,18 @@ type Context struct {
 
 // RequestID returns the request ID from context.
 func (c *Context) RequestID() string {
-	if c.Ctx == nil {
+	if c.Context == nil {
 		return ""
 	}
-	return contextx.RequestID(c.Ctx)
+	return contextx.RequestID(c.Context)
 }
 
 // UserID returns the user ID from context.
 func (c *Context) UserID() string {
-	if c.Ctx == nil {
+	if c.Context == nil {
 		return ""
 	}
-	return contextx.UserID(c.Ctx)
+	return contextx.UserID(c.Context)
 }
 
 // BindParams unmarshals the request params into the given struct.
@@ -56,6 +57,16 @@ func (c *Context) BindValidate(v any) error {
 		return err
 	}
 	return validate.Struct(v)
+}
+
+// JSON returns a successful JSON-RPC response with the given data.
+func (c *Context) JSON(data any) *jsonrpc.Response {
+	return jsonrpc.NewResponse(c.Request.ID, data)
+}
+
+// Error returns a JSON-RPC error response.
+func (c *Context) Error(err error) *jsonrpc.Response {
+	return jsonrpc.NewErrorResponse(c.Request.ID, err)
 }
 
 // Handler is a message handler function.

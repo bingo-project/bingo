@@ -19,7 +19,7 @@ func Auth(next ws.Handler) ws.Handler {
 		}
 
 		// Add user ID to context
-		c.Ctx = contextx.WithUserID(c.Ctx, c.Client.UserID)
+		c.Context = contextx.WithUserID(c.Context, c.Client.UserID)
 
 		return next(c)
 	}

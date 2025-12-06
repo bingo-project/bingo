@@ -21,7 +21,7 @@ func TestRecovery(t *testing.T) {
 	wrapped := Recovery(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
@@ -42,7 +42,7 @@ func TestRecovery_NoError(t *testing.T) {
 	wrapped := Recovery(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
@@ -61,7 +61,7 @@ func TestRecovery_PanicWithError(t *testing.T) {
 	wrapped := Recovery(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}

@@ -16,7 +16,7 @@ import (
 
 func TestHeartbeatHandler(t *testing.T) {
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  &Client{HeartbeatTime: 0},
 		Method:  "heartbeat",
@@ -52,7 +52,7 @@ func TestSubscribeHandler(t *testing.T) {
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
 		Method:  "subscribe",
@@ -74,7 +74,7 @@ func TestSubscribeHandler_InvalidParams(t *testing.T) {
 	}
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
 		Method:  "subscribe",
@@ -95,7 +95,7 @@ func TestSubscribeHandler_EmptyTopics(t *testing.T) {
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
 		Method:  "subscribe",
@@ -124,7 +124,7 @@ func TestUnsubscribeHandler(t *testing.T) {
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,
 		Method:  "unsubscribe",
@@ -146,7 +146,7 @@ func TestUnsubscribeHandler_InvalidParams(t *testing.T) {
 	}
 
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
 		Method:  "unsubscribe",
@@ -167,7 +167,7 @@ func TestUnsubscribeHandler_EmptyTopics(t *testing.T) {
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
 	c := &Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,
 		Method:  "unsubscribe",

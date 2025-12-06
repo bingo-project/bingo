@@ -208,7 +208,7 @@ func (c *Client) handleMessage(data []byte) {
 	// Use router if available
 	if c.router != nil {
 		mc := &Context{
-			Ctx:       c.ctx,
+			Context:   c.ctx,
 			Request:   &req,
 			Client:    c,
 			Method:    req.Method,

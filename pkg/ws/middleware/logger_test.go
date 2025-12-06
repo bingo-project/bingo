@@ -23,7 +23,7 @@ func TestLogger_Success(t *testing.T) {
 	wrapped := Logger(handler)
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
@@ -45,7 +45,7 @@ func TestLogger_Error(t *testing.T) {
 	wrapped := Logger(handler)
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
@@ -70,7 +70,7 @@ func TestLogger_WithClient(t *testing.T) {
 	}
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,
 		Method:    "test",

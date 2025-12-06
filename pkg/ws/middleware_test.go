@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"bingo/internal/pkg/contextx"
+	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 )
 
@@ -19,7 +20,7 @@ func TestContext_RequestID(t *testing.T) {
 	ctx = contextx.WithRequestID(ctx, "test-123")
 
 	c := &Context{
-		Ctx:       ctx,
+		Context:   ctx,
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
@@ -33,7 +34,7 @@ func TestContext_UserID(t *testing.T) {
 	ctx = contextx.WithUserID(ctx, "user-456")
 
 	c := &Context{
-		Ctx:       ctx,
+		Context:   ctx,
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
@@ -44,7 +45,7 @@ func TestContext_UserID(t *testing.T) {
 
 func TestContext_EmptyContext(t *testing.T) {
 	c := &Context{
-		Ctx:     nil,
+		Context: nil,
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
 	}
@@ -197,4 +198,33 @@ func TestContext_BindValidate_ValidationError(t *testing.T) {
 
 	err := c.BindValidate(&params)
 	assert.Error(t, err)
+}
+
+func TestContext_JSON(t *testing.T) {
+	c := &Context{
+		Request: &jsonrpc.Request{ID: 1, Method: "test"},
+	}
+
+	resp := c.JSON(map[string]string{"status": "ok"})
+
+	assert.NotNil(t, resp)
+	assert.Equal(t, any(1), resp.ID)
+	assert.Nil(t, resp.Error)
+	assert.Equal(t, map[string]string{"status": "ok"}, resp.Result)
+}
+
+func TestContext_Error(t *testing.T) {
+	c := &Context{
+		Request: &jsonrpc.Request{ID: 2, Method: "test"},
+	}
+
+	err := &errorsx.ErrorX{Code: 400, Reason: "BadRequest", Message: "Invalid params"}
+	resp := c.Error(err)
+
+	assert.NotNil(t, resp)
+	assert.Equal(t, any(2), resp.ID)
+	assert.Nil(t, resp.Result)
+	assert.NotNil(t, resp.Error)
+	assert.Equal(t, -32602, resp.Error.Code) // 400 maps to JSON-RPC error code
+	assert.Equal(t, "BadRequest", resp.Error.Reason)
 }

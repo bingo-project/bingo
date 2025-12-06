@@ -18,7 +18,7 @@ func Recovery(next ws.Handler) ws.Handler {
 	return func(c *ws.Context) (resp *jsonrpc.Response) {
 		defer func() {
 			if r := recover(); r != nil {
-				log.C(c.Ctx).Errorw("WebSocket panic recovered",
+				log.C(c.Context).Errorw("WebSocket panic recovered",
 					"method", c.Method,
 					"panic", r,
 					"stack", string(debug.Stack()),

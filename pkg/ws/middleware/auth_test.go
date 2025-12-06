@@ -26,7 +26,7 @@ func TestAuth_Authenticated(t *testing.T) {
 	client.LoginTime = 1000
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
@@ -48,7 +48,7 @@ func TestAuth_Unauthenticated(t *testing.T) {
 	client := &ws.Client{} // Not logged in
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",
@@ -68,7 +68,7 @@ func TestAuth_NilClient(t *testing.T) {
 	wrapped := Auth(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,
 		Method:  "test",
@@ -96,7 +96,7 @@ func TestAuth_SetsUserIDInContext(t *testing.T) {
 	client.LoginTime = 1000
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
 		Method:  "test",

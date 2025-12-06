@@ -24,7 +24,7 @@ func TestRequestID_UsesClientID(t *testing.T) {
 	wrapped := RequestID(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: "client-123", Method: "test"},
 		Method:  "test",
 	}
@@ -45,7 +45,7 @@ func TestRequestID_GeneratesIfMissing(t *testing.T) {
 	wrapped := RequestID(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{Method: "test"}, // No ID
 		Method:  "test",
 	}
@@ -67,7 +67,7 @@ func TestRequestID_NumericID(t *testing.T) {
 	wrapped := RequestID(handler)
 
 	c := &ws.Context{
-		Ctx:     context.Background(),
+		Context: context.Background(),
 		Request: &jsonrpc.Request{ID: 42, Method: "test"},
 		Method:  "test",
 	}

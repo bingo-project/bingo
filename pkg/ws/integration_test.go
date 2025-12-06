@@ -61,7 +61,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 	}
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Client:    client,
 		Method:    "public.test",
@@ -114,7 +114,7 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 	})
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
 		StartTime: time.Now(),
@@ -149,7 +149,7 @@ func TestRateLimitIntegration(t *testing.T) {
 	}
 
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,
 		Method:    "test",
@@ -205,7 +205,7 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 
 	// Test public method - only global middleware should be called
 	c := &ws.Context{
-		Ctx:       context.Background(),
+		Context:   context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Method:    "public.test",
 		StartTime: time.Now(),
