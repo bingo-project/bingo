@@ -50,6 +50,7 @@ type Client struct {
 	hub            *Hub
 	conn           *websocket.Conn
 	adapter        *jsonrpc.Adapter
+	router         *Router
 	ctx            context.Context
 	tokenParser    TokenParser
 	contextUpdater ContextUpdater
@@ -87,6 +88,13 @@ func WithTokenParser(parser TokenParser) ClientOption {
 func WithContextUpdater(updater ContextUpdater) ClientOption {
 	return func(c *Client) {
 		c.contextUpdater = updater
+	}
+}
+
+// WithRouter sets a router for the client.
+func WithRouter(r *Router) ClientOption {
+	return func(c *Client) {
+		c.router = r
 	}
 }
 
@@ -175,7 +183,7 @@ func (c *Client) WritePump() {
 func (c *Client) handleMessage(data []byte) {
 	logger := c.hub.logger.WithContext(c.ctx)
 
-	// Recover from panics in message handling
+	// Recover from panics in message handling (only for legacy path)
 	defer func() {
 		if r := recover(); r != nil {
 			logger.Errorw("Panic in handleMessage", "addr", c.Addr, "panic", r)
@@ -194,11 +202,25 @@ func (c *Client) handleMessage(data []byte) {
 		return
 	}
 
-	// Log message received
-	logger.Debugw("WebSocket message received", "method", req.Method, "id", req.ID, "addr", c.Addr)
-
 	// Update heartbeat for any message
 	c.Heartbeat(time.Now().Unix())
+
+	// Use router if available
+	if c.router != nil {
+		mc := &MiddlewareContext{
+			Ctx:       c.ctx,
+			Request:   &req,
+			Client:    c,
+			Method:    req.Method,
+			StartTime: time.Now(),
+		}
+		resp := c.router.Dispatch(mc)
+		c.sendJSON(resp)
+		return
+	}
+
+	// Legacy path: direct handling without router
+	logger.Debugw("WebSocket message received", "method", req.Method, "id", req.ID, "addr", c.Addr)
 
 	// Handle heartbeat
 	if req.Method == "heartbeat" {

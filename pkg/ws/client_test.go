@@ -57,3 +57,17 @@ func TestClient_IDIsUnique(t *testing.T) {
 
 	assert.NotEqual(t, client1.ID, client2.ID)
 }
+
+func TestClient_WithRouter(t *testing.T) {
+	hub := NewHub()
+	router := NewRouter()
+
+	router.Handle("test.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+		return jsonrpc.NewResponse(mc.Request.ID, "ok")
+	})
+
+	client := NewClient(hub, nil, context.Background(), nil, WithRouter(router))
+
+	assert.NotNil(t, client.router)
+	assert.Equal(t, router, client.router)
+}
