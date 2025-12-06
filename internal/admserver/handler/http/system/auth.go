@@ -3,7 +3,6 @@ package system
 import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 
 	"bingo/internal/admserver/biz"
 	"bingo/internal/pkg/core"
@@ -11,6 +10,7 @@ import (
 	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 type AuthController struct {
@@ -35,9 +35,8 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 func (ctrl *AuthController) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
-	var admin v1.AdminInfo
-	err := auth.User(c, &admin)
-	if err != nil {
+	admin, ok := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
+	if !ok {
 		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
 
 		return
@@ -59,8 +58,7 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 func (ctrl *AuthController) Menus(c *gin.Context) {
 	log.C(c).Infow("Menus function called")
 
-	var admin v1.AdminInfo
-	_ = auth.User(c, &admin)
+	admin, _ := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
 
 	resp, err := ctrl.b.Roles().GetMenuTree(c, admin.RoleName)
 	if err != nil {
@@ -93,7 +91,7 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	username := cast.ToString(auth.ID(c))
+	username := contextx.Username(c.Request.Context())
 	err := ctrl.b.Admins().ChangePassword(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
@@ -125,7 +123,7 @@ func (ctrl *AuthController) SwitchRole(c *gin.Context) {
 		return
 	}
 
-	username := cast.ToString(auth.ID(c))
+	username := contextx.Username(c.Request.Context())
 	resp, err := ctrl.b.Admins().SwitchRole(c, username, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)

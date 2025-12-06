@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 
 	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 // RequestID is a middleware that injects a 'X-Request-ID' into the context and request/response header of each request.
@@ -20,10 +21,22 @@ func RequestID() gin.HandlerFunc {
 			rid = uuid.New().String()
 		}
 
-		// Set request id to gin context & response header.
-		c.Request.Header.Set(auth.XRequestIDKey, rid)
-		c.Set(auth.XRequestIDKey, rid)
+		// Set request id to context & response header.
+		ctx := contextx.WithRequestID(c.Request.Context(), rid)
+		c.Request = c.Request.WithContext(ctx)
+
 		c.Writer.Header().Set(auth.XRequestIDKey, rid)
+
+		c.Next()
+	}
+}
+
+// ClientIP is a middleware that injects common prefix fields to context.
+func ClientIP() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+		ctx = contextx.WithClientIP(ctx, c.ClientIP())
+		c.Request = c.Request.WithContext(ctx)
 
 		c.Next()
 	}
@@ -73,13 +86,7 @@ func GetDefaultLogFormatterWithRequestID() gin.LogFormatter {
 
 // GetRequestIDFromContext returns 'RequestID' from the given context if present.
 func GetRequestIDFromContext(c *gin.Context) string {
-	if v, ok := c.Get(auth.XRequestIDKey); ok {
-		if requestID, ok := v.(string); ok {
-			return requestID
-		}
-	}
-
-	return ""
+	return contextx.RequestID(c.Request.Context())
 }
 
 // GetRequestIDFromHeaders returns 'RequestID' from the headers if present.

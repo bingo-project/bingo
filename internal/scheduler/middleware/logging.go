@@ -4,16 +4,18 @@ import (
 	"context"
 	"time"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/hibiken/asynq"
+
+	"bingo/internal/pkg/log"
+	"bingo/pkg/contextx"
 )
 
 func Logging(h asynq.Handler) asynq.Handler {
 	return asynq.HandlerFunc(func(ctx context.Context, t *asynq.Task) error {
 		// Context
-		taskId, _ := asynq.GetTaskID(ctx)
-		ctx = context.WithValue(ctx, log.KeyTask, t.Type())
-		ctx = context.WithValue(ctx, log.KeyTrace, taskId)
+		taskID, _ := asynq.GetTaskID(ctx)
+		ctx = contextx.WithTask(ctx, t.Type())
+		ctx = contextx.WithRequestID(ctx, taskID)
 
 		start := time.Now()
 
@@ -27,7 +29,7 @@ func Logging(h asynq.Handler) asynq.Handler {
 			return err
 		}
 
-		log.C(ctx).Infow("Finished processing "+t.Type(), "cost", time.Since(start), "payload", string(t.Payload()))
+		log.C(ctx).Infow("Finished processing "+t.Type(), log.KeyCost, time.Since(start), "payload", string(t.Payload()))
 
 		return nil
 	})

@@ -78,7 +78,7 @@ func (err *ErrorX) GRPCStatus() *status.Status {
 
 // WithRequestID 设置请求 ID.
 func (err *ErrorX) WithRequestID(requestID string) *ErrorX {
-	return err.KV("X-Request-ID", requestID) // 设置请求 ID
+	return err.KV("x-request-id", requestID) // 设置请求 ID
 }
 
 // Is 判断当前错误是否与目标错误匹配.

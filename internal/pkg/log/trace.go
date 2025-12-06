@@ -20,7 +20,6 @@ var (
 	KeyMessage  = "message"
 	KeyObject   = "object"
 	KeyInstance = "instance"
-	KeyInfo     = "info"
 )
 
 // C Parse context.
@@ -39,7 +38,6 @@ func (l *zapLogger) C(ctx context.Context) *zapLogger {
 		KeyTask:     contextx.Task,
 		KeyObject:   contextx.Object,
 		KeyInstance: contextx.Instance,
-		KeyInfo:     contextx.Info,
 	}
 
 	// 遍历映射，从 context 中提取值并添加到日志中.

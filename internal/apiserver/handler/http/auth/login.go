@@ -9,7 +9,7 @@ import (
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/model"
 	"bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 // Login returns a JWT token.
@@ -123,11 +123,10 @@ func (ctrl *AuthController) BindProvider(c *gin.Context) {
 		return
 	}
 
-	var user model.UserM
-	_ = auth.User(c, &user)
+	user, _ := contextx.UserInfo[*model.UserM](c.Request.Context())
 
 	provider := c.Param("provider")
-	resp, err := ctrl.b.Auth().Bind(c, provider, &req, &user)
+	resp, err := ctrl.b.Auth().Bind(c, provider, &req, user)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

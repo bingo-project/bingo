@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bingo-project/component-base/log"
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
+
+	"bingo/pkg/contextx"
 )
 
 var Ctx = context.Background()
@@ -17,9 +18,8 @@ func Context(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		user = i.Member.User
 	}
 
-	Ctx = context.WithValue(Ctx, log.KeyTrace, uuid.New().String())
-	Ctx = context.WithValue(Ctx, log.KeySubject, user.ID)
-	Ctx = context.WithValue(Ctx, log.KeyObject, i.ApplicationCommandData().Name)
-	Ctx = context.WithValue(Ctx, log.KeyInstance, i.ChannelID)
-	Ctx = context.WithValue(Ctx, log.KeyInfo, fmt.Sprintf("%s#%s", user.Username, user.Discriminator))
+	Ctx = contextx.WithRequestID(Ctx, uuid.New().String())
+	Ctx = contextx.WithUserID(Ctx, fmt.Sprintf("%s#%s", user.Username, user.Discriminator))
+	Ctx = contextx.WithObject(Ctx, i.ApplicationCommandData().Name)
+	Ctx = contextx.WithInstance(Ctx, i.ChannelID)
 }

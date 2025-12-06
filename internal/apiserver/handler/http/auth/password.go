@@ -3,12 +3,11 @@ package auth
 import (
 	"github.com/bingo-project/component-base/log"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/cast"
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 // ChangePassword 修改指定用户的密码.
@@ -32,8 +31,8 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	uid := auth.ID(c)
-	err := ctrl.b.Auth().ChangePassword(c, cast.ToString(uid), &req)
+	uid := contextx.UserID(c.Request.Context())
+	err := ctrl.b.Auth().ChangePassword(c, uid, &req)
 	if err != nil {
 		core.WriteResponse(c, err, nil)
 

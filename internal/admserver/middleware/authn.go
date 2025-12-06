@@ -1,14 +1,13 @@
 package middleware
 
 import (
-	"github.com/bingo-project/component-base/log"
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 func Authn() gin.HandlerFunc {
@@ -31,9 +30,9 @@ func Authn() gin.HandlerFunc {
 			return
 		}
 
-		c.Set(auth.XUserInfoKey, userInfo)
-		c.Set(auth.XUsernameKey, payload.Subject)
-		c.Set(log.KeySubject, payload.Subject)
+		ctx := contextx.WithUserInfo(c.Request.Context(), userInfo)
+		ctx = contextx.WithUserID(ctx, userInfo.Username)
+		c.Request = c.Request.WithContext(ctx)
 		c.Next()
 	}
 }

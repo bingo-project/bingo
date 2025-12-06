@@ -10,6 +10,7 @@ import (
 	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
+	"bingo/pkg/contextx"
 )
 
 type AuthController struct {
@@ -96,9 +97,8 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 func (ctrl *AuthController) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
-	var user v1.UserInfo
-	err := auth.User(c, &user)
-	if err != nil {
+	user, ok := contextx.UserInfo[v1.UserInfo](c.Request.Context())
+	if !ok {
 		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
 
 		return
