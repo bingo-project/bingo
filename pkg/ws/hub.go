@@ -272,9 +272,12 @@ func (h *Hub) handleLogin(event *LoginEvent) {
 	h.anonymousLock.Unlock()
 
 	// Update client info
+	now := time.Now().Unix()
 	client.UserID = event.UserID
 	client.Platform = event.Platform
+	client.LoginTime = now
 	client.TokenExpiresAt = event.TokenExpiresAt
+	client.Heartbeat(now)
 
 	// Check for existing session
 	h.userLock.Lock()

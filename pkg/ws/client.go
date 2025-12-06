@@ -308,6 +308,31 @@ func (c *Client) Login(platform, userID string, loginTime int64) {
 	c.Heartbeat(loginTime)
 }
 
+// ParseToken parses a JWT token using the client's token parser.
+func (c *Client) ParseToken(token string) (*TokenInfo, error) {
+	if c.tokenParser == nil {
+		return nil, errorsx.New(500, "InternalError", "Token parser not configured")
+	}
+	return c.tokenParser(token)
+}
+
+// UpdateContext updates the client context with user info.
+func (c *Client) UpdateContext(userID string) {
+	if c.contextUpdater != nil {
+		c.ctx = c.contextUpdater(c.ctx, userID)
+	}
+}
+
+// NotifyLogin sends a login event to the hub.
+func (c *Client) NotifyLogin(userID, platform string, tokenExpiresAt int64) {
+	c.hub.Login <- &LoginEvent{
+		Client:         c,
+		UserID:         userID,
+		Platform:       platform,
+		TokenExpiresAt: tokenExpiresAt,
+	}
+}
+
 func (c *Client) handleLogin(req *jsonrpc.Request) {
 	logger := c.hub.logger.WithContext(c.ctx)
 

@@ -39,7 +39,7 @@ func RegisterWSHandlers(router *ws.Router, b biz.IBiz) {
 	public.Handle("heartbeat", ws.HeartbeatHandler)
 	public.Handle("system.healthz", wrapBizHandler(systemHandler.Healthz))
 	public.Handle("system.version", wrapBizHandler(systemHandler.Version))
-	public.Handle("auth.login", wrapBizHandlerWithReq(authHandler.Login, &v1.LoginRequest{}))
+	public.Handle("auth.login", wrapLoginHandler(authHandler.Login))
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
@@ -59,21 +59,55 @@ func wrapBizHandler(handler func(context.Context, any) (any, error)) ws.Handler 
 	}
 }
 
-// wrapBizHandlerWithReq adapts a biz handler with request params to ws.Handler.
-func wrapBizHandlerWithReq[T any](handler func(context.Context, any) (any, error), _ *T) ws.Handler {
+// loginParams extends LoginRequest with WebSocket-specific fields.
+type loginParams struct {
+	v1.LoginRequest
+	Platform string `json:"platform"`
+}
+
+// wrapLoginHandler adapts the login handler to update client state after successful login.
+func wrapLoginHandler(handler func(context.Context, any) (any, error)) ws.Handler {
 	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
-		req := new(T)
+		// Parse request params
+		var params loginParams
 		if len(mc.Request.Params) > 0 {
-			if err := json.Unmarshal(mc.Request.Params, req); err != nil {
+			if err := json.Unmarshal(mc.Request.Params, &params); err != nil {
 				return jsonrpc.NewErrorResponse(mc.Request.ID,
 					errorsx.New(400, "InvalidParams", "Invalid params: %s", err.Error()))
 			}
 		}
 
-		resp, err := handler(mc.Ctx, req)
+		// Validate platform
+		if !ws.IsValidPlatform(params.Platform) {
+			return jsonrpc.NewErrorResponse(mc.Request.ID,
+				errorsx.New(400, "InvalidPlatform", "Invalid platform: %s", params.Platform))
+		}
+
+		// Call login handler
+		resp, err := handler(mc.Ctx, &params.LoginRequest)
 		if err != nil {
 			return jsonrpc.NewErrorResponse(mc.Request.ID, err)
 		}
+
+		// Parse token from response to get user info
+		if mc.Client != nil {
+			respBytes, _ := json.Marshal(resp)
+			var loginResp struct {
+				AccessToken string `json:"accessToken"`
+			}
+			if err := json.Unmarshal(respBytes, &loginResp); err == nil && loginResp.AccessToken != "" {
+				// Parse token using client's token parser
+				tokenInfo, err := mc.Client.ParseToken(loginResp.AccessToken)
+				if err == nil {
+					// Update client context
+					mc.Client.UpdateContext(tokenInfo.UserID)
+
+					// Notify hub about login
+					mc.Client.NotifyLogin(tokenInfo.UserID, params.Platform, tokenInfo.ExpiresAt)
+				}
+			}
+		}
+
 		return jsonrpc.NewResponse(mc.Request.ID, resp)
 	}
 }
