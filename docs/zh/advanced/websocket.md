@@ -233,7 +233,7 @@ func RegisterWSHandlers(router *ws.Router) {
     public := router.Group()
     public.Handle("heartbeat", ws.HeartbeatHandler)
     public.Handle("system.healthz", h.Healthz)
-    public.Handle("auth.login", middleware.LoginStateUpdater(h.Login))
+    public.Handle("auth.login", h.Login, middleware.LoginStateUpdater)
 
     // 需要认证的方法
     private := router.Group(middleware.Auth)

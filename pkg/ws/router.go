@@ -42,7 +42,8 @@ func (r *Router) Use(middlewares ...Middleware) *Router {
 	return r
 }
 
-// Handle registers a handler for a method.
+// Handle registers a handler for a method with optional middlewares.
+// Middlewares are applied in order: global -> group -> method-specific.
 func (r *Router) Handle(method string, handler Handler, middlewares ...Middleware) {
 	r.mu.Lock()
 	defer r.mu.Unlock()

@@ -225,7 +225,7 @@ func RegisterWSHandlers(router *ws.Router) {
 
     // 公开方法
     public := router.Group()
-    public.Handle("auth.login", middleware.LoginStateUpdater(h.Login))
+    public.Handle("auth.login", h.Login, middleware.LoginStateUpdater)
 
     // 需要认证的方法
     private := router.Group(middleware.Auth)

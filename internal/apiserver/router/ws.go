@@ -32,7 +32,9 @@ func RegisterWSHandlers(router *ws.Router) {
 	public.Handle("heartbeat", ws.HeartbeatHandler)
 	public.Handle("system.healthz", h.Healthz)
 	public.Handle("system.version", h.Version)
-	public.Handle("auth.login", middleware.LoginStateUpdater(h.Login))
+	// LoginStateUpdater runs after Login handler succeeds, parsing the returned
+	// access token to update client state and notify the hub of the login event.
+	public.Handle("auth.login", h.Login, middleware.LoginStateUpdater)
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
