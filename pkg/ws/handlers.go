@@ -11,7 +11,7 @@ import (
 )
 
 // HeartbeatHandler responds to heartbeat requests.
-func HeartbeatHandler(mc *MiddlewareContext) *jsonrpc.Response {
+func HeartbeatHandler(mc *Context) *jsonrpc.Response {
 	return jsonrpc.NewResponse(mc.Request.ID, map[string]any{
 		"status":      "ok",
 		"server_time": time.Now().Unix(),
@@ -19,7 +19,7 @@ func HeartbeatHandler(mc *MiddlewareContext) *jsonrpc.Response {
 }
 
 // SubscribeHandler handles topic subscription.
-func SubscribeHandler(mc *MiddlewareContext) *jsonrpc.Response {
+func SubscribeHandler(mc *Context) *jsonrpc.Response {
 	var params struct {
 		Topics []string `json:"topics"`
 	}
@@ -48,7 +48,7 @@ func SubscribeHandler(mc *MiddlewareContext) *jsonrpc.Response {
 }
 
 // UnsubscribeHandler handles topic unsubscription.
-func UnsubscribeHandler(mc *MiddlewareContext) *jsonrpc.Response {
+func UnsubscribeHandler(mc *Context) *jsonrpc.Response {
 	var params struct {
 		Topics []string `json:"topics"`
 	}

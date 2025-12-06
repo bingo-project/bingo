@@ -62,7 +62,7 @@ func TestClient_WithRouter(t *testing.T) {
 	hub := NewHub()
 	router := NewRouter()
 
-	router.Handle("test.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+	router.Handle("test.method", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 

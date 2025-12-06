@@ -15,7 +15,7 @@ import (
 )
 
 func TestHeartbeatHandler(t *testing.T) {
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  &Client{HeartbeatTime: 0},
@@ -51,7 +51,7 @@ func TestSubscribeHandler(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
@@ -73,7 +73,7 @@ func TestSubscribeHandler_InvalidParams(t *testing.T) {
 		hub: hub,
 	}
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
@@ -94,7 +94,7 @@ func TestSubscribeHandler_EmptyTopics(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "subscribe", Params: params},
 		Client:  client,
@@ -123,7 +123,7 @@ func TestUnsubscribeHandler(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {"market.BTC"}})
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,
@@ -145,7 +145,7 @@ func TestUnsubscribeHandler_InvalidParams(t *testing.T) {
 		hub: hub,
 	}
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: json.RawMessage(`invalid`)},
 		Client:  client,
@@ -166,7 +166,7 @@ func TestUnsubscribeHandler_EmptyTopics(t *testing.T) {
 	}
 
 	params, _ := json.Marshal(map[string][]string{"topics": {}})
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unsubscribe", Params: params},
 		Client:  client,

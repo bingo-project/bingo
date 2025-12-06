@@ -16,14 +16,14 @@ import (
 func TestRequestID_UsesClientID(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		capturedRequestID = mc.RequestID()
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: "client-123", Method: "test"},
 		Method:  "test",
@@ -37,14 +37,14 @@ func TestRequestID_UsesClientID(t *testing.T) {
 func TestRequestID_GeneratesIfMissing(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		capturedRequestID = mc.RequestID()
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{Method: "test"}, // No ID
 		Method:  "test",
@@ -59,14 +59,14 @@ func TestRequestID_GeneratesIfMissing(t *testing.T) {
 func TestRequestID_NumericID(t *testing.T) {
 	var capturedRequestID string
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		capturedRequestID = mc.RequestID()
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := RequestID(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 42, Method: "test"},
 		Method:  "test",

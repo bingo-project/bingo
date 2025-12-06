@@ -12,7 +12,7 @@ import (
 
 // Auth requires the client to be authenticated.
 func Auth(next ws.Handler) ws.Handler {
-	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	return func(mc *ws.Context) *jsonrpc.Response {
 		if mc.Client == nil || !mc.Client.IsAuthenticated() {
 			return jsonrpc.NewErrorResponse(mc.Request.ID,
 				errorsx.New(401, "Unauthorized", "Login required"))

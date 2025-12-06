@@ -66,7 +66,7 @@ func (cl *clientLimiters) remove(client *ws.Client) {
 // RateLimit limits request rate per client per method.
 func RateLimit(cfg *RateLimitConfig) ws.Middleware {
 	return func(next ws.Handler) ws.Handler {
-		return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+		return func(mc *ws.Context) *jsonrpc.Response {
 			if mc.Client == nil {
 				return next(mc)
 			}

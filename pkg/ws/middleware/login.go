@@ -25,7 +25,7 @@ type loginResponse struct {
 // It validates platform, and after successful login, parses the access token
 // from response and notifies the hub.
 func LoginStateUpdater(next ws.Handler) ws.Handler {
-	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	return func(mc *ws.Context) *jsonrpc.Response {
 		// Parse platform from request params
 		var params loginParams
 		if len(mc.Request.Params) > 0 {

@@ -18,7 +18,7 @@ func TestRateLimit_Allows(t *testing.T) {
 		Default: 10, // 10 requests per second
 	}
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -27,7 +27,7 @@ func TestRateLimit_Allows(t *testing.T) {
 	client := &ws.Client{
 		Addr: "127.0.0.1:12345",
 	}
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
@@ -48,7 +48,7 @@ func TestRateLimit_Blocks(t *testing.T) {
 		Default: 1, // 1 request per second
 	}
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -57,7 +57,7 @@ func TestRateLimit_Blocks(t *testing.T) {
 	client := &ws.Client{
 		Addr: "127.0.0.1:12346",
 	}
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
@@ -89,7 +89,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 		},
 	}
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -100,7 +100,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 	}
 
 	// Heartbeat should always succeed
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "heartbeat"},
 		Client:  client,
@@ -121,13 +121,13 @@ func TestRateLimit_NilClient(t *testing.T) {
 		Default: 1,
 	}
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := RateLimit(cfg)(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,

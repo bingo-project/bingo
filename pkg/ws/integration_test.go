@@ -28,13 +28,13 @@ func TestFullMiddlewareChain(t *testing.T) {
 	var order []string
 	router.Use(
 		func(next ws.Handler) ws.Handler {
-			return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+			return func(mc *ws.Context) *jsonrpc.Response {
 				order = append(order, "recovery")
 				return middleware.Recovery(next)(mc)
 			}
 		},
 		func(next ws.Handler) ws.Handler {
-			return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+			return func(mc *ws.Context) *jsonrpc.Response {
 				order = append(order, "requestid")
 				return middleware.RequestID(next)(mc)
 			}
@@ -42,14 +42,14 @@ func TestFullMiddlewareChain(t *testing.T) {
 	)
 
 	// Public handler
-	router.Handle("public.test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	router.Handle("public.test", func(mc *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
 	// Private handler with auth middleware
 	private := router.Group(middleware.Auth)
-	private.Handle("private.test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	private.Handle("private.test", func(mc *ws.Context) *jsonrpc.Response {
 		order = append(order, "private-handler")
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
@@ -60,7 +60,7 @@ func TestFullMiddlewareChain(t *testing.T) {
 		Send: make(chan []byte, 256),
 	}
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Client:    client,
@@ -99,7 +99,7 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 	for i := 1; i <= 3; i++ {
 		n := i // capture
 		router.Use(func(next ws.Handler) ws.Handler {
-			return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+			return func(mc *ws.Context) *jsonrpc.Response {
 				order = append(order, "before-"+string(rune('0'+n)))
 				resp := next(mc)
 				order = append(order, "after-"+string(rune('0'+n)))
@@ -108,12 +108,12 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 		})
 	}
 
-	router.Handle("test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	router.Handle("test", func(mc *ws.Context) *jsonrpc.Response {
 		order = append(order, "handler")
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
@@ -139,7 +139,7 @@ func TestRateLimitIntegration(t *testing.T) {
 		Default: 1,
 	}))
 
-	router.Handle("test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	router.Handle("test", func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
@@ -148,7 +148,7 @@ func TestRateLimitIntegration(t *testing.T) {
 		Send: make(chan []byte, 256),
 	}
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,
@@ -180,7 +180,7 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 
 	// Global middleware
 	router.Use(func(next ws.Handler) ws.Handler {
-		return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+		return func(mc *ws.Context) *jsonrpc.Response {
 			publicMiddlewareCalled = true
 			return next(mc)
 		}
@@ -188,23 +188,23 @@ func TestGroupMiddlewareIsolation(t *testing.T) {
 
 	// Public group (no additional middleware)
 	public := router.Group()
-	public.Handle("public.test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	public.Handle("public.test", func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "public")
 	})
 
 	// Private group with additional middleware
 	private := router.Group(func(next ws.Handler) ws.Handler {
-		return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+		return func(mc *ws.Context) *jsonrpc.Response {
 			privateMiddlewareCalled = true
 			return next(mc)
 		}
 	})
-	private.Handle("private.test", func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	private.Handle("private.test", func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "private")
 	})
 
 	// Test public method - only global middleware should be called
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "public.test"},
 		Method:    "public.test",

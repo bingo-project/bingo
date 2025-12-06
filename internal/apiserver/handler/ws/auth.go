@@ -14,7 +14,7 @@ import (
 )
 
 // Login handles user login and returns JWT token.
-func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
+func (h *Handler) Login(mc *ws.Context) *jsonrpc.Response {
 	log.C(mc.Ctx).Debugw("Login function called")
 
 	var req v1.LoginRequest
@@ -31,7 +31,7 @@ func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
 }
 
 // UserInfo returns the current user's info.
-func (h *Handler) UserInfo(mc *ws.MiddlewareContext) *jsonrpc.Response {
+func (h *Handler) UserInfo(mc *ws.Context) *jsonrpc.Response {
 	uid := mc.UserID()
 	if uid == "" {
 		return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrTokenInvalid)

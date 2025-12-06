@@ -17,8 +17,8 @@ import (
 // validate is the singleton validator instance.
 var validate = validator.New()
 
-// MiddlewareContext contains all information needed by middleware.
-type MiddlewareContext struct {
+// Context contains all information needed by middleware.
+type Context struct {
 	Ctx       context.Context
 	Request   *jsonrpc.Request
 	Client    *Client
@@ -27,7 +27,7 @@ type MiddlewareContext struct {
 }
 
 // RequestID returns the request ID from context.
-func (mc *MiddlewareContext) RequestID() string {
+func (mc *Context) RequestID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
@@ -35,7 +35,7 @@ func (mc *MiddlewareContext) RequestID() string {
 }
 
 // UserID returns the user ID from context.
-func (mc *MiddlewareContext) UserID() string {
+func (mc *Context) UserID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
@@ -43,7 +43,7 @@ func (mc *MiddlewareContext) UserID() string {
 }
 
 // BindParams unmarshals the request params into the given struct.
-func (mc *MiddlewareContext) BindParams(v any) error {
+func (mc *Context) BindParams(v any) error {
 	if len(mc.Request.Params) == 0 {
 		return nil
 	}
@@ -51,7 +51,7 @@ func (mc *MiddlewareContext) BindParams(v any) error {
 }
 
 // BindValidate unmarshals and validates the request params.
-func (mc *MiddlewareContext) BindValidate(v any) error {
+func (mc *Context) BindValidate(v any) error {
 	if err := mc.BindParams(v); err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (mc *MiddlewareContext) BindValidate(v any) error {
 }
 
 // Handler is a message handler function.
-type Handler func(*MiddlewareContext) *jsonrpc.Response
+type Handler func(*Context) *jsonrpc.Response
 
 // Middleware wraps a handler with additional functionality.
 type Middleware func(Handler) Handler

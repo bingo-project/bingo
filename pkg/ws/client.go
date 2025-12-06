@@ -207,7 +207,7 @@ func (c *Client) handleMessage(data []byte) {
 
 	// Use router if available
 	if c.router != nil {
-		mc := &MiddlewareContext{
+		mc := &Context{
 			Ctx:       c.ctx,
 			Request:   &req,
 			Client:    c,

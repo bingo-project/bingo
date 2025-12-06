@@ -16,12 +16,12 @@ func TestRouter_Handle(t *testing.T) {
 	r := NewRouter()
 
 	called := false
-	r.Handle("test.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+	r.Handle("test.method", func(mc *Context) *jsonrpc.Response {
 		called = true
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test.method"},
 		Method:  "test.method",
@@ -37,7 +37,7 @@ func TestRouter_Handle(t *testing.T) {
 func TestRouter_MethodNotFound(t *testing.T) {
 	r := NewRouter()
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "unknown"},
 		Method:  "unknown",
@@ -54,17 +54,17 @@ func TestRouter_GlobalMiddleware(t *testing.T) {
 
 	var middlewareCalled bool
 	r.Use(func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			middlewareCalled = true
 			return next(mc)
 		}
 	})
 
-	r.Handle("test", func(mc *MiddlewareContext) *jsonrpc.Response {
+	r.Handle("test", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
@@ -81,26 +81,26 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 	var order []string
 
 	globalMw := func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			order = append(order, "global")
 			return next(mc)
 		}
 	}
 
 	handlerMw := func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			order = append(order, "handler-mw")
 			return next(mc)
 		}
 	}
 
 	r.Use(globalMw)
-	r.Handle("test", func(mc *MiddlewareContext) *jsonrpc.Response {
+	r.Handle("test", func(mc *Context) *jsonrpc.Response {
 		order = append(order, "handler")
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}, handlerMw)
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
@@ -114,10 +114,10 @@ func TestRouter_HandlerMiddleware(t *testing.T) {
 func TestRouter_Methods(t *testing.T) {
 	r := NewRouter()
 
-	r.Handle("method.a", func(mc *MiddlewareContext) *jsonrpc.Response {
+	r.Handle("method.a", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "a")
 	})
-	r.Handle("method.b", func(mc *MiddlewareContext) *jsonrpc.Response {
+	r.Handle("method.b", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "b")
 	})
 
@@ -134,24 +134,24 @@ func TestRouter_Group(t *testing.T) {
 	var globalCalled, groupCalled bool
 
 	r.Use(func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			globalCalled = true
 			return next(mc)
 		}
 	})
 
 	g := r.Group(func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			groupCalled = true
 			return next(mc)
 		}
 	})
 
-	g.Handle("group.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+	g.Handle("group.method", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "group.method"},
 		Method:  "group.method",
@@ -168,7 +168,7 @@ func TestRouter_GroupIsolation(t *testing.T) {
 
 	var authCalled bool
 	authMiddleware := func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			authCalled = true
 			return next(mc)
 		}
@@ -176,19 +176,19 @@ func TestRouter_GroupIsolation(t *testing.T) {
 
 	// Public group (no auth)
 	public := r.Group()
-	public.Handle("public.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+	public.Handle("public.method", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "public")
 	})
 
 	// Private group (with auth)
 	private := r.Group(authMiddleware)
-	private.Handle("private.method", func(mc *MiddlewareContext) *jsonrpc.Response {
+	private.Handle("private.method", func(mc *Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "private")
 	})
 
 	// Call public method
 	authCalled = false
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "public.method"},
 		Method:  "public.method",
@@ -210,24 +210,24 @@ func TestGroup_Use(t *testing.T) {
 
 	g := r.Group()
 	g.Use(func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			order = append(order, "group-mw-1")
 			return next(mc)
 		}
 	})
 	g.Use(func(next Handler) Handler {
-		return func(mc *MiddlewareContext) *jsonrpc.Response {
+		return func(mc *Context) *jsonrpc.Response {
 			order = append(order, "group-mw-2")
 			return next(mc)
 		}
 	})
 
-	g.Handle("test", func(mc *MiddlewareContext) *jsonrpc.Response {
+	g.Handle("test", func(mc *Context) *jsonrpc.Response {
 		order = append(order, "handler")
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	})
 
-	mc := &MiddlewareContext{
+	mc := &Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",

@@ -53,7 +53,7 @@ func (r *Router) Handle(method string, handler Handler, middlewares ...Middlewar
 }
 
 // Dispatch routes a request to its handler.
-func (r *Router) Dispatch(mc *MiddlewareContext) *jsonrpc.Response {
+func (r *Router) Dispatch(mc *Context) *jsonrpc.Response {
 	r.mu.RLock()
 	entry, ok := r.handlers[mc.Method]
 	if !ok {

@@ -15,7 +15,7 @@ import (
 
 // Recovery catches panics and returns an error response.
 func Recovery(next ws.Handler) ws.Handler {
-	return func(mc *ws.MiddlewareContext) (resp *jsonrpc.Response) {
+	return func(mc *ws.Context) (resp *jsonrpc.Response) {
 		defer func() {
 			if r := recover(); r != nil {
 				log.C(mc.Ctx).Errorw("WebSocket panic recovered",

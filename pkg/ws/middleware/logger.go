@@ -14,7 +14,7 @@ import (
 
 // Logger logs request details after handling.
 func Logger(next ws.Handler) ws.Handler {
-	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	return func(mc *ws.Context) *jsonrpc.Response {
 		resp := next(mc)
 
 		fields := []any{

@@ -16,13 +16,13 @@ import (
 )
 
 func TestLogger_Success(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := Logger(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
@@ -37,14 +37,14 @@ func TestLogger_Success(t *testing.T) {
 }
 
 func TestLogger_Error(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewErrorResponse(mc.Request.ID,
 			errorsx.New(400, "BadRequest", "test error"))
 	}
 
 	wrapped := Logger(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:    "test",
@@ -58,7 +58,7 @@ func TestLogger_Error(t *testing.T) {
 }
 
 func TestLogger_WithClient(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -69,7 +69,7 @@ func TestLogger_WithClient(t *testing.T) {
 		UserID: "user-123",
 	}
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:       context.Background(),
 		Request:   &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:    client,

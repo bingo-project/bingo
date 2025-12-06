@@ -143,8 +143,8 @@ WebSocket Message
 ```go
 // pkg/ws/middleware.go
 
-// MiddlewareContext 中间件上下文
-type MiddlewareContext struct {
+// Context 中间件上下文
+type Context struct {
     Ctx       context.Context   // 请求上下文
     Request   *jsonrpc.Request  // JSON-RPC 请求
     Client    *Client           // WebSocket 客户端
@@ -153,7 +153,7 @@ type MiddlewareContext struct {
 }
 
 // Handler 消息处理函数
-type Handler func(*MiddlewareContext) *jsonrpc.Response
+type Handler func(*Context) *jsonrpc.Response
 
 // Middleware 中间件函数
 type Middleware func(Handler) Handler
@@ -201,7 +201,7 @@ func (r *Router) Handle(method string, handler Handler, middlewares ...Middlewar
 func (r *Router) Group(middlewares ...Middleware) *Group
 
 // Dispatch 分发请求
-func (r *Router) Dispatch(mc *MiddlewareContext) *jsonrpc.Response
+func (r *Router) Dispatch(mc *Context) *jsonrpc.Response
 ```
 
 ### Handler 注册示例
@@ -247,10 +247,10 @@ func RegisterWSHandlers(router *ws.Router) {
 // pkg/ws/middleware.go
 
 // Handler 消息处理函数
-type Handler func(*MiddlewareContext) *jsonrpc.Response
+type Handler func(*Context) *jsonrpc.Response
 
-// MiddlewareContext 包含请求的所有信息
-type MiddlewareContext struct {
+// Context 包含请求的所有信息
+type Context struct {
     Ctx       context.Context   // 请求上下文
     Request   *jsonrpc.Request  // JSON-RPC 请求
     Client    *Client           // WebSocket 客户端
@@ -259,10 +259,10 @@ type MiddlewareContext struct {
 }
 
 // BindParams 解析请求参数到结构体
-func (mc *MiddlewareContext) BindParams(v any) error
+func (mc *Context) BindParams(v any) error
 
 // BindValidate 解析并验证请求参数
-func (mc *MiddlewareContext) BindValidate(v any) error
+func (mc *Context) BindValidate(v any) error
 ```
 
 ### Handler 实现示例
@@ -270,7 +270,7 @@ func (mc *MiddlewareContext) BindValidate(v any) error
 ```go
 // internal/apiserver/handler/ws/auth.go
 
-func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
+func (h *Handler) Login(mc *ws.Context) *jsonrpc.Response {
     var req v1.LoginRequest
     if err := mc.BindValidate(&req); err != nil {
         return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrBind.SetMessage(err.Error()))
@@ -284,7 +284,7 @@ func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
     return jsonrpc.NewResponse(mc.Request.ID, resp)
 }
 
-func (h *Handler) UserInfo(mc *ws.MiddlewareContext) *jsonrpc.Response {
+func (h *Handler) UserInfo(mc *ws.Context) *jsonrpc.Response {
     uid := mc.UserID()
     if uid == "" {
         return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrTokenInvalid)

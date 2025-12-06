@@ -14,13 +14,13 @@ import (
 )
 
 func TestRecovery(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		panic("test panic")
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
@@ -35,13 +35,13 @@ func TestRecovery(t *testing.T) {
 }
 
 func TestRecovery_NoError(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",
@@ -54,13 +54,13 @@ func TestRecovery_NoError(t *testing.T) {
 }
 
 func TestRecovery_PanicWithError(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		panic(assert.AnError)
 	}
 
 	wrapped := Recovery(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Method:  "test",

@@ -14,7 +14,7 @@ import (
 )
 
 func TestAuth_Authenticated(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -25,7 +25,7 @@ func TestAuth_Authenticated(t *testing.T) {
 	client.Platform = "web"
 	client.LoginTime = 1000
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
@@ -39,7 +39,7 @@ func TestAuth_Authenticated(t *testing.T) {
 }
 
 func TestAuth_Unauthenticated(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
@@ -47,7 +47,7 @@ func TestAuth_Unauthenticated(t *testing.T) {
 
 	client := &ws.Client{} // Not logged in
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,
@@ -61,13 +61,13 @@ func TestAuth_Unauthenticated(t *testing.T) {
 }
 
 func TestAuth_NilClient(t *testing.T) {
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
 
 	wrapped := Auth(handler)
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  nil,
@@ -83,7 +83,7 @@ func TestAuth_NilClient(t *testing.T) {
 func TestAuth_SetsUserIDInContext(t *testing.T) {
 	var capturedUserID string
 
-	handler := func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	handler := func(mc *ws.Context) *jsonrpc.Response {
 		capturedUserID = mc.UserID()
 		return jsonrpc.NewResponse(mc.Request.ID, "ok")
 	}
@@ -95,7 +95,7 @@ func TestAuth_SetsUserIDInContext(t *testing.T) {
 	client.Platform = "web"
 	client.LoginTime = 1000
 
-	mc := &ws.MiddlewareContext{
+	mc := &ws.Context{
 		Ctx:     context.Background(),
 		Request: &jsonrpc.Request{ID: 1, Method: "test"},
 		Client:  client,

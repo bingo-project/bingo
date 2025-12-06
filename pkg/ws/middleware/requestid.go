@@ -16,7 +16,7 @@ import (
 // RequestID adds request ID to context.
 // Uses client-provided ID if present, otherwise generates UUID.
 func RequestID(next ws.Handler) ws.Handler {
-	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	return func(mc *ws.Context) *jsonrpc.Response {
 		requestID := ""
 		if mc.Request.ID != nil {
 			requestID = fmt.Sprintf("%v", mc.Request.ID)
