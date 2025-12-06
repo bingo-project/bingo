@@ -170,12 +170,24 @@ func Chain(middlewares ...Middleware) Middleware
 
 | 中间件 | 位置 | 说明 |
 |-------|------|------|
-| Recovery | `pkg/ws/middleware/recovery.go` | 捕获 panic，返回 500 错误 |
+| Recovery / RecoveryWithLogger | `pkg/ws/middleware/recovery.go` | 捕获 panic，返回 500 错误；WithLogger 版本支持自定义日志记录器 |
 | RequestID | `pkg/ws/middleware/requestid.go` | 注入 request-id 到 context |
-| Logger | `pkg/ws/middleware/logger.go` | 记录请求日志和延迟 |
+| Logger / LoggerWithLogger | `pkg/ws/middleware/logger.go` | 记录请求日志和延迟；WithLogger 版本支持自定义日志记录器 |
 | Auth | `pkg/ws/middleware/auth.go` | 验证用户已登录 |
-| RateLimit | `pkg/ws/middleware/ratelimit.go` | 令牌桶限流 |
+| RateLimitWithStore | `pkg/ws/middleware/ratelimit.go` | 令牌桶限流，使用 Redis 存储 |
 | LoginStateUpdater | `pkg/ws/middleware/login.go` | 登录成功后更新客户端状态 |
+
+**自定义日志记录器**：
+
+```go
+// 使用自定义日志记录器
+import "github.com/marmotedu/iam/pkg/log"
+
+router.Use(
+    middleware.RecoveryWithLogger(log.L()),  // 使用项目日志记录器
+    middleware.LoggerWithLogger(log.L()),    // 使用项目日志记录器
+)
+```
 
 ---
 
@@ -213,7 +225,7 @@ func (r *Router) Dispatch(c *Context) *jsonrpc.Response
 ```go
 // internal/apiserver/router/ws.go
 
-func RegisterWSHandlers(router *ws.Router) {
+func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore) {
     h := wshandler.NewHandler(store.S)
 
     // 全局中间件
@@ -221,7 +233,7 @@ func RegisterWSHandlers(router *ws.Router) {
         middleware.Recovery,
         middleware.RequestID,
         middleware.Logger,
-        middleware.RateLimit(&middleware.RateLimitConfig{
+        middleware.RateLimitWithStore(rateLimitStore, &middleware.RateLimitConfig{
             Default: 10,
             Methods: map[string]float64{
                 "heartbeat": 0, // 不限制
@@ -560,6 +572,9 @@ pkg/ws/
 pkg/jsonrpc/
 ├── message.go          # Request/Response 类型
 └── response.go         # 响应构造函数
+
+pkg/contextx/           # 上下文工具
+└── contextx.go         # UserID/RequestID 提取
 
 internal/apiserver/
 ├── ws.go               # WebSocket 初始化
