@@ -7,8 +7,8 @@ import (
 	"context"
 	"encoding/json"
 
-	"bingo/internal/apiserver/biz"
 	wshandler "bingo/internal/apiserver/handler/ws"
+	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
@@ -17,9 +17,8 @@ import (
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.
-func RegisterWSHandlers(router *ws.Router, b biz.IBiz) {
-	systemHandler := wshandler.NewSystemHandler(b)
-	authHandler := wshandler.NewAuthHandler(b)
+func RegisterWSHandlers(router *ws.Router) {
+	h := wshandler.NewHandler(store.S)
 
 	// Global middleware
 	router.Use(
@@ -37,15 +36,15 @@ func RegisterWSHandlers(router *ws.Router, b biz.IBiz) {
 	// Public methods (no auth required)
 	public := router.Group()
 	public.Handle("heartbeat", ws.HeartbeatHandler)
-	public.Handle("system.healthz", wrapBizHandler(systemHandler.Healthz))
-	public.Handle("system.version", wrapBizHandler(systemHandler.Version))
-	public.Handle("auth.login", wrapLoginHandler(authHandler.Login))
+	public.Handle("system.healthz", wrapBizHandler(h.Healthz))
+	public.Handle("system.version", wrapBizHandler(h.Version))
+	public.Handle("auth.login", wrapLoginHandler(h.Login))
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
 	private.Handle("subscribe", ws.SubscribeHandler)
 	private.Handle("unsubscribe", ws.UnsubscribeHandler)
-	private.Handle("auth.user-info", wrapBizHandler(authHandler.UserInfo))
+	private.Handle("auth.user-info", wrapBizHandler(h.UserInfo))
 }
 
 // wrapBizHandler adapts a biz handler (no request params) to ws.Handler.

@@ -8,25 +8,14 @@ import (
 
 	"github.com/bingo-project/component-base/log"
 
-	"bingo/internal/apiserver/biz"
 	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
 )
 
-// AuthHandler handles auth-related WebSocket methods.
-type AuthHandler struct {
-	b biz.IBiz
-}
-
-// NewAuthHandler creates a new AuthHandler.
-func NewAuthHandler(b biz.IBiz) *AuthHandler {
-	return &AuthHandler{b: b}
-}
-
 // Login handles user login and returns JWT token.
-func (h *AuthHandler) Login(ctx context.Context, req any) (any, error) {
+func (h *Handler) Login(ctx context.Context, req any) (any, error) {
 	log.C(ctx).Debugw("Login function called")
 
 	r := req.(*v1.LoginRequest)
@@ -35,7 +24,7 @@ func (h *AuthHandler) Login(ctx context.Context, req any) (any, error) {
 }
 
 // UserInfo returns the current user's info.
-func (h *AuthHandler) UserInfo(ctx context.Context, req any) (any, error) {
+func (h *Handler) UserInfo(ctx context.Context, req any) (any, error) {
 	uid := contextx.UserID(ctx)
 	if uid == "" {
 		return nil, errno.ErrTokenInvalid

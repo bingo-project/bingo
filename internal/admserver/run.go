@@ -1,5 +1,5 @@
 // ABOUTME: Application entry point for admserver.
-// ABOUTME: Initializes HTTP, gRPC, and WebSocket servers based on configuration.
+// ABOUTME: Assembles and runs all enabled servers.
 
 package admserver
 
@@ -8,24 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/bingo-project/component-base/log"
-	"github.com/gin-gonic/gin"
-	gm "github.com/grpc-ecosystem/go-grpc-middleware"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/reflection"
-
-	"bingo/internal/admserver/biz"
-	wshandler "bingo/internal/admserver/handler/ws"
-	"bingo/internal/admserver/router"
-	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/facade"
-	interceptor "bingo/internal/pkg/middleware/grpc"
 	"bingo/internal/pkg/server"
-	"bingo/internal/pkg/store"
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
 )
 
 // run starts all enabled servers based on configuration.
@@ -49,82 +33,4 @@ func run() error {
 
 	// Run all servers
 	return runner.Run(ctx)
-}
-
-// initGinEngine initializes the Gin engine with routes.
-func initGinEngine() *gin.Engine {
-	g := bootstrap.InitGin()
-
-	// Swagger
-	if facade.Config.Feature.ApiDoc {
-		router.MapSwagRouters(g)
-	}
-
-	// Queue dashboard
-	if facade.Config.Feature.QueueDash {
-		router.MapQueueRouters(g)
-	}
-
-	// Common router
-	router.MapCommonRouters(g)
-
-	// System
-	router.MapApiRouters(g)
-
-	// Init System API
-	router.InitSystemAPI(g)
-
-	return g
-}
-
-// initGRPCServer initializes the gRPC server with services and TLS support.
-func initGRPCServer(cfg *config.GRPC) *grpc.Server {
-	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(gm.ChainUnaryServer(
-			interceptor.RequestID,
-			interceptor.ClientIP,
-			interceptor.Logger,
-			interceptor.Recovery,
-		)),
-	}
-
-	// Add TLS credentials if enabled
-	if cfg != nil && cfg.TLS != nil && cfg.TLS.Enabled {
-		creds, err := credentials.NewServerTLSFromFile(cfg.TLS.CertFile, cfg.TLS.KeyFile)
-		if err != nil {
-			log.Fatalw("Failed to load TLS credentials", "err", err)
-		}
-		opts = append(opts, grpc.Creds(creds))
-		log.Infow("gRPC TLS enabled", "cert", cfg.TLS.CertFile)
-	}
-
-	srv := grpc.NewServer(opts...)
-
-	// Register gRPC routes
-	router.GRPC(srv)
-
-	// Enable reflection for grpcurl debugging
-	reflection.Register(srv)
-
-	return srv
-}
-
-// initWebSocket initializes the WebSocket engine and hub.
-func initWebSocket() (*gin.Engine, *ws.Hub) {
-	// Create hub
-	hub := ws.NewHub()
-
-	// Create JSON-RPC adapter and register handlers
-	adapter := jsonrpc.NewAdapter()
-	bizInstance := biz.NewBiz(store.S)
-	router.RegisterWSHandlers(adapter, bizInstance)
-
-	// Create Gin engine for WebSocket
-	engine := bootstrap.InitGinForWebSocket()
-
-	// Register WebSocket route
-	handler := wshandler.NewHandler(hub, adapter, facade.Config.WebSocket)
-	engine.GET("/ws", handler.ServeWS)
-
-	return engine, hub
 }
