@@ -23,7 +23,7 @@ func Logger(next ws.Handler) ws.Handler {
 		}
 
 		if mc.Client != nil {
-			fields = append(fields, "client_addr", mc.Client.Addr)
+			fields = append(fields, "client_id", mc.Client.ID, "client_addr", mc.Client.Addr)
 			if mc.Client.UserID != "" {
 				fields = append(fields, "user_id", mc.Client.UserID)
 			}

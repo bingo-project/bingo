@@ -12,10 +12,14 @@ import (
 	"bingo/pkg/jsonrpc"
 )
 
+// ClientDisconnectCallback is called when a client disconnects.
+type ClientDisconnectCallback func(client *Client)
+
 // Hub maintains the set of active clients and manages their lifecycle.
 type Hub struct {
-	config *HubConfig
-	logger Logger
+	config             *HubConfig
+	logger             Logger
+	onClientDisconnect ClientDisconnectCallback
 
 	// Anonymous connections (not yet logged in)
 	anonymous     map[*Client]bool
@@ -74,6 +78,14 @@ type HubOption func(*Hub)
 func WithLogger(l Logger) HubOption {
 	return func(h *Hub) {
 		h.logger = l
+	}
+}
+
+// WithClientDisconnectCallback sets a callback for client disconnect events.
+// Use this to clean up resources when a client disconnects.
+func WithClientDisconnectCallback(cb ClientDisconnectCallback) HubOption {
+	return func(h *Hub) {
+		h.onClientDisconnect = cb
 	}
 }
 
@@ -195,6 +207,11 @@ func (h *Hub) handleUnregister(client *Client) {
 		h.clientsByIDLock.Lock()
 		delete(h.clientsByID, client.ID)
 		h.clientsByIDLock.Unlock()
+	}
+
+	// Call disconnect callback to cleanup resources (e.g., rate limiters)
+	if h.onClientDisconnect != nil {
+		h.onClientDisconnect(client)
 	}
 
 	// Remove from anonymous

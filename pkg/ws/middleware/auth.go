@@ -4,8 +4,7 @@
 package middleware
 
 import (
-	"context"
-
+	"bingo/internal/pkg/contextx"
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
@@ -20,7 +19,7 @@ func Auth(next ws.Handler) ws.Handler {
 		}
 
 		// Add user ID to context
-		mc.Ctx = context.WithValue(mc.Ctx, ws.UserIDKey{}, mc.Client.UserID)
+		mc.Ctx = contextx.WithUserID(mc.Ctx, mc.Client.UserID)
 
 		return next(mc)
 	}

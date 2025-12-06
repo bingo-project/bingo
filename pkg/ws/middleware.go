@@ -7,14 +7,9 @@ import (
 	"context"
 	"time"
 
+	"bingo/internal/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 )
-
-// RequestIDKey is the context key for request ID.
-type RequestIDKey struct{}
-
-// UserIDKey is the context key for user ID.
-type UserIDKey struct{}
 
 // MiddlewareContext contains all information needed by middleware.
 type MiddlewareContext struct {
@@ -30,8 +25,7 @@ func (mc *MiddlewareContext) RequestID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
-	rid, _ := mc.Ctx.Value(RequestIDKey{}).(string)
-	return rid
+	return contextx.RequestID(mc.Ctx)
 }
 
 // UserID returns the user ID from context.
@@ -39,8 +33,7 @@ func (mc *MiddlewareContext) UserID() string {
 	if mc.Ctx == nil {
 		return ""
 	}
-	uid, _ := mc.Ctx.Value(UserIDKey{}).(string)
-	return uid
+	return contextx.UserID(mc.Ctx)
 }
 
 // Handler is a message handler function.

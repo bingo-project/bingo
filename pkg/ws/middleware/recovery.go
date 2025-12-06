@@ -24,7 +24,7 @@ func Recovery(next ws.Handler) ws.Handler {
 					"stack", string(debug.Stack()),
 				)
 				resp = jsonrpc.NewErrorResponse(mc.Request.ID,
-					errorsx.New(500, "InternalError", "panic: %v", r))
+					errorsx.New(500, "InternalError", "Internal server error"))
 			}
 		}()
 		return next(mc)

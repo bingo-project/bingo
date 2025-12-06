@@ -30,7 +30,8 @@ func TestRecovery(t *testing.T) {
 
 	assert.NotNil(t, resp.Error)
 	assert.Equal(t, "InternalError", resp.Error.Reason)
-	assert.Contains(t, resp.Error.Message, "panic")
+	assert.Equal(t, "Internal server error", resp.Error.Message)
+	assert.NotContains(t, resp.Error.Message, "panic") // Panic details should not be exposed
 }
 
 func TestRecovery_NoError(t *testing.T) {

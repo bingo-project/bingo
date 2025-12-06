@@ -4,11 +4,11 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/google/uuid"
 
+	"bingo/internal/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 	"bingo/pkg/ws"
 )
@@ -25,7 +25,7 @@ func RequestID(next ws.Handler) ws.Handler {
 			requestID = uuid.New().String()
 		}
 
-		mc.Ctx = context.WithValue(mc.Ctx, ws.RequestIDKey{}, requestID)
+		mc.Ctx = contextx.WithRequestID(mc.Ctx, requestID)
 		return next(mc)
 	}
 }

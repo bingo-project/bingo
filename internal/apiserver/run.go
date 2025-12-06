@@ -25,6 +25,7 @@ import (
 	"bingo/internal/pkg/server"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/ws"
+	"bingo/pkg/ws/middleware"
 )
 
 // run starts all enabled servers based on configuration.
@@ -102,8 +103,10 @@ func initGRPCServer(cfg *config.GRPC) *grpc.Server {
 
 // initWebSocket initializes the WebSocket engine and hub.
 func initWebSocket() (*gin.Engine, *ws.Hub) {
-	// Create hub
-	hub := ws.NewHub()
+	// Create hub with disconnect callback to cleanup rate limiters
+	hub := ws.NewHub(
+		ws.WithClientDisconnectCallback(middleware.CleanupClientLimiters),
+	)
 
 	// Create router and register handlers
 	wsRouter := ws.NewRouter()
