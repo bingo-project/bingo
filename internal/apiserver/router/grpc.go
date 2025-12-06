@@ -10,5 +10,5 @@ import (
 
 func GRPC(g *grpc.Server) {
 	// ApiServer
-	v1.RegisterApiServerServer(g, grpchandler.New(store.S))
+	v1.RegisterApiServerServer(g, grpchandler.NewHandler(store.S))
 }

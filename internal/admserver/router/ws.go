@@ -8,8 +8,8 @@ import (
 	"bingo/pkg/jsonrpc"
 )
 
-// RegisterHandlers registers all JSON-RPC handlers with the adapter.
-func RegisterHandlers(a *jsonrpc.Adapter, b biz.IBiz) {
+// RegisterWSHandlers registers all JSON-RPC handlers with the adapter.
+func RegisterWSHandlers(a *jsonrpc.Adapter, b biz.IBiz) {
 	// Admin methods can be registered here as needed.
 	// Example:
 	// jsonrpc.Register(a, "admin.stats", b.System().Stats)

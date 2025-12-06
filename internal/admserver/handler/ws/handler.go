@@ -7,6 +7,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
@@ -50,6 +51,23 @@ func (h *Handler) checkOrigin(cfg *config.WebSocket) func(r *http.Request) bool 
 	}
 }
 
+// tokenParser parses JWT token and returns user info.
+func tokenParser(tokenStr string) (*ws.TokenInfo, error) {
+	payload, err := token.Parse(tokenStr)
+	if err != nil {
+		return nil, err
+	}
+	return &ws.TokenInfo{
+		UserID:    payload.Subject,
+		ExpiresAt: payload.ExpiresAt.Unix(),
+	}, nil
+}
+
+// contextUpdater updates context with user ID after login.
+func contextUpdater(ctx context.Context, userID string) context.Context {
+	return contextx.WithUserID(ctx, userID)
+}
+
 // ServeWS handles WebSocket upgrade requests.
 func (h *Handler) ServeWS(c *gin.Context) {
 	// 1. Create base context with request ID
@@ -62,8 +80,11 @@ func (h *Handler) ServeWS(c *gin.Context) {
 		return
 	}
 
-	// 3. Create anonymous client
-	client := ws.NewClient(h.hub, conn, ctx, h.adapter)
+	// 3. Create anonymous client with token parser and context updater
+	client := ws.NewClient(h.hub, conn, ctx, h.adapter,
+		ws.WithTokenParser(tokenParser),
+		ws.WithContextUpdater(contextUpdater),
+	)
 
 	// 4. Register with hub (as anonymous)
 	h.hub.Register <- client

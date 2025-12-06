@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "apiserver/v1/healthz.proto";
 import "apiserver/v1/version.proto";
+import "apiserver/v1/auth.proto";
 
 option go_package = "bingo/pkg/proto/apiserver/v1/pb";
 
@@ -65,6 +66,32 @@ service ApiServer {
       summary: "版本信息";
       description: "获取服务版本信息";
       tags: "系统";
+    };
+  }
+
+  rpc Login (LoginRequest) returns (LoginReply) {
+    option (google.api.http) = {
+      post: "/v1/auth/login"
+      body: "*"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "用户登录";
+      description: "使用用户名密码登录，返回JWT令牌";
+      tags: "认证";
+      security: {};
+    };
+  }
+
+  rpc UserInfo (UserInfoRequest) returns (UserInfoReply) {
+    option (google.api.http) = {
+      get: "/v1/auth/user-info"
+    };
+
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+      summary: "获取用户信息";
+      description: "获取当前登录用户的信息";
+      tags: "认证";
     };
   }
 }

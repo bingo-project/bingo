@@ -16,6 +16,45 @@ consumes:
 produces:
   - application/json
 paths:
+  /v1/auth/login:
+    post:
+      summary: 用户登录
+      description: 使用用户名密码登录，返回JWT令牌
+      operationId: ApiServer_Login
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1LoginReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/v1LoginRequest'
+      tags:
+        - 认证
+      security: []
+  /v1/auth/user-info:
+    get:
+      summary: 获取用户信息
+      description: 获取当前登录用户的信息
+      operationId: ApiServer_UserInfo
+      responses:
+        "200":
+          description: A successful response.
+          schema:
+            $ref: '#/definitions/v1UserInfoReply'
+        default:
+          description: An unexpected error response.
+          schema:
+            $ref: '#/definitions/rpcStatus'
+      tags:
+        - 认证
   /v1/healthz:
     get:
       summary: 健康检查
@@ -76,6 +115,47 @@ definitions:
       ip:
         type: string
       ts:
+        type: string
+        format: date-time
+  v1LoginReply:
+    type: object
+    properties:
+      accessToken:
+        type: string
+      refreshToken:
+        type: string
+      tokenType:
+        type: string
+      expiresIn:
+        type: string
+        format: int64
+  v1LoginRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      password:
+        type: string
+  v1UserInfoReply:
+    type: object
+    properties:
+      uid:
+        type: string
+      username:
+        type: string
+      nickname:
+        type: string
+      email:
+        type: string
+      phone:
+        type: string
+      status:
+        type: integer
+        format: int32
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
         type: string
         format: date-time
   v1VersionReply:

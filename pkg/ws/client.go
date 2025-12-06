@@ -32,12 +32,26 @@ const (
 	heartbeatTimeout = 90
 )
 
+// TokenInfo contains parsed token information.
+type TokenInfo struct {
+	UserID    string
+	ExpiresAt int64
+}
+
+// TokenParser parses a JWT token and returns user info.
+type TokenParser func(token string) (*TokenInfo, error)
+
+// ContextUpdater updates the client context with user info after login.
+type ContextUpdater func(ctx context.Context, userID string) context.Context
+
 // Client represents a WebSocket client connection.
 type Client struct {
-	hub     *Hub
-	conn    *websocket.Conn
-	adapter *jsonrpc.Adapter
-	ctx     context.Context
+	hub            *Hub
+	conn           *websocket.Conn
+	adapter        *jsonrpc.Adapter
+	ctx            context.Context
+	tokenParser    TokenParser
+	contextUpdater ContextUpdater
 
 	// Send channel for outbound messages
 	Send      chan []byte
@@ -57,10 +71,27 @@ type Client struct {
 	topicsLock sync.RWMutex
 }
 
+// ClientOption is a functional option for configuring Client.
+type ClientOption func(*Client)
+
+// WithTokenParser sets a token parser for the client.
+func WithTokenParser(parser TokenParser) ClientOption {
+	return func(c *Client) {
+		c.tokenParser = parser
+	}
+}
+
+// WithContextUpdater sets a context updater for the client.
+func WithContextUpdater(updater ContextUpdater) ClientOption {
+	return func(c *Client) {
+		c.contextUpdater = updater
+	}
+}
+
 // NewClient creates a new WebSocket client.
-func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jsonrpc.Adapter) *Client {
+func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jsonrpc.Adapter, opts ...ClientOption) *Client {
 	now := time.Now().Unix()
-	return &Client{
+	c := &Client{
 		hub:           hub,
 		conn:          conn,
 		adapter:       adapter,
@@ -70,6 +101,10 @@ func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jso
 		FirstTime:     now,
 		HeartbeatTime: now,
 	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
 }
 
 // ReadPump pumps messages from the websocket connection to the hub.
@@ -245,15 +280,12 @@ func (c *Client) Login(platform, userID string, loginTime int64) {
 }
 
 func (c *Client) handleLogin(req *jsonrpc.Request) {
-	// Parse params
-	var params struct {
-		Type     string `json:"type"`
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Platform string `json:"platform"`
-		Token    string `json:"token"`
-	}
+	logger := c.hub.logger.WithContext(c.ctx)
 
+	// Parse params to get platform
+	var params struct {
+		Platform string `json:"platform"`
+	}
 	paramsBytes, _ := json.Marshal(req.Params)
 	if err := json.Unmarshal(paramsBytes, &params); err != nil {
 		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
@@ -261,48 +293,66 @@ func (c *Client) handleLogin(req *jsonrpc.Request) {
 		return
 	}
 
-	var platform string
-	var userID string
-	var tokenExpiresAt int64
-
-	switch params.Type {
-	case "token":
-		// TODO: Implement token parsing
+	if !IsValidPlatform(params.Platform) {
 		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(501, "NotImplemented", "Token login not yet implemented")))
+			errorsx.New(400, "InvalidPlatform", "Invalid platform")))
 		return
+	}
 
-	case "password":
-		if !IsValidPlatform(params.Platform) {
-			c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-				errorsx.New(400, "InvalidPlatform", "Invalid platform")))
-			return
-		}
-		platform = params.Platform
-		// TODO: Validate username/password against actual auth service
-		userID = params.Username
-		tokenExpiresAt = time.Now().Add(7 * 24 * time.Hour).Unix()
+	// Route to auth.login handler via adapter
+	loginReq := &jsonrpc.Request{
+		JSONRPC: req.JSONRPC,
+		Method:  "auth.login",
+		Params:  req.Params,
+		ID:      req.ID,
+	}
+	resp := c.adapter.Handle(c.ctx, loginReq)
+	if resp.Error != nil {
+		logger.Warnw("WebSocket login failed", "addr", c.Addr, "error", resp.Error.Reason)
+		c.sendJSON(resp)
+		return
+	}
 
-	default:
+	// Extract token from response
+	resultBytes, _ := json.Marshal(resp.Result)
+	var loginResp struct {
+		AccessToken string `json:"accessToken"`
+	}
+	if err := json.Unmarshal(resultBytes, &loginResp); err != nil {
 		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidLoginType", "Type must be 'token' or 'password'")))
+			errorsx.New(500, "InternalError", "Failed to parse login response")))
 		return
+	}
+
+	// Parse token to get user info
+	if c.tokenParser == nil {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(500, "InternalError", "Token parser not configured")))
+		return
+	}
+
+	tokenInfo, err := c.tokenParser(loginResp.AccessToken)
+	if err != nil {
+		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
+			errorsx.New(401, "InvalidToken", "Failed to parse token: %s", err.Error())))
+		return
+	}
+
+	// Update client context with user info
+	if c.contextUpdater != nil {
+		c.ctx = c.contextUpdater(c.ctx, tokenInfo.UserID)
 	}
 
 	// Send login event to hub
 	c.hub.Login <- &LoginEvent{
 		Client:         c,
-		UserID:         userID,
-		Platform:       platform,
-		TokenExpiresAt: tokenExpiresAt,
+		UserID:         tokenInfo.UserID,
+		Platform:       params.Platform,
+		TokenExpiresAt: tokenInfo.ExpiresAt,
 	}
 
-	// Return success response
-	c.sendJSON(jsonrpc.NewResponse(req.ID, map[string]any{
-		"user_id":    userID,
-		"platform":   platform,
-		"expires_at": tokenExpiresAt,
-	}))
+	// Return the original login response (contains token for client to store)
+	c.sendJSON(resp)
 }
 
 func (c *Client) handleSubscribe(req *jsonrpc.Request) {

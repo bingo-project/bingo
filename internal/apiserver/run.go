@@ -109,7 +109,7 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	// Create JSON-RPC adapter and register handlers
 	adapter := jsonrpc.NewAdapter()
 	bizInstance := biz.NewBiz(store.S)
-	router.RegisterHandlers(adapter, bizInstance)
+	router.RegisterWSHandlers(adapter, bizInstance)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGin()
