@@ -1,0 +1,27 @@
+// ABOUTME: Authentication middleware for WebSocket handlers.
+// ABOUTME: Blocks unauthenticated requests with 401 error.
+
+package middleware
+
+import (
+	"context"
+
+	"bingo/pkg/errorsx"
+	"bingo/pkg/jsonrpc"
+	"bingo/pkg/ws"
+)
+
+// Auth requires the client to be authenticated.
+func Auth(next ws.Handler) ws.Handler {
+	return func(mc *ws.MiddlewareContext) *jsonrpc.Response {
+		if mc.Client == nil || !mc.Client.IsAuthenticated() {
+			return jsonrpc.NewErrorResponse(mc.Request.ID,
+				errorsx.New(401, "Unauthorized", "Login required"))
+		}
+
+		// Add user ID to context
+		mc.Ctx = context.WithValue(mc.Ctx, ws.UserIDKey{}, mc.Client.UserID)
+
+		return next(mc)
+	}
+}
