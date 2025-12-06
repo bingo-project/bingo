@@ -21,6 +21,10 @@ type HubConfig struct {
 	PingPeriod time.Duration
 	// WebSocket protocol pong wait timeout
 	PongWait time.Duration
+
+	// Client connection settings
+	MaxMessageSize int64         // Maximum message size allowed from peer
+	WriteWait      time.Duration // Time allowed to write a message to the peer
 }
 
 // DefaultHubConfig returns default configuration.
@@ -32,5 +36,7 @@ func DefaultHubConfig() *HubConfig {
 		HeartbeatCleanup: 30 * time.Second,
 		PingPeriod:       54 * time.Second,
 		PongWait:         60 * time.Second,
+		MaxMessageSize:   4096,
+		WriteWait:        10 * time.Second,
 	}
 }

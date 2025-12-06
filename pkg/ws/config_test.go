@@ -19,4 +19,6 @@ func TestDefaultHubConfig(t *testing.T) {
 	assert.Equal(t, 30*time.Second, cfg.HeartbeatCleanup)
 	assert.Equal(t, 54*time.Second, cfg.PingPeriod)
 	assert.Equal(t, 60*time.Second, cfg.PongWait)
+	assert.Equal(t, int64(4096), cfg.MaxMessageSize)
+	assert.Equal(t, 10*time.Second, cfg.WriteWait)
 }
