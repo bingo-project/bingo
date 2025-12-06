@@ -603,8 +603,11 @@ gwmux := runtime.NewServeMux(
 )
 ```
 
-## 下一步
+## 相关文档
 
-- [统一 HTTP/gRPC/WebSocket 错误处理](./unified-error-handling.md)
-- [认证中间件迁移指南](./auth-middleware-migration.md)
-- [WebSocket 统一方案](./websocket-unification.md)
+- [可插拔协议层](protocol-layer.md) - HTTP/gRPC/WebSocket 统一架构
+- [WebSocket 设计与实现](websocket.md) - JSON-RPC 2.0 消息格式、中间件架构
+
+---
+
+**下一步**：了解 [统一错误处理](unified-error-handling.md)，学习如何让 HTTP/gRPC/WebSocket 三协议共享相同的错误格式。

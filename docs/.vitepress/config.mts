@@ -129,14 +129,14 @@ export default defineConfig({
         nav: [
           { text: '指南', link: '/guide/what-is-bingo' },
           { text: '核心概念', link: '/essentials/architecture' },
+          { text: '进阶特性', link: '/advanced/protocol-layer' },
           { text: '组件', link: '/components/overview' },
           {
             text: '更多',
             items: [
               { text: '开发规范', link: '/development/standards' },
               { text: '测试指南', link: '/development/testing' },
-              { text: 'Docker 部署', link: '/deployment/docker' },
-              { text: '微服务拆分', link: '/advanced/microservices' }
+              { text: 'Docker 部署', link: '/deployment/docker' }
             ]
           },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
@@ -202,6 +202,10 @@ export default defineConfig({
             {
               text: '进阶主题',
               items: [
+                { text: '可插拔协议层', link: '/advanced/protocol-layer' },
+                { text: 'WebSocket', link: '/advanced/websocket' },
+                { text: 'gRPC-Gateway', link: '/advanced/grpc-gateway' },
+                { text: '统一错误处理', link: '/advanced/unified-error-handling' },
                 { text: '微服务拆分', link: '/advanced/microservices' }
               ]
             }

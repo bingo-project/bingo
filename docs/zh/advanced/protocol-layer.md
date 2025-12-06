@@ -272,3 +272,7 @@ func RegisterWSHandlers(router *ws.Router) {
 - [gRPC-Gateway 集成](grpc-gateway.md) - Gateway 模式配置与使用
 - [统一错误处理](unified-error-handling.md) - 三协议错误格式统一
 - [认证中间件迁移](auth-middleware-migration.md) - 统一认证实现
+
+---
+
+**下一步**：了解 [WebSocket 设计与实现](websocket.md)，深入 JSON-RPC 2.0 协议和中间件架构。

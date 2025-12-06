@@ -504,7 +504,12 @@ HTTP 401
 3. **gRPC 友好** - `GRPCStatus()` 方法自动添加 ErrorInfo details
 4. **链式调用** - 支持 `WithMessage()`、`KV()` 等方法
 
-## 下一步
+## 相关文档
 
-- [认证中间件迁移指南](./auth-middleware-migration.md) - 如何在 HTTP/gRPC/WebSocket 统一认证
-- [WebSocket 统一方案](./websocket-unification.md) - WebSocket 与 HTTP/gRPC 完整统一方案
+- [可插拔协议层](protocol-layer.md) - HTTP/gRPC/WebSocket 统一架构
+- [WebSocket 设计与实现](websocket.md) - JSON-RPC 2.0 消息格式、中间件架构
+- [认证中间件迁移](auth-middleware-migration.md) - 统一认证实现
+
+---
+
+**下一步**：了解 [微服务拆分](microservices.md)，学习如何将单体应用演进为微服务架构。

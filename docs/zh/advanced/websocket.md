@@ -552,3 +552,9 @@ type HubConfig struct {
 ## 相关文档
 
 - [可插拔协议层](protocol-layer.md) - HTTP/gRPC/WebSocket 统一架构
+- [gRPC-Gateway 集成](grpc-gateway.md) - Gateway 模式配置与使用
+- [统一错误处理](unified-error-handling.md) - 三协议错误格式统一
+
+---
+
+**下一步**：了解 [gRPC-Gateway 集成](grpc-gateway.md)，学习如何让一份代码同时支持 HTTP 和 gRPC。
