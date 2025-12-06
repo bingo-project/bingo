@@ -134,10 +134,13 @@ func TestMiddlewareChain_ExecutionOrder(t *testing.T) {
 func TestRateLimitIntegration(t *testing.T) {
 	router := ws.NewRouter()
 
+	// Create rate limiter store
+	store := middleware.NewRateLimiterStore()
+
 	// Apply rate limit of 1 request per second
-	router.Use(middleware.RateLimit(&middleware.RateLimitConfig{
+	router.Use(middleware.RateLimitWithStore(&middleware.RateLimitConfig{
 		Default: 1,
-	}))
+	}, store))
 
 	router.Handle("test", func(c *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
@@ -170,7 +173,7 @@ func TestRateLimitIntegration(t *testing.T) {
 	assert.Equal(t, "TooManyRequests", resp.Error.Reason)
 
 	// Clean up
-	middleware.CleanupClientLimiters(client)
+	store.Remove(client)
 }
 
 func TestGroupMiddlewareIsolation(t *testing.T) {

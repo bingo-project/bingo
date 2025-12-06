@@ -11,7 +11,7 @@ import (
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.
-func RegisterWSHandlers(router *ws.Router) {
+func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore) {
 	h := wshandler.NewHandler(store.S)
 
 	// Global middleware
@@ -19,12 +19,12 @@ func RegisterWSHandlers(router *ws.Router) {
 		middleware.Recovery,
 		middleware.RequestID,
 		middleware.Logger,
-		middleware.RateLimit(&middleware.RateLimitConfig{
+		middleware.RateLimitWithStore(&middleware.RateLimitConfig{
 			Default: 10,
 			Methods: map[string]float64{
 				"heartbeat": 0, // No limit for heartbeat
 			},
-		}),
+		}, rateLimitStore),
 	)
 
 	// Public methods (no auth required)

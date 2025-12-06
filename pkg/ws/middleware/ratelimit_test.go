@@ -18,11 +18,13 @@ func TestRateLimit_Allows(t *testing.T) {
 		Default: 10, // 10 requests per second
 	}
 
+	store := NewRateLimiterStore()
+
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
-	wrapped := RateLimit(cfg)(handler)
+	wrapped := RateLimitWithStore(cfg, store)(handler)
 
 	client := &ws.Client{
 		Addr: "127.0.0.1:12345",
@@ -40,7 +42,7 @@ func TestRateLimit_Allows(t *testing.T) {
 	assert.Equal(t, "ok", resp.Result)
 
 	// Cleanup
-	CleanupClientLimiters(client)
+	store.Remove(client)
 }
 
 func TestRateLimit_Blocks(t *testing.T) {
@@ -48,11 +50,13 @@ func TestRateLimit_Blocks(t *testing.T) {
 		Default: 1, // 1 request per second
 	}
 
+	store := NewRateLimiterStore()
+
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
-	wrapped := RateLimit(cfg)(handler)
+	wrapped := RateLimitWithStore(cfg, store)(handler)
 
 	client := &ws.Client{
 		Addr: "127.0.0.1:12346",
@@ -78,7 +82,7 @@ func TestRateLimit_Blocks(t *testing.T) {
 	assert.Equal(t, "TooManyRequests", resp.Error.Reason)
 
 	// Cleanup
-	CleanupClientLimiters(client)
+	store.Remove(client)
 }
 
 func TestRateLimit_MethodSpecific(t *testing.T) {
@@ -89,11 +93,13 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 		},
 	}
 
+	store := NewRateLimiterStore()
+
 	handler := func(c *ws.Context) *jsonrpc.Response {
 		return jsonrpc.NewResponse(c.Request.ID, "ok")
 	}
 
-	wrapped := RateLimit(cfg)(handler)
+	wrapped := RateLimitWithStore(cfg, store)(handler)
 
 	client := &ws.Client{
 		Addr: "127.0.0.1:12347",
@@ -113,7 +119,7 @@ func TestRateLimit_MethodSpecific(t *testing.T) {
 	}
 
 	// Cleanup
-	CleanupClientLimiters(client)
+	store.Remove(client)
 }
 
 func TestRateLimit_NilClient(t *testing.T) {

@@ -22,14 +22,17 @@ import (
 
 // initWebSocket initializes the WebSocket engine and hub.
 func initWebSocket() (*gin.Engine, *ws.Hub) {
+	// Create rate limiter store
+	rateLimitStore := middleware.NewRateLimiterStore()
+
 	// Create hub with disconnect callback to cleanup rate limiters
 	hub := ws.NewHub(
-		ws.WithClientDisconnectCallback(middleware.CleanupClientLimiters),
+		ws.WithClientDisconnectCallback(rateLimitStore.Remove),
 	)
 
 	// Create router and register handlers
 	wsRouter := ws.NewRouter()
-	router.RegisterWSHandlers(wsRouter)
+	router.RegisterWSHandlers(wsRouter, rateLimitStore)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGinForWebSocket()

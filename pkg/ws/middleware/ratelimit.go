@@ -19,52 +19,56 @@ type RateLimitConfig struct {
 	Methods map[string]float64 // Per-method limits (0 = unlimited)
 }
 
-// clientLimiters stores per-client limiters.
-type clientLimiters struct {
+// RateLimiterStore manages per-client rate limiters.
+type RateLimiterStore struct {
 	mu       sync.RWMutex
 	limiters map[*ws.Client]map[string]*rate.Limiter
 }
 
-var limiters = &clientLimiters{
-	limiters: make(map[*ws.Client]map[string]*rate.Limiter),
+// NewRateLimiterStore creates a new rate limiter store.
+func NewRateLimiterStore() *RateLimiterStore {
+	return &RateLimiterStore{
+		limiters: make(map[*ws.Client]map[string]*rate.Limiter),
+	}
 }
 
-func (cl *clientLimiters) get(client *ws.Client, method string, limit float64) *rate.Limiter {
-	cl.mu.RLock()
-	if methods, ok := cl.limiters[client]; ok {
+func (s *RateLimiterStore) get(client *ws.Client, method string, limit float64) *rate.Limiter {
+	s.mu.RLock()
+	if methods, ok := s.limiters[client]; ok {
 		if limiter, ok := methods[method]; ok {
-			cl.mu.RUnlock()
+			s.mu.RUnlock()
 			return limiter
 		}
 	}
-	cl.mu.RUnlock()
+	s.mu.RUnlock()
 
-	cl.mu.Lock()
-	defer cl.mu.Unlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
-	if cl.limiters[client] == nil {
-		cl.limiters[client] = make(map[string]*rate.Limiter)
+	if s.limiters[client] == nil {
+		s.limiters[client] = make(map[string]*rate.Limiter)
 	}
 
-	if _, ok := cl.limiters[client][method]; !ok {
+	if _, ok := s.limiters[client][method]; !ok {
 		burst := int(limit) + 1
 		if burst < 1 {
 			burst = 1
 		}
-		cl.limiters[client][method] = rate.NewLimiter(rate.Limit(limit), burst)
+		s.limiters[client][method] = rate.NewLimiter(rate.Limit(limit), burst)
 	}
 
-	return cl.limiters[client][method]
+	return s.limiters[client][method]
 }
 
-func (cl *clientLimiters) remove(client *ws.Client) {
-	cl.mu.Lock()
-	defer cl.mu.Unlock()
-	delete(cl.limiters, client)
+// Remove removes all limiters for a client. Call this on client disconnect.
+func (s *RateLimiterStore) Remove(client *ws.Client) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.limiters, client)
 }
 
-// RateLimit limits request rate per client per method.
-func RateLimit(cfg *RateLimitConfig) ws.Middleware {
+// RateLimitWithStore creates a rate limit middleware with custom store.
+func RateLimitWithStore(cfg *RateLimitConfig, store *RateLimiterStore) ws.Middleware {
 	return func(next ws.Handler) ws.Handler {
 		return func(c *ws.Context) *jsonrpc.Response {
 			if c.Client == nil {
@@ -85,7 +89,7 @@ func RateLimit(cfg *RateLimitConfig) ws.Middleware {
 			}
 
 			// Check rate limit
-			limiter := limiters.get(c.Client, c.Method, limit)
+			limiter := store.get(c.Client, c.Method, limit)
 			if !limiter.Allow() {
 				return jsonrpc.NewErrorResponse(c.Request.ID,
 					errorsx.New(429, "TooManyRequests", "Rate limit exceeded"))
@@ -96,8 +100,15 @@ func RateLimit(cfg *RateLimitConfig) ws.Middleware {
 	}
 }
 
-// CleanupClientLimiters removes limiters for a disconnected client.
-// Call this when client disconnects.
+// RateLimit creates a rate limit middleware with a new store.
+// Note: For proper cleanup, use RateLimitWithStore with Hub's WithClientDisconnectCallback.
+func RateLimit(cfg *RateLimitConfig) ws.Middleware {
+	return RateLimitWithStore(cfg, NewRateLimiterStore())
+}
+
+// CleanupClientLimiters is deprecated.
+//
+// Deprecated: Use RateLimiterStore.Remove with Hub's WithClientDisconnectCallback instead.
 func CleanupClientLimiters(client *ws.Client) {
-	limiters.remove(client)
+	// no-op for backward compatibility
 }
