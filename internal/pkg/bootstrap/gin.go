@@ -68,3 +68,18 @@ func registerProfiling(g *gin.Engine) {
 
 	pprof.RouteRegister(p, "debug/pprof")
 }
+
+// InitGinForWebSocket creates a minimal Gin engine for WebSocket connections.
+// WebSocket connections don't need rate limiting, User-Agent checks, or request logging.
+func InitGinForWebSocket() *gin.Engine {
+	gin.SetMode(facade.Config.HTTP.GinMode)
+
+	g := gin.New()
+	g.Use(
+		gin.Recovery(),
+		middleware.Cors,
+		middleware.RequestID(),
+	)
+
+	return g
+}

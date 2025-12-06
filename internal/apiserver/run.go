@@ -112,7 +112,7 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	router.RegisterWSHandlers(adapter, bizInstance)
 
 	// Create Gin engine for WebSocket
-	engine := bootstrap.InitGin()
+	engine := bootstrap.InitGinForWebSocket()
 
 	// Register WebSocket route
 	handler := wshandler.NewHandler(hub, adapter, facade.Config.WebSocket)

@@ -203,7 +203,7 @@ func (c *Client) handleMessage(data []byte) {
 	}
 
 	// Handle login (allowed without authentication)
-	if req.Method == "login" {
+	if req.Method == "login" || req.Method == "auth.login" {
 		c.handleLogin(&req)
 		return
 	}
@@ -288,14 +288,18 @@ func (c *Client) handleLogin(req *jsonrpc.Request) {
 	}
 	paramsBytes, _ := json.Marshal(req.Params)
 	if err := json.Unmarshal(paramsBytes, &params); err != nil {
+		logger.Warnw("WebSocket login invalid params", "addr", c.Addr, "error", err.Error())
 		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
 			errorsx.New(400, "InvalidParams", "Invalid login params")))
+
 		return
 	}
 
 	if !IsValidPlatform(params.Platform) {
+		logger.Warnw("WebSocket login invalid platform", "addr", c.Addr, "platform", params.Platform)
 		c.sendJSON(jsonrpc.NewErrorResponse(req.ID,
-			errorsx.New(400, "InvalidPlatform", "Invalid platform")))
+			errorsx.New(400, "InvalidPlatform", "Invalid platform: %s", params.Platform)))
+
 		return
 	}
 

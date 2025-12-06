@@ -46,7 +46,13 @@ func (h *Handler) checkOrigin(cfg *config.WebSocket) func(r *http.Request) bool 
 		if cfg == nil || cfg.AllowAllOrigins() {
 			return true
 		}
+
 		origin := r.Header.Get("Origin")
+		// Allow requests without Origin header (non-browser clients like Postman, mobile SDKs)
+		if origin == "" {
+			return true
+		}
+
 		return cfg.IsOriginAllowed(origin)
 	}
 }

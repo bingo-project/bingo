@@ -6,6 +6,8 @@ package ws
 import (
 	"context"
 
+	"github.com/bingo-project/component-base/log"
+
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/errno"
@@ -25,7 +27,10 @@ func NewAuthHandler(b biz.IBiz) *AuthHandler {
 
 // Login handles user login and returns JWT token.
 func (h *AuthHandler) Login(ctx context.Context, req any) (any, error) {
+	log.C(ctx).Debugw("Login function called")
+
 	r := req.(*v1.LoginRequest)
+
 	return h.b.Auth().Login(ctx, r)
 }
 

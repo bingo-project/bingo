@@ -7,7 +7,11 @@ import (
 	"context"
 
 	"github.com/bingo-project/component-base/log"
+	"go.uber.org/zap"
 )
+
+// callerSkip adjusts the caller frame to show the actual calling code instead of this wrapper.
+var callerSkip = zap.AddCallerSkip(1)
 
 // Logger defines the logging interface used by the ws package.
 type Logger interface {
@@ -22,19 +26,19 @@ type Logger interface {
 type defaultLogger struct{}
 
 func (defaultLogger) Debugw(msg string, keysAndValues ...any) {
-	log.Debugw(msg, keysAndValues...)
+	log.SugaredLogger().WithOptions(callerSkip).Debugw(msg, keysAndValues...)
 }
 
 func (defaultLogger) Infow(msg string, keysAndValues ...any) {
-	log.Infow(msg, keysAndValues...)
+	log.SugaredLogger().WithOptions(callerSkip).Infow(msg, keysAndValues...)
 }
 
 func (defaultLogger) Warnw(msg string, keysAndValues ...any) {
-	log.Warnw(msg, keysAndValues...)
+	log.SugaredLogger().WithOptions(callerSkip).Warnw(msg, keysAndValues...)
 }
 
 func (defaultLogger) Errorw(msg string, keysAndValues ...any) {
-	log.Errorw(msg, keysAndValues...)
+	log.SugaredLogger().WithOptions(callerSkip).Errorw(msg, keysAndValues...)
 }
 
 func (defaultLogger) WithContext(ctx context.Context) Logger {
@@ -47,19 +51,19 @@ type contextLogger struct {
 }
 
 func (l contextLogger) Debugw(msg string, keysAndValues ...any) {
-	log.C(l.ctx).Debugw(msg, keysAndValues...)
+	log.C(l.ctx).WithOption(callerSkip).Debugw(msg, keysAndValues...)
 }
 
 func (l contextLogger) Infow(msg string, keysAndValues ...any) {
-	log.C(l.ctx).Infow(msg, keysAndValues...)
+	log.C(l.ctx).WithOption(callerSkip).Infow(msg, keysAndValues...)
 }
 
 func (l contextLogger) Warnw(msg string, keysAndValues ...any) {
-	log.C(l.ctx).Warnw(msg, keysAndValues...)
+	log.C(l.ctx).WithOption(callerSkip).Warnw(msg, keysAndValues...)
 }
 
 func (l contextLogger) Errorw(msg string, keysAndValues ...any) {
-	log.C(l.ctx).Errorw(msg, keysAndValues...)
+	log.C(l.ctx).WithOption(callerSkip).Errorw(msg, keysAndValues...)
 }
 
 func (l contextLogger) WithContext(ctx context.Context) Logger {
