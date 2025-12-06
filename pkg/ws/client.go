@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
 	"bingo/pkg/errorsx"
@@ -58,6 +59,7 @@ type Client struct {
 	closeOnce sync.Once
 
 	// Client info
+	ID             string // Unique client identifier
 	Addr           string
 	Platform       string
 	UserID         string
@@ -91,13 +93,18 @@ func WithContextUpdater(updater ContextUpdater) ClientOption {
 // NewClient creates a new WebSocket client.
 func NewClient(hub *Hub, conn *websocket.Conn, ctx context.Context, adapter *jsonrpc.Adapter, opts ...ClientOption) *Client {
 	now := time.Now().Unix()
+	addr := ""
+	if conn != nil {
+		addr = conn.RemoteAddr().String()
+	}
 	c := &Client{
 		hub:           hub,
 		conn:          conn,
 		adapter:       adapter,
 		ctx:           ctx,
 		Send:          make(chan []byte, 256),
-		Addr:          conn.RemoteAddr().String(),
+		ID:            uuid.New().String(),
+		Addr:          addr,
 		FirstTime:     now,
 		HeartbeatTime: now,
 	}
