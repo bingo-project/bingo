@@ -228,29 +228,75 @@ func RegisterWSHandlers(router *ws.Router) {
     // 公开方法（无需认证）
     public := router.Group()
     public.Handle("heartbeat", ws.HeartbeatHandler)
-    public.Handle("system.healthz", ws.WrapBizHandler(h.Healthz))
-    public.Handle("auth.login", middleware.LoginStateUpdater(
-        ws.WrapParamsHandler(h.Login, func() *v1.LoginRequest { return &v1.LoginRequest{} }),
-    ))
+    public.Handle("system.healthz", h.Healthz)
+    public.Handle("auth.login", middleware.LoginStateUpdater(h.Login))
 
     // 需要认证的方法
     private := router.Group(middleware.Auth)
     private.Handle("subscribe", ws.SubscribeHandler)
     private.Handle("unsubscribe", ws.UnsubscribeHandler)
-    private.Handle("auth.user-info", ws.WrapBizHandler(h.UserInfo))
+    private.Handle("auth.user-info", h.UserInfo)
 }
 ```
 
-### Handler 适配器
+### Handler 签名
+
+所有 Handler 使用统一的签名，类似 Gin 的 `func(c *gin.Context)`：
 
 ```go
-// pkg/ws/handlers.go
+// pkg/ws/middleware.go
 
-// WrapBizHandler 适配无参数的 Biz 方法
-func WrapBizHandler(handler BizHandler) Handler
+// Handler 消息处理函数
+type Handler func(*MiddlewareContext) *jsonrpc.Response
 
-// WrapParamsHandler 适配带参数的 Biz 方法（泛型）
-func WrapParamsHandler[T any](handler BizHandler, paramsFactory func() *T) Handler
+// MiddlewareContext 包含请求的所有信息
+type MiddlewareContext struct {
+    Ctx       context.Context   // 请求上下文
+    Request   *jsonrpc.Request  // JSON-RPC 请求
+    Client    *Client           // WebSocket 客户端
+    Method    string            // 方法名
+    StartTime time.Time         // 请求开始时间
+}
+
+// BindParams 解析请求参数到结构体
+func (mc *MiddlewareContext) BindParams(v any) error
+
+// BindValidate 解析并验证请求参数
+func (mc *MiddlewareContext) BindValidate(v any) error
+```
+
+### Handler 实现示例
+
+```go
+// internal/apiserver/handler/ws/auth.go
+
+func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
+    var req v1.LoginRequest
+    if err := mc.BindValidate(&req); err != nil {
+        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrBind.SetMessage(err.Error()))
+    }
+
+    resp, err := h.b.Auth().Login(mc.Ctx, &req)
+    if err != nil {
+        return jsonrpc.NewErrorResponse(mc.Request.ID, err)
+    }
+
+    return jsonrpc.NewResponse(mc.Request.ID, resp)
+}
+
+func (h *Handler) UserInfo(mc *ws.MiddlewareContext) *jsonrpc.Response {
+    uid := mc.UserID()
+    if uid == "" {
+        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrTokenInvalid)
+    }
+
+    user, err := store.S.User().GetByUID(mc.Ctx, uid)
+    if err != nil {
+        return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrUserNotFound)
+    }
+
+    return jsonrpc.NewResponse(mc.Request.ID, &v1.UserInfo{...})
+}
 ```
 
 ### 内置 Handler

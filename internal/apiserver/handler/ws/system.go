@@ -4,25 +4,28 @@
 package ws
 
 import (
-	"context"
 	"time"
 
 	"github.com/bingo-project/component-base/version"
+
+	"bingo/pkg/jsonrpc"
+	"bingo/pkg/ws"
 )
 
 // Healthz returns server health status.
-func (h *Handler) Healthz(ctx context.Context, req any) (any, error) {
-	status, err := h.b.Servers().Status(ctx)
+func (h *Handler) Healthz(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	status, err := h.b.Servers().Status(mc.Ctx)
 	if err != nil {
-		return nil, err
+		return jsonrpc.NewErrorResponse(mc.Request.ID, err)
 	}
-	return map[string]any{
+
+	return jsonrpc.NewResponse(mc.Request.ID, map[string]any{
 		"status":     status,
 		"serverTime": time.Now().Unix(),
-	}, nil
+	})
 }
 
 // Version returns server version info.
-func (h *Handler) Version(ctx context.Context, req any) (any, error) {
-	return version.Get(), nil
+func (h *Handler) Version(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	return jsonrpc.NewResponse(mc.Request.ID, version.Get())
 }

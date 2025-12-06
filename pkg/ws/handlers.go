@@ -1,50 +1,14 @@
 // ABOUTME: Built-in handlers for common WebSocket methods.
-// ABOUTME: Provides heartbeat, subscribe, unsubscribe, and handler adapters.
+// ABOUTME: Provides heartbeat, subscribe, and unsubscribe handlers.
 
 package ws
 
 import (
-	"context"
-	"encoding/json"
 	"time"
 
 	"bingo/pkg/errorsx"
 	"bingo/pkg/jsonrpc"
 )
-
-// BizHandler is a business logic handler function type.
-type BizHandler func(ctx context.Context, req any) (any, error)
-
-// WrapBizHandler adapts a biz handler (no request params) to ws.Handler.
-func WrapBizHandler(handler BizHandler) Handler {
-	return func(mc *MiddlewareContext) *jsonrpc.Response {
-		resp, err := handler(mc.Ctx, nil)
-		if err != nil {
-			return jsonrpc.NewErrorResponse(mc.Request.ID, err)
-		}
-		return jsonrpc.NewResponse(mc.Request.ID, resp)
-	}
-}
-
-// WrapParamsHandler adapts a biz handler with typed request params to ws.Handler.
-// The paramsFactory creates a new instance of the params type for unmarshaling.
-func WrapParamsHandler[T any](handler BizHandler, paramsFactory func() *T) Handler {
-	return func(mc *MiddlewareContext) *jsonrpc.Response {
-		params := paramsFactory()
-		if len(mc.Request.Params) > 0 {
-			if err := json.Unmarshal(mc.Request.Params, params); err != nil {
-				return jsonrpc.NewErrorResponse(mc.Request.ID,
-					errorsx.New(400, "InvalidParams", "Invalid params: %s", err.Error()))
-			}
-		}
-
-		resp, err := handler(mc.Ctx, params)
-		if err != nil {
-			return jsonrpc.NewErrorResponse(mc.Request.ID, err)
-		}
-		return jsonrpc.NewResponse(mc.Request.ID, resp)
-	}
-}
 
 // HeartbeatHandler responds to heartbeat requests.
 func HeartbeatHandler(mc *MiddlewareContext) *jsonrpc.Response {
@@ -60,7 +24,7 @@ func SubscribeHandler(mc *MiddlewareContext) *jsonrpc.Response {
 		Topics []string `json:"topics"`
 	}
 
-	if err := json.Unmarshal(mc.Request.Params, &params); err != nil {
+	if err := mc.BindParams(&params); err != nil {
 		return jsonrpc.NewErrorResponse(mc.Request.ID,
 			errorsx.New(400, "InvalidParams", "Invalid subscribe params"))
 	}
@@ -89,7 +53,7 @@ func UnsubscribeHandler(mc *MiddlewareContext) *jsonrpc.Response {
 		Topics []string `json:"topics"`
 	}
 
-	if err := json.Unmarshal(mc.Request.Params, &params); err != nil {
+	if err := mc.BindParams(&params); err != nil {
 		return jsonrpc.NewErrorResponse(mc.Request.ID,
 			errorsx.New(400, "InvalidParams", "Invalid unsubscribe params"))
 	}

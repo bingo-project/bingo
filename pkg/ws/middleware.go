@@ -5,11 +5,17 @@ package ws
 
 import (
 	"context"
+	"encoding/json"
 	"time"
+
+	"github.com/go-playground/validator/v10"
 
 	"bingo/internal/pkg/contextx"
 	"bingo/pkg/jsonrpc"
 )
+
+// validate is the singleton validator instance.
+var validate = validator.New()
 
 // MiddlewareContext contains all information needed by middleware.
 type MiddlewareContext struct {
@@ -34,6 +40,22 @@ func (mc *MiddlewareContext) UserID() string {
 		return ""
 	}
 	return contextx.UserID(mc.Ctx)
+}
+
+// BindParams unmarshals the request params into the given struct.
+func (mc *MiddlewareContext) BindParams(v any) error {
+	if len(mc.Request.Params) == 0 {
+		return nil
+	}
+	return json.Unmarshal(mc.Request.Params, v)
+}
+
+// BindValidate unmarshals and validates the request params.
+func (mc *MiddlewareContext) BindValidate(v any) error {
+	if err := mc.BindParams(v); err != nil {
+		return err
+	}
+	return validate.Struct(v)
 }
 
 // Handler is a message handler function.

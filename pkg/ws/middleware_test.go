@@ -105,3 +105,96 @@ func TestMiddlewareChain_Empty(t *testing.T) {
 
 	assert.Equal(t, "ok", resp.Result)
 }
+
+func TestMiddlewareContext_BindParams(t *testing.T) {
+	mc := &MiddlewareContext{
+		Request: &jsonrpc.Request{
+			ID:     1,
+			Method: "test",
+			Params: []byte(`{"username":"alice","age":25}`),
+		},
+	}
+
+	var params struct {
+		Username string `json:"username"`
+		Age      int    `json:"age"`
+	}
+
+	err := mc.BindParams(&params)
+	assert.NoError(t, err)
+	assert.Equal(t, "alice", params.Username)
+	assert.Equal(t, 25, params.Age)
+}
+
+func TestMiddlewareContext_BindParams_Empty(t *testing.T) {
+	mc := &MiddlewareContext{
+		Request: &jsonrpc.Request{
+			ID:     1,
+			Method: "test",
+			Params: nil,
+		},
+	}
+
+	var params struct {
+		Username string `json:"username"`
+	}
+
+	err := mc.BindParams(&params)
+	assert.NoError(t, err)
+	assert.Equal(t, "", params.Username)
+}
+
+func TestMiddlewareContext_BindParams_Invalid(t *testing.T) {
+	mc := &MiddlewareContext{
+		Request: &jsonrpc.Request{
+			ID:     1,
+			Method: "test",
+			Params: []byte(`invalid json`),
+		},
+	}
+
+	var params struct {
+		Username string `json:"username"`
+	}
+
+	err := mc.BindParams(&params)
+	assert.Error(t, err)
+}
+
+func TestMiddlewareContext_BindValidate(t *testing.T) {
+	mc := &MiddlewareContext{
+		Request: &jsonrpc.Request{
+			ID:     1,
+			Method: "test",
+			Params: []byte(`{"username":"alice","email":"alice@example.com"}`),
+		},
+	}
+
+	var params struct {
+		Username string `json:"username" validate:"required,min=3"`
+		Email    string `json:"email" validate:"required,email"`
+	}
+
+	err := mc.BindValidate(&params)
+	assert.NoError(t, err)
+	assert.Equal(t, "alice", params.Username)
+	assert.Equal(t, "alice@example.com", params.Email)
+}
+
+func TestMiddlewareContext_BindValidate_ValidationError(t *testing.T) {
+	mc := &MiddlewareContext{
+		Request: &jsonrpc.Request{
+			ID:     1,
+			Method: "test",
+			Params: []byte(`{"username":"ab","email":"invalid"}`),
+		},
+	}
+
+	var params struct {
+		Username string `json:"username" validate:"required,min=3"`
+		Email    string `json:"email" validate:"required,email"`
+	}
+
+	err := mc.BindValidate(&params)
+	assert.Error(t, err)
+}

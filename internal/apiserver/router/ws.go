@@ -6,7 +6,6 @@ package router
 import (
 	wshandler "bingo/internal/apiserver/handler/ws"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/ws"
 	"bingo/pkg/ws/middleware"
 )
@@ -31,15 +30,13 @@ func RegisterWSHandlers(router *ws.Router) {
 	// Public methods (no auth required)
 	public := router.Group()
 	public.Handle("heartbeat", ws.HeartbeatHandler)
-	public.Handle("system.healthz", ws.WrapBizHandler(h.Healthz))
-	public.Handle("system.version", ws.WrapBizHandler(h.Version))
-	public.Handle("auth.login", middleware.LoginStateUpdater(
-		ws.WrapParamsHandler(h.Login, func() *v1.LoginRequest { return &v1.LoginRequest{} }),
-	))
+	public.Handle("system.healthz", h.Healthz)
+	public.Handle("system.version", h.Version)
+	public.Handle("auth.login", middleware.LoginStateUpdater(h.Login))
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
 	private.Handle("subscribe", ws.SubscribeHandler)
 	private.Handle("unsubscribe", ws.UnsubscribeHandler)
-	private.Handle("auth.user-info", ws.WrapBizHandler(h.UserInfo))
+	private.Handle("auth.user-info", h.UserInfo)
 }

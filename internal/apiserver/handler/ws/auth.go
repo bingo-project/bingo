@@ -4,38 +4,45 @@
 package ws
 
 import (
-	"context"
-
 	"github.com/bingo-project/component-base/log"
 
-	"bingo/internal/pkg/contextx"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/store"
 	"bingo/pkg/api/apiserver/v1"
+	"bingo/pkg/jsonrpc"
+	"bingo/pkg/ws"
 )
 
 // Login handles user login and returns JWT token.
-func (h *Handler) Login(ctx context.Context, req any) (any, error) {
-	log.C(ctx).Debugw("Login function called")
+func (h *Handler) Login(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	log.C(mc.Ctx).Debugw("Login function called")
 
-	r := req.(*v1.LoginRequest)
+	var req v1.LoginRequest
+	if err := mc.BindValidate(&req); err != nil {
+		return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrBind.SetMessage(err.Error()))
+	}
 
-	return h.b.Auth().Login(ctx, r)
+	resp, err := h.b.Auth().Login(mc.Ctx, &req)
+	if err != nil {
+		return jsonrpc.NewErrorResponse(mc.Request.ID, err)
+	}
+
+	return jsonrpc.NewResponse(mc.Request.ID, resp)
 }
 
 // UserInfo returns the current user's info.
-func (h *Handler) UserInfo(ctx context.Context, req any) (any, error) {
-	uid := contextx.UserID(ctx)
+func (h *Handler) UserInfo(mc *ws.MiddlewareContext) *jsonrpc.Response {
+	uid := mc.UserID()
 	if uid == "" {
-		return nil, errno.ErrTokenInvalid
+		return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrTokenInvalid)
 	}
 
-	user, err := store.S.User().GetByUID(ctx, uid)
+	user, err := store.S.User().GetByUID(mc.Ctx, uid)
 	if err != nil {
-		return nil, errno.ErrUserNotFound
+		return jsonrpc.NewErrorResponse(mc.Request.ID, errno.ErrUserNotFound)
 	}
 
-	return &v1.UserInfo{
+	return jsonrpc.NewResponse(mc.Request.ID, &v1.UserInfo{
 		UID:       user.UID,
 		Username:  user.Username,
 		Nickname:  user.Nickname,
@@ -44,5 +51,5 @@ func (h *Handler) UserInfo(ctx context.Context, req any) (any, error) {
 		Status:    int32(user.Status),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
-	}, nil
+	})
 }
