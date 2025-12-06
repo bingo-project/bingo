@@ -4,8 +4,8 @@ import (
 	"context"
 	"regexp"
 
+	"github.com/dromara/carbon/v2"
 	"github.com/duke-git/lancet/v2/pointer"
-	"github.com/golang-module/carbon/v2"
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/errno"

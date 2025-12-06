@@ -10,10 +10,10 @@ import (
 
 	"github.com/agiledragon/gomonkey/v2"
 	"github.com/bingo-project/component-base/web/signer"
+	"github.com/dromara/carbon/v2"
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/duke-git/lancet/v2/pointer"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-module/carbon/v2"
 	"github.com/google/uuid"
 
 	"bingo/internal/pkg/config"
