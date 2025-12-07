@@ -3,7 +3,7 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/bot/discord/controller/v1/server"
+	"bingo/internal/bot/discord/handler"
 	"bingo/internal/bot/discord/middleware"
 	"bingo/internal/pkg/store"
 )
@@ -12,28 +12,28 @@ func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreat
 	middleware.Context(s, i)
 	defer middleware.Recover()
 
-	serverController := server.New(store.S, s, i)
+	serverHandler := handler.NewServerHandler(store.S, s, i)
 
 	switch i.ApplicationCommandData().Name {
 	// Ping
 	case "ping":
-		serverController.Pong()
+		serverHandler.Pong()
 
 	// Healthz
 	case "healthz":
-		serverController.Healthz()
+		serverHandler.Healthz()
 
 	// Version
 	case "version":
-		serverController.Version()
+		serverHandler.Version()
 
 	// Subscribe
 	case "subscribe":
-		serverController.Subscribe()
+		serverHandler.Subscribe()
 
 	// UnSubscribe
 	case "unsubscribe":
-		serverController.UnSubscribe()
+		serverHandler.UnSubscribe()
 
 	default:
 	}
@@ -47,7 +47,7 @@ func RegisterCommandHandlers(s *discordgo.Session, i *discordgo.InteractionCreat
 	switch i.ApplicationCommandData().Name {
 	// Maintenance
 	case "maintenance":
-		serverController.ToggleMaintenance()
+		serverHandler.ToggleMaintenance()
 
 	default:
 	}

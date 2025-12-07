@@ -19,7 +19,7 @@ import (
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/providers [GET].
-func (ctrl *AuthController) Providers(c *gin.Context) {
+func (ctrl *AuthHandler) Providers(c *gin.Context) {
 	log.C(c).Infow("Providers function called")
 
 	resp, err := ctrl.b.AuthProviders().FindEnabled(c)

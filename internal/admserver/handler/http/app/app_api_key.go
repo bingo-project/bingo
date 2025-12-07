@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type ApiKeyController struct {
+type ApiKeyHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
-	return &ApiKeyController{a: a, b: biz.NewBiz(ds)}
+func NewApiKeyHandler(ds store.IStore, a *auth.Authz) *ApiKeyHandler {
+	return &ApiKeyHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -33,7 +33,7 @@ func NewApiKeyController(ds store.IStore, a *auth.Authz) *ApiKeyController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/api-keys [GET].
-func (ctrl *ApiKeyController) List(c *gin.Context) {
+func (ctrl *ApiKeyHandler) List(c *gin.Context) {
 	log.C(c).Infow("List apiKey function called")
 
 	var req v1.ListApiKeyRequest
@@ -64,7 +64,7 @@ func (ctrl *ApiKeyController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/api-keys [POST].
-func (ctrl *ApiKeyController) Create(c *gin.Context) {
+func (ctrl *ApiKeyHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create apiKey function called")
 
 	var req v1.CreateApiKeyRequest
@@ -96,7 +96,7 @@ func (ctrl *ApiKeyController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/api-keys/{id} [GET].
-func (ctrl *ApiKeyController) Get(c *gin.Context) {
+func (ctrl *ApiKeyHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))
@@ -122,7 +122,7 @@ func (ctrl *ApiKeyController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/api-keys/{id} [PUT].
-func (ctrl *ApiKeyController) Update(c *gin.Context) {
+func (ctrl *ApiKeyHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update apiKey function called")
 
 	var req v1.UpdateApiKeyRequest
@@ -154,7 +154,7 @@ func (ctrl *ApiKeyController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/api-keys/{id} [DELETE].
-func (ctrl *ApiKeyController) Delete(c *gin.Context) {
+func (ctrl *ApiKeyHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete apiKey function called")
 
 	ID := cast.ToUint(c.Param("id"))

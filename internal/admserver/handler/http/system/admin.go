@@ -12,13 +12,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type AdminController struct {
+type AdminHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAdminController(ds store.IStore, a *auth.Authz) *AdminController {
-	return &AdminController{a: a, b: biz.NewBiz(ds)}
+func NewAdminHandler(ds store.IStore, a *auth.Authz) *AdminHandler {
+	return &AdminHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -32,7 +32,7 @@ func NewAdminController(ds store.IStore, a *auth.Authz) *AdminController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins [GET].
-func (ctrl *AdminController) List(c *gin.Context) {
+func (ctrl *AdminHandler) List(c *gin.Context) {
 	log.C(c).Infow("List admin function called")
 
 	var req v1.ListAdminRequest
@@ -63,7 +63,7 @@ func (ctrl *AdminController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins [POST].
-func (ctrl *AdminController) Create(c *gin.Context) {
+func (ctrl *AdminHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create admin function called")
 
 	var req v1.CreateAdminRequest
@@ -95,7 +95,7 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins/{name} [GET].
-func (ctrl *AdminController) Get(c *gin.Context) {
+func (ctrl *AdminHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get admin function called")
 
 	username := c.Param("name")
@@ -121,7 +121,7 @@ func (ctrl *AdminController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins/{name} [PUT].
-func (ctrl *AdminController) Update(c *gin.Context) {
+func (ctrl *AdminHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update admin function called")
 
 	var req v1.UpdateAdminRequest
@@ -153,7 +153,7 @@ func (ctrl *AdminController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins/{name} [DELETE].
-func (ctrl *AdminController) Delete(c *gin.Context) {
+func (ctrl *AdminHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete admin function called")
 
 	username := c.Param("name")
@@ -178,7 +178,7 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/admins/{name}/roles [PUT].
-func (ctrl *AdminController) SetRoles(c *gin.Context) {
+func (ctrl *AdminHandler) SetRoles(c *gin.Context) {
 	log.C(c).Infow("SetRoles function called")
 
 	var req v1.SetRolesRequest

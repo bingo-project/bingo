@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/contextx"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
-	return &AuthController{a: a, b: biz.NewBiz(ds)}
+func NewAuthHandler(ds store.IStore, a *auth.Authz) *AuthHandler {
+	return &AuthHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // SendEmailCode
@@ -33,7 +33,7 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/code/email [POST].
-func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
+func (ctrl *AuthHandler) SendEmailCode(c *gin.Context) {
 	log.C(c).Infow("SendEmailCode function called")
 
 	var req v1.SendEmailRequest
@@ -64,7 +64,7 @@ func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/register [POST].
-func (ctrl *AuthController) Register(c *gin.Context) {
+func (ctrl *AuthHandler) Register(c *gin.Context) {
 	log.C(c).Infow("Register function called")
 
 	var req v1.RegisterRequest
@@ -94,7 +94,7 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/user-info [GET].
-func (ctrl *AuthController) UserInfo(c *gin.Context) {
+func (ctrl *AuthHandler) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
 	user, ok := contextx.UserInfo[*v1.UserInfo](c.Request.Context())

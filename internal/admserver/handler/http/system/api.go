@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type ApiController struct {
+type ApiHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewApiController(ds store.IStore, a *auth.Authz) *ApiController {
-	return &ApiController{a: a, b: biz.NewBiz(ds)}
+func NewApiHandler(ds store.IStore, a *auth.Authz) *ApiHandler {
+	return &ApiHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -33,7 +33,7 @@ func NewApiController(ds store.IStore, a *auth.Authz) *ApiController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis [GET].
-func (ctrl *ApiController) List(c *gin.Context) {
+func (ctrl *ApiHandler) List(c *gin.Context) {
 	log.C(c).Infow("List api function called")
 
 	var req v1.ListApiRequest
@@ -64,7 +64,7 @@ func (ctrl *ApiController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis [POST].
-func (ctrl *ApiController) Create(c *gin.Context) {
+func (ctrl *ApiHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create api function called")
 
 	var req v1.CreateApiRequest
@@ -96,7 +96,7 @@ func (ctrl *ApiController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/{id} [GET].
-func (ctrl *ApiController) Get(c *gin.Context) {
+func (ctrl *ApiHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get api function called")
 
 	ID := cast.ToUint(c.Param("id"))
@@ -122,7 +122,7 @@ func (ctrl *ApiController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/{id} [PUT].
-func (ctrl *ApiController) Update(c *gin.Context) {
+func (ctrl *ApiHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update api function called")
 
 	var req v1.UpdateApiRequest
@@ -154,7 +154,7 @@ func (ctrl *ApiController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/{id} [DELETE].
-func (ctrl *ApiController) Delete(c *gin.Context) {
+func (ctrl *ApiHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete api function called")
 
 	ID := cast.ToUint(c.Param("id"))
@@ -177,7 +177,7 @@ func (ctrl *ApiController) Delete(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/all [GET].
-func (ctrl *ApiController) All(c *gin.Context) {
+func (ctrl *ApiHandler) All(c *gin.Context) {
 	log.C(c).Infow("All api function called")
 
 	resp, err := ctrl.b.Apis().All(c)
@@ -200,7 +200,7 @@ func (ctrl *ApiController) All(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apis/tree [GET].
-func (ctrl *ApiController) Tree(c *gin.Context) {
+func (ctrl *ApiHandler) Tree(c *gin.Context) {
 	log.C(c).Infow("Tree api function called")
 
 	resp, err := ctrl.b.Apis().Tree(c)

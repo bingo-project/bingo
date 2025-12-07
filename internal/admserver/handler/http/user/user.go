@@ -12,15 +12,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-// UserController 是 user 模块在 Controller 层的实现，用来处理用户模块的请求.
-type UserController struct {
+type UserHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-// NewUserController 创建一个 user controller.
-func NewUserController(ds store.IStore, a *auth.Authz) *UserController {
-	return &UserController{a: a, b: biz.NewBiz(ds)}
+func NewUserHandler(ds store.IStore, a *auth.Authz) *UserHandler {
+	return &UserHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -34,7 +32,7 @@ func NewUserController(ds store.IStore, a *auth.Authz) *UserController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users [GET].
-func (ctrl *UserController) List(c *gin.Context) {
+func (ctrl *UserHandler) List(c *gin.Context) {
 	log.C(c).Infow("List user function called")
 
 	var req v1.ListUserRequest
@@ -65,7 +63,7 @@ func (ctrl *UserController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users [POST].
-func (ctrl *UserController) Create(c *gin.Context) {
+func (ctrl *UserHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create user function called")
 
 	var req v1.CreateUserRequest
@@ -103,7 +101,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users/{name} [GET].
-func (ctrl *UserController) Get(c *gin.Context) {
+func (ctrl *UserHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get user function called")
 
 	user, err := ctrl.b.Users().Get(c, c.Param("name"))
@@ -128,7 +126,7 @@ func (ctrl *UserController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users/{name} [PUT].
-func (ctrl *UserController) Update(c *gin.Context) {
+func (ctrl *UserHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update user function called")
 
 	var req v1.UpdateUserRequest
@@ -158,7 +156,7 @@ func (ctrl *UserController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users/{name} [DELETE].
-func (ctrl *UserController) Delete(c *gin.Context) {
+func (ctrl *UserHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete user function called")
 
 	username := c.Param("name")

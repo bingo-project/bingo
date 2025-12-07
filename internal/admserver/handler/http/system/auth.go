@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/contextx"
 )
 
-type AuthController struct {
+type AuthHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
-	return &AuthController{a: a, b: biz.NewBiz(ds)}
+func NewAuthHandler(ds store.IStore, a *auth.Authz) *AuthHandler {
+	return &AuthHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // UserInfo
@@ -32,7 +32,7 @@ func NewAuthController(ds store.IStore, a *auth.Authz) *AuthController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/user-info [GET].
-func (ctrl *AuthController) UserInfo(c *gin.Context) {
+func (ctrl *AuthHandler) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
 	admin, ok := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
@@ -55,7 +55,7 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/menus [GET].
-func (ctrl *AuthController) Menus(c *gin.Context) {
+func (ctrl *AuthHandler) Menus(c *gin.Context) {
 	log.C(c).Infow("Menus function called")
 
 	admin, _ := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
@@ -81,7 +81,7 @@ func (ctrl *AuthController) Menus(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/change-password [PUT].
-func (ctrl *AuthController) ChangePassword(c *gin.Context) {
+func (ctrl *AuthHandler) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change admin password function called")
 
 	var req v1.ChangePasswordRequest
@@ -113,7 +113,7 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/switch-role [PUT].
-func (ctrl *AuthController) SwitchRole(c *gin.Context) {
+func (ctrl *AuthHandler) SwitchRole(c *gin.Context) {
 	log.C(c).Infow("SwitchRole function called")
 
 	var req v1.SwitchRoleRequest

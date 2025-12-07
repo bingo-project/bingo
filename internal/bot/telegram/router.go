@@ -3,23 +3,23 @@ package telegram
 import (
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/bot/telegram/controller/v1/server"
+	"bingo/internal/bot/telegram/handler"
 	"bingo/internal/bot/telegram/middleware"
 	"bingo/internal/pkg/store"
 )
 
 func RegisterRouters(b *telebot.Bot) {
-	serverController := server.New(store.S)
+	serverHandler := handler.NewServerHandler(store.S)
 
 	// Server
-	b.Handle("/ping", serverController.Pong)
-	b.Handle("/healthz", serverController.Healthz)
-	b.Handle("/version", serverController.Version)
-	b.Handle("/subscribe", serverController.Subscribe)
-	b.Handle("/unsubscribe", serverController.UnSubscribe)
+	b.Handle("/ping", serverHandler.Pong)
+	b.Handle("/healthz", serverHandler.Healthz)
+	b.Handle("/version", serverHandler.Version)
+	b.Handle("/subscribe", serverHandler.Subscribe)
+	b.Handle("/unsubscribe", serverHandler.UnSubscribe)
 
 	// Admin
 	adminOnly := b.Group()
 	adminOnly.Use(middleware.AdminOnly)
-	adminOnly.Handle("/maintenance", serverController.ToggleMaintenance)
+	adminOnly.Handle("/maintenance", serverHandler.ToggleMaintenance)
 }

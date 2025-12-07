@@ -21,7 +21,7 @@ import (
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/users/{name}/change-password [PUT].
-func (ctrl *UserController) ChangePassword(c *gin.Context) {
+func (ctrl *UserHandler) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change password function called")
 
 	var req v1.ChangePasswordRequest

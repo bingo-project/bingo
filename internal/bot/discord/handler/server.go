@@ -1,4 +1,4 @@
-package server
+package handler
 
 import (
 	"github.com/bingo-project/component-base/version"
@@ -14,25 +14,25 @@ import (
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
-type ServerController struct {
+type ServerHandler struct {
 	b biz.IBiz
 	*client.Client
 }
 
-func New(ds store.IStore, s *discordgo.Session, i *discordgo.InteractionCreate) *ServerController {
-	return &ServerController{
+func NewServerHandler(ds store.IStore, s *discordgo.Session, i *discordgo.InteractionCreate) *ServerHandler {
+	return &ServerHandler{
 		b:      biz.NewBiz(ds),
 		Client: client.NewClient(s, i),
 	}
 }
 
-func (ctrl *ServerController) Pong() {
+func (ctrl *ServerHandler) Pong() {
 	log.C(mw.Ctx).Infow("Pong function called")
 
 	ctrl.WriteResponse("pong")
 }
 
-func (ctrl *ServerController) Healthz() {
+func (ctrl *ServerHandler) Healthz() {
 	log.C(mw.Ctx).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(mw.Ctx)
@@ -45,7 +45,7 @@ func (ctrl *ServerController) Healthz() {
 	ctrl.WriteResponse(status)
 }
 
-func (ctrl *ServerController) Version() {
+func (ctrl *ServerHandler) Version() {
 	log.C(mw.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
@@ -53,7 +53,7 @@ func (ctrl *ServerController) Version() {
 	ctrl.WriteResponse(v)
 }
 
-func (ctrl *ServerController) ToggleMaintenance() {
+func (ctrl *ServerHandler) ToggleMaintenance() {
 	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(mw.Ctx)
@@ -66,7 +66,7 @@ func (ctrl *ServerController) ToggleMaintenance() {
 	ctrl.WriteResponse("Operation success")
 }
 
-func (ctrl *ServerController) Subscribe() {
+func (ctrl *ServerHandler) Subscribe() {
 	log.C(mw.Ctx).Infow("Subscribe function called")
 
 	user := ctrl.I.User
@@ -90,7 +90,7 @@ func (ctrl *ServerController) Subscribe() {
 	ctrl.WriteResponse("Successfully subscribe, enjoy it!")
 }
 
-func (ctrl *ServerController) UnSubscribe() {
+func (ctrl *ServerHandler) UnSubscribe() {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
 	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, ctrl.I.ChannelID)

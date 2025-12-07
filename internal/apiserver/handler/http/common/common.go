@@ -11,13 +11,12 @@ import (
 	v1 "bingo/pkg/api/apiserver/v1"
 )
 
-type CommonController struct {
+type CommonHandler struct {
 	b biz.IBiz
 }
 
-// NewCommonController 创建一个 common controller.
-func NewCommonController(ds store.IStore) *CommonController {
-	return &CommonController{
+func NewCommonHandler(ds store.IStore) *CommonHandler {
+	return &CommonHandler{
 		b: biz.NewBiz(ds),
 	}
 }
@@ -31,7 +30,7 @@ func NewCommonController(ds store.IStore) *CommonController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /healthz  [GET].
-func (ctrl *CommonController) Healthz(c *gin.Context) {
+func (ctrl *CommonHandler) Healthz(c *gin.Context) {
 	log.C(c).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(c)
@@ -53,7 +52,7 @@ func (ctrl *CommonController) Healthz(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /version  [GET].
-func (ctrl *CommonController) Version(c *gin.Context) {
+func (ctrl *CommonHandler) Version(c *gin.Context) {
 	log.C(c).Infow("Version function called")
 
 	core.Response(c, version.Get(), nil)

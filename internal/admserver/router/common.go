@@ -21,14 +21,14 @@ func MapCommonRouters(g *gin.Engine) {
 	cm.Use(middleware.Maintenance())
 
 	// Common
-	commonController := common.NewCommonController(store.S)
-	cm.GET("/healthz", commonController.Healthz)
-	cm.GET("/version", commonController.Version)
+	commonHandler := common.NewCommonHandler(store.S)
+	cm.GET("/healthz", commonHandler.Healthz)
+	cm.GET("/version", commonHandler.Version)
 
 	// v1 group
 	v1 := g.Group("/v1")
 
 	// Upload
-	fileController := file.NewFileController(nil, nil)
-	v1.POST("file/upload", middleware.Authn(), fileController.Upload)
+	fileHandler := file.NewFileHandler(nil, nil)
+	v1.POST("file/upload", middleware.Authn(), fileHandler.Upload)
 }

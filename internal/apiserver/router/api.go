@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	auth2 "bingo/internal/apiserver/handler/http/auth"
+	authhandler "bingo/internal/apiserver/handler/http/auth"
 	"bingo/internal/apiserver/middleware"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
@@ -23,26 +23,26 @@ func MapApiRouters(g *gin.Engine) {
 		log.Fatalw("auth.NewAuthz error", "err", err)
 	}
 
-	authController := auth2.NewAuthController(store.S, authz)
+	authHandler := authhandler.NewAuthHandler(store.S, authz)
 
 	// Login
-	v1.POST("auth/code/email", authController.SendEmailCode)
-	v1.POST("auth/register", authController.Register)
-	v1.POST("auth/login", authController.Login)
+	v1.POST("auth/code/email", authHandler.SendEmailCode)
+	v1.POST("auth/register", authHandler.Register)
+	v1.POST("auth/login", authHandler.Login)
 
 	// Login by Address
-	v1.GET("auth/nonce", authController.Nonce)
-	v1.POST("auth/login/address", authController.LoginByAddress)
+	v1.GET("auth/nonce", authHandler.Nonce)
+	v1.POST("auth/login/address", authHandler.LoginByAddress)
 
 	// Login by Third Party
-	v1.GET("auth/providers", authController.Providers)
-	v1.GET("auth/login/:provider", authController.GetAuthCode)
-	v1.POST("auth/login/:provider", authController.LoginByProvider)
+	v1.GET("auth/providers", authHandler.Providers)
+	v1.GET("auth/login/:provider", authHandler.GetAuthCode)
+	v1.POST("auth/login/:provider", authHandler.LoginByProvider)
 
 	v1.Use(middleware.Authn())
 
 	// Auth
-	v1.GET("auth/user-info", authController.UserInfo)             // 获取登录账号信息
-	v1.PUT("auth/change-password", authController.ChangePassword) // 修改用户密码
-	v1.POST("auth/bind/:provider", authController.BindProvider)
+	v1.GET("auth/user-info", authHandler.UserInfo)             // 获取登录账号信息
+	v1.PUT("auth/change-password", authHandler.ChangePassword) // 修改用户密码
+	v1.POST("auth/bind/:provider", authHandler.BindProvider)
 }

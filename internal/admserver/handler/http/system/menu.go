@@ -13,13 +13,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type MenuController struct {
+type MenuHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewMenuController(ds store.IStore, a *auth.Authz) *MenuController {
-	return &MenuController{a: a, b: biz.NewBiz(ds)}
+func NewMenuHandler(ds store.IStore, a *auth.Authz) *MenuHandler {
+	return &MenuHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -33,7 +33,7 @@ func NewMenuController(ds store.IStore, a *auth.Authz) *MenuController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus [GET].
-func (ctrl *MenuController) List(c *gin.Context) {
+func (ctrl *MenuHandler) List(c *gin.Context) {
 	log.C(c).Infow("List menu function called")
 
 	var req v1.ListMenuRequest
@@ -64,7 +64,7 @@ func (ctrl *MenuController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus [POST].
-func (ctrl *MenuController) Create(c *gin.Context) {
+func (ctrl *MenuHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create menu function called")
 
 	var req v1.CreateMenuRequest
@@ -96,7 +96,7 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/{id} [GET].
-func (ctrl *MenuController) Get(c *gin.Context) {
+func (ctrl *MenuHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get menu function called")
 
 	ID := cast.ToUint(c.Param("id"))
@@ -122,7 +122,7 @@ func (ctrl *MenuController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/{id} [PUT].
-func (ctrl *MenuController) Update(c *gin.Context) {
+func (ctrl *MenuHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update menu function called")
 
 	var req v1.UpdateMenuRequest
@@ -154,7 +154,7 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/{id} [DELETE].
-func (ctrl *MenuController) Delete(c *gin.Context) {
+func (ctrl *MenuHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete menu function called")
 
 	ID := cast.ToUint(c.Param("id"))
@@ -177,7 +177,7 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/tree [GET].
-func (ctrl *MenuController) Tree(c *gin.Context) {
+func (ctrl *MenuHandler) Tree(c *gin.Context) {
 	log.C(c).Infow("Tree menu function called")
 
 	resp, err := ctrl.b.Menus().Tree(c)
@@ -201,7 +201,7 @@ func (ctrl *MenuController) Tree(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/menus/{id}/toggle-hidden [POST].
-func (ctrl *MenuController) ToggleHidden(c *gin.Context) {
+func (ctrl *MenuHandler) ToggleHidden(c *gin.Context) {
 	log.C(c).Infow("menu.ToggleHidden function called")
 
 	ID := cast.ToUint(c.Param("id"))

@@ -12,13 +12,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type AppController struct {
+type AppHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
-	return &AppController{a: a, b: biz.NewBiz(ds)}
+func NewAppHandler(ds store.IStore, a *auth.Authz) *AppHandler {
+	return &AppHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -32,7 +32,7 @@ func NewAppController(ds store.IStore, a *auth.Authz) *AppController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apps [GET].
-func (ctrl *AppController) List(c *gin.Context) {
+func (ctrl *AppHandler) List(c *gin.Context) {
 	log.C(c).Infow("List app function called")
 
 	var req v1.ListAppRequest
@@ -63,7 +63,7 @@ func (ctrl *AppController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apps [POST].
-func (ctrl *AppController) Create(c *gin.Context) {
+func (ctrl *AppHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create app function called")
 
 	var req v1.CreateAppRequest
@@ -95,7 +95,7 @@ func (ctrl *AppController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apps/{appid} [GET].
-func (ctrl *AppController) Get(c *gin.Context) {
+func (ctrl *AppHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get app function called")
 
 	appID := c.Param("appid")
@@ -121,7 +121,7 @@ func (ctrl *AppController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apps/{appid} [PUT].
-func (ctrl *AppController) Update(c *gin.Context) {
+func (ctrl *AppHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update app function called")
 
 	var req v1.UpdateAppRequest
@@ -153,7 +153,7 @@ func (ctrl *AppController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/apps/{appid} [DELETE].
-func (ctrl *AppController) Delete(c *gin.Context) {
+func (ctrl *AppHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete app function called")
 
 	appID := c.Param("appid")

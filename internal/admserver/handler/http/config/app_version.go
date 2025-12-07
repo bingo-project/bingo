@@ -1,4 +1,4 @@
-package syscfg
+package config
 
 import (
 	"github.com/gin-gonic/gin"
@@ -13,37 +13,37 @@ import (
 	"bingo/pkg/auth"
 )
 
-type ConfigController struct {
+type AppVersionHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewConfigController(ds store.IStore, a *auth.Authz) *ConfigController {
-	return &ConfigController{a: a, b: biz.NewBiz(ds)}
+func NewAppVersionHandler(ds store.IStore, a *auth.Authz) *AppVersionHandler {
+	return &AppVersionHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
-// @Summary    List configs
+// @Summary    List apps
 // @Security   Bearer
 // @Tags       Config
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 query	    v1.ListConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ListConfigResponse
+// @Param      request	 query	    v1.ListAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.ListAppVersionResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs [GET].
-func (ctrl *ConfigController) List(c *gin.Context) {
-	log.C(c).Infow("List config function called")
+// @Router    /v1/cfg/apps [GET].
+func (ctrl *AppVersionHandler) List(c *gin.Context) {
+	log.C(c).Infow("List app function called")
 
-	var req v1.ListConfigRequest
+	var req v1.ListAppVersionRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
-	resp, err := ctrl.b.Configs().List(c, &req)
+	resp, err := ctrl.b.AppVersions().List(c, &req)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -54,28 +54,28 @@ func (ctrl *ConfigController) List(c *gin.Context) {
 }
 
 // Create
-// @Summary    Create config
+// @Summary    Create app
 // @Security   Bearer
 // @Tags       Config
 // @Accept     application/json
 // @Produce    json
-// @Param      request	 body	    v1.CreateConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Param      request	 body	    v1.CreateAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs [POST].
-func (ctrl *ConfigController) Create(c *gin.Context) {
-	log.C(c).Infow("Create config function called")
+// @Router    /v1/cfg/apps [POST].
+func (ctrl *AppVersionHandler) Create(c *gin.Context) {
+	log.C(c).Infow("Create app function called")
 
-	var req v1.CreateConfigRequest
+	var req v1.CreateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
-	// Create config
-	resp, err := ctrl.b.Configs().Create(c, &req)
+	// Create app
+	resp, err := ctrl.b.AppVersions().Create(c, &req)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -86,46 +86,46 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 }
 
 // Get
-// @Summary    Get config info
+// @Summary    Get app info
 // @Security   Bearer
 // @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [GET].
-func (ctrl *ConfigController) Get(c *gin.Context) {
-	log.C(c).Infow("Get config function called")
+// @Router    /v1/cfg/apps/{id} [GET].
+func (ctrl *AppVersionHandler) Get(c *gin.Context) {
+	log.C(c).Infow("Get app function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	config, err := ctrl.b.Configs().Get(c, ID)
+	app, err := ctrl.b.AppVersions().Get(c, ID)
 	if err != nil {
 		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.Response(c, config, nil)
+	core.Response(c, app, nil)
 }
 
 // Update
-// @Summary    Update config info
+// @Summary    Update app info
 // @Security   Bearer
 // @Tags       Config
 // @Accept     application/json
 // @Produce    json
 // @Param      id	     path	    string            		 true  "ID"
-// @Param      request	 body	    v1.UpdateConfigRequest	 true  "Param"
-// @Success	   200		{object}	v1.ConfigInfo
+// @Param      request	 body	    v1.UpdateAppVersionRequest	 true  "Param"
+// @Success	   200		{object}	v1.AppVersionInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [PUT].
-func (ctrl *ConfigController) Update(c *gin.Context) {
-	log.C(c).Infow("Update config function called")
+// @Router    /v1/cfg/apps/{id} [PUT].
+func (ctrl *AppVersionHandler) Update(c *gin.Context) {
+	log.C(c).Infow("Update app function called")
 
-	var req v1.UpdateConfigRequest
+	var req v1.UpdateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
@@ -133,7 +133,7 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 	}
 
 	ID := cast.ToUint(c.Param("id"))
-	resp, err := ctrl.b.Configs().Update(c, ID, &req)
+	resp, err := ctrl.b.AppVersions().Update(c, ID, &req)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -144,7 +144,7 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 }
 
 // Delete
-// @Summary    Delete config
+// @Summary    Delete app
 // @Security   Bearer
 // @Tags       Config
 // @Accept     application/json
@@ -153,12 +153,12 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/cfg/configs/{id} [DELETE].
-func (ctrl *ConfigController) Delete(c *gin.Context) {
-	log.C(c).Infow("Delete config function called")
+// @Router    /v1/cfg/apps/{id} [DELETE].
+func (ctrl *AppVersionHandler) Delete(c *gin.Context) {
+	log.C(c).Infow("Delete app function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	if err := ctrl.b.Configs().Delete(c, ID); err != nil {
+	if err := ctrl.b.AppVersions().Delete(c, ID); err != nil {
 		core.Response(c, nil, err)
 
 		return

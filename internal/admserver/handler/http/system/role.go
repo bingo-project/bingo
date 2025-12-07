@@ -12,13 +12,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type RoleController struct {
+type RoleHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewRoleController(ds store.IStore, a *auth.Authz) *RoleController {
-	return &RoleController{a: a, b: biz.NewBiz(ds)}
+func NewRoleHandler(ds store.IStore, a *auth.Authz) *RoleHandler {
+	return &RoleHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // List
@@ -32,7 +32,7 @@ func NewRoleController(ds store.IStore, a *auth.Authz) *RoleController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles [GET].
-func (ctrl *RoleController) List(c *gin.Context) {
+func (ctrl *RoleHandler) List(c *gin.Context) {
 	log.C(c).Infow("List role function called")
 
 	var req v1.ListRoleRequest
@@ -63,7 +63,7 @@ func (ctrl *RoleController) List(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles [POST].
-func (ctrl *RoleController) Create(c *gin.Context) {
+func (ctrl *RoleHandler) Create(c *gin.Context) {
 	log.C(c).Infow("Create role function called")
 
 	var req v1.CreateRoleRequest
@@ -95,7 +95,7 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name} [GET].
-func (ctrl *RoleController) Get(c *gin.Context) {
+func (ctrl *RoleHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get role function called")
 
 	roleName := c.Param("name")
@@ -121,7 +121,7 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name} [PUT].
-func (ctrl *RoleController) Update(c *gin.Context) {
+func (ctrl *RoleHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update role function called")
 
 	var req v1.UpdateRoleRequest
@@ -153,7 +153,7 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name} [DELETE].
-func (ctrl *RoleController) Delete(c *gin.Context) {
+func (ctrl *RoleHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete role function called")
 
 	roleName := c.Param("name")
@@ -178,7 +178,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name}/apis [PUT].
-func (ctrl *RoleController) SetApis(c *gin.Context) {
+func (ctrl *RoleHandler) SetApis(c *gin.Context) {
 	var req v1.SetApisRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
@@ -208,7 +208,7 @@ func (ctrl *RoleController) SetApis(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name}/apis [GET].
-func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
+func (ctrl *RoleHandler) GetApiIDs(c *gin.Context) {
 	name := c.Param("name")
 	resp, err := ctrl.b.Roles().GetApiIDs(c, ctrl.a, name)
 	if err != nil {
@@ -232,7 +232,7 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name}/menus [PUT].
-func (ctrl *RoleController) SetMenus(c *gin.Context) {
+func (ctrl *RoleHandler) SetMenus(c *gin.Context) {
 	var req v1.SetMenusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
@@ -262,7 +262,7 @@ func (ctrl *RoleController) SetMenus(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/{name}/menus [GET].
-func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
+func (ctrl *RoleHandler) GetMenuIDs(c *gin.Context) {
 	roleName := c.Param("name")
 	resp, err := ctrl.b.Roles().GetMenuIDs(c, roleName)
 	if err != nil {
@@ -284,7 +284,7 @@ func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/roles/all [GET].
-func (ctrl *RoleController) All(c *gin.Context) {
+func (ctrl *RoleHandler) All(c *gin.Context) {
 	log.C(c).Infow("All role function called")
 
 	resp, err := ctrl.b.Roles().All(c)

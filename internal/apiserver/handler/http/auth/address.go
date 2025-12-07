@@ -20,7 +20,7 @@ import (
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/nonce [GET].
-func (ctrl *AuthController) Nonce(c *gin.Context) {
+func (ctrl *AuthHandler) Nonce(c *gin.Context) {
 	log.C(c).Infow("Nonce function called")
 
 	var req v1.AddressRequest
@@ -51,7 +51,7 @@ func (ctrl *AuthController) Nonce(c *gin.Context) {
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/login/address [POST].
-func (ctrl *AuthController) LoginByAddress(c *gin.Context) {
+func (ctrl *AuthHandler) LoginByAddress(c *gin.Context) {
 	log.C(c).Infow("LoginByAddress function called")
 
 	var req v1.LoginByAddressRequest

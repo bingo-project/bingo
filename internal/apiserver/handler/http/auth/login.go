@@ -21,7 +21,7 @@ import (
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/login [POST].
-func (ctrl *AuthController) Login(c *gin.Context) {
+func (ctrl *AuthHandler) Login(c *gin.Context) {
 	log.C(c).Infow("Login function called")
 
 	var req v1.LoginRequest
@@ -53,7 +53,7 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/login/{provider} [GET].
-func (ctrl *AuthController) GetAuthCode(c *gin.Context) {
+func (ctrl *AuthHandler) GetAuthCode(c *gin.Context) {
 	log.C(c).Infow("LoginByProvider function called")
 
 	var req v1.LoginByProviderRequest
@@ -78,7 +78,7 @@ func (ctrl *AuthController) GetAuthCode(c *gin.Context) {
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/login/{provider} [POST].
-func (ctrl *AuthController) LoginByProvider(c *gin.Context) {
+func (ctrl *AuthHandler) LoginByProvider(c *gin.Context) {
 	log.C(c).Infow("LoginByProvider function called")
 
 	var req v1.LoginByProviderRequest
@@ -111,7 +111,7 @@ func (ctrl *AuthController) LoginByProvider(c *gin.Context) {
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/bind/{provider} [POST].
-func (ctrl *AuthController) BindProvider(c *gin.Context) {
+func (ctrl *AuthHandler) BindProvider(c *gin.Context) {
 	log.C(c).Infow("BindProvider function called")
 
 	var req v1.LoginByProviderRequest

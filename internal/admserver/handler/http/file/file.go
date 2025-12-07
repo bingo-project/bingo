@@ -12,13 +12,13 @@ import (
 	"bingo/pkg/auth"
 )
 
-type FileController struct {
+type FileHandler struct {
 	a *auth.Authz
 	b biz.IBiz
 }
 
-func NewFileController(ds store.IStore, a *auth.Authz) *FileController {
-	return &FileController{a: a, b: biz.NewBiz(ds)}
+func NewFileHandler(ds store.IStore, a *auth.Authz) *FileHandler {
+	return &FileHandler{a: a, b: biz.NewBiz(ds)}
 }
 
 // Upload
@@ -32,7 +32,7 @@ func NewFileController(ds store.IStore, a *auth.Authz) *FileController {
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/file/upload [POST].
-func (ctrl *FileController) Upload(c *gin.Context) {
+func (ctrl *FileHandler) Upload(c *gin.Context) {
 	log.C(c).Infow("Upload file function called")
 
 	var req v1.UploadFileRequest

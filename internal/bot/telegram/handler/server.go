@@ -1,4 +1,4 @@
-package server
+package handler
 
 import (
 	"github.com/bingo-project/component-base/version"
@@ -14,21 +14,21 @@ import (
 	v1 "bingo/pkg/api/apiserver/v1/bot"
 )
 
-type ServerController struct {
+type ServerHandler struct {
 	b biz.IBiz
 }
 
-func New(ds store.IStore) *ServerController {
-	return &ServerController{b: biz.NewBiz(ds)}
+func NewServerHandler(ds store.IStore) *ServerHandler {
+	return &ServerHandler{b: biz.NewBiz(ds)}
 }
 
-func (ctrl *ServerController) Pong(c telebot.Context) error {
+func (ctrl *ServerHandler) Pong(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("Pong function called")
 
 	return c.Send("pong")
 }
 
-func (ctrl *ServerController) Healthz(c telebot.Context) error {
+func (ctrl *ServerHandler) Healthz(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("Healthz function called")
 
 	status, err := ctrl.b.Servers().Status(mw.Ctx)
@@ -39,7 +39,7 @@ func (ctrl *ServerController) Healthz(c telebot.Context) error {
 	return c.Send(status)
 }
 
-func (ctrl *ServerController) Version(c telebot.Context) error {
+func (ctrl *ServerHandler) Version(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("Version function called")
 
 	v := version.Get().GitVersion
@@ -47,7 +47,7 @@ func (ctrl *ServerController) Version(c telebot.Context) error {
 	return c.Send(v)
 }
 
-func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
+func (ctrl *ServerHandler) ToggleMaintenance(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("ToggleMaintenance function called")
 
 	err := ctrl.b.Servers().ToggleMaintenance(mw.Ctx)
@@ -58,7 +58,7 @@ func (ctrl *ServerController) ToggleMaintenance(c telebot.Context) error {
 	return c.Send("Operation success")
 }
 
-func (ctrl *ServerController) Subscribe(c telebot.Context) error {
+func (ctrl *ServerHandler) Subscribe(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("Subscribe function called")
 
 	req := v1.CreateChannelRequest{
@@ -75,7 +75,7 @@ func (ctrl *ServerController) Subscribe(c telebot.Context) error {
 	return c.Send("Successfully subscribe, enjoy it!")
 }
 
-func (ctrl *ServerController) UnSubscribe(c telebot.Context) error {
+func (ctrl *ServerHandler) UnSubscribe(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("UnSubscribe function called")
 
 	err := ctrl.b.Channels().DeleteChannel(mw.Ctx, cast.ToString(c.Chat().ID))
