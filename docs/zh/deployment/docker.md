@@ -79,7 +79,7 @@ COPY --from=builder /build/bingo-apiserver .
 # 复制配置文件
 COPY configs/bingo-apiserver.example.yaml /etc/bingo/config.yaml
 
-EXPOSE 8080 8081 8082
+EXPOSE 8080 9090 8081
 
 CMD ["./bingo-apiserver", "-c", "/etc/bingo/config.yaml"]
 ```
@@ -132,7 +132,7 @@ docker run -d \
   --name bingo-apiserver \
   --restart unless-stopped \
   -p 8080:8080 \
-  -p 8081:8081 \
+  -p 9090:9090 \
   -v /data/bingo/config.yaml:/etc/bingo/config.yaml \
   -v /data/bingo/logs:/app/storage/log \
   -e MYSQL_PASSWORD="your-mysql-password" \
@@ -152,7 +152,7 @@ services:
     image: registry.example.com/bingo-apiserver:v1.0.0
     ports:
       - "8080:8080"
-      - "8081:8081"
+      - "9090:9090"
     volumes:
       - ./config.yaml:/etc/bingo/config.yaml
       - ./logs:/app/storage/log

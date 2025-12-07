@@ -203,22 +203,19 @@ type ErrResponse struct {
 	Metadata map[string]string `json:"metadata,omitempty"`
 }
 
-// WriteResponse 写入 HTTP 响应
-func WriteResponse(c *gin.Context, err error, data interface{}) {
-	if err == nil {
-		c.JSON(http.StatusOK, data)
+// Response 写入 HTTP 响应
+func Response(c *gin.Context, data any, err error) {
+	if err != nil {
+		e := errorsx.FromError(err)
+		c.JSON(e.Code, ErrResponse{
+			Reason:   e.Reason,
+			Message:  e.Message,
+			Metadata: e.Metadata,
+		})
 		return
 	}
 
-	// 转换为 ErrorX
-	e := errorsx.FromError(err)
-
-	c.JSON(e.Code, ErrResponse{
-		Code:     e.Code,
-		Reason:   e.Reason,
-		Message:  e.Message,
-		Metadata: e.Metadata,
-	})
+	c.JSON(http.StatusOK, data)
 }
 
 // HandleJSONRequest 通用 JSON 请求处理器
@@ -231,21 +228,21 @@ func HandleJSONRequest[Req, Resp any](
 
 	// 绑定请求体
 	if err := c.ShouldBindJSON(&req); err != nil {
-		WriteResponse(c, errno.ErrInvalidArgument.WithMessage(err.Error()), nil)
+		Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
 		return
 	}
 
 	// 运行验证器
 	for _, validate := range validators {
 		if err := validate(&req); err != nil {
-			WriteResponse(c, err, nil)
+			Response(c, nil, err)
 			return
 		}
 	}
 
 	// 调用处理函数
 	resp, err := handler(c.Request.Context(), &req)
-	WriteResponse(c, err, resp)
+	Response(c, resp, err)
 }
 ```
 
@@ -459,7 +456,7 @@ POST /v1/auth/login
 
 ↓ Gin Handler
 ↓ Biz.Login() returns errno.ErrPasswordIncorrect
-↓ core.WriteResponse()
+↓ core.Response()
 
 HTTP 401
 {"code": 401, "reason": "Unauthenticated.PasswordIncorrect", "message": "Password is incorrect."}

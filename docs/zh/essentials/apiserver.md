@@ -14,8 +14,8 @@ API Server 是 Bingo 微服务架构的核心服务，负责对外提供用户�
 | 协议 | 端口 | 用途 | 状态 |
 |------|------|------|------|
 | HTTP | 8080 | RESTful API 接口 | 稳定 |
-| gRPC | 8081 | 服务间通信 | 稳定 |
-| WebSocket | 8082 | 实时通信 | 开发中 |
+| gRPC | 9090 | 服务间通信 | 稳定 |
+| WebSocket | 8081 | 实时通信 | 开发中 |
 
 ### 核心特性
 
@@ -178,7 +178,7 @@ import (
 func main() {
   // 建立连接
   conn, err := grpc.Dial(
-    "localhost:8081",
+    "localhost:9090",
     grpc.WithInsecure(),
   )
   if err != nil {
@@ -206,7 +206,7 @@ func main() {
 ```
 ┌─────────────┐                  ┌──────────────┐
 │ Admin       │ ──gRPC──────────▶ │ API Server   │
-│ Server      │ ◀───────gRPC────── │ (8081)       │
+│ Server      │ ◀───────gRPC────── │ (9090)       │
 └─────────────┘                  └──────────────┘
 
 ┌─────────────┐
@@ -230,9 +230,9 @@ func main() {
 ### 预期端点
 
 ```
-ws://localhost:8082/ws/chat      # 聊天消息
-ws://localhost:8082/ws/notify    # 系统通知
-ws://localhost:8082/ws/stream    # 数据流
+ws://localhost:8081/ws/chat      # 聊天消息
+ws://localhost:8081/ws/notify    # 系统通知
+ws://localhost:8081/ws/stream    # 数据流
 ```
 
 ### 计划特性
@@ -242,7 +242,7 @@ ws://localhost:8082/ws/stream    # 数据流
 ```javascript
 // 客户端连接时携带 token
 const ws = new WebSocket(
-  'ws://localhost:8082/ws/chat?token=' + token
+  'ws://localhost:8081/ws/chat?token=' + token
 );
 ```
 
@@ -311,11 +311,11 @@ API_SERVER_HTTP_PORT=8080
 API_SERVER_HTTP_HOST=0.0.0.0
 
 # gRPC 服务
-API_SERVER_GRPC_PORT=8081
+API_SERVER_GRPC_PORT=9090
 API_SERVER_GRPC_HOST=0.0.0.0
 
-# WebSocket 服务（开发中）
-API_SERVER_WEBSOCKET_PORT=8082
+# WebSocket 服务
+API_SERVER_WEBSOCKET_PORT=8081
 API_SERVER_WEBSOCKET_HOST=0.0.0.0
 
 # 认证
@@ -331,8 +331,8 @@ CORS_ORIGINS=http://localhost:3000,https://example.com
 ```bash
 docker run -d \
   -p 8080:8080 \
+  -p 9090:9090 \
   -p 8081:8081 \
-  -p 8082:8082 \
   -e JWT_SECRET=secret \
   -e DATABASE_URL=postgres://user:pass@db:5432/bingo \
   -e REDIS_URL=redis://cache:6379 \
@@ -349,8 +349,8 @@ services:
     image: bingo-apiserver:latest
     ports:
       - "8080:8080"
+      - "9090:9090"
       - "8081:8081"
-      - "8082:8082"
     environment:
       - JWT_SECRET=secret
       - DATABASE_URL=postgres://db:5432/bingo
@@ -389,7 +389,7 @@ Redis 缓存 (热数据)
 
 ```go
 // gRPC 连接复用
-conn, _ := grpc.Dial("localhost:8081")
+conn, _ := grpc.Dial("localhost:9090")
 // 复用单个连接，多个 RPC 调用共享
 
 // 数据库连接池

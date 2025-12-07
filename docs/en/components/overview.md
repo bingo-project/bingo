@@ -189,7 +189,7 @@ func (h *UserHandler) Create(c *gin.Context) {
 
     // Gin auto-validation
     if err := c.ShouldBindJSON(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
@@ -238,7 +238,7 @@ if user == nil {
 func (h *UserHandler) Get(c *gin.Context) {
     user, err := h.biz.Users().Get(c.Request.Context(), id)
     // Unified error response
-    core.WriteResponse(c, err, user)
+    core.Response(c, user, err)
 }
 ```
 

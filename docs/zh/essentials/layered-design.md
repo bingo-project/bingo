@@ -55,19 +55,19 @@ func (h *UserHandler) Get(c *gin.Context) {
     // 1. 参数验证
     var req GetUserRequest
     if err := c.ShouldBindUri(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
     // 2. 调用业务层
     user, err := h.biz.Users().Get(c.Context(), req.UserID)
     if err != nil {
-        core.WriteResponse(c, err, nil)
+        core.Response(c, nil, err)
         return
     }
 
     // 3. 返回响应
-    core.WriteResponse(c, nil, user)
+    core.Response(c, user, nil)
 }
 ```
 
@@ -100,13 +100,13 @@ func (h *UserHandler) Create(c *gin.Context) {
 func (h *UserHandler) Create(c *gin.Context) {
     var req CreateUserRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
     // ✅ 业务逻辑交给 Biz 层
     user, err := h.biz.Users().Create(c.Context(), &req)
-    core.WriteResponse(c, err, user)
+    core.Response(c, user, err)
 }
 ```
 

@@ -201,12 +201,12 @@ type UserHandler struct {
 func (h *UserHandler) Login(c *gin.Context) {
     var req pb.LoginRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        core.WriteResponse(c, errno.ErrInvalidArgument.WithMessage(err.Error()), nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
     resp, err := h.biz.User().Login(c.Request.Context(), &req)
-    core.WriteResponse(c, err, resp)
+    core.Response(c, resp, err)
 }
 ```
 

@@ -45,8 +45,8 @@ description: 深入了解 Bingo Go 微服务框架的整体架构设计，包括
 
 **端口**:
 - 8080 (HTTP)
-- 8081 (gRPC)
-- 8082 (WebSocket)
+- 9090 (gRPC)
+- 8081 (WebSocket)
 
 **职责**:
 - 对外提供 RESTful API 服务
@@ -67,7 +67,8 @@ description: 深入了解 Bingo Go 微服务框架的整体架构设计，包括
 
 **端口**:
 - 18080 (HTTP)
-- 18081 (gRPC)
+- 18090 (gRPC)
+- 18081 (WebSocket)
 
 **职责**:
 - 管理后台 API 服务

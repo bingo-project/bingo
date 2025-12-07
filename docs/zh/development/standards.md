@@ -114,11 +114,11 @@ func (h *UserHandler) Get(c *gin.Context) {
     user, err := h.biz.Users().Get(c.Context(), id)
     if err != nil {
         // 统一错误响应
-        core.WriteResponse(c, err, nil)
+        core.Response(c, nil, err)
         return
     }
 
-    core.WriteResponse(c, nil, user)
+    core.Response(c, user, nil)
 }
 ```
 

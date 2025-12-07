@@ -14,8 +14,8 @@ The API Server is the core service in Bingo's microservice architecture. It prov
 | Protocol | Port | Purpose | Status |
 |----------|------|---------|--------|
 | HTTP | 8080 | RESTful API endpoints | Stable |
-| gRPC | 8081 | Inter-service communication | Stable |
-| WebSocket | 8082 | Real-time communication | In Development |
+| gRPC | 9090 | Inter-service communication | Stable |
+| WebSocket | 8081 | Real-time communication | In Development |
 
 ### Core Features
 
@@ -178,7 +178,7 @@ import (
 func main() {
   // Establish connection
   conn, err := grpc.Dial(
-    "localhost:8081",
+    "localhost:9090",
     grpc.WithInsecure(),
   )
   if err != nil {
@@ -206,12 +206,12 @@ func main() {
 ```
 ┌─────────────┐                  ┌──────────────┐
 │ Admin       │ ──gRPC──────────▶ │ API Server   │
-│ Server      │ ◀───────gRPC────── │ (8081)       │
+│ Server      │ ◀───────gRPC────── │ (9090)       │
 └─────────────┘                  └──────────────┘
 
 ┌─────────────┐
 │ Scheduler   │ ──gRPC──────────▶ │ API Server   │
-│             │ ◀───────gRPC────── │ (8081)       │
+│             │ ◀───────gRPC────── │ (9090)       │
 └─────────────┘                  └──────────────┘
 ```
 
@@ -230,9 +230,9 @@ func main() {
 ### Planned Endpoints
 
 ```
-ws://localhost:8082/ws/chat      # Chat messages
-ws://localhost:8082/ws/notify    # System notifications
-ws://localhost:8082/ws/stream    # Data streams
+ws://localhost:8081/ws/chat      # Chat messages
+ws://localhost:8081/ws/notify    # System notifications
+ws://localhost:8081/ws/stream    # Data streams
 ```
 
 ### Planned Features
@@ -242,7 +242,7 @@ ws://localhost:8082/ws/stream    # Data streams
 ```javascript
 // Include token when establishing connection
 const ws = new WebSocket(
-  'ws://localhost:8082/ws/chat?token=' + token
+  'ws://localhost:8081/ws/chat?token=' + token
 );
 ```
 
@@ -311,11 +311,11 @@ API_SERVER_HTTP_PORT=8080
 API_SERVER_HTTP_HOST=0.0.0.0
 
 # gRPC service
-API_SERVER_GRPC_PORT=8081
+API_SERVER_GRPC_PORT=9090
 API_SERVER_GRPC_HOST=0.0.0.0
 
 # WebSocket service (in development)
-API_SERVER_WEBSOCKET_PORT=8082
+API_SERVER_WEBSOCKET_PORT=8081
 API_SERVER_WEBSOCKET_HOST=0.0.0.0
 
 # Authentication
@@ -331,8 +331,8 @@ CORS_ORIGINS=http://localhost:3000,https://example.com
 ```bash
 docker run -d \
   -p 8080:8080 \
+  -p 9090:9090 \
   -p 8081:8081 \
-  -p 8082:8082 \
   -e JWT_SECRET=secret \
   -e DATABASE_URL=postgres://user:pass@db:5432/bingo \
   -e REDIS_URL=redis://cache:6379 \
@@ -349,8 +349,8 @@ services:
     image: bingo-apiserver:latest
     ports:
       - "8080:8080"
+      - "9090:9090"
       - "8081:8081"
-      - "8082:8082"
     environment:
       - JWT_SECRET=secret
       - DATABASE_URL=postgres://db:5432/bingo
@@ -389,7 +389,7 @@ Database Query
 
 ```go
 // Reuse gRPC connections
-conn, _ := grpc.Dial("localhost:8081")
+conn, _ := grpc.Dial("localhost:9090")
 // Multiple RPC calls share the single connection
 
 // Database connection pool

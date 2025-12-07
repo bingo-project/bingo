@@ -219,7 +219,7 @@ func New(biz biz.IBiz) *ArticleHandler {
 func (h *ArticleHandler) Create(c *gin.Context) {
     var req CreateArticleRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
@@ -228,11 +228,11 @@ func (h *ArticleHandler) Create(c *gin.Context) {
 
     article, err := h.biz.Articles().Create(c.Request.Context(), &req)
     if err != nil {
-        core.WriteResponse(c, err, nil)
+        core.Response(c, nil, err)
         return
     }
 
-    core.WriteResponse(c, nil, article)
+    core.Response(c, article, nil)
 }
 
 // @Summary      获取文章
@@ -244,17 +244,17 @@ func (h *ArticleHandler) Create(c *gin.Context) {
 func (h *ArticleHandler) Get(c *gin.Context) {
     var req GetArticleRequest
     if err := c.ShouldBindUri(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
     }
 
     article, err := h.biz.Articles().Get(c.Request.Context(), req.ID)
     if err != nil {
-        core.WriteResponse(c, err, nil)
+        core.Response(c, nil, err)
         return
     }
 
-    core.WriteResponse(c, nil, article)
+    core.Response(c, article, nil)
 }
 ```
 
