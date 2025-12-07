@@ -2,7 +2,7 @@
 # Makefile helper functions for tools
 #
 
-TOOLS ?= golangci-lint goimports gotests mockgen protoc-gen-go swagger addlicense
+TOOLS ?= golangci-lint goimports protoc-plugins swagger addlicense protoc-go-inject-tag protolint
 
 .PHONY: tools.verify
 tools.verify: $(addprefix tools.verify., $(TOOLS))
@@ -27,31 +27,29 @@ install.golangci-lint:
 	@golangci-lint completion zsh > $(HOME)/.golangci-lint.zsh
 	@if ! grep -q .golangci-lint.zsh $(HOME)/.zshrc; then echo "source \$$HOME/.golangci-lint.zsh" >> $(HOME)/.zshrc; fi
 
-.PHONY: install.goimports
 install.goimports:
 	@$(GO) install golang.org/x/tools/cmd/goimports@latest
 
-.PHONY: install.gotests
-install.gotests:
-	@$(GO) install github.com/cweill/gotests/gotests@latest
+install.protoc-plugins:
+	@$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.10
+	@$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.6.0
+	@$(GO) install github.com/onexstack/protoc-gen-defaults@v0.0.2
+	@$(GO) install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.27.3
+	@$(GO) install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2@v2.27.3
 
-.PHONY: install.mockgen
-install.mockgen:
-	@$(GO) install github.com/golang/mock/mockgen@latest
-
-.PHONY: install.protoc-gen-go
-install.protoc-gen-go:
-	@$(GO) install github.com/golang/protobuf/protoc-gen-go@latest
-	@$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
-.PHONY: install.swagger
 install.swagger:
 	@$(GO) install github.com/go-swagger/go-swagger/cmd/swagger@latest
 
-.PHONY: install.swag
-install.swag:
-	@$(GO) install github.com/swaggo/swag/cmd/swag@latest
-
-.PHONY: install.addlicense
 install.addlicense:
 	@$(GO) install github.com/marmotedu/addlicense@latest
+
+install.protoc-go-inject-tag:
+	@$(GO) install github.com/favadi/protoc-go-inject-tag@latest
+
+install.protolint:
+	@$(GO) install github.com/yoheimuta/protolint/cmd/protolint@latest
+
+# 伪目标（防止文件与目标名称冲突）
+.PHONY: tools.verify tools.install tools.install.% tools.verify.% install.golangci-lint \
+	install.goimports install.protoc-plugins install.swagger \
+	install.addlicense install.protoc-go-inject-tag protolint

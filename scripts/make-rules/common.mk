@@ -1,37 +1,27 @@
+# ==============================================================================
+# 定义全局 Makefile 变量方便后面引用
+
 SHELL := /bin/bash
 
-# include the common make file
 COMMON_SELF_DIR := $(dir $(lastword $(MAKEFILE_LIST)))
+# 项目根目录
+PROJ_ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/../../ && pwd -P))
+# 构建产物、临时文件存放目录
+OUTPUT_DIR := $(PROJ_ROOT_DIR)/_output
 
-# Root dir
-ifeq ($(origin ROOT_DIR),undefined)
-ROOT_DIR := $(abspath .)
-endif
-
-# Output dir
-ifeq ($(origin OUTPUT_DIR),undefined)
-OUTPUT_DIR := $(ROOT_DIR)/_output
-$(shell mkdir -p $(OUTPUT_DIR))
-endif
-
-ifeq ($(origin TOOLS_DIR),undefined)
-TOOLS_DIR := $(OUTPUT_DIR)/tools
-$(shell mkdir -p $(TOOLS_DIR))
-endif
-
-ifeq ($(origin TMP_DIR),undefined)
-TMP_DIR := $(OUTPUT_DIR)/tmp
-$(shell mkdir -p $(TMP_DIR))
-endif
+# 定义包名
+ROOT_PACKAGE=bingo
 
 # Protobuf 文件存放路径
-PROTOROOT=$(ROOT_DIR)/pkg/proto
+PROTO_ROOT=$(PROJ_ROOT_DIR)/pkg/proto
 
 # ==============================================================================
 # 定义版本相关变量
 
-# set the version number. you should not need to do this
-# for the majority of scenarios.
+# 指定应用使用的 version 包，会通过 `-ldflags -X` 向该包中指定的变量注入值
+VERSION_PACKAGE=github.com/bingo-project/component-base/version
+
+## 定义 VERSION 语义化版本号
 ifeq ($(origin VERSION), undefined)
 VERSION := $(shell git describe --tags --always --match='v*')
 endif
@@ -44,10 +34,10 @@ endif
 GIT_COMMIT:=$(shell git rev-parse HEAD)
 
 GO_LDFLAGS += \
-	-X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
-	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
-	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
-	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+	-X $(VERSION_PACKAGE).gitVersion=$(VERSION) \
+	-X $(VERSION_PACKAGE).gitCommit=$(GIT_COMMIT) \
+	-X $(VERSION_PACKAGE).gitTreeState=$(GIT_TREE_STATE) \
+	-X $(VERSION_PACKAGE).buildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 # The OS can be linux/darwin/windows when building binaries
 PLATFORMS ?= linux_amd64 linux_arm64 darwin_amd64 darwin_arm64 windows_amd64
@@ -67,6 +57,16 @@ else
 	GOOS := $(word 1, $(subst _, ,$(PLATFORM)))
 	GOARCH := $(word 2, $(subst _, ,$(PLATFORM)))
 	IMAGE_PLAT := $(PLATFORM)
+endif
+
+# 设置单元测试覆盖率阈值
+ifeq ($(origin COVERAGE),undefined)
+COVERAGE := 1
+endif
+
+# Makefile 设置
+ifndef V
+MAKEFLAGS += --no-print-directory
 endif
 
 # Linux command settings

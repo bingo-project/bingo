@@ -11,17 +11,17 @@ TAG := $(VERSION:v%=%)
 REGISTRY_PREFIX ?= bingo
 
 # Determine image files by looking into cmd/*
-IMAGES_DIR ?= $(wildcard ${ROOT_DIR}/cmd/*)
+IMAGES_DIR ?= $(wildcard ${PROJ_ROOT_DIR}/cmd/*)
 # Determine images names by stripping out the dir names
 IMAGES ?= $(filter-out tools,$(foreach image,${IMAGES_DIR},$(notdir ${image})))
 
 ifeq (${IMAGES},)
-  $(error Could not determine IMAGES, set ONEX_ROOT or run in source dir)
+  $(error Could not determine IMAGES, set PROJ_ROOT_DIR or run in source dir)
 endif
 
 .PHONY: image.build
 image.build:
-	$(ROOT_DIR)/scripts/docker/build.sh -a amd64
+	$(PROJ_ROOT_DIR)/scripts/docker/build.sh -a amd64
 
 .PHONY: image.push
 image.push: $(addprefix image.push., $(IMAGES))

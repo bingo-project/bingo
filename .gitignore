@@ -86,6 +86,7 @@ _output
 
 # Protobuf go files
 *.pb.go
+*.pb.gw.go
 
 # Tools
 .air.toml
