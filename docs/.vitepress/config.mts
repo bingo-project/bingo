@@ -224,14 +224,14 @@ export default defineConfig({
         nav: [
           { text: 'Guide', link: '/en/guide/what-is-bingo' },
           { text: 'Essentials', link: '/en/essentials/architecture' },
+          { text: 'Advanced', link: '/en/advanced/protocol-layer' },
           { text: 'Components', link: '/en/components/overview' },
           {
             text: 'More',
             items: [
               { text: 'Development Standards', link: '/en/development/standards' },
               { text: 'Testing Guide', link: '/en/development/testing' },
-              { text: 'Docker Deployment', link: '/en/deployment/docker' },
-              { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
+              { text: 'Docker Deployment', link: '/en/deployment/docker' }
             ]
           },
           { text: 'GitHub', link: 'https://github.com/bingo-project/bingo' },
@@ -297,6 +297,11 @@ export default defineConfig({
             {
               text: 'Advanced Topics',
               items: [
+                { text: 'Pluggable Protocol Layer', link: '/en/advanced/protocol-layer' },
+                { text: 'WebSocket', link: '/en/advanced/websocket' },
+                { text: 'gRPC-Gateway', link: '/en/advanced/grpc-gateway' },
+                { text: 'Unified Authentication', link: '/en/advanced/unified-auth' },
+                { text: 'Unified Error Handling', link: '/en/advanced/unified-error-handling' },
                 { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
               ]
             }
