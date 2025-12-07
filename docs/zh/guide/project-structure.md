@@ -52,7 +52,7 @@ internal/apiserver/
 ├── app.go                      # 应用初始化
 ├── run.go                      # 服务启动逻辑
 ├── biz/                        # 业务逻辑层
-│   ├── auth/                   # 认证业务
+│   ├── auth/                   # 认证业务（UserLoader 实现）
 │   ├── user/                   # 用户业务
 │   └── ...                     # 其他业务模块
 ├── handler/                    # HTTP Handler 层
@@ -65,10 +65,6 @@ internal/apiserver/
 │   └── ...
 ├── router/                     # 路由定义
 │   └── router.go
-├── middleware/                 # 中间件
-│   ├── authn.go                # 认证中间件
-│   ├── authz.go                # 授权中间件
-│   └── ...
 └── grpc/                       # gRPC 服务实现
 ```
 
@@ -78,7 +74,6 @@ internal/apiserver/
 - `handler/`: HTTP 处理器,负责请求响应
 - `store/`: 数据访问层,封装数据库操作
 - `router/`: 路由配置
-- `middleware/`: 中间件
 - `grpc/`: gRPC 服务实现
 
 ### internal/pkg/ - 内部共享包
@@ -90,12 +85,17 @@ internal/pkg/
 ├── model/                  # 数据模型
 ├── logger/                 # 日志组件
 ├── db/                     # 数据库组件
-├── auth/                   # 认证组件
+├── auth/                   # 统一认证授权
+│   ├── authenticator.go   # 认证器（token 验证 + UserLoader）
+│   ├── authorizer.go      # 授权器（Casbin + SubjectResolver）
+│   ├── interceptor.go     # gRPC 拦截器
+│   ├── middleware.go      # HTTP 中间件
+│   └── password.go        # 密码加密
 ├── util/                   # 工具函数
 └── ...
 ```
 
-被多个内部服务使用,但不对外暴露。
+被多个内部服务使用,但不对外暴露。认证授权采用插件式设计，各服务通过实现 `UserLoader` 和 `SubjectResolver` 接口来定制用户加载和权限解析逻辑。
 
 ## pkg/ - 公共包
 

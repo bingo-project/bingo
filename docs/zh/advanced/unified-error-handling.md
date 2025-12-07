@@ -231,7 +231,7 @@ func HandleJSONRequest[Req, Resp any](
 
 	// 绑定请求体
 	if err := c.ShouldBindJSON(&req); err != nil {
-		WriteResponse(c, errno.ErrBind.WithMessage(err.Error()), nil)
+		WriteResponse(c, errno.ErrInvalidArgument.WithMessage(err.Error()), nil)
 		return
 	}
 
@@ -521,7 +521,7 @@ HTTP 401
 
 - [可插拔协议层](protocol-layer.md) - HTTP/gRPC/WebSocket 统一架构
 - [WebSocket 设计与实现](websocket.md) - JSON-RPC 2.0 消息格式、中间件架构
-- [认证中间件迁移](auth-middleware-migration.md) - 统一认证实现
+- [统一认证授权](unified-auth.md) - 插件式认证授权架构
 
 ---
 

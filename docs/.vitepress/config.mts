@@ -205,6 +205,7 @@ export default defineConfig({
                 { text: '可插拔协议层', link: '/advanced/protocol-layer' },
                 { text: 'WebSocket', link: '/advanced/websocket' },
                 { text: 'gRPC-Gateway', link: '/advanced/grpc-gateway' },
+                { text: '统一认证授权', link: '/advanced/unified-auth' },
                 { text: '统一错误处理', link: '/advanced/unified-error-handling' },
                 { text: '微服务拆分', link: '/advanced/microservices' }
               ]

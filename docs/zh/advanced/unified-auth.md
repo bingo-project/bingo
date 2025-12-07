@@ -1,46 +1,36 @@
-# 统一认证设计
+# 统一认证授权
 
-## 问题
+Bingo 提供了插件式的认证授权架构，通用逻辑集中在 `internal/pkg/auth`，各服务通过实现接口来定制用户加载和权限解析逻辑。
 
-当前认证和授权逻辑分散在多处：
+## 特性
 
-**认证 (authn)：**
-- `internal/pkg/auth` - 只做 token 验证，不加载用户
-- `internal/apiserver/middleware/authn.go` - HTTP 认证，查 User 表
-- `internal/admserver/middleware/authn.go` - HTTP 认证，查 Admin 表
-- `internal/pkg/middleware/grpc/authn.go` - gRPC 认证，查 User 表
-- `pkg/ws/middleware/auth.go` - WS 认证，依赖 Client 状态
+- **插件式设计**：通过 `UserLoader` 和 `SubjectResolver` 接口支持不同用户类型
+- **协议统一**：HTTP 和 gRPC 共享相同的认证授权逻辑
+- **职责分离**：认证（authn）和授权（authz）独立，可单独使用
+- **类型安全**：context 携带类型化的用户信息
 
-**授权 (authz)：**
-- `internal/admserver/middleware/authz.go` - HTTP 授权，admserver 专用
-- `pkg/auth/authz.go` - Casbin 封装
-
-路径分散，职责不清晰，代码重复。
-
-## 目标
-
-1. 统一认证入口到 `internal/pkg/auth`
-2. 统一授权入口到 `internal/pkg/auth`
-3. 支持不同用户类型（user, admin 等）
-4. 保持通用模块不耦合具体 model
-
-## 设计
-
-### 目录结构
+## 目录结构
 
 ```
 internal/pkg/auth/
 ├── authenticator.go      # 认证器核心（token 验证 + UserLoader 调用）
+├── authenticator_test.go # 认证器测试
 ├── authorizer.go         # 授权器核心（Casbin 封装 + SubjectResolver 调用）
 ├── interceptor.go        # gRPC interceptors
 ├── middleware.go         # HTTP middleware
-├── websocket.go          # WebSocket helpers
-└── authenticator_test.go
+├── password.go           # 密码加密/比较
+└── websocket.go          # WebSocket helpers
+
+internal/apiserver/biz/auth/
+└── loader.go             # apiserver UserLoader 实现
+
+internal/admserver/biz/auth/
+└── loader.go             # admserver AdminLoader + SubjectResolver 实现
 ```
 
-### 核心接口
+## 核心接口
 
-#### UserLoader - 加载用户信息
+### UserLoader - 加载用户信息
 
 ```go
 // internal/pkg/auth/authenticator.go
@@ -84,7 +74,7 @@ func (a *Authenticator) Verify(ctx context.Context, tokenStr string) (context.Co
 }
 ```
 
-#### SubjectResolver - 获取授权主体
+### SubjectResolver - 获取授权主体
 
 ```go
 // internal/pkg/auth/authorizer.go
@@ -124,7 +114,9 @@ func (a *Authorizer) Authorize(ctx context.Context, obj, act string) error {
 }
 ```
 
-### apiserver 实现
+## 服务实现示例
+
+### apiserver UserLoader
 
 ```go
 // internal/apiserver/biz/auth/loader.go
@@ -154,7 +146,7 @@ func (l *UserLoader) LoadUser(ctx context.Context, userID string) (context.Conte
 }
 ```
 
-### admserver 实现
+### admserver AdminLoader + SubjectResolver
 
 ```go
 // internal/admserver/biz/auth/loader.go
@@ -195,9 +187,9 @@ func (r *AdminSubjectResolver) ResolveSubject(ctx context.Context) (string, erro
 }
 ```
 
-### 使用方式
+## 使用方式
 
-#### apiserver HTTP (router/api.go)
+### apiserver HTTP (router/api.go)
 
 ```go
 func MapApiRouters(g *gin.Engine) {
@@ -214,7 +206,7 @@ func MapApiRouters(g *gin.Engine) {
 }
 ```
 
-#### apiserver gRPC (grpc.go)
+### apiserver gRPC (grpc.go)
 
 ```go
 func initGRPCServer(cfg *config.GRPC) *grpc.Server {
@@ -241,7 +233,7 @@ var publicMethods = map[string]bool{
 }
 ```
 
-#### admserver HTTP (router/api.go)
+### admserver HTTP (router/api.go)
 
 ```go
 func MapApiRouters(g *gin.Engine) {
@@ -265,43 +257,7 @@ func MapApiRouters(g *gin.Engine) {
 }
 ```
 
-## 文件变更
+## 相关文档
 
-### 修改
-
-- `internal/pkg/auth/authenticator.go` - 添加 UserLoader 接口
-- `internal/pkg/auth/interceptor.go` - 支持公开方法白名单参数
-- `internal/pkg/auth/middleware.go` - 简化，使用 Authenticator
-
-### 新增
-
-- `internal/pkg/auth/authorizer.go` - 授权器（从 pkg/auth/authz.go 迁移核心逻辑）
-- `internal/apiserver/biz/auth/loader.go` - apiserver UserLoader
-- `internal/admserver/biz/auth/loader.go` - admserver AdminLoader + SubjectResolver
-
-### 删除
-
-- `internal/apiserver/middleware/authn.go`
-- `internal/admserver/middleware/authn.go`
-- `internal/admserver/middleware/authz.go`
-- `internal/pkg/middleware/grpc/authn.go`
-
-### 保留
-
-- `pkg/auth/authz.go` - 保留对外暴露的 Authz 类型（如果有外部依赖）
-- `pkg/ws/middleware/auth.go` - WS 认证逻辑不同，保持独立
-
-## 迁移步骤
-
-1. 修改 `internal/pkg/auth/authenticator.go`，添加 UserLoader 接口
-2. 修改 `internal/pkg/auth/interceptor.go`，支持白名单参数
-3. 修改 `internal/pkg/auth/middleware.go`，使用 Authenticator
-4. 创建 `internal/pkg/auth/authorizer.go`
-5. 创建 `internal/apiserver/auth/loader.go`
-6. 修改 apiserver 的 grpc.go 和 router/api.go
-7. 删除 `internal/apiserver/middleware/authn.go`
-8. 删除 `internal/pkg/middleware/grpc/authn.go`
-9. 创建 `internal/admserver/auth/loader.go`
-10. 修改 admserver 的 grpc.go 和 router/api.go
-11. 删除 `internal/admserver/middleware/authn.go` 和 `authz.go`
-12. 运行测试验证
+- [可插拔协议层](protocol-layer.md) - HTTP/gRPC/WebSocket 统一架构
+- [统一错误处理](unified-error-handling.md) - 三协议共享错误格式

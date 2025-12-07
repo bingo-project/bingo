@@ -295,7 +295,7 @@ func (c *Context) Error(err error) *jsonrpc.Response
 func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
     var req v1.LoginRequest
     if err := c.BindValidate(&req); err != nil {
-        return c.Error(errno.ErrBind.SetMessage(err.Error()))
+        return c.Error(errno.ErrInvalidArgument.WithMessage(err.Error()))
     }
 
     resp, err := h.b.Auth().Login(c, &req)  // ws.Context 嵌入 context.Context，可直接传递

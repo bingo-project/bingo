@@ -201,7 +201,7 @@ type UserHandler struct {
 func (h *UserHandler) Login(c *gin.Context) {
     var req pb.LoginRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        core.WriteResponse(c, errno.ErrBind, nil)
+        core.WriteResponse(c, errno.ErrInvalidArgument.WithMessage(err.Error()), nil)
         return
     }
 
@@ -268,7 +268,7 @@ func RegisterWSHandlers(router *ws.Router) {
 - [WebSocket 设计与实现](websocket.md) - JSON-RPC 2.0 消息格式、中间件架构、连接管理
 - [gRPC-Gateway 集成](grpc-gateway.md) - Gateway 模式配置与使用
 - [统一错误处理](unified-error-handling.md) - 三协议错误格式统一
-- [认证中间件迁移](auth-middleware-migration.md) - 统一认证实现
+- [统一认证授权](unified-auth.md) - 插件式认证授权架构
 
 ---
 
