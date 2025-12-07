@@ -4,20 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/biz"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type UserHandler struct {
-	a *auth.Authz
+	a *auth.Authorizer
 	b biz.IBiz
 }
 
-func NewUserHandler(ds store.IStore, a *auth.Authz) *UserHandler {
+func NewUserHandler(ds store.IStore, a *auth.Authorizer) *UserHandler {
 	return &UserHandler{a: a, b: biz.NewBiz(ds)}
 }
 
@@ -81,7 +81,7 @@ func (ctrl *UserHandler) Create(c *gin.Context) {
 	}
 
 	// Create policy
-	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/users/"+req.Username, auth.AclDefaultMethods); err != nil {
+	if _, err := ctrl.a.Enforcer().AddNamedPolicy("p", req.Username, "/v1/users/"+req.Username, auth.AclDefaultMethods); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -167,7 +167,7 @@ func (ctrl *UserHandler) Delete(c *gin.Context) {
 		return
 	}
 
-	if _, err := ctrl.a.RemoveNamedPolicy("p", username, "", ""); err != nil {
+	if _, err := ctrl.a.Enforcer().RemoveFilteredNamedPolicy("p", 0, username); err != nil {
 		core.Response(c, nil, err)
 
 		return

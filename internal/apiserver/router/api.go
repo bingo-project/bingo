@@ -1,17 +1,13 @@
 package router
 
 import (
-	"context"
-
 	"github.com/gin-gonic/gin"
 
 	bizauth "bingo/internal/apiserver/biz/auth"
 	authhandler "bingo/internal/apiserver/handler/http/auth"
 	"bingo/internal/apiserver/middleware"
 	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	pkgauth "bingo/pkg/auth"
 )
 
 func MapApiRouters(g *gin.Engine) {
@@ -19,13 +15,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1 := g.Group("/v1")
 	v1.Use(middleware.Maintenance())
 
-	// Authz (still using pkg/auth for Casbin policy management)
-	authz, err := pkgauth.NewAuthz(store.S.DB(context.Background()))
-	if err != nil {
-		log.Fatalw("auth.NewAuthz error", "err", err)
-	}
-
-	authHandler := authhandler.NewAuthHandler(store.S, authz)
+	authHandler := authhandler.NewAuthHandler(store.S, nil)
 
 	// Login
 	v1.POST("auth/code/email", authHandler.SendEmailCode)

@@ -13,21 +13,20 @@ import (
 	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	pkgauth "bingo/pkg/auth"
 )
 
 func MapApiRouters(g *gin.Engine) {
 	// v1 group
 	v1 := g.Group("/v1")
 
-	// Authz (still using pkg/auth for Casbin policy management)
-	authz, err := pkgauth.NewAuthz(store.S.DB(context.Background()))
+	// Authorizer for policy management (resolver is nil since these handlers only manage policies)
+	policyAuthz, err := auth.NewAuthorizer(store.S.DB(context.Background()), nil)
 	if err != nil {
-		log.Fatalw("auth.NewAuthz error", "err", err)
+		log.Fatalw("auth.NewAuthorizer error", "err", err)
 	}
 
-	authHandler := system.NewAuthHandler(store.S, authz)
-	adminHandler := system.NewAdminHandler(store.S, authz)
+	authHandler := system.NewAuthHandler(store.S, policyAuthz)
+	adminHandler := system.NewAdminHandler(store.S, policyAuthz)
 
 	// Login
 	v1.POST("auth/login", adminHandler.Login)
@@ -61,7 +60,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.PUT("admins/:name/roles", adminHandler.SetRoles)                 // 设置角色组
 
 	// Role
-	roleHandler := system.NewRoleHandler(store.S, authz)
+	roleHandler := system.NewRoleHandler(store.S, policyAuthz)
 	v1.GET("roles", roleHandler.List)
 	v1.POST("roles", roleHandler.Create)
 	v1.GET("roles/:name", roleHandler.Get)
@@ -74,7 +73,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("roles/all", roleHandler.All)
 
 	// API
-	apiHandler := system.NewApiHandler(store.S, authz)
+	apiHandler := system.NewApiHandler(store.S, policyAuthz)
 	v1.GET("apis", apiHandler.List)
 	v1.GET("apis/all", apiHandler.All)
 	v1.POST("apis", apiHandler.Create)
@@ -84,7 +83,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("apis/tree", apiHandler.Tree)
 
 	// Menu
-	menuHandler := system.NewMenuHandler(store.S, authz)
+	menuHandler := system.NewMenuHandler(store.S, policyAuthz)
 	v1.GET("menus", menuHandler.List)
 	v1.POST("menus", menuHandler.Create)
 	v1.GET("menus/:id", menuHandler.Get)
@@ -94,7 +93,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.POST("menus/:id/toggle-hidden", menuHandler.ToggleHidden)
 
 	// App Version
-	appVersionHandler := config.NewAppVersionHandler(store.S, authz)
+	appVersionHandler := config.NewAppVersionHandler(store.S, policyAuthz)
 	v1.GET("cfg/apps", appVersionHandler.List)
 	v1.POST("cfg/apps", appVersionHandler.Create)
 	v1.GET("cfg/apps/:id", appVersionHandler.Get)
@@ -102,7 +101,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.DELETE("cfg/apps/:id", appVersionHandler.Delete)
 
 	// Sys config
-	configHandler := config.NewConfigHandler(store.S, authz)
+	configHandler := config.NewConfigHandler(store.S, policyAuthz)
 	v1.GET("cfg/configs", configHandler.List)
 	v1.POST("cfg/configs", configHandler.Create)
 	v1.GET("cfg/configs/:id", configHandler.Get)
@@ -110,7 +109,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.DELETE("cfg/configs/:id", configHandler.Delete)
 
 	// User
-	userHandler := user.NewUserHandler(store.S, authz)
+	userHandler := user.NewUserHandler(store.S, policyAuthz)
 	v1.GET("users", userHandler.List)                                 // 列出用户列表，只有 root 用户才能访问
 	v1.POST("users", userHandler.Create)                              // 创建用户
 	v1.GET("users/:name", userHandler.Get)                            // 获取用户详情
@@ -119,7 +118,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.PUT("users/:name/change-password", userHandler.ChangePassword) // 修改用户密码
 
 	// App
-	appHandler := app.NewAppHandler(store.S, authz)
+	appHandler := app.NewAppHandler(store.S, policyAuthz)
 	v1.GET("apps", appHandler.List)
 	v1.POST("apps", appHandler.Create)
 	v1.GET("apps/:appid", appHandler.Get)
@@ -127,7 +126,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.DELETE("apps/:appid", appHandler.Delete)
 
 	// Api keys
-	apiKeyHandler := app.NewApiKeyHandler(store.S, authz)
+	apiKeyHandler := app.NewApiKeyHandler(store.S, policyAuthz)
 	v1.GET("api-keys", apiKeyHandler.List)
 	v1.POST("api-keys", apiKeyHandler.Create)
 	v1.GET("api-keys/:id", apiKeyHandler.Get)

@@ -3,10 +3,10 @@ package seeder
 import (
 	"context"
 
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/auth"
 )
 
 type AdminSeeder struct {
@@ -37,8 +37,8 @@ func (AdminSeeder) Run() error {
 	}
 
 	// Init permission
-	authz, _ := auth.NewAuthz(store.S.DB(ctx))
-	_, err = authz.AddNamedPolicy("p", known.RolePrefix+known.RoleRoot, "*", auth.AclDefaultMethods)
+	authz, _ := auth.NewAuthorizer(store.S.DB(ctx), nil)
+	_, err = authz.Enforcer().AddNamedPolicy("p", known.RolePrefix+known.RoleRoot, "*", auth.AclDefaultMethods)
 	if err != nil {
 		return err
 	}

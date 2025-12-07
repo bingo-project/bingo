@@ -5,20 +5,20 @@ import (
 	"github.com/spf13/cast"
 
 	"bingo/internal/admserver/biz"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type ApiHandler struct {
-	a *auth.Authz
+	a *auth.Authorizer
 	b biz.IBiz
 }
 
-func NewApiHandler(ds store.IStore, a *auth.Authz) *ApiHandler {
+func NewApiHandler(ds store.IStore, a *auth.Authorizer) *ApiHandler {
 	return &ApiHandler{a: a, b: biz.NewBiz(ds)}
 }
 

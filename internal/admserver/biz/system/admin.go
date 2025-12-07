@@ -6,12 +6,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type AdminBiz interface {

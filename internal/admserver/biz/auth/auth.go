@@ -14,13 +14,13 @@ import (
 	"github.com/spf13/cast"
 	"golang.org/x/oauth2"
 
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
 	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 // AuthBiz 定义了 user 模块在 biz 层所实现的方法.

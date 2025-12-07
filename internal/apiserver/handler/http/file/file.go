@@ -4,20 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type FileHandler struct {
-	a *auth.Authz
+	a *auth.Authorizer
 	b biz.IBiz
 }
 
-func NewFileHandler(ds store.IStore, a *auth.Authz) *FileHandler {
+func NewFileHandler(ds store.IStore, a *auth.Authorizer) *FileHandler {
 	return &FileHandler{a: a, b: biz.NewBiz(ds)}
 }
 

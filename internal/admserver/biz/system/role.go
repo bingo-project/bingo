@@ -6,13 +6,13 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type RoleBiz interface {
@@ -22,8 +22,8 @@ type RoleBiz interface {
 	Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error)
 	Delete(ctx context.Context, roleName string) error
 
-	SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error
-	GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (v1.GetApiIDsResponse, error)
+	SetApis(ctx context.Context, a *auth.Authorizer, roleName string, apiIDs []uint) error
+	GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName string) (v1.GetApiIDsResponse, error)
 	SetMenus(ctx context.Context, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
 	GetMenuTree(ctx context.Context, roleName string) ([]*v1.MenuInfo, error)
@@ -123,7 +123,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 	return b.ds.SysRole().DeleteByName(ctx, roleName)
 }
 
-func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
+func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authorizer, roleName string, apiIDs []uint) error {
 	if roleName == known.RoleRoot {
 		return errno.ErrPermissionDenied
 	}
@@ -141,7 +141,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	}
 
 	// Remove policy
-	_, err = a.RemoveFilteredPolicy(0, known.RolePrefix+role.Name)
+	_, err = a.Enforcer().RemoveFilteredPolicy(0, known.RolePrefix+role.Name)
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 		rules = append(rules, []string{known.RolePrefix + role.Name, api.Path, api.Method})
 	}
 
-	_, err = a.AddPolicies(rules)
+	_, err = a.Enforcer().AddPolicies(rules)
 	if err != nil {
 		return err
 	}
@@ -165,14 +165,14 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	return nil
 }
 
-func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string) (ret v1.GetApiIDsResponse, err error) {
+func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName string) (ret v1.GetApiIDsResponse, err error) {
 	// Get role
 	role, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
 		return
 	}
 
-	list, _ := a.GetFilteredPolicy(0, known.RolePrefix+role.Name)
+	list, _ := a.Enforcer().GetFilteredPolicy(0, known.RolePrefix+role.Name)
 
 	pathAndMethod := make([][]string, 0)
 	for _, v := range list {

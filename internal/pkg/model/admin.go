@@ -3,7 +3,7 @@ package model
 import (
 	"gorm.io/gorm"
 
-	"bingo/pkg/auth"
+	"bingo/internal/pkg/auth"
 )
 
 type AdminM struct {

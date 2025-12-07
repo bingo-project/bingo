@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/facade"
-	"bingo/pkg/auth"
 )
 
 type UserM struct {

@@ -4,20 +4,20 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/admserver/biz"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 )
 
 type AdminHandler struct {
-	a *auth.Authz
+	a *auth.Authorizer
 	b biz.IBiz
 }
 
-func NewAdminHandler(ds store.IStore, a *auth.Authz) *AdminHandler {
+func NewAdminHandler(ds store.IStore, a *auth.Authorizer) *AdminHandler {
 	return &AdminHandler{a: a, b: biz.NewBiz(ds)}
 }
 

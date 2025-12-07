@@ -32,6 +32,8 @@ e = some(where (p.eft == allow))
 
 [matchers]
 m = g(r.sub, p.sub) && r.sub == p.sub && keyMatch2(r.obj, p.obj) && regexMatch(r.act, p.act)`
+
+	AclDefaultMethods = "(GET)|(POST)|(PUT)|(DELETE)"
 )
 
 // SubjectResolver resolves the authorization subject from context.
@@ -46,7 +48,20 @@ type Authorizer struct {
 }
 
 // NewAuthorizer creates a new Authorizer with the given database and subject resolver.
+// Pass nil for resolver if only using Enforcer() for policy management.
 func NewAuthorizer(db *gorm.DB, resolver SubjectResolver) (*Authorizer, error) {
+	enforcer, err := newEnforcer(db)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Authorizer{
+		enforcer: enforcer,
+		resolver: resolver,
+	}, nil
+}
+
+func newEnforcer(db *gorm.DB) (*casbin.SyncedEnforcer, error) {
 	a, err := adapter.NewAdapterByDBUseTableName(db, "sys", "casbin_rule")
 	if err != nil {
 		return nil, err
@@ -64,14 +79,15 @@ func NewAuthorizer(db *gorm.DB, resolver SubjectResolver) (*Authorizer, error) {
 	}
 	enforcer.StartAutoLoadPolicy(time.Second * 5)
 
-	return &Authorizer{
-		enforcer: enforcer,
-		resolver: resolver,
-	}, nil
+	return enforcer, nil
 }
 
 // Authorize checks if the subject in context has permission to perform the action on the object.
 func (a *Authorizer) Authorize(ctx context.Context, obj, act string) error {
+	if a.resolver == nil {
+		return errorsx.New(500, "InternalError", "authorization resolver not configured")
+	}
+
 	sub, err := a.resolver.ResolveSubject(ctx)
 	if err != nil {
 		return err

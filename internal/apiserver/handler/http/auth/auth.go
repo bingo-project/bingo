@@ -4,21 +4,21 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"bingo/internal/apiserver/biz"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/auth"
 	"bingo/pkg/contextx"
 )
 
 type AuthHandler struct {
-	a *auth.Authz
+	a *auth.Authorizer
 	b biz.IBiz
 }
 
-func NewAuthHandler(ds store.IStore, a *auth.Authz) *AuthHandler {
+func NewAuthHandler(ds store.IStore, a *auth.Authorizer) *AuthHandler {
 	return &AuthHandler{a: a, b: biz.NewBiz(ds)}
 }
 
