@@ -76,7 +76,7 @@ func (b *authProviderBiz) Create(ctx context.Context, req *v1.CreateAuthProvider
 func (b *authProviderBiz) Get(ctx context.Context, ID uint) (*v1.AuthProviderInfo, error) {
 	authProvider, err := b.ds.AuthProvider().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.AuthProviderInfo
@@ -88,7 +88,7 @@ func (b *authProviderBiz) Get(ctx context.Context, ID uint) (*v1.AuthProviderInf
 func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAuthProviderRequest) (*v1.AuthProviderInfo, error) {
 	authProviderM, err := b.ds.AuthProvider().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

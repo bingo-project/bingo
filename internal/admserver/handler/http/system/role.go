@@ -37,19 +37,19 @@ func (ctrl *RoleController) List(c *gin.Context) {
 
 	var req v1.ListRoleRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Roles().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -68,7 +68,7 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 
 	var req v1.CreateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -76,12 +76,12 @@ func (ctrl *RoleController) Create(c *gin.Context) {
 	// Create role
 	resp, err := ctrl.b.Roles().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -101,12 +101,12 @@ func (ctrl *RoleController) Get(c *gin.Context) {
 	roleName := c.Param("name")
 	role, err := ctrl.b.Roles().Get(c, roleName)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, role)
+	core.Response(c, role, nil)
 }
 
 // Update
@@ -126,7 +126,7 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 
 	var req v1.UpdateRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -134,12 +134,12 @@ func (ctrl *RoleController) Update(c *gin.Context) {
 	roleName := c.Param("name")
 	resp, err := ctrl.b.Roles().Update(c, roleName, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -158,12 +158,12 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 
 	roleName := c.Param("name")
 	if err := ctrl.b.Roles().Delete(c, roleName); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // SetApis
@@ -181,7 +181,7 @@ func (ctrl *RoleController) Delete(c *gin.Context) {
 func (ctrl *RoleController) SetApis(c *gin.Context) {
 	var req v1.SetApisRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -189,12 +189,12 @@ func (ctrl *RoleController) SetApis(c *gin.Context) {
 	name := c.Param("name")
 	err := ctrl.b.Roles().SetApis(c, ctrl.a, name, req.ApiIDs)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // GetApiIDs
@@ -212,12 +212,12 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 	name := c.Param("name")
 	resp, err := ctrl.b.Roles().GetApiIDs(c, ctrl.a, name)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // SetMenus
@@ -235,7 +235,7 @@ func (ctrl *RoleController) GetApiIDs(c *gin.Context) {
 func (ctrl *RoleController) SetMenus(c *gin.Context) {
 	var req v1.SetMenusRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -243,12 +243,12 @@ func (ctrl *RoleController) SetMenus(c *gin.Context) {
 	roleName := c.Param("name")
 	err := ctrl.b.Roles().SetMenus(c, roleName, req.MenuIDs)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // GetMenuIDs
@@ -266,12 +266,12 @@ func (ctrl *RoleController) GetMenuIDs(c *gin.Context) {
 	roleName := c.Param("name")
 	resp, err := ctrl.b.Roles().GetMenuIDs(c, roleName)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // All
@@ -289,10 +289,10 @@ func (ctrl *RoleController) All(c *gin.Context) {
 
 	resp, err := ctrl.b.Roles().All(c)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

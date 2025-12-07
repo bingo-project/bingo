@@ -2,13 +2,13 @@ basePath: /
 definitions:
   core.ErrResponse:
     properties:
-      code:
-        description: Code defines the business error code.
-        type: string
       message:
-        description: |-
-          Message contains the detail of this message.
-          This message is suitable to be exposed to external
+        type: string
+      metadata:
+        additionalProperties:
+          type: string
+        type: object
+      reason:
         type: string
     type: object
   syscfg.AppVersionInfo:

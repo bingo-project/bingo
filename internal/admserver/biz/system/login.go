@@ -15,13 +15,13 @@ func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRe
 	// Get user
 	user, err := b.ds.Admin().GetByUsername(ctx, req.Username)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	// Check password
 	err = auth.Compare(user.Password, req.Password)
 	if err != nil {
-		return nil, errno.ErrPasswordIncorrect
+		return nil, errno.ErrPasswordInvalid
 	}
 
 	// Generate token
@@ -41,12 +41,12 @@ func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRe
 func (b *adminBiz) ChangePassword(ctx context.Context, username string, req *v1.ChangePasswordRequest) error {
 	userM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
-		return errno.ErrResourceNotFound
+		return errno.ErrNotFound
 	}
 
 	// Check password
 	if err := auth.Compare(userM.Password, req.PasswordOld); err != nil {
-		return errno.ErrPasswordOldIncorrect
+		return errno.ErrPasswordOldInvalid
 	}
 
 	// Update password

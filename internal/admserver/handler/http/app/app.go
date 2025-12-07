@@ -37,19 +37,19 @@ func (ctrl *AppController) List(c *gin.Context) {
 
 	var req v1.ListAppRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.Apps().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -68,7 +68,7 @@ func (ctrl *AppController) Create(c *gin.Context) {
 
 	var req v1.CreateAppRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -76,12 +76,12 @@ func (ctrl *AppController) Create(c *gin.Context) {
 	// Create app
 	resp, err := ctrl.b.Apps().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -101,12 +101,12 @@ func (ctrl *AppController) Get(c *gin.Context) {
 	appID := c.Param("appid")
 	app, err := ctrl.b.Apps().Get(c, appID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, app)
+	core.Response(c, app, nil)
 }
 
 // Update
@@ -126,7 +126,7 @@ func (ctrl *AppController) Update(c *gin.Context) {
 
 	var req v1.UpdateAppRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -134,12 +134,12 @@ func (ctrl *AppController) Update(c *gin.Context) {
 	appID := c.Param("appid")
 	resp, err := ctrl.b.Apps().Update(c, appID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -158,10 +158,10 @@ func (ctrl *AppController) Delete(c *gin.Context) {
 
 	appID := c.Param("appid")
 	if err := ctrl.b.Apps().Delete(c, appID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

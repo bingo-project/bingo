@@ -1,22 +1,32 @@
 package errno
 
-import "net/http"
+import (
+	"net/http"
+
+	"bingo/pkg/errorsx"
+)
 
 var (
-	OK = &Errno{HTTP: http.StatusOK, Code: "", Message: "OK"} // 代表请求成功
+	// OK 代表请求成功.
+	OK                  = &errorsx.ErrorX{Code: http.StatusOK, Message: "ok"}
+	ErrInternal         = errorsx.ErrInternal
+	ErrNotFound         = errorsx.ErrNotFound
+	ErrBind             = errorsx.ErrBind
+	ErrInvalidArgument  = errorsx.ErrInvalidArgument
+	ErrUnauthenticated  = errorsx.ErrUnauthenticated
+	ErrPermissionDenied = errorsx.ErrPermissionDenied
+	ErrOperationFailed  = errorsx.ErrOperationFailed
 
-	ErrResourceAlreadyExists = &Errno{HTTP: 400, Code: "ResourceAlreadyExists", Message: "Resource already exists."}                                          // 表示资源已存在
-	ErrBind                  = &Errno{HTTP: 400, Code: "InvalidParameter.BindError", Message: "Error occurred while binding the request body to the struct."} // 表示参数绑定错误
-	ErrInvalidParameter      = &Errno{HTTP: 400, Code: "InvalidParameter", Message: "Parameter verification failed."}                                         // 表示所有验证失败的错误
-	ErrIllegalRequest        = &Errno{HTTP: 400, Code: "IllegalRequest", Message: "Illegal request."}                                                         // 表示非法请求
-	ErrResourceNotFound      = &Errno{HTTP: 404, Code: "ResourceNotFound", Message: "Resource not found."}                                                    // 表示资源不存在
-	ErrTooManyRequests       = &Errno{HTTP: 429, Code: "TooManyRequests", Message: "Too Many Requests"}                                                       // 请求过于频繁
+	ErrIllegalRequest        = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.IllegalRequest", Message: "Illegal request."}                // 表示非法请求
+	ErrResourceAlreadyExists = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.ResourceAlreadyExists", Message: "Resource already exists."} // 表示资源已存在
+	ErrPageNotFound          = &errorsx.ErrorX{Code: http.StatusNotFound, Reason: "NotFound.PageNotFound", Message: "Page not found."}
+	ErrSignToken             = &errorsx.ErrorX{Code: http.StatusUnauthorized, Reason: "Unauthenticated.SignToken", Message: "Error occurred while signing the JSON web token."} // 表示签发 JWT Token 时出错.
+	ErrTokenInvalid          = &errorsx.ErrorX{Code: http.StatusUnauthorized, Reason: "Unauthenticated.TokenInvalid", Message: "Token was invalid."}                            // 表示 JWT Token 格式错误.
+	ErrTooManyRequests       = &errorsx.ErrorX{Code: http.StatusTooManyRequests, Reason: "TooManyRequests", Message: "Too Many Requests"}                                       // 请求过于频繁
 
-	ErrSignToken    = &Errno{HTTP: 401, Code: "AuthFailure.SignTokenError", Message: "Error occurred while signing the JSON web token."} // 表示签发 JWT Token 时出错.
-	ErrTokenInvalid = &Errno{HTTP: 401, Code: "AuthFailure.TokenInvalid", Message: "Token was invalid."}                                 // 表示 JWT Token 格式错误.
-	ErrUnauthorized = &Errno{HTTP: 401, Code: "AuthFailure.Unauthorized", Message: "Unauthorized."}                                      // 表示请求没有被授权.
-	ErrForbidden    = &Errno{HTTP: 403, Code: "Forbidden", Message: "Forbidden."}                                                        // 表示请求没有被授权.
-
-	InternalServerError        = &Errno{HTTP: 500, Code: "InternalError", Message: "Internal server error."}               // 表示所有未知的服务器端错误
-	ErrServiceUnderMaintenance = &Errno{HTTP: 503, Code: "ServiceUnderMaintenance", Message: "Service under maintenance."} // 系统维护中
+	ErrDBRead                  = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.DBRead", Message: "Database read failure."}
+	ErrDBWrite                 = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.DBWrite", Message: "Database write failure."}
+	ErrAddRole                 = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.AddRole", Message: "Error occurred while adding the role."}
+	ErrRemoveRole              = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.RemoveRole", Message: "Error occurred while removing the role."}
+	ErrServiceUnderMaintenance = &errorsx.ErrorX{Code: http.StatusServiceUnavailable, Reason: "InternalError.ServiceUnderMaintenance", Message: "Server under maintenance."}
 )

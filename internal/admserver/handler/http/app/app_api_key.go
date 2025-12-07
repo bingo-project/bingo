@@ -38,19 +38,19 @@ func (ctrl *ApiKeyController) List(c *gin.Context) {
 
 	var req v1.ListApiKeyRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.ApiKeys().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -69,7 +69,7 @@ func (ctrl *ApiKeyController) Create(c *gin.Context) {
 
 	var req v1.CreateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -77,12 +77,12 @@ func (ctrl *ApiKeyController) Create(c *gin.Context) {
 	// Create apiKey
 	resp, err := ctrl.b.ApiKeys().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -102,12 +102,12 @@ func (ctrl *ApiKeyController) Get(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	apiKey, err := ctrl.b.ApiKeys().Get(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, apiKey)
+	core.Response(c, apiKey, nil)
 }
 
 // Update
@@ -127,7 +127,7 @@ func (ctrl *ApiKeyController) Update(c *gin.Context) {
 
 	var req v1.UpdateApiKeyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -135,12 +135,12 @@ func (ctrl *ApiKeyController) Update(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.ApiKeys().Update(c, ID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -159,10 +159,10 @@ func (ctrl *ApiKeyController) Delete(c *gin.Context) {
 
 	ID := cast.ToUint(c.Param("id"))
 	if err := ctrl.b.ApiKeys().Delete(c, ID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

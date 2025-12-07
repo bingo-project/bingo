@@ -83,7 +83,7 @@ func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.Ro
 func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.RoleInfo, error) {
 	role, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.RoleInfo
@@ -95,7 +95,7 @@ func (b *roleBiz) Get(ctx context.Context, roleName string) (*v1.RoleInfo, error
 func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRoleRequest) (*v1.RoleInfo, error) {
 	roleM, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Description != nil {
@@ -117,7 +117,7 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 
 func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 	if roleName == known.RoleRoot {
-		return errno.ErrForbidden
+		return errno.ErrPermissionDenied
 	}
 
 	return b.ds.SysRole().DeleteByName(ctx, roleName)
@@ -125,7 +125,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
 	if roleName == known.RoleRoot {
-		return errno.ErrForbidden
+		return errno.ErrPermissionDenied
 	}
 
 	// 1. Get apis by ids
@@ -189,12 +189,12 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 
 func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
 	if roleName == known.RoleRoot {
-		return errno.ErrForbidden
+		return errno.ErrPermissionDenied
 	}
 
 	roleM, err := b.ds.SysRole().GetByName(ctx, roleName)
 	if err != nil {
-		return errno.ErrResourceNotFound
+		return errno.ErrNotFound
 	}
 
 	// Update menus

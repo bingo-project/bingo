@@ -73,7 +73,7 @@ func (b *appVersionBiz) Create(ctx context.Context, req *v1.CreateAppVersionRequ
 func (b *appVersionBiz) Get(ctx context.Context, ID uint) (*v1.AppVersionInfo, error) {
 	app, err := b.ds.AppVersion().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.AppVersionInfo
@@ -85,7 +85,7 @@ func (b *appVersionBiz) Get(ctx context.Context, ID uint) (*v1.AppVersionInfo, e
 func (b *appVersionBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAppVersionRequest) (*v1.AppVersionInfo, error) {
 	appM, err := b.ds.AppVersion().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

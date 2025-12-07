@@ -26,7 +26,7 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 
 	var req v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -34,10 +34,10 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 	uid := contextx.UserID(c.Request.Context())
 	err := ctrl.b.Auth().ChangePassword(c, uid, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

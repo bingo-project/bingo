@@ -14,7 +14,7 @@ import (
 func MapCommonRouters(g *gin.Engine) {
 	// 注册 404 Handler.
 	g.NoRoute(func(c *gin.Context) {
-		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
+		core.Response(c, nil, errno.ErrNotFound)
 	})
 
 	cm := g.Group("/")

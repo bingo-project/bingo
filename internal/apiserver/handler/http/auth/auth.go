@@ -38,19 +38,19 @@ func (ctrl *AuthController) SendEmailCode(c *gin.Context) {
 
 	var req v1.SendEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	err := ctrl.b.Email().SendEmailVerifyCode(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // Register
@@ -69,19 +69,19 @@ func (ctrl *AuthController) Register(c *gin.Context) {
 
 	var req v1.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Auth().Register(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // UserInfo
@@ -99,10 +99,10 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 
 	user, ok := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
 	if !ok {
-		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
+		core.Response(c, nil, errno.ErrNotFound)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, user)
+	core.Response(c, user, nil)
 }

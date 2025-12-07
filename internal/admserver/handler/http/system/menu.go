@@ -38,19 +38,19 @@ func (ctrl *MenuController) List(c *gin.Context) {
 
 	var req v1.ListMenuRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Menus().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -69,7 +69,7 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 
 	var req v1.CreateMenuRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -77,12 +77,12 @@ func (ctrl *MenuController) Create(c *gin.Context) {
 	// Create menu
 	resp, err := ctrl.b.Menus().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -102,12 +102,12 @@ func (ctrl *MenuController) Get(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	menu, err := ctrl.b.Menus().Get(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, menu)
+	core.Response(c, menu, nil)
 }
 
 // Update
@@ -127,7 +127,7 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 
 	var req v1.UpdateMenuRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -135,12 +135,12 @@ func (ctrl *MenuController) Update(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.Menus().Update(c, ID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -159,12 +159,12 @@ func (ctrl *MenuController) Delete(c *gin.Context) {
 
 	ID := cast.ToUint(c.Param("id"))
 	if err := ctrl.b.Menus().Delete(c, ID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // Tree
@@ -182,12 +182,12 @@ func (ctrl *MenuController) Tree(c *gin.Context) {
 
 	resp, err := ctrl.b.Menus().Tree(c)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // ToggleHidden
@@ -207,10 +207,10 @@ func (ctrl *MenuController) ToggleHidden(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.Menus().ToggleHidden(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

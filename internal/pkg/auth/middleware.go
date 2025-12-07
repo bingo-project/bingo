@@ -24,7 +24,7 @@ func Middleware(a *Authenticator) gin.HandlerFunc {
 		ctx, err := a.Verify(c.Request.Context(), tokenStr)
 		if err != nil {
 			e := errorsx.FromError(err)
-			core.WriteResponse(c, e, nil)
+			core.Response(c, nil, e)
 			c.Abort()
 
 			return
@@ -44,7 +44,7 @@ func MiddlewareFromRequest(a *Authenticator) gin.HandlerFunc {
 		// Parse JWT Token using component-base parser
 		payload, err := token.ParseRequest(c.Request)
 		if err != nil {
-			core.WriteResponse(c, errorsx.New(401, "Unauthenticated", "invalid token: %s", err.Error()), nil)
+			core.Response(c, nil, errorsx.New(401, "Unauthenticated", "invalid token: %s", err.Error()))
 			c.Abort()
 
 			return

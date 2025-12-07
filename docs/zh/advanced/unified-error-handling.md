@@ -295,55 +295,65 @@ func CustomErrorHandler(
 }
 ```
 
-### 3.3 WebSocket 错误处理
+### 3.3 WebSocket 错误处理（JSON-RPC 2.0）
 
-参考 [WebSocket 统一方案](./websocket-unification.md) 中的消息格式：
+WebSocket 层使用 JSON-RPC 2.0 协议，错误码遵循 JSON-RPC 规范：
 
 ```go
-// pkg/ws/message/message.go
+// pkg/jsonrpc/message.go
 
-package message
-
-import (
-	"bingo/pkg/errorsx"
-)
-
-// Response WebSocket 响应消息
+// Response represents a JSON-RPC 2.0 response.
 type Response struct {
-	Seq   string      `json:"seq"`
-	Cmd   string      `json:"cmd"`
-	Data  interface{} `json:"data,omitempty"`
-	Error *Error      `json:"error,omitempty"`
+	JSONRPC string `json:"jsonrpc"`
+	Method  string `json:"method,omitempty"` // For notifications
+	Result  any    `json:"result,omitempty"`
+	Error   *Error `json:"error,omitempty"`
+	ID      any    `json:"id,omitempty"`
 }
 
-// Error 错误格式（与 HTTP 完全一致）
+// Error represents a JSON-RPC 2.0 error.
 type Error struct {
-	Code     int               `json:"code"`
-	Reason   string            `json:"reason"`
-	Message  string            `json:"message"`
-	Metadata map[string]string `json:"metadata,omitempty"`
+	Code    int               `json:"code"`    // JSON-RPC 错误码
+	Reason  string            `json:"reason"`  // 业务错误码
+	Message string            `json:"message"`
+	Data    map[string]string `json:"data,omitempty"`
 }
+```
 
-// NewResponse 创建成功响应
-func NewResponse(seq, cmd string, data interface{}) *Response {
-	return &Response{Seq: seq, Cmd: cmd, Data: data}
-}
+```go
+// pkg/jsonrpc/response.go
 
-// NewErrorResponse 创建错误响应
-func NewErrorResponse(seq, cmd string, err error) *Response {
+// NewErrorResponse creates an error response from an error.
+func NewErrorResponse(id any, err error) *Response {
 	e := errorsx.FromError(err)
+
 	return &Response{
-		Seq: seq,
-		Cmd: cmd,
+		JSONRPC: Version,
 		Error: &Error{
-			Code:     e.Code,
-			Reason:   e.Reason,
-			Message:  e.Message,
-			Metadata: e.Metadata,
+			Code:    e.JSONRPCCode(),  // 转换为 JSON-RPC 错误码
+			Reason:  e.Reason,
+			Message: e.Message,
+			Data:    e.Metadata,
 		},
+		ID: id,
 	}
 }
 ```
+
+#### HTTP → JSON-RPC 错误码映射
+
+`errorsx.JSONRPCCode()` 方法自动将 HTTP 状态码转换为 JSON-RPC 错误码：
+
+| HTTP 状态码 | JSON-RPC 错误码 | 说明 |
+|------------|----------------|------|
+| 400 Bad Request | -32602 | Invalid params |
+| 401 Unauthorized | -32001 | Unauthenticated |
+| 403 Forbidden | -32003 | Permission denied |
+| 404 Not Found | -32004 | Not found |
+| 409 Conflict | -32009 | Conflict |
+| 429 Too Many Requests | -32029 | Too many requests |
+| 500 Internal Server Error | -32603 | Internal error |
+| 503 Service Unavailable | -32053 | Service unavailable |
 
 ## 第四阶段：Biz 层错误使用
 
@@ -483,26 +493,29 @@ HTTP 401
 {"code": 401, "reason": "Unauthenticated.PasswordIncorrect", "message": "Password is incorrect."}
 ```
 
-### WebSocket 请求
+### WebSocket 请求（JSON-RPC 2.0）
 
 ```json
-{"seq": "1", "cmd": "Login", "data": {"username": "test", "password": "wrong"}}
+{"jsonrpc": "2.0", "method": "Login", "params": {"username": "test", "password": "wrong"}, "id": 1}
 
-↓ WS Adapter
+↓ JSON-RPC Router
 ↓ Biz.Login() returns errno.ErrPasswordIncorrect
-↓ message.NewErrorResponse()
+↓ jsonrpc.NewErrorResponse()
 
-{"seq": "1", "cmd": "Login", "error": {"code": 401, "reason": "Unauthenticated.PasswordIncorrect", "message": "Password is incorrect."}}
+{"jsonrpc": "2.0", "error": {"code": -32001, "reason": "Unauthenticated.PasswordIncorrect", "message": "Password is incorrect."}, "id": 1}
 ```
+
+注意：WebSocket 层的 `error.code` 是 JSON-RPC 错误码（-32001），而非 HTTP 状态码（401）。
 
 ## 总结
 
 使用 `bingo/pkg/errorsx` 的优势：
 
-1. **简洁设计** - 只需指定 HTTP 状态码，自动转换为 gRPC 状态码
+1. **简洁设计** - 只需指定 HTTP 状态码，自动转换为 gRPC/JSON-RPC 错误码
 2. **生产就绪** - 经过实践验证
 3. **gRPC 友好** - `GRPCStatus()` 方法自动添加 ErrorInfo details
-4. **链式调用** - 支持 `WithMessage()`、`KV()` 等方法
+4. **JSON-RPC 友好** - `JSONRPCCode()` 方法自动转换错误码
+5. **链式调用** - 支持 `WithMessage()`、`KV()` 等方法
 
 ## 相关文档
 

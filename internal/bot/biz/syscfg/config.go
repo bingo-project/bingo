@@ -74,7 +74,7 @@ func (b *configBiz) Create(ctx context.Context, req *v1.CreateConfigRequest) (*v
 func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
 	config, err := b.ds.SysConfig().Get(ctx, where.F("id", ID))
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.ConfigInfo
@@ -86,7 +86,7 @@ func (b *configBiz) Get(ctx context.Context, ID uint) (*v1.ConfigInfo, error) {
 func (b *configBiz) Update(ctx context.Context, ID uint, req *v1.UpdateConfigRequest) (*v1.ConfigInfo, error) {
 	configM, err := b.ds.SysConfig().Get(ctx, where.F("id", ID))
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

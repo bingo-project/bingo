@@ -1,6 +1,11 @@
 package errno
 
+import (
+	"net/http"
+
+	"bingo/pkg/errorsx"
+)
+
 var (
-	ErrAppAlreadyExist = &Errno{HTTP: 404, Code: "FailedOperation.AppAlreadyExist", Message: "App already exist."}
-	ErrAppNotFound     = &Errno{HTTP: 404, Code: "ResourceNotFound.AppNotFound", Message: "App was not found."}
+	ErrAppNotFound = &errorsx.ErrorX{Code: http.StatusNotFound, Reason: "NotFound.AppNotFound", Message: "App was not found."}
 )

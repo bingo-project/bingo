@@ -3514,12 +3514,16 @@ const docTemplate = `{
         "core.ErrResponse": {
             "type": "object",
             "properties": {
-                "code": {
-                    "description": "Code defines the business error code.",
+                "message": {
                     "type": "string"
                 },
-                "message": {
-                    "description": "Message contains the detail of this message.\nThis message is suitable to be exposed to external",
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "reason": {
                     "type": "string"
                 }
             }

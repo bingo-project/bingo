@@ -98,7 +98,7 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	// Check password
 	err = auth.Compare(user.Password, req.Password)
 	if err != nil {
-		return nil, errno.ErrPasswordIncorrect
+		return nil, errno.ErrPasswordInvalid
 	}
 
 	// Generate token
@@ -120,7 +120,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	provider = strings.ToLower(provider)
 	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	conf := oauth2.Config{
@@ -181,7 +181,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error) {
 	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	conf := oauth2.Config{
@@ -255,7 +255,7 @@ func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.Change
 
 	// Check password
 	if err := auth.Compare(userM.Password, req.PasswordOld); err != nil {
-		return errno.ErrPasswordIncorrect
+		return errno.ErrPasswordInvalid
 	}
 
 	// Update password

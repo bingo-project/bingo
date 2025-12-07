@@ -38,19 +38,19 @@ func (ctrl *ApiController) List(c *gin.Context) {
 
 	var req v1.ListApiRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Apis().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -69,7 +69,7 @@ func (ctrl *ApiController) Create(c *gin.Context) {
 
 	var req v1.CreateApiRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -77,12 +77,12 @@ func (ctrl *ApiController) Create(c *gin.Context) {
 	// Create api
 	resp, err := ctrl.b.Apis().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -100,14 +100,14 @@ func (ctrl *ApiController) Get(c *gin.Context) {
 	log.C(c).Infow("Get api function called")
 
 	ID := cast.ToUint(c.Param("id"))
-	api, err := ctrl.b.Apis().Get(c, ID)
+	resp, err := ctrl.b.Apis().Get(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, api)
+	core.Response(c, resp, nil)
 }
 
 // Update
@@ -127,7 +127,7 @@ func (ctrl *ApiController) Update(c *gin.Context) {
 
 	var req v1.UpdateApiRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -135,12 +135,12 @@ func (ctrl *ApiController) Update(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.Apis().Update(c, ID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -159,12 +159,12 @@ func (ctrl *ApiController) Delete(c *gin.Context) {
 
 	ID := cast.ToUint(c.Param("id"))
 	if err := ctrl.b.Apis().Delete(c, ID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // All
@@ -182,12 +182,12 @@ func (ctrl *ApiController) All(c *gin.Context) {
 
 	resp, err := ctrl.b.Apis().All(c)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Tree
@@ -205,10 +205,10 @@ func (ctrl *ApiController) Tree(c *gin.Context) {
 
 	resp, err := ctrl.b.Apis().Tree(c)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

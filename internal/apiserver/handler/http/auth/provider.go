@@ -24,10 +24,10 @@ func (ctrl *AuthController) Providers(c *gin.Context) {
 
 	resp, err := ctrl.b.AuthProviders().FindEnabled(c)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

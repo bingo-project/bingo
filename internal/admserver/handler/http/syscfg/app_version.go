@@ -38,19 +38,19 @@ func (ctrl *AppVersionController) List(c *gin.Context) {
 
 	var req v1.ListAppVersionRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.AppVersions().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -69,7 +69,7 @@ func (ctrl *AppVersionController) Create(c *gin.Context) {
 
 	var req v1.CreateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -77,12 +77,12 @@ func (ctrl *AppVersionController) Create(c *gin.Context) {
 	// Create app
 	resp, err := ctrl.b.AppVersions().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -102,12 +102,12 @@ func (ctrl *AppVersionController) Get(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	app, err := ctrl.b.AppVersions().Get(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, app)
+	core.Response(c, app, nil)
 }
 
 // Update
@@ -127,7 +127,7 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 
 	var req v1.UpdateAppVersionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -135,12 +135,12 @@ func (ctrl *AppVersionController) Update(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.AppVersions().Update(c, ID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -159,10 +159,10 @@ func (ctrl *AppVersionController) Delete(c *gin.Context) {
 
 	ID := cast.ToUint(c.Param("id"))
 	if err := ctrl.b.AppVersions().Delete(c, ID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

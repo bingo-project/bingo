@@ -74,7 +74,7 @@ func (b *botBiz) Create(ctx context.Context, req *v1.CreateBotRequest) (*v1.BotI
 func (b *botBiz) Get(ctx context.Context, ID uint) (*v1.BotInfo, error) {
 	bot, err := b.ds.Bot().Get(ctx, where.F("id", ID))
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.BotInfo
@@ -86,7 +86,7 @@ func (b *botBiz) Get(ctx context.Context, ID uint) (*v1.BotInfo, error) {
 func (b *botBiz) Update(ctx context.Context, ID uint, req *v1.UpdateBotRequest) (*v1.BotInfo, error) {
 	botM, err := b.ds.Bot().Get(ctx, where.F("id", ID))
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

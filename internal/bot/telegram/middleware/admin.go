@@ -12,7 +12,7 @@ func AdminOnly(next telebot.HandlerFunc) telebot.HandlerFunc {
 	return func(c telebot.Context) error {
 		admin, _ := store.S.BotAdmin().IsAdmin(Ctx, cast.ToString(c.Sender().ID))
 		if !admin {
-			return c.Send(errno.ErrForbidden.Message)
+			return c.Send(errno.ErrPermissionDenied.Message)
 		}
 
 		return next(c)

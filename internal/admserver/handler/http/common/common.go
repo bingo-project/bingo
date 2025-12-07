@@ -41,7 +41,7 @@ func (ctrl *CommonController) Healthz(c *gin.Context) {
 
 	data := &v1.HealthzResponse{Status: status}
 
-	core.WriteResponse(c, nil, data)
+	core.Response(c, data, nil)
 }
 
 // Version
@@ -56,5 +56,5 @@ func (ctrl *CommonController) Healthz(c *gin.Context) {
 func (ctrl *CommonController) Version(c *gin.Context) {
 	log.C(c).Infow("Version function called")
 
-	core.WriteResponse(c, nil, version.Get())
+	core.Response(c, version.Get(), nil)
 }

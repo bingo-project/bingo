@@ -37,7 +37,7 @@ func (ctrl *FileController) Upload(c *gin.Context) {
 
 	var req v1.UploadFileRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
@@ -45,10 +45,10 @@ func (ctrl *FileController) Upload(c *gin.Context) {
 	// Create file
 	resp, err := ctrl.b.Files().Upload(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

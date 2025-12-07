@@ -37,19 +37,19 @@ func (ctrl *AdminController) List(c *gin.Context) {
 
 	var req v1.ListAdminRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Admins().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -68,7 +68,7 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 
 	var req v1.CreateAdminRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -76,12 +76,12 @@ func (ctrl *AdminController) Create(c *gin.Context) {
 	// Create admin
 	resp, err := ctrl.b.Admins().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -101,12 +101,12 @@ func (ctrl *AdminController) Get(c *gin.Context) {
 	username := c.Param("name")
 	admin, err := ctrl.b.Admins().Get(c, username)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, admin)
+	core.Response(c, admin, nil)
 }
 
 // Update
@@ -126,7 +126,7 @@ func (ctrl *AdminController) Update(c *gin.Context) {
 
 	var req v1.UpdateAdminRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -134,12 +134,12 @@ func (ctrl *AdminController) Update(c *gin.Context) {
 	username := c.Param("name")
 	resp, err := ctrl.b.Admins().Update(c, username, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -158,12 +158,12 @@ func (ctrl *AdminController) Delete(c *gin.Context) {
 
 	username := c.Param("name")
 	if err := ctrl.b.Admins().Delete(c, username); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // SetRoles
@@ -183,7 +183,7 @@ func (ctrl *AdminController) SetRoles(c *gin.Context) {
 
 	var req v1.SetRolesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -191,10 +191,10 @@ func (ctrl *AdminController) SetRoles(c *gin.Context) {
 	username := c.Param("name")
 	resp, err := ctrl.b.Admins().SetRoles(c, username, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

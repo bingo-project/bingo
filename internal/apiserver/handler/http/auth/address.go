@@ -25,19 +25,19 @@ func (ctrl *AuthController) Nonce(c *gin.Context) {
 
 	var req v1.AddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.Auth().Nonce(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // LoginByAddress
@@ -56,17 +56,17 @@ func (ctrl *AuthController) LoginByAddress(c *gin.Context) {
 
 	var req v1.LoginByAddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.Auth().LoginByAddress(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

@@ -1,11 +1,34 @@
 package errno
 
+import (
+	"net/http"
+
+	"bingo/pkg/errorsx"
+)
+
 var (
-	ErrUserAlreadyExist = &Errno{HTTP: 404, Code: "FailedOperation.UserAlreadyExist", Message: "User already exist."} // 代表用户已经存在.
-	ErrUserNotFound     = &Errno{HTTP: 404, Code: "ResourceNotFound.UserNotFound", Message: "User was not found."}    // 表示未找到用户.
+	// ErrUsernameInvalid 表示用户名不合法.
+	ErrUsernameInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.UsernameInvalid",
+		Message: "Invalid username: Username must consist of letters, digits, and underscores only, and its length must be between 3 and 20 characters.",
+	}
 
-	ErrUserAccountAlreadyExist = &Errno{HTTP: 404, Code: "FailedOperation.ErrUserAccountAlreadyExist", Message: "User account already exist."} // 代表用户已经存在.
+	ErrUserAlreadyExist        = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.UserAlreadyExist", Message: "User already exist."}
+	ErrUserAccountAlreadyExist = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.UserAlreadyExist", Message: "User account already exist."}
 
-	ErrPasswordIncorrect    = &Errno{HTTP: 401, Code: "InvalidParameter.PasswordIncorrect", Message: "Password was incorrect."}     // 表示密码不正确.
-	ErrPasswordOldIncorrect = &Errno{HTTP: 400, Code: "InvalidParameter.PasswordIncorrect", Message: "Old password was incorrect."} // 旧密码不正确
+	// ErrPasswordInvalid 表示密码不合法.
+	ErrPasswordInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.PasswordInvalid",
+		Message: "Password is incorrect.",
+	}
+
+	ErrPasswordOldInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.PasswordInvalid",
+		Message: "Old password is incorrect.",
+	}
+
+	ErrUserNotFound = &errorsx.ErrorX{Code: http.StatusNotFound, Reason: "NotFound.UserNotFound", Message: "User was not found."}
 )

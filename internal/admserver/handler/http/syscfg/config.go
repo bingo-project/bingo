@@ -38,19 +38,19 @@ func (ctrl *ConfigController) List(c *gin.Context) {
 
 	var req v1.ListConfigRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.Configs().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -69,7 +69,7 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 
 	var req v1.CreateConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -77,12 +77,12 @@ func (ctrl *ConfigController) Create(c *gin.Context) {
 	// Create config
 	resp, err := ctrl.b.Configs().Create(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -102,12 +102,12 @@ func (ctrl *ConfigController) Get(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	config, err := ctrl.b.Configs().Get(c, ID)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, config)
+	core.Response(c, config, nil)
 }
 
 // Update
@@ -127,7 +127,7 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 
 	var req v1.UpdateConfigRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -135,12 +135,12 @@ func (ctrl *ConfigController) Update(c *gin.Context) {
 	ID := cast.ToUint(c.Param("id"))
 	resp, err := ctrl.b.Configs().Update(c, ID, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Delete
@@ -159,10 +159,10 @@ func (ctrl *ConfigController) Delete(c *gin.Context) {
 
 	ID := cast.ToUint(c.Param("id"))
 	if err := ctrl.b.Configs().Delete(c, ID); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

@@ -26,19 +26,19 @@ func (ctrl *AuthController) Login(c *gin.Context) {
 
 	var req v1.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	resp, err := ctrl.b.Auth().Login(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // GetAuthCode
@@ -58,12 +58,12 @@ func (ctrl *AuthController) GetAuthCode(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
-	core.WriteResponse(c, nil, req)
+	core.Response(c, req, nil)
 }
 
 // LoginByProvider
@@ -83,7 +83,7 @@ func (ctrl *AuthController) LoginByProvider(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -91,12 +91,12 @@ func (ctrl *AuthController) LoginByProvider(c *gin.Context) {
 	provider := c.Param("provider")
 	resp, err := ctrl.b.Auth().LoginByProvider(c, provider, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // BindProvider
@@ -116,7 +116,7 @@ func (ctrl *AuthController) BindProvider(c *gin.Context) {
 
 	var req v1.LoginByProviderRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -126,10 +126,10 @@ func (ctrl *AuthController) BindProvider(c *gin.Context) {
 	provider := c.Param("provider")
 	resp, err := ctrl.b.Auth().Bind(c, provider, &req, user)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

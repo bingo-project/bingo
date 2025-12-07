@@ -88,7 +88,7 @@ func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.
 func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, error) {
 	admin, err := b.ds.Admin().GetUserInfo(ctx, username)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.AdminInfo
@@ -100,7 +100,7 @@ func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, err
 func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAdminRequest) (*v1.AdminInfo, error) {
 	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Nickname != nil {
@@ -154,7 +154,7 @@ func (b *adminBiz) Delete(ctx context.Context, username string) error {
 func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRolesRequest) (*v1.AdminInfo, error) {
 	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	// Update roles & current role
@@ -175,13 +175,13 @@ func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRol
 func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.SwitchRoleRequest) (*v1.AdminInfo, error) {
 	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	// Check if the user has the role
 	hasRole := b.ds.Admin().HasRole(ctx, adminM, req.RoleName)
 	if !hasRole {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	// Update roles & current role

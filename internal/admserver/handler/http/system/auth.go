@@ -37,12 +37,12 @@ func (ctrl *AuthController) UserInfo(c *gin.Context) {
 
 	admin, ok := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
 	if !ok {
-		core.WriteResponse(c, errno.ErrResourceNotFound, nil)
+		core.Response(c, nil, errno.ErrNotFound)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, admin)
+	core.Response(c, admin, nil)
 }
 
 // Menus
@@ -62,12 +62,12 @@ func (ctrl *AuthController) Menus(c *gin.Context) {
 
 	resp, err := ctrl.b.Roles().GetMenuTree(c, admin.RoleName)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // ChangePassword
@@ -86,7 +86,7 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 
 	var req v1.ChangePasswordRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -94,12 +94,12 @@ func (ctrl *AuthController) ChangePassword(c *gin.Context) {
 	username := contextx.Username(c.Request.Context())
 	err := ctrl.b.Admins().ChangePassword(c, username, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // SwitchRole
@@ -118,7 +118,7 @@ func (ctrl *AuthController) SwitchRole(c *gin.Context) {
 
 	var req v1.SwitchRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -126,10 +126,10 @@ func (ctrl *AuthController) SwitchRole(c *gin.Context) {
 	username := contextx.Username(c.Request.Context())
 	resp, err := ctrl.b.Admins().SwitchRole(c, username, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }

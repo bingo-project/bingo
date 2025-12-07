@@ -77,7 +77,7 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 func (b *menuBiz) Get(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
 	menu, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.MenuInfo
@@ -89,7 +89,7 @@ func (b *menuBiz) Get(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
 func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest) (*v1.MenuInfo, error) {
 	menuM, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.ParentID != nil {
@@ -186,7 +186,7 @@ func (b *menuBiz) Tree(ctx context.Context) (ret []*v1.MenuInfo, err error) {
 func (b *menuBiz) ToggleHidden(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
 	menuM, err := b.ds.SysMenu().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	menuM.Hidden = !menuM.Hidden

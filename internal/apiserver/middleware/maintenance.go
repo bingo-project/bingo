@@ -22,7 +22,7 @@ func Maintenance() gin.HandlerFunc {
 
 		// Under maintenance.
 		if cfg.Status == model.ServerStatusMaintenance {
-			core.WriteResponse(c, errno.ErrServiceUnderMaintenance, nil)
+			core.Response(c, nil, errno.ErrServiceUnderMaintenance)
 			c.Abort()
 
 			return

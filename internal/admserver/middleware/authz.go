@@ -29,7 +29,7 @@ func Authz(a Author) gin.HandlerFunc {
 		// System admin
 		admin, ok := contextx.UserInfo[v1.AdminInfo](ctx)
 		if !ok {
-			core.WriteResponse(c, errno.ErrUnauthorized, nil)
+			core.Response(c, nil, errno.ErrTokenInvalid)
 
 			return
 		}
@@ -38,7 +38,7 @@ func Authz(a Author) gin.HandlerFunc {
 
 		log.C(c).Debugw("Build authorize context", "sub", sub, "obj", obj, "act", act)
 		if allowed, _ := a.Authorize(sub, obj, act); !allowed {
-			core.WriteResponse(c, errno.ErrForbidden, nil)
+			core.Response(c, nil, errno.ErrPermissionDenied)
 			c.Abort()
 
 			return

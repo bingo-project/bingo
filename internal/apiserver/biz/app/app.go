@@ -79,7 +79,7 @@ func (b *appBiz) Create(ctx context.Context, req *v1.CreateAppRequest) (*v1.AppI
 func (b *appBiz) Get(ctx context.Context, appID string) (*v1.AppInfo, error) {
 	app, err := b.ds.App().GetByAppID(ctx, appID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.AppInfo
@@ -91,7 +91,7 @@ func (b *appBiz) Get(ctx context.Context, appID string) (*v1.AppInfo, error) {
 func (b *appBiz) Update(ctx context.Context, appID string, req *v1.UpdateAppRequest) (*v1.AppInfo, error) {
 	appM, err := b.ds.App().GetByAppID(ctx, appID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

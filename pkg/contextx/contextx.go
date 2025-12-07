@@ -18,6 +18,7 @@ type (
 	taskKey        struct{}
 	objectKey      struct{}
 	instanceKey    struct{}
+	messageKey     struct{}
 )
 
 // WithUserInfo 将用户信息存放到上下文中.
@@ -126,4 +127,14 @@ func Instance(ctx context.Context) string {
 	instance, _ := ctx.Value(instanceKey{}).(string)
 
 	return instance
+}
+
+func WithMessage(ctx context.Context, message string) context.Context {
+	return context.WithValue(ctx, messageKey{}, message)
+}
+
+func Message(ctx context.Context) string {
+	username, _ := ctx.Value(messageKey{}).(string)
+
+	return username
 }

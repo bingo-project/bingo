@@ -40,7 +40,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		var body map[string]any
 		err := json.Unmarshal(requestBody, &body)
 		if err != nil {
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -53,7 +53,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		timestamp := body["timestamp"]
 		if facade.Config.OpenAPI.TTL > 0 && cast.ToInt64(timestamp) < time.Now().Unix()-facade.Config.OpenAPI.TTL {
 			log.C(c).Infow("timestamp error", "timestamp", timestamp, "now", time.Now().Unix())
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -65,7 +65,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		nonceExist := facade.Cache.Has(nonceKey)
 		if facade.Config.OpenAPI.Nonce && (nonce == "" || nonceExist) {
 			log.C(c).Infow("nonce error", "nonce", nonce)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -79,7 +79,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		apiKey, err := store.S.ApiKey().GetByAK(c, ak)
 		if err != nil {
 			log.C(c).Infow("api key not found", "ak", ak, "err", err)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -88,7 +88,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		// 3.1 是否可用
 		if apiKey.Status != model.ApiKeyStatusEnabled {
 			log.C(c).Infow("api key disabled", "ak", ak)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -97,7 +97,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		// 3.2 是否过期
 		if apiKey.ExpiredAt != nil && apiKey.ExpiredAt.Before(time.Now()) {
 			log.C(c).Infow("api key expired", "ak", ak, "expiredAt", apiKey.ExpiredAt)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -108,7 +108,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		clientIP := c.ClientIP()
 		if len(apiKey.ACL) > 0 && !ip.ContainsInCIDR(apiKey.ACL, forwardedIP) && !ip.ContainsInCIDR(apiKey.ACL, clientIP) {
 			log.C(c).Infow("ip not in whitelist", "ak", ak, "acl", apiKey.ACL, "ip", clientIP, "forwarded", forwardedIP)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return
@@ -122,7 +122,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		resign := client.Sign(body, apiKey.SecretKey)
 		if sign == "" || sign != resign {
 			log.C(c).Infow("sign error", "ak", ak, "sign", sign, "resign", resign)
-			core.WriteResponse(c, errno.ErrIllegalRequest, nil)
+			core.Response(c, nil, errno.ErrIllegalRequest)
 			c.Abort()
 
 			return

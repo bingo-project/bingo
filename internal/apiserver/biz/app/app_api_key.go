@@ -88,7 +88,7 @@ func (b *apiKeyBiz) Create(ctx context.Context, req *v1.CreateApiKeyRequest) (*v
 func (b *apiKeyBiz) Get(ctx context.Context, ID uint) (*v1.ApiKeyInfo, error) {
 	apiKey, err := b.ds.ApiKey().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.ApiKeyInfo
@@ -100,7 +100,7 @@ func (b *apiKeyBiz) Get(ctx context.Context, ID uint) (*v1.ApiKeyInfo, error) {
 func (b *apiKeyBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiKeyRequest) (*v1.ApiKeyInfo, error) {
 	apiKeyM, err := b.ds.ApiKey().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Name != nil {

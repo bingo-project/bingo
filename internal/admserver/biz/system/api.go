@@ -77,7 +77,7 @@ func (b *apiBiz) Create(ctx context.Context, req *v1.CreateApiRequest) (*v1.ApiI
 func (b *apiBiz) Get(ctx context.Context, ID uint) (*v1.ApiInfo, error) {
 	api, err := b.ds.SysApi().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.ApiInfo
@@ -89,7 +89,7 @@ func (b *apiBiz) Get(ctx context.Context, ID uint) (*v1.ApiInfo, error) {
 func (b *apiBiz) Update(ctx context.Context, ID uint, req *v1.UpdateApiRequest) (*v1.ApiInfo, error) {
 	apiM, err := b.ds.SysApi().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Method != nil {

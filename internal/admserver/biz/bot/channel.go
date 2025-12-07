@@ -75,7 +75,7 @@ func (b *channelBiz) Create(ctx context.Context, req *v1.CreateChannelRequest) (
 func (b *channelBiz) Get(ctx context.Context, ID uint) (*v1.ChannelInfo, error) {
 	channel, err := b.ds.BotChannel().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.ChannelInfo
@@ -87,7 +87,7 @@ func (b *channelBiz) Get(ctx context.Context, ID uint) (*v1.ChannelInfo, error) 
 func (b *channelBiz) Update(ctx context.Context, ID uint, req *v1.UpdateChannelRequest) (*v1.ChannelInfo, error) {
 	channelM, err := b.ds.BotChannel().GetByID(ctx, ID)
 	if err != nil {
-		return nil, errno.ErrResourceNotFound
+		return nil, errno.ErrNotFound
 	}
 
 	if req.Source != nil {

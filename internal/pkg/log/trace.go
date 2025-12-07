@@ -38,6 +38,7 @@ func (l *zapLogger) C(ctx context.Context) *zapLogger {
 		KeyTask:     contextx.Task,
 		KeyObject:   contextx.Object,
 		KeyInstance: contextx.Instance,
+		KeyMessage:  contextx.Message,
 	}
 
 	// 遍历映射，从 context 中提取值并添加到日志中.

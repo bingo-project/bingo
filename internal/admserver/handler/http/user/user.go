@@ -39,19 +39,19 @@ func (ctrl *UserController) List(c *gin.Context) {
 
 	var req v1.ListUserRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	resp, err := ctrl.b.Users().List(c, &req)
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, resp)
+	core.Response(c, resp, nil)
 }
 
 // Create
@@ -70,26 +70,26 @@ func (ctrl *UserController) Create(c *gin.Context) {
 
 	var req v1.CreateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrInvalidParameter.SetMessage("%s", err.Error()), nil)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
 
 	// Create user
 	if err := ctrl.b.Users().Create(c, &req); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
 	// Create policy
 	if _, err := ctrl.a.AddNamedPolicy("p", req.Username, "/v1/users/"+req.Username, auth.AclDefaultMethods); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // Get
@@ -108,12 +108,12 @@ func (ctrl *UserController) Get(c *gin.Context) {
 
 	user, err := ctrl.b.Users().Get(c, c.Param("name"))
 	if err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, user)
+	core.Response(c, user, nil)
 }
 
 // Update
@@ -133,18 +133,18 @@ func (ctrl *UserController) Update(c *gin.Context) {
 
 	var req v1.UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.WriteResponse(c, errno.ErrBind, nil)
+		core.Response(c, nil, errno.ErrBind)
 
 		return
 	}
 
 	if err := ctrl.b.Users().Update(c, c.Param("name"), &req); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }
 
 // Delete
@@ -164,16 +164,16 @@ func (ctrl *UserController) Delete(c *gin.Context) {
 	username := c.Param("name")
 
 	if err := ctrl.b.Users().Delete(c, username); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
 	if _, err := ctrl.a.RemoveNamedPolicy("p", username, "", ""); err != nil {
-		core.WriteResponse(c, err, nil)
+		core.Response(c, nil, err)
 
 		return
 	}
 
-	core.WriteResponse(c, nil, nil)
+	core.Response(c, nil, nil)
 }

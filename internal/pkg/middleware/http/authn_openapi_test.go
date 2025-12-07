@@ -88,7 +88,7 @@ func TestAuthnOpenAPI(t *testing.T) {
 
 		Convey("api key not found", func() {
 			patches := gomonkey.ApplyPrivateMethod(store.S.ApiKey(), "GetByAK", func(ctx context.Context, ak string) (*model.ApiKey, error) {
-				return nil, errno.ErrResourceNotFound
+				return nil, errno.ErrNotFound
 			})
 			defer patches.Reset()
 

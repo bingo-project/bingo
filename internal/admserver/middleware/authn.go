@@ -17,7 +17,7 @@ func Authn() gin.HandlerFunc {
 		// Parse JWT Token
 		payload, err := token.ParseRequest(c.Request)
 		if err != nil {
-			core.WriteResponse(c, errno.ErrTokenInvalid, nil)
+			core.Response(c, nil, errno.ErrTokenInvalid)
 			c.Abort()
 
 			return
@@ -26,7 +26,7 @@ func Authn() gin.HandlerFunc {
 		// Admin
 		adminM, _ := store.S.Admin().GetUserInfo(c, payload.Subject)
 		if adminM.ID == 0 {
-			core.WriteResponse(c, errno.ErrTokenInvalid, nil)
+			core.Response(c, nil, errno.ErrTokenInvalid)
 			c.Abort()
 
 			return
