@@ -9,7 +9,7 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/apiserver/v1"
 	genericstore "bingo/pkg/store"
@@ -58,7 +58,7 @@ func (s *sysRoleStore) ListWithRequest(ctx context.Context, req *v1.ListRoleRequ
 		opts = opts.F("name", req.Name)
 	}
 
-	db := s.DB(ctx, opts).Where("name != ?", global.RoleRoot)
+	db := s.DB(ctx, opts).Where("name != ?", known.RoleRoot)
 	var ret []*model.RoleM
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 

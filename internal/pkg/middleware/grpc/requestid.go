@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
 
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
-	"bingo/pkg/auth"
 	"bingo/pkg/contextx"
 	"bingo/pkg/errorsx"
 )
@@ -20,7 +20,7 @@ func RequestID(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler
 	md, _ := metadata.FromIncomingContext(ctx)
 
 	// 从请求中获取请求 ID
-	if requestIDs := md[auth.XRequestIDKey]; len(requestIDs) > 0 {
+	if requestIDs := md[known.XRequestID]; len(requestIDs) > 0 {
 		requestID = requestIDs[0]
 	}
 

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"bingo/pkg/auth"
+	"bingo/internal/pkg/known"
 	"bingo/pkg/contextx"
 )
 
@@ -16,7 +16,7 @@ import (
 func RequestID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Check for incoming header, use it if exists
-		rid := c.GetHeader(auth.XRequestIDKey)
+		rid := c.GetHeader(known.XRequestID)
 		if rid == "" {
 			rid = uuid.New().String()
 		}
@@ -25,7 +25,7 @@ func RequestID() gin.HandlerFunc {
 		ctx := contextx.WithRequestID(c.Request.Context(), rid)
 		c.Request = c.Request.WithContext(ctx)
 
-		c.Writer.Header().Set(auth.XRequestIDKey, rid)
+		c.Writer.Header().Set(known.XRequestID, rid)
 
 		c.Next()
 	}
@@ -91,5 +91,5 @@ func GetRequestIDFromContext(c *gin.Context) string {
 
 // GetRequestIDFromHeaders returns 'RequestID' from the headers if present.
 func GetRequestIDFromHeaders(c *gin.Context) string {
-	return c.Request.Header.Get(auth.XRequestIDKey)
+	return c.Request.Header.Get(known.XRequestID)
 }

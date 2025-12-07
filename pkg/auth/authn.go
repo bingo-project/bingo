@@ -4,13 +4,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	XRequestIDKey = "x-request-id"
-	XForwardedKey = "x-forwarded-for"
-	XUserID       = "x-user-id"
-	XUsername     = "x-username"
-)
-
 // Encrypt string by bcrypt.
 func Encrypt(source string) (string, error) {
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(source), bcrypt.DefaultCost)

@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
-	"bingo/pkg/auth"
 )
 
 // 自定义 ResponseWriter 用于捕获响应数据.
@@ -49,8 +49,8 @@ func Logger() gin.HandlerFunc {
 		}
 
 		// X-Forward
-		if forwarded := c.GetHeader(auth.XForwardedKey); forwarded != "" {
-			logFields = append(logFields, zap.String(auth.XForwardedKey, forwarded))
+		if forwarded := c.GetHeader(known.XForwardedFor); forwarded != "" {
+			logFields = append(logFields, zap.String(known.XForwardedFor, forwarded))
 		}
 
 		// Log request params & response except GET

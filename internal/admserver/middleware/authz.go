@@ -5,7 +5,7 @@ import (
 
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/contextx"
@@ -34,7 +34,7 @@ func Authz(a Author) gin.HandlerFunc {
 			return
 		}
 
-		sub = global.RolePrefix + admin.RoleName
+		sub = known.RolePrefix + admin.RoleName
 
 		log.C(c).Debugw("Build authorize context", "sub", sub, "obj", obj, "act", act)
 		if allowed, _ := a.Authorize(sub, obj, act); !allowed {

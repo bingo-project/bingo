@@ -16,7 +16,7 @@ import (
 
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
@@ -75,7 +75,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 	}
 
 	// Generate token
-	t, err := token.Sign(user.UID, global.AuthUser)
+	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
@@ -102,7 +102,7 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	}
 
 	// Generate token
-	t, err := token.Sign(user.UID, global.AuthUser)
+	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
@@ -165,7 +165,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	}
 
 	// Generate token
-	t, err := token.Sign(user.UID, global.AuthUser)
+	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}

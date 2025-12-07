@@ -9,7 +9,7 @@ import (
 
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
 	"bingo/internal/pkg/task"
@@ -32,7 +32,7 @@ func NewEmail(ds store.IStore) *emailBiz {
 
 func (b *emailBiz) SendEmailVerifyCode(ctx context.Context, req *v1.SendEmailRequest) error {
 	// Check waiting time
-	keyWaiting := fmt.Sprintf("%s:%s", global.CacheKeyVerifyCodeWaiting, req.Email)
+	keyWaiting := fmt.Sprintf("%s:%s", known.CacheKeyVerifyCodeWaiting, req.Email)
 	exist := facade.Cache.Get(keyWaiting)
 	if exist != nil {
 		return errno.ErrTooManyRequests
@@ -59,7 +59,7 @@ func (b *emailBiz) SendEmailVerifyCode(ctx context.Context, req *v1.SendEmailReq
 	}
 
 	// Cache code
-	keyTtl := fmt.Sprintf("%s:%s", global.CacheKeyVerifyCodeTtl, req.Email)
+	keyTtl := fmt.Sprintf("%s:%s", known.CacheKeyVerifyCodeTTL, req.Email)
 	facade.Cache.Set(keyTtl, code, time.Minute*time.Duration(facade.Config.Code.TTL))
 	facade.Cache.Set(keyWaiting, code, time.Minute*time.Duration(facade.Config.Code.Waiting))
 

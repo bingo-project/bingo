@@ -11,7 +11,7 @@ import (
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/eth/sign"
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/model"
 	v1 "bingo/pkg/api/apiserver/v1"
 )
@@ -65,7 +65,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	}
 
 	// Generate token
-	t, err := token.Sign(user.UID, global.AuthUser)
+	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}

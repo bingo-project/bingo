@@ -13,9 +13,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/api/apiserver/v1"
-	known "bingo/pkg/auth"
 	"bingo/pkg/contextx"
 )
 

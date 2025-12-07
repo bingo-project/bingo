@@ -6,7 +6,7 @@ import (
 	"github.com/bingo-project/component-base/web/token"
 
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	v1 "bingo/pkg/api/apiserver/v1"
 	"bingo/pkg/auth"
 )
@@ -25,7 +25,7 @@ func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRe
 	}
 
 	// Generate token
-	t, err := token.Sign(user.Username, global.AuthAdmin)
+	t, err := token.Sign(user.Username, known.RoleAdmin)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}

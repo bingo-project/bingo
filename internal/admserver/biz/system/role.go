@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 
 	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/global"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
@@ -116,7 +116,7 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 }
 
 func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
-	if roleName == global.RoleRoot {
+	if roleName == known.RoleRoot {
 		return errno.ErrForbidden
 	}
 
@@ -124,7 +124,7 @@ func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
 }
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, apiIDs []uint) error {
-	if roleName == global.RoleRoot {
+	if roleName == known.RoleRoot {
 		return errno.ErrForbidden
 	}
 
@@ -141,7 +141,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	}
 
 	// Remove policy
-	_, err = a.RemoveFilteredPolicy(0, global.RolePrefix+role.Name)
+	_, err = a.RemoveFilteredPolicy(0, known.RolePrefix+role.Name)
 	if err != nil {
 		return err
 	}
@@ -154,7 +154,7 @@ func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authz, roleName string, a
 	// Add casbin rule
 	rules := make([][]string, 0)
 	for _, api := range apis {
-		rules = append(rules, []string{global.RolePrefix + role.Name, api.Path, api.Method})
+		rules = append(rules, []string{known.RolePrefix + role.Name, api.Path, api.Method})
 	}
 
 	_, err = a.AddPolicies(rules)
@@ -172,7 +172,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 		return
 	}
 
-	list, _ := a.GetFilteredPolicy(0, global.RolePrefix+role.Name)
+	list, _ := a.GetFilteredPolicy(0, known.RolePrefix+role.Name)
 
 	pathAndMethod := make([][]string, 0)
 	for _, v := range list {
@@ -188,7 +188,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authz, roleName string)
 }
 
 func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
-	if roleName == global.RoleRoot {
+	if roleName == known.RoleRoot {
 		return errno.ErrForbidden
 	}
 
@@ -214,7 +214,7 @@ func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuID
 
 func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
 	var menus []*model.MenuM
-	if roleName == global.RoleRoot {
+	if roleName == known.RoleRoot {
 		menus, _ = b.ds.SysMenu().AllEnabled(ctx)
 	} else {
 		// Auto-fill parent menu

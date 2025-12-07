@@ -11,10 +11,10 @@ import (
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/known"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/model"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/auth"
 	"bingo/pkg/util/ip"
 )
 
@@ -104,7 +104,7 @@ func AuthnOpenAPI() gin.HandlerFunc {
 		}
 
 		// 3.3 IP 是否在白名单中
-		forwardedIP := c.GetHeader(auth.XForwardedKey)
+		forwardedIP := c.GetHeader(known.XForwardedFor)
 		clientIP := c.ClientIP()
 		if len(apiKey.ACL) > 0 && !ip.ContainsInCIDR(apiKey.ACL, forwardedIP) && !ip.ContainsInCIDR(apiKey.ACL, clientIP) {
 			log.C(c).Infow("ip not in whitelist", "ak", ak, "acl", apiKey.ACL, "ip", clientIP, "forwarded", forwardedIP)
