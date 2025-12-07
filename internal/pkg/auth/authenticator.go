@@ -13,12 +13,19 @@ import (
 	"bingo/pkg/errorsx"
 )
 
-// Authenticator provides unified authentication across protocols.
-type Authenticator struct{}
+// UserLoader loads user information into context.
+type UserLoader interface {
+	LoadUser(ctx context.Context, userID string) (context.Context, error)
+}
 
-// New creates a new Authenticator.
-func New() *Authenticator {
-	return &Authenticator{}
+// Authenticator provides unified authentication across protocols.
+type Authenticator struct {
+	loader UserLoader
+}
+
+// New creates a new Authenticator with optional UserLoader.
+func New(loader UserLoader) *Authenticator {
+	return &Authenticator{loader: loader}
 }
 
 // Verify validates a token and returns a context with user info.
@@ -33,7 +40,13 @@ func (a *Authenticator) Verify(ctx context.Context, tokenStr string) (context.Co
 	}
 
 	ctx = contextx.WithUserID(ctx, payload.Subject)
-	ctx = contextx.WithUsername(ctx, payload.Subject)
+
+	if a.loader != nil {
+		ctx, err = a.loader.LoadUser(ctx, payload.Subject)
+		if err != nil {
+			return ctx, err
+		}
+	}
 
 	return ctx, nil
 }

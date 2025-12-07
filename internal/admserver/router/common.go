@@ -3,9 +3,11 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
+	bizauth "bingo/internal/admserver/biz/auth"
 	"bingo/internal/admserver/handler/http/common"
 	"bingo/internal/admserver/handler/http/file"
 	"bingo/internal/admserver/middleware"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/core"
 	"bingo/internal/pkg/errno"
 	"bingo/internal/pkg/store"
@@ -29,6 +31,8 @@ func MapCommonRouters(g *gin.Engine) {
 	v1 := g.Group("/v1")
 
 	// Upload
+	loader := bizauth.NewAdminLoader(store.S)
+	authn := auth.New(loader)
 	fileHandler := file.NewFileHandler(nil, nil)
-	v1.POST("file/upload", middleware.Authn(), fileHandler.Upload)
+	v1.POST("file/upload", auth.Middleware(authn), fileHandler.Upload)
 }

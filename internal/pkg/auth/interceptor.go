@@ -13,8 +13,14 @@ import (
 )
 
 // UnaryInterceptor returns a gRPC unary interceptor that authenticates requests.
-func UnaryInterceptor(a *Authenticator) grpc.UnaryServerInterceptor {
+// publicMethods is a map of method names that don't require authentication.
+func UnaryInterceptor(a *Authenticator, publicMethods map[string]bool) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		// Skip authentication for public methods
+		if publicMethods[info.FullMethod] {
+			return handler(ctx, req)
+		}
+
 		// Extract token from metadata
 		tokenStr, err := extractTokenFromMetadata(ctx)
 		if err != nil {
@@ -32,8 +38,14 @@ func UnaryInterceptor(a *Authenticator) grpc.UnaryServerInterceptor {
 }
 
 // StreamInterceptor returns a gRPC stream interceptor that authenticates requests.
-func StreamInterceptor(a *Authenticator) grpc.StreamServerInterceptor {
+// publicMethods is a map of method names that don't require authentication.
+func StreamInterceptor(a *Authenticator, publicMethods map[string]bool) grpc.StreamServerInterceptor {
 	return func(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		// Skip authentication for public methods
+		if publicMethods[info.FullMethod] {
+			return handler(srv, ss)
+		}
+
 		ctx := ss.Context()
 
 		// Extract token from metadata

@@ -127,7 +127,7 @@ func (a *Authorizer) Authorize(ctx context.Context, obj, act string) error {
 ### apiserver 实现
 
 ```go
-// internal/apiserver/auth/loader.go
+// internal/apiserver/biz/auth/loader.go
 
 type UserLoader struct {
     store store.IStore
@@ -157,7 +157,7 @@ func (l *UserLoader) LoadUser(ctx context.Context, userID string) (context.Conte
 ### admserver 实现
 
 ```go
-// internal/admserver/auth/loader.go
+// internal/admserver/biz/auth/loader.go
 
 type AdminLoader struct {
     store store.IStore
@@ -276,8 +276,8 @@ func MapApiRouters(g *gin.Engine) {
 ### 新增
 
 - `internal/pkg/auth/authorizer.go` - 授权器（从 pkg/auth/authz.go 迁移核心逻辑）
-- `internal/apiserver/auth/loader.go` - apiserver UserLoader
-- `internal/admserver/auth/loader.go` - admserver AdminLoader + SubjectResolver
+- `internal/apiserver/biz/auth/loader.go` - apiserver UserLoader
+- `internal/admserver/biz/auth/loader.go` - admserver AdminLoader + SubjectResolver
 
 ### 删除
 

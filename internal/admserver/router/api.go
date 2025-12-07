@@ -5,22 +5,23 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	bizauth "bingo/internal/admserver/biz/auth"
 	"bingo/internal/admserver/handler/http/app"
 	"bingo/internal/admserver/handler/http/config"
 	"bingo/internal/admserver/handler/http/system"
 	"bingo/internal/admserver/handler/http/user"
-	"bingo/internal/admserver/middleware"
+	"bingo/internal/pkg/auth"
 	"bingo/internal/pkg/log"
 	"bingo/internal/pkg/store"
-	"bingo/pkg/auth"
+	pkgauth "bingo/pkg/auth"
 )
 
 func MapApiRouters(g *gin.Engine) {
 	// v1 group
 	v1 := g.Group("/v1")
 
-	// Authz
-	authz, err := auth.NewAuthz(store.S.DB(context.Background()))
+	// Authz (still using pkg/auth for Casbin policy management)
+	authz, err := pkgauth.NewAuthz(store.S.DB(context.Background()))
 	if err != nil {
 		log.Fatalw("auth.NewAuthz error", "err", err)
 	}
@@ -31,7 +32,10 @@ func MapApiRouters(g *gin.Engine) {
 	// Login
 	v1.POST("auth/login", adminHandler.Login)
 
-	v1.Use(middleware.Authn())
+	// Authentication middleware
+	loader := bizauth.NewAdminLoader(store.S)
+	authn := auth.New(loader)
+	v1.Use(auth.Middleware(authn))
 
 	// Auth
 	v1.GET("auth/user-info", authHandler.UserInfo)             // 获取登录账号信息
@@ -39,7 +43,13 @@ func MapApiRouters(g *gin.Engine) {
 	v1.PUT("auth/change-password", authHandler.ChangePassword) // 修改密码
 	v1.PUT("auth/switch-role", authHandler.SwitchRole)         // 切换角色
 
-	v1.Use(middleware.Authz(authz))
+	// Authorization middleware
+	resolver := &bizauth.AdminSubjectResolver{}
+	authorizer, err := auth.NewAuthorizer(store.S.DB(context.Background()), resolver)
+	if err != nil {
+		log.Fatalw("auth.NewAuthorizer error", "err", err)
+	}
+	v1.Use(auth.AuthzMiddleware(authorizer))
 
 	// Admin
 	v1.GET("admins", adminHandler.List)                                 // 管理员列表

@@ -62,7 +62,7 @@ func TestExtractBearerToken(t *testing.T) {
 }
 
 func TestAuthenticator_Verify_EmptyToken(t *testing.T) {
-	a := New()
+	a := New(nil)
 	ctx := context.Background()
 
 	_, err := a.Verify(ctx, "")
