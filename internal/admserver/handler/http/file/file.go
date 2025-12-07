@@ -37,7 +37,7 @@ func (ctrl *FileHandler) Upload(c *gin.Context) {
 
 	var req v1.UploadFileRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}

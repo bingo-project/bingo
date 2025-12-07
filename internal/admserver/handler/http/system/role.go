@@ -37,7 +37,7 @@ func (ctrl *RoleHandler) List(c *gin.Context) {
 
 	var req v1.ListRoleRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}

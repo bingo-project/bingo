@@ -5,7 +5,6 @@ package interceptor
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-playground/validator/v10"
 	"google.golang.org/grpc"
@@ -17,7 +16,6 @@ var validate = validator.New()
 
 // Validator returns a gRPC unary interceptor that validates requests.
 func Validator(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	fmt.Println("Validator", req)
 	if err := validate.Struct(req); err != nil {
 		if validationErrs, ok := err.(validator.ValidationErrors); ok {
 			return nil, status.Errorf(codes.InvalidArgument, "validation failed: %s", formatValidationErrors(validationErrs))

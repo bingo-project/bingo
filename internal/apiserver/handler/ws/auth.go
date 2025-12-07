@@ -18,7 +18,7 @@ func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
 
 	var req v1.LoginRequest
 	if err := c.BindValidate(&req); err != nil {
-		return c.Error(errno.ErrBind.WithMessage("%s", err.Error()))
+		return c.Error(errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 	}
 
 	resp, err := h.b.Auth().Login(c, &req)

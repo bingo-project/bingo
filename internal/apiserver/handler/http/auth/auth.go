@@ -38,7 +38,7 @@ func (ctrl *AuthHandler) SendEmailCode(c *gin.Context) {
 
 	var req v1.SendEmailRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}
@@ -69,7 +69,7 @@ func (ctrl *AuthHandler) Register(c *gin.Context) {
 
 	var req v1.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}

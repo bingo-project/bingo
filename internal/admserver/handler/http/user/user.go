@@ -37,7 +37,7 @@ func (ctrl *UserHandler) List(c *gin.Context) {
 
 	var req v1.ListUserRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}
@@ -131,7 +131,7 @@ func (ctrl *UserHandler) Update(c *gin.Context) {
 
 	var req v1.UpdateUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}

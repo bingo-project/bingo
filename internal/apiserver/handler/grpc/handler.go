@@ -4,10 +4,18 @@
 package grpc
 
 import (
+	"github.com/go-playground/validator/v10"
+
 	"bingo/internal/apiserver/biz"
 	"bingo/internal/pkg/store"
 	v1 "bingo/pkg/proto/apiserver/v1/pb"
 )
+
+var validate = validator.New(validator.WithRequiredStructEnabled())
+
+func init() {
+	validate.SetTagName("binding")
+}
 
 type Handler struct {
 	b biz.IBiz

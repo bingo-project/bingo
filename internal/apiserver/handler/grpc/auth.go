@@ -24,6 +24,10 @@ func (h *Handler) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRep
 		Password: req.Password,
 	}
 
+	if err := validate.Struct(loginReq); err != nil {
+		return nil, errno.ErrInvalidArgument
+	}
+
 	resp, err := h.b.Auth().Login(ctx, loginReq)
 	if err != nil {
 		return nil, err

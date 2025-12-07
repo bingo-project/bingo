@@ -38,7 +38,7 @@ func (ctrl *MenuHandler) List(c *gin.Context) {
 
 	var req v1.ListMenuRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}

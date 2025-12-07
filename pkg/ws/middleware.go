@@ -15,7 +15,11 @@ import (
 )
 
 // validate is the singleton validator instance.
-var validate = validator.New()
+var validate = validator.New(validator.WithRequiredStructEnabled())
+
+func init() {
+	validate.SetTagName("binding")
+}
 
 // Context contains all information needed by middleware.
 // It embeds context.Context so it can be passed directly to business layer methods.

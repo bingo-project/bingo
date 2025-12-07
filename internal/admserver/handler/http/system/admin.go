@@ -37,7 +37,7 @@ func (ctrl *AdminHandler) List(c *gin.Context) {
 
 	var req v1.ListAdminRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.Response(c, nil, errno.ErrBind)
+		core.Response(c, nil, errno.ErrInvalidArgument)
 
 		return
 	}
