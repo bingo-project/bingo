@@ -21,12 +21,12 @@ gen.protoc: tools.verify.protoc-gen-go ## 编译 protobuf 文件.
 	@echo "===========> Generate protobuf files"
 	@mkdir -p $(ROOT_DIR)/api/openapi
 	@protoc \
-		--proto_path=$(ROOT_DIR)/third_party \
 		--proto_path=$(PROTOROOT) \
-		--go_out=$(ROOT_DIR) --go_opt=module=bingo \
-		--go-grpc_out=$(ROOT_DIR) --go-grpc_opt=module=bingo \
-		--grpc-gateway_out=$(ROOT_DIR) --grpc-gateway_opt=module=bingo \
-		--openapiv2_out=$(ROOT_DIR)/api/openapi --openapiv2_opt=logtostderr=true,output_format=yaml \
+		--proto_path=$(ROOT_DIR)/third_party/protobuf \
+		--go_out=$(ROOT_DIR) --go_opt=module=$(APIROOT) \
+		--go-grpc_out=$(ROOT_DIR) --go-grpc_opt=module=$(APIROOT) \
+		--grpc-gateway_out=$(ROOT_DIR) --grpc-gateway_opt=module=$(APIROOT) \
+		--openapiv2_out=$(ROOT_DIR)/api/openapi --openapiv2_opt=logtostderr=true,output_format=yaml,allow_delete_body=true \
 		$(shell find $(PROTOROOT) -name "*.proto")
 
 .PHONY: gen.deps
