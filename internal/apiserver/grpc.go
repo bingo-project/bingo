@@ -4,7 +4,6 @@
 package apiserver
 
 import (
-	gm "github.com/grpc-ecosystem/go-grpc-middleware"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
@@ -18,12 +17,14 @@ import (
 // initGRPCServer initializes the gRPC server with services and TLS support.
 func initGRPCServer(cfg *config.GRPC) *grpc.Server {
 	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(gm.ChainUnaryServer(
+		grpc.ChainUnaryInterceptor(
 			interceptor.RequestID,
 			interceptor.ClientIP,
 			interceptor.Logger,
 			interceptor.Recovery,
-		)),
+			interceptor.Validator,
+			interceptor.Authn,
+		),
 	}
 
 	// Add TLS credentials if enabled

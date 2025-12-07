@@ -17,8 +17,8 @@ func Logger(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler gr
 		"interceptor.Logger request",
 		"method", info.FullMethod,
 		"cost", time.Since(start),
-		"req", req,
-		"resp", resp,
+		// "req", req,
+		// "resp", resp,
 	)
 
 	return resp, err

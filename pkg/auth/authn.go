@@ -7,6 +7,8 @@ import (
 var (
 	XRequestIDKey = "x-request-id"
 	XForwardedKey = "x-forwarded-for"
+	XUserID       = "x-user-id"
+	XUsername     = "x-username"
 )
 
 // Encrypt string by bcrypt.
