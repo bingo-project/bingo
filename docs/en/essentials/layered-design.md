@@ -1,6 +1,6 @@
 ---
 title: Layered Architecture - Bingo Go Three-Layer Design Guide
-description: Deep dive into Bingo's Controller, Biz, Store three-layer architecture design, including layer responsibilities, code examples, and best practices.
+description: Deep dive into Bingo's Handler, Biz, Store three-layer architecture design, including layer responsibilities, code examples, and best practices.
 ---
 
 # Layered Architecture in Detail
@@ -11,7 +11,7 @@ Bingo adopts a classic three-layer architecture design. This document explains t
 
 ```
 ┌─────────────────────────────────────────┐
-│         Controller Layer                │  HTTP/gRPC Handler Layer
+│         Handler Layer                   │  HTTP/gRPC Handler Layer
 │  - Parameter validation                 │
 │  - Request/response conversion          │
 │  - Error handling                       │
@@ -34,7 +34,7 @@ Bingo adopts a classic three-layer architecture design. This document explains t
 └─────────────────────────────────────────┘
 ```
 
-## Controller Layer (HTTP/gRPC Handler)
+## Handler Layer (HTTP/gRPC Handler)
 
 ### Responsibilities
 
@@ -46,12 +46,12 @@ Bingo adopts a classic three-layer architecture design. This document explains t
 ### Code Example
 
 ```go
-// internal/apiserver/controller/v1/user/user.go
-type UserController struct {
+// internal/apiserver/handler/http/user/user.go
+type UserHandler struct {
     biz biz.IBiz
 }
 
-func (ctrl *UserController) Get(c *gin.Context) {
+func (h *UserHandler) Get(c *gin.Context) {
     // 1. Parameter validation
     var req GetUserRequest
     if err := c.ShouldBindUri(&req); err != nil {
@@ -60,7 +60,7 @@ func (ctrl *UserController) Get(c *gin.Context) {
     }
 
     // 2. Call business layer
-    user, err := ctrl.biz.Users().Get(c.Context(), req.UserID)
+    user, err := h.biz.Users().Get(c.Context(), req.UserID)
     if err != nil {
         core.WriteResponse(c, err, nil)
         return
@@ -73,17 +73,17 @@ func (ctrl *UserController) Get(c *gin.Context) {
 
 ### Design Principles
 
-- **Thin Controllers**: Only handle parameter processing and responses, no business logic
+- **Thin Handlers**: Only handle parameter processing and responses, no business logic
 - **Unified Responses**: Use consistent response format
 - **Error Handling**: Unified error handling mechanism
 - **Version Isolation**: Different API versions in separate directories (`v1/`, `v2/`)
 
 ### What NOT to Do
 
-❌ **Don't write business logic in Controller**
+❌ **Don't write business logic in Handler**
 ```go
 // Wrong example
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     // ❌ Business rules shouldn't be here
     if user.Age < 18 {
         return errors.New("Age too young")
@@ -97,7 +97,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 ✅ **Call Biz layer instead**
 ```go
 // Correct example
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     var req CreateUserRequest
     if err := c.ShouldBindJSON(&req); err != nil {
         core.WriteResponse(c, errno.ErrBind, nil)
@@ -105,7 +105,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
     }
 
     // ✅ Business logic goes to Biz layer
-    user, err := ctrl.biz.Users().Create(c.Context(), &req)
+    user, err := h.biz.Users().Create(c.Context(), &req)
     core.WriteResponse(c, err, user)
 }
 ```
@@ -337,7 +337,7 @@ func (s *userStore) Get(ctx context.Context, id uint64) (*model.User, error) {
 
 ### 1. Separation of Concerns
 Each layer focuses on its own responsibility:
-- Controller focuses on HTTP protocol
+- Handler focuses on HTTP protocol
 - Biz focuses on business rules
 - Store focuses on data access
 
@@ -355,41 +355,41 @@ func TestUserBiz_Create(t *testing.T) {
 ```
 
 ### 3. Code Reuse
-Biz layer can be reused by multiple Controllers:
+Biz layer can be reused by multiple Handlers:
 ```
-HTTP Controller  ──┐
-                   ├──→  User Biz  ──→  User Store
-gRPC Service    ──┘
+HTTP Handler  ──┐
+                ├──→  User Biz  ──→  User Store
+gRPC Service  ──┘
 ```
 
 ### 4. Easy to Maintain
 - Modify database operations: only change Store layer
 - Modify business rules: only change Biz layer
-- Modify API format: only change Controller layer
+- Modify API format: only change Handler layer
 
 ### 5. Team Collaboration
 Different layers can be developed in parallel:
-- Frontend developers: Mock Controller and develop in parallel
+- Frontend developers: Mock Handler and develop in parallel
 - Backend developers: Define interface first, develop in layers
 
 ## Common Mistakes
 
 ### Mistake 1: Cross-Layer Calls
 
-❌ **Controller directly calls Store**
+❌ **Handler directly calls Store**
 ```go
 // Wrong
-func (ctrl *UserController) Get(c *gin.Context) {
-    // ❌ Controller shouldn't directly call Store
-    user, err := ctrl.store.Users().Get(ctx, id)
+func (h *UserHandler) Get(c *gin.Context) {
+    // ❌ Handler shouldn't directly call Store
+    user, err := h.store.Users().Get(ctx, id)
 }
 ```
 
 ✅ **Use Biz layer**
 ```go
 // Correct
-func (ctrl *UserController) Get(c *gin.Context) {
-    user, err := ctrl.biz.Users().Get(ctx, id)
+func (h *UserHandler) Get(c *gin.Context) {
+    user, err := h.biz.Users().Get(ctx, id)
 }
 ```
 

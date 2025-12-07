@@ -22,7 +22,7 @@ hero:
 
 features:
   - title: 🏗️ Clean Architecture Design
-    details: Adopts Controller → Biz → Store three-layer architecture, supports microservice decomposition, enabling teams to quickly understand and maintain code.
+    details: Adopts Handler → Biz → Store three-layer architecture, supports microservice decomposition, enabling teams to quickly understand and maintain code.
   - title: 🚀 Complete Engineering Capabilities
     details: Built-in code generation, hot reload, automated testing, Docker support, improving development efficiency.
   - title: 📚 Complete Tech Stack

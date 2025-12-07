@@ -31,7 +31,7 @@ package user_service   // 不使用下划线
 - 与主要类型相关
 
 ```
-user_controller.go
+user_handler.go
 article_store.go
 auth_middleware.go
 ```
@@ -51,8 +51,8 @@ type ICache interface {}
 
 ```go
 // 导出
-type UserController struct {}
-func (c *UserController) Create() {}
+type UserHandler struct {}
+func (h *UserHandler) Create() {}
 
 // 私有
 type userCache struct {}
@@ -107,11 +107,11 @@ if user == nil {
 }
 ```
 
-### Controller 层错误处理
+### Handler 层错误处理
 
 ```go
-func (ctrl *UserController) Get(c *gin.Context) {
-    user, err := ctrl.biz.Users().Get(c.Context(), id)
+func (h *UserHandler) Get(c *gin.Context) {
+    user, err := h.biz.Users().Get(c.Context(), id)
     if err != nil {
         // 统一错误响应
         core.WriteResponse(c, err, nil)
@@ -219,14 +219,14 @@ func (b *UserBiz) CreateUser(ctx context.Context, req *CreateUserRequest) (*mode
 // @Success      200  {object}  UserResponse
 // @Failure      404  {object}  ErrorResponse
 // @Router       /v1/users/{id} [get]
-func (ctrl *UserController) Get(c *gin.Context) {
+func (h *UserHandler) Get(c *gin.Context) {
     // ...
 }
 ```
 
 ## 代码组织
 
-### Controller 层
+### Handler 层
 
 ```go
 package user
@@ -238,24 +238,24 @@ import (
 )
 
 // 1. 类型定义
-type UserController struct {
+type UserHandler struct {
     biz biz.IBiz
 }
 
 // 2. 构造函数
-func New(biz biz.IBiz) *UserController {
-    return &UserController{biz: biz}
+func New(biz biz.IBiz) *UserHandler {
+    return &UserHandler{biz: biz}
 }
 
 // 3. HTTP 处理方法(按 CRUD 顺序)
-func (ctrl *UserController) Create(c *gin.Context) {}
-func (ctrl *UserController) Get(c *gin.Context) {}
-func (ctrl *UserController) List(c *gin.Context) {}
-func (ctrl *UserController) Update(c *gin.Context) {}
-func (ctrl *UserController) Delete(c *gin.Context) {}
+func (h *UserHandler) Create(c *gin.Context) {}
+func (h *UserHandler) Get(c *gin.Context) {}
+func (h *UserHandler) List(c *gin.Context) {}
+func (h *UserHandler) Update(c *gin.Context) {}
+func (h *UserHandler) Delete(c *gin.Context) {}
 
 // 4. 私有辅助方法
-func (ctrl *UserController) validateRequest() {}
+func (h *UserHandler) validateRequest() {}
 ```
 
 ### Biz 层

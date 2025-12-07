@@ -19,7 +19,7 @@ HTTP 请求 ──→ gRPC-Gateway (反向代理) ──→ gRPC 服务器
 | 传统方式 | gRPC-Gateway |
 |---------|--------------|
 | HTTP 路由手写 | Proto 注解自动生成 |
-| Controller 层手写 | 只写 gRPC Handler |
+| Handler 层手写 | 只写 gRPC Handler |
 | HTTP/gRPC 分别维护 | 改 Proto 自动同步 |
 | Swagger 手写注解 | OpenAPI 自动生成 |
 

@@ -55,8 +55,8 @@ internal/apiserver/
 │   ├── auth/                   # 认证业务
 │   ├── user/                   # 用户业务
 │   └── ...                     # 其他业务模块
-├── controller/                 # 控制器层(HTTP Handler)
-│   └── v1/                     # API v1 版本
+├── handler/                    # HTTP Handler 层
+│   └── http/                   # HTTP 处理器
 │       ├── auth/               # 认证相关接口
 │       ├── user/               # 用户相关接口
 │       └── ...
@@ -75,7 +75,7 @@ internal/apiserver/
 **每个服务都遵循相同的结构**:
 - `app.go` / `run.go`: 应用初始化和启动逻辑
 - `biz/`: 业务逻辑层,处理业务规则
-- `controller/`: HTTP 处理器,负责请求响应
+- `handler/`: HTTP 处理器,负责请求响应
 - `store/`: 数据访问层,封装数据库操作
 - `router/`: 路由配置
 - `middleware/`: 中间件

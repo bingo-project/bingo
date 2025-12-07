@@ -153,7 +153,7 @@ API documentation auto-generation based on [swaggo/swag](https://github.com/swag
 // @Success      200   {object}  UserResponse
 // @Failure      400   {object}  ErrorResponse
 // @Router       /v1/users [post]
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     // ...
 }
 ```
@@ -184,7 +184,7 @@ type CreateUserRequest struct {
     Password string `json:"password" binding:"required,min=6"`
 }
 
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     var req CreateUserRequest
 
     // Gin auto-validation
@@ -234,9 +234,9 @@ if user == nil {
     return nil, errno.ErrUserNotFound
 }
 
-// Handle uniformly in Controller layer
-func (ctrl *UserController) Get(c *gin.Context) {
-    user, err := ctrl.biz.Users().Get(c.Request.Context(), id)
+// Handle uniformly in Handler layer
+func (h *UserHandler) Get(c *gin.Context) {
+    user, err := h.biz.Users().Get(c.Request.Context(), id)
     // Unified error response
     core.WriteResponse(c, err, user)
 }

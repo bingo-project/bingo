@@ -223,7 +223,7 @@ Auto-generates:
 - `internal/pkg/model/user.go` - Data model
 - `internal/apiserver/store/user.go` - Data access layer
 - `internal/apiserver/biz/user/user.go` - Business logic layer
-- `internal/apiserver/controller/v1/user/user.go` - Controller layer
+- `internal/apiserver/handler/http/user/user.go` - Handler layer
 - `pkg/api/v1/user.go` - Request/response definitions
 
 And auto-registers to:
@@ -243,8 +243,8 @@ bingo make store article
 # Generate Biz layer
 bingo make biz article
 
-# Generate Controller layer
-bingo make controller article
+# Generate Handler layer
+bingo make handler article
 
 # Generate Request validation
 bingo make request article
@@ -311,7 +311,7 @@ Generate complete service modules:
 
 ```bash
 # Generate API service with HTTP server
-bingo make service api --http --with-store --with-controller
+bingo make service api --http --with-store --with-handler
 
 # Generate service with gRPC server
 bingo make service rpc --grpc
@@ -329,7 +329,7 @@ Service options:
 - `--with-biz`: Generate business layer (default true)
 - `--no-biz`: Don't generate business layer
 - `--with-store`: Generate storage layer
-- `--with-controller`: Generate controller layer
+- `--with-handler`: Generate handler layer
 - `--with-middleware`: Generate middleware directory
 - `--with-router`: Generate router directory
 
@@ -390,7 +390,7 @@ directory:
   store: internal/apiserver/store
   request: pkg/api/v1
   biz: internal/apiserver/biz
-  controller: internal/apiserver/controller/v1
+  handler: internal/apiserver/handler/http
   middleware: internal/pkg/middleware
   job: internal/watcher/watcher
   migration: internal/pkg/database/migration
@@ -480,7 +480,7 @@ vim internal/watcher/watcher/daily_report.go
 bingo make service notification \
   --http \
   --with-store \
-  --with-controller \
+  --with-handler \
   --with-router
 
 # Generate pure gRPC service
@@ -517,7 +517,7 @@ Supported types:
 - `model` - Data model
 - `store` - Storage layer
 - `biz` - Business logic layer
-- `controller` - Controller layer
+- `handler` - Handler layer
 - `request` - Request validation
 - `middleware` - Middleware
 - `job` - Scheduled task
@@ -597,7 +597,7 @@ curl http://localhost:8080/v1/users
 
 Generated code is a starting point. Customize based on actual needs:
 - Add business rules in Biz layer
-- Add parameter validation in Controller layer
+- Add parameter validation in Handler layer
 - Optimize queries in Store layer
 
 ### 5. Version Control Configuration Files

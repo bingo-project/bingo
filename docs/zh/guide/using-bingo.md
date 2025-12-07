@@ -223,7 +223,7 @@ bingo make crud user
 - `internal/pkg/model/user.go` - 数据模型
 - `internal/apiserver/store/user.go` - 数据访问层
 - `internal/apiserver/biz/user/user.go` - 业务逻辑层
-- `internal/apiserver/controller/v1/user/user.go` - 控制器层
+- `internal/apiserver/handler/http/user/user.go` - 处理器层
 - `pkg/api/v1/user.go` - 请求/响应定义
 
 并自动注册到:
@@ -243,8 +243,8 @@ bingo make store article
 # 生成 Biz 层
 bingo make biz article
 
-# 生成 Controller 层
-bingo make controller article
+# 生成 Handler 层
+bingo make handler article
 
 # 生成 Request 验证
 bingo make request article
@@ -311,7 +311,7 @@ migrate:
 
 ```bash
 # 生成带 HTTP 服务器的 API 服务
-bingo make service api --http --with-store --with-controller
+bingo make service api --http --with-store --with-handler
 
 # 生成带 gRPC 服务器的服务
 bingo make service rpc --grpc
@@ -329,7 +329,7 @@ bingo make service worker --no-biz
 - `--with-biz`: 生成业务层(默认 true)
 - `--no-biz`: 不生成业务层
 - `--with-store`: 生成存储层
-- `--with-controller`: 生成控制器层
+- `--with-handler`: 生成处理器层
 - `--with-middleware`: 生成中间件目录
 - `--with-router`: 生成路由目录
 
@@ -390,7 +390,7 @@ directory:
   store: internal/apiserver/store
   request: pkg/api/v1
   biz: internal/apiserver/biz
-  controller: internal/apiserver/controller/v1
+  handler: internal/apiserver/handler/http
   middleware: internal/pkg/middleware
   job: internal/watcher/watcher
   migration: internal/pkg/database/migration
@@ -480,7 +480,7 @@ vim internal/watcher/watcher/daily_report.go
 bingo make service notification \
   --http \
   --with-store \
-  --with-controller \
+  --with-handler \
   --with-router
 
 # 生成一个纯 gRPC 服务
@@ -517,7 +517,7 @@ bingo make <type> <name> [选项]
 - `model` - 数据模型
 - `store` - 存储层
 - `biz` - 业务逻辑层
-- `controller` - 控制器层
+- `handler` - 处理器层
 - `request` - 请求验证
 - `middleware` - 中间件
 - `job` - 定时任务
@@ -597,7 +597,7 @@ curl http://localhost:8080/v1/users
 
 生成的代码是起点,根据实际需求自定义:
 - Biz 层添加业务规则
-- Controller 层添加参数验证
+- Handler 层添加参数验证
 - Store 层优化查询
 
 ### 5. 版本控制配置文件

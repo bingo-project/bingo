@@ -18,7 +18,7 @@ HTTP 请求
     ↓
 Gin Middleware (authn.go)  ← HTTP 专用
     ↓
-Controller
+Handler
     ↓
 Biz 层
 

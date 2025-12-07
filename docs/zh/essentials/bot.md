@@ -244,7 +244,7 @@ for _, channel := range channels {
 ┌─────────────────────────────────────┐
 │  Platform Layer (Telegram/Discord) │  ← 平台适配层
 ├─────────────────────────────────────┤
-│     Controller Layer                │  ← 控制器层
+│     Handler Layer                   │  ← 处理器层
 ├─────────────────────────────────────┤
 │     Business Logic (Biz)            │  ← 业务逻辑层
 ├─────────────────────────────────────┤
@@ -260,12 +260,12 @@ internal/bot/
 │   ├── bot/          # Bot 相关业务
 │   └── syscfg/       # 系统配置
 ├── telegram/         # Telegram 平台
-│   ├── controller/   # 控制器
+│   ├── handler/      # 处理器
 │   ├── middleware/   # 中间件
 │   ├── router.go     # 路由配置
 │   └── run.go        # 启动入口
 ├── discord/          # Discord 平台
-│   ├── controller/   # 控制器
+│   ├── handler/      # 处理器
 │   ├── middleware/   # 中间件
 │   ├── client/       # 客户端封装
 │   ├── router.go     # 路由配置
@@ -281,18 +281,18 @@ internal/bot/
 #### 1. 添加新命令处理器
 
 ```go
-// internal/bot/telegram/controller/v1/custom/custom.go
-package custom
+// internal/bot/telegram/handler/custom.go
+package handler
 
 import (
     "gopkg.in/telebot.v3"
 )
 
-type CustomController struct {
+type CustomHandler struct {
     // ...
 }
 
-func (ctrl *CustomController) Hello(c telebot.Context) error {
+func (h *CustomHandler) Hello(c telebot.Context) error {
     return c.Send("Hello, " + c.Sender().FirstName + "!")
 }
 ```
@@ -305,8 +305,8 @@ func RegisterRouter(b *telebot.Bot) {
     // ... 其他路由
 
     // 自定义命令
-    customCtrl := custom.New(store.S)
-    b.Handle("/hello", customCtrl.Hello)
+    customHandler := handler.NewCustomHandler(store.S)
+    b.Handle("/hello", customHandler.Hello)
 }
 ```
 
@@ -432,9 +432,9 @@ grep "Subscribe" storage/log/bot.log
 ### 1. 错误处理
 
 ```go
-func (ctrl *ServerController) SomeCommand(c telebot.Context) error {
+func (h *ServerHandler) SomeCommand(c telebot.Context) error {
     // 详细的错误信息
-    result, err := ctrl.b.DoSomething(ctx)
+    result, err := h.b.DoSomething(ctx)
     if err != nil {
         log.Errorf("操作失败: %v", err)
         return c.Send("操作失败，请稍后重试")
@@ -448,7 +448,7 @@ func (ctrl *ServerController) SomeCommand(c telebot.Context) error {
 
 ```go
 // Telegram 支持 Markdown 和 HTML
-func (ctrl *ServerController) Status(c telebot.Context) error {
+func (h *ServerHandler) Status(c telebot.Context) error {
     message := `
 *服务状态*
 ━━━━━━━━━━━━
@@ -470,7 +470,7 @@ func (ctrl *ServerController) Status(c telebot.Context) error {
 // 使用限流器防止滥用
 var limiter = rate.NewLimiter(rate.Every(time.Second), 10)
 
-func (ctrl *ServerController) RateLimitedCommand(c telebot.Context) error {
+func (h *ServerHandler) RateLimitedCommand(c telebot.Context) error {
     if !limiter.Allow() {
         return c.Send("请求过于频繁，请稍后再试")
     }
@@ -523,7 +523,7 @@ bot:
 ### 3. 输入验证
 
 ```go
-func (ctrl *ServerController) ProcessInput(c telebot.Context) error {
+func (h *ServerHandler) ProcessInput(c telebot.Context) error {
     input := c.Text()
 
     // 验证输入
@@ -546,7 +546,7 @@ func (ctrl *ServerController) ProcessInput(c telebot.Context) error {
 ```go
 import "bingo/internal/apiserver/biz"
 
-func (ctrl *ServerController) GetUserInfo(c telebot.Context) error {
+func (h *ServerHandler) GetUserInfo(c telebot.Context) error {
     // 通过 Store 访问数据
     user, err := store.S.Users().Get(ctx, userID)
     if err != nil {
@@ -562,7 +562,7 @@ func (ctrl *ServerController) GetUserInfo(c telebot.Context) error {
 ```go
 import "bingo/internal/pkg/mail"
 
-func (ctrl *ServerController) SendReport(c telebot.Context) error {
+func (h *ServerHandler) SendReport(c telebot.Context) error {
     // 生成报告
     report := generateReport()
 

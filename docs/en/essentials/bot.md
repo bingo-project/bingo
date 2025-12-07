@@ -238,7 +238,7 @@ for _, channel := range channels {
 ┌─────────────────────────────────────┐
 │  Platform Layer (Telegram/Discord) │  ← Platform adapters
 ├─────────────────────────────────────┤
-│     Controller Layer                │  ← Controllers
+│     Handler Layer                   │  ← Handlers
 ├─────────────────────────────────────┤
 │     Business Logic (Biz)            │  ← Business logic
 ├─────────────────────────────────────┤
@@ -254,12 +254,12 @@ internal/bot/
 │   ├── bot/
 │   └── syscfg/
 ├── telegram/         # Telegram platform
-│   ├── controller/
+│   ├── handler/
 │   ├── middleware/
 │   ├── router.go
 │   └── run.go
 ├── discord/          # Discord platform
-│   ├── controller/
+│   ├── handler/
 │   ├── middleware/
 │   ├── client/
 │   ├── router.go
@@ -275,16 +275,16 @@ internal/bot/
 #### 1. Add Command Handler
 
 ```go
-// internal/bot/telegram/controller/v1/custom/custom.go
-package custom
+// internal/bot/telegram/handler/custom.go
+package handler
 
 import "gopkg.in/telebot.v3"
 
-type CustomController struct {
+type CustomHandler struct {
     // ...
 }
 
-func (ctrl *CustomController) Hello(c telebot.Context) error {
+func (h *CustomHandler) Hello(c telebot.Context) error {
     return c.Send("Hello, " + c.Sender().FirstName + "!")
 }
 ```
@@ -294,8 +294,8 @@ func (ctrl *CustomController) Hello(c telebot.Context) error {
 ```go
 // internal/bot/telegram/router.go
 func RegisterRouter(b *telebot.Bot) {
-    customCtrl := custom.New(store.S)
-    b.Handle("/hello", customCtrl.Hello)
+    customHandler := handler.NewCustomHandler(store.S)
+    b.Handle("/hello", customHandler.Hello)
 }
 ```
 
@@ -391,8 +391,8 @@ curl http://localhost:18080/debug/pprof/profile?seconds=30 > cpu.prof
 ### 1. Error Handling
 
 ```go
-func (ctrl *ServerController) SomeCommand(c telebot.Context) error {
-    result, err := ctrl.b.DoSomething(ctx)
+func (h *ServerHandler) SomeCommand(c telebot.Context) error {
+    result, err := h.b.DoSomething(ctx)
     if err != nil {
         log.Errorf("Operation failed: %v", err)
         return c.Send("Operation failed, please try again")
@@ -405,7 +405,7 @@ func (ctrl *ServerController) SomeCommand(c telebot.Context) error {
 
 ```go
 // Telegram supports Markdown and HTML
-func (ctrl *ServerController) Status(c telebot.Context) error {
+func (h *ServerHandler) Status(c telebot.Context) error {
     message := `
 *Service Status*
 ━━━━━━━━━━━━
@@ -426,7 +426,7 @@ Updated: %s
 // Prevent abuse
 var limiter = rate.NewLimiter(rate.Every(time.Second), 10)
 
-func (ctrl *ServerController) RateLimitedCommand(c telebot.Context) error {
+func (h *ServerHandler) RateLimitedCommand(c telebot.Context) error {
     if !limiter.Allow() {
         return c.Send("Too many requests, please try again later")
     }
@@ -472,7 +472,7 @@ bot:
 ### 3. Input Validation
 
 ```go
-func (ctrl *ServerController) ProcessInput(c telebot.Context) error {
+func (h *ServerHandler) ProcessInput(c telebot.Context) error {
     input := c.Text()
     if len(input) > 1000 {
         return c.Send("Input too long")
@@ -490,7 +490,7 @@ func (ctrl *ServerController) ProcessInput(c telebot.Context) error {
 ```go
 import "bingo/internal/apiserver/biz"
 
-func (ctrl *ServerController) GetUserInfo(c telebot.Context) error {
+func (h *ServerHandler) GetUserInfo(c telebot.Context) error {
     user, err := store.S.Users().Get(ctx, userID)
     if err != nil {
         return c.Send("User not found")
@@ -504,7 +504,7 @@ func (ctrl *ServerController) GetUserInfo(c telebot.Context) error {
 ```go
 import "bingo/internal/pkg/mail"
 
-func (ctrl *ServerController) SendReport(c telebot.Context) error {
+func (h *ServerHandler) SendReport(c telebot.Context) error {
     report := generateReport()
     err := mail.Send(mail.Message{
         To:      []string{"admin@example.com"},

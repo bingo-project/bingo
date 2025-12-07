@@ -24,7 +24,7 @@ Bingo adopts a **microservice architecture** with a clear **three-layer design**
 ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
 │  API Server      │ │  Admin Server    │ │ Scheduler        │
 │  ┌────────────┐  │ │  ┌────────────┐  │ │  ┌────────────┐  │
-│  │ Controller │  │ │  │ Controller │  │ │  │ Job Engine │  │
+│  │  Handler   │  │ │  │  Handler   │  │ │  │ Job Engine │  │
 │  └──────┬─────┘  │ │  └──────┬─────┘  │ │  └──────┬─────┘  │
 │         ↓        │ │         ↓        │ │         ↓        │
 │  ┌────────────┐  │ │  ┌────────────┐  │ │  ┌────────────┐  │
@@ -65,7 +65,7 @@ Bingo adopts a **microservice architecture** with a clear **three-layer design**
 
 Every service follows the three-layer design:
 
-#### Layer 1: Controller (HTTP Handler)
+#### Layer 1: Handler (HTTP Handler)
 - **Responsibility**: Handle HTTP requests, parameter validation
 - **Input**: HTTP requests
 - **Output**: JSON responses
@@ -77,7 +77,7 @@ Every service follows the three-layer design:
 
 #### Layer 2: Business Logic (Biz)
 - **Responsibility**: Core business logic implementation
-- **Input**: Validated parameters from Controller
+- **Input**: Validated parameters from Handler
 - **Output**: Business results
 - **Key Features**:
   - Core business rules
@@ -139,7 +139,7 @@ type Store[T any] interface {
 ```
 1. Client Request
    ↓
-2. Controller
+2. Handler
    - Parse parameters
    - Validate input
    ↓
@@ -160,7 +160,7 @@ type Store[T any] interface {
 ```
 POST /api/v1/users
 
-1. Controller.CreateUser()
+1. Handler.CreateUser()
    - Validate request body
    - Check authorization
 

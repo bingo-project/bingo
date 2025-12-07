@@ -23,7 +23,7 @@ An out-of-the-box Go backend scaffold based on microservice architecture design,
 
 ### Architecture Level
 - **Microservice Architecture**: Multiple services deployed independently, supporting horizontal scaling
-- **Layered Design**: Clear three-layer architecture (Controller → Biz → Store)
+- **Layered Design**: Clear three-layer architecture (Handler → Biz → Store)
 - **Dependency Injection**: Interface-based programming, easy to test and extend
 - **Service Discovery**: Support gRPC inter-service communication
 

@@ -19,7 +19,7 @@ bingo/
 │   └── bingoctl/           # CLI tool
 ├── internal/               # Internal application code
 │   ├── apiserver/          # API server implementation
-│   │   ├── controller/     # HTTP handlers
+│   │   ├── handler/        # HTTP handlers
 │   │   ├── biz/            # Business logic layer
 │   │   ├── store/          # Data access layer
 │   │   ├── middleware/     # Middleware
@@ -75,7 +75,7 @@ Each service implements the three-layer model:
 ```
 Request
    ↓
-Controller (HTTP Handler)
+Handler (HTTP Handler)
    ↓
 Biz (Business Logic)
    ↓
@@ -84,7 +84,7 @@ Store (Data Access)
 Database/External Services
 ```
 
-- **controller/**: HTTP request handlers, parameter validation, response formatting
+- **handler/**: HTTP request handlers, parameter validation, response formatting
 - **biz/**: Business logic implementation, contains core application logic
 - **store/**: Data access layer, database operations and queries
 - **middleware/**: Request/response processing middleware
@@ -136,12 +136,12 @@ log:
 ### File and Directory Names
 
 - Use lowercase with hyphens for directories and files
-- Example: `user_service.go`, `user-controller/`
+- Example: `user_service.go`, `user-handler/`
 
 ### Package Names
 
 - Package names should be lowercase, single word when possible
-- Example: `controller`, `biz`, `store`
+- Example: `handler`, `biz`, `store`
 
 ### Variable and Function Names
 

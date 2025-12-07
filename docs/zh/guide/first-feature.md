@@ -1,6 +1,6 @@
 ---
 title: 开发第一个功能 - Bingo Go 开发实战教程
-description: 通过开发一个文章管理功能，学习 Bingo Go 微服务框架的完整开发流程，包括 Model、Store、Biz、Controller 各层的实现。
+description: 通过开发一个文章管理功能，学习 Bingo Go 微服务框架的完整开发流程，包括 Model、Store、Biz、Handler 各层的实现。
 ---
 
 # 开发第一个功能
@@ -16,7 +16,7 @@ description: 通过开发一个文章管理功能，学习 Bingo Go 微服务框
 bingo make crud article
 ```
 
-这会自动生成 Model、Store、Biz、Controller、Request 的完整代码,并自动注册到相应的接口和路由。
+这会自动生成 Model、Store、Biz、Handler、Request 的完整代码,并自动注册到相应的接口和路由。
 
 > 想了解更多 Bingo CLI 功能? 查看 [使用 Bingo CLI](./using-bingo.md)
 
@@ -37,7 +37,7 @@ bingo make crud article
     ↓
 4. 创建 Biz 层 (业务逻辑)
     ↓
-5. 创建 Controller 层 (HTTP 处理)
+5. 创建 Handler 层 (HTTP 处理)
     ↓
 6. 注册路由 (Router)
     ↓
@@ -186,9 +186,9 @@ func (b *articleBiz) Get(ctx context.Context, id uint64) (*model.Article, error)
 }
 ```
 
-## 5. 创建 Controller 层
+## 5. 创建 Handler 层
 
-创建文件 `internal/apiserver/controller/v1/article/article.go`:
+创建文件 `internal/apiserver/handler/http/article/article.go`:
 
 ```go
 package article
@@ -200,12 +200,12 @@ import (
     "github.com/bingo-project/bingo/pkg/errno"
 )
 
-type ArticleController struct {
+type ArticleHandler struct {
     biz biz.IBiz
 }
 
-func New(biz biz.IBiz) *ArticleController {
-    return &ArticleController{biz: biz}
+func New(biz biz.IBiz) *ArticleHandler {
+    return &ArticleHandler{biz: biz}
 }
 
 // @Summary      创建文章
@@ -216,7 +216,7 @@ func New(biz biz.IBiz) *ArticleController {
 // @Param        body  body      CreateArticleRequest  true  "文章信息"
 // @Success      200   {object}  Article
 // @Router       /v1/articles [post]
-func (ctrl *ArticleController) Create(c *gin.Context) {
+func (h *ArticleHandler) Create(c *gin.Context) {
     var req CreateArticleRequest
     if err := c.ShouldBindJSON(&req); err != nil {
         core.WriteResponse(c, errno.ErrBind, nil)
@@ -226,7 +226,7 @@ func (ctrl *ArticleController) Create(c *gin.Context) {
     // 从上下文获取当前用户 ID
     req.AuthorID = c.GetUint64("user_id")
 
-    article, err := ctrl.biz.Articles().Create(c.Request.Context(), &req)
+    article, err := h.biz.Articles().Create(c.Request.Context(), &req)
     if err != nil {
         core.WriteResponse(c, err, nil)
         return
@@ -241,14 +241,14 @@ func (ctrl *ArticleController) Create(c *gin.Context) {
 // @Param        id   path      int  true  "文章ID"
 // @Success      200  {object}  Article
 // @Router       /v1/articles/{id} [get]
-func (ctrl *ArticleController) Get(c *gin.Context) {
+func (h *ArticleHandler) Get(c *gin.Context) {
     var req GetArticleRequest
     if err := c.ShouldBindUri(&req); err != nil {
         core.WriteResponse(c, errno.ErrBind, nil)
         return
     }
 
-    article, err := ctrl.biz.Articles().Get(c.Request.Context(), req.ID)
+    article, err := h.biz.Articles().Get(c.Request.Context(), req.ID)
     if err != nil {
         core.WriteResponse(c, err, nil)
         return
@@ -267,14 +267,14 @@ func InstallRouters(g *gin.Engine) {
     // ... 其他路由
 
     // 文章路由
-    articleController := article.New(biz)
+    articleHandler := article.New(biz)
     v1auth := v1.Group("")
     v1auth.Use(middleware.Authn())
     {
         articles := v1auth.Group("/articles")
         {
-            articles.POST("", articleController.Create)
-            articles.GET("/:id", articleController.Get)
+            articles.POST("", articleHandler.Create)
+            articles.GET("/:id", articleHandler.Get)
         }
     }
 }
@@ -313,7 +313,7 @@ curl http://localhost:8080/v1/articles/1 \
 2. **Migration**: 数据库变更
 3. **Store**: 数据访问(GORM 操作)
 4. **Biz**: 业务逻辑(规则验证、流程编排)
-5. **Controller**: HTTP 处理(参数绑定、调用 Biz、返回响应)
+5. **Handler**: HTTP 处理(参数绑定、调用 Biz、返回响应)
 6. **Router**: 路由注册
 
 ## 下一步

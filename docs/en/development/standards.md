@@ -31,7 +31,7 @@ package user_service   // Don't use underscore
 - Related to main type
 
 ```
-user_controller.go
+user_handler.go
 article_store.go
 auth_middleware.go
 ```
@@ -51,8 +51,8 @@ type ICache interface {}
 
 ```go
 // Exported
-type UserController struct {}
-func (c *UserController) Create() {}
+type UserHandler struct {}
+func (h *UserHandler) Create() {}
 
 // Private
 type userCache struct {}
@@ -107,11 +107,11 @@ if user == nil {
 }
 ```
 
-### Controller Layer Error Handling
+### Handler Layer Error Handling
 
 ```go
-func (ctrl *UserController) Get(c *gin.Context) {
-    user, err := ctrl.biz.Users().Get(c.Context(), id)
+func (h *UserHandler) Get(c *gin.Context) {
+    user, err := h.biz.Users().Get(c.Context(), id)
     if err != nil {
         // Unified error response
         core.WriteResponse(c, err, nil)
@@ -219,14 +219,14 @@ func (b *UserBiz) CreateUser(ctx context.Context, req *CreateUserRequest) (*mode
 // @Success      200  {object}  UserResponse
 // @Failure      404  {object}  ErrorResponse
 // @Router       /v1/users/{id} [get]
-func (ctrl *UserController) Get(c *gin.Context) {
+func (h *UserHandler) Get(c *gin.Context) {
     // ...
 }
 ```
 
 ## Code Organization
 
-### Controller Layer
+### Handler Layer
 
 ```go
 package user
@@ -238,24 +238,24 @@ import (
 )
 
 // 1. Type definitions
-type UserController struct {
+type UserHandler struct {
     biz biz.IBiz
 }
 
 // 2. Constructor
-func New(biz biz.IBiz) *UserController {
-    return &UserController{biz: biz}
+func New(biz biz.IBiz) *UserHandler {
+    return &UserHandler{biz: biz}
 }
 
 // 3. HTTP handlers (in CRUD order)
-func (ctrl *UserController) Create(c *gin.Context) {}
-func (ctrl *UserController) Get(c *gin.Context) {}
-func (ctrl *UserController) List(c *gin.Context) {}
-func (ctrl *UserController) Update(c *gin.Context) {}
-func (ctrl *UserController) Delete(c *gin.Context) {}
+func (h *UserHandler) Create(c *gin.Context) {}
+func (h *UserHandler) Get(c *gin.Context) {}
+func (h *UserHandler) List(c *gin.Context) {}
+func (h *UserHandler) Update(c *gin.Context) {}
+func (h *UserHandler) Delete(c *gin.Context) {}
 
 // 4. Private helper methods
-func (ctrl *UserController) validateRequest() {}
+func (h *UserHandler) validateRequest() {}
 ```
 
 ### Biz Layer

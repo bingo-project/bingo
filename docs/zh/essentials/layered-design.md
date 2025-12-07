@@ -1,6 +1,6 @@
 ---
 title: 分层架构详解 - Bingo Go 微服务三层架构设计
-description: 深入理解 Bingo Go 微服务框架的 Controller → Biz → Store 三层架构设计，了解每层的职责边界、代码组织和最佳实践。
+description: 深入理解 Bingo Go 微服务框架的 Handler → Biz → Store 三层架构设计，了解每层的职责边界、代码组织和最佳实践。
 ---
 
 # 分层架构详解
@@ -11,7 +11,7 @@ Bingo 采用经典的三层架构设计,本文详细介绍每一层的职责和�
 
 ```
 ┌─────────────────────────────────────────┐
-│         Controller Layer                │  HTTP/gRPC 处理层
+│         Handler Layer                   │  HTTP/gRPC 处理层
 │  - 参数验证                              │
 │  - 请求响应转换                          │
 │  - 错误处理                              │
@@ -34,7 +34,7 @@ Bingo 采用经典的三层架构设计,本文详细介绍每一层的职责和�
 └─────────────────────────────────────────┘
 ```
 
-## Controller 层(控制器层)
+## Handler 层(HTTP/gRPC 处理层)
 
 ### 职责
 
@@ -46,12 +46,12 @@ Bingo 采用经典的三层架构设计,本文详细介绍每一层的职责和�
 ### 代码示例
 
 ```go
-// internal/apiserver/controller/v1/user/user.go
-type UserController struct {
+// internal/apiserver/handler/http/user/user.go
+type UserHandler struct {
     biz biz.IBiz
 }
 
-func (ctrl *UserController) Get(c *gin.Context) {
+func (h *UserHandler) Get(c *gin.Context) {
     // 1. 参数验证
     var req GetUserRequest
     if err := c.ShouldBindUri(&req); err != nil {
@@ -60,7 +60,7 @@ func (ctrl *UserController) Get(c *gin.Context) {
     }
 
     // 2. 调用业务层
-    user, err := ctrl.biz.Users().Get(c.Context(), req.UserID)
+    user, err := h.biz.Users().Get(c.Context(), req.UserID)
     if err != nil {
         core.WriteResponse(c, err, nil)
         return
@@ -73,17 +73,17 @@ func (ctrl *UserController) Get(c *gin.Context) {
 
 ### 设计原则
 
-- **薄控制器**: 只做参数处理和响应,不包含业务逻辑
+- **薄 Handler**: 只做参数处理和响应,不包含业务逻辑
 - **统一响应**: 使用统一的响应格式
 - **错误处理**: 统一的错误处理机制
 - **版本隔离**: 不同 API 版本独立目录(`v1/`, `v2/`)
 
 ### 不应该做的事
 
-❌ **在 Controller 中写业务逻辑**
+❌ **在 Handler 中写业务逻辑**
 ```go
 // 错误示例
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     // ❌ 业务规则不应该在这里
     if user.Age < 18 {
         return errors.New("年龄不足")
@@ -97,7 +97,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
 ✅ **应该调用 Biz 层**
 ```go
 // 正确示例
-func (ctrl *UserController) Create(c *gin.Context) {
+func (h *UserHandler) Create(c *gin.Context) {
     var req CreateUserRequest
     if err := c.ShouldBindJSON(&req); err != nil {
         core.WriteResponse(c, errno.ErrBind, nil)
@@ -105,7 +105,7 @@ func (ctrl *UserController) Create(c *gin.Context) {
     }
 
     // ✅ 业务逻辑交给 Biz 层
-    user, err := ctrl.biz.Users().Create(c.Context(), &req)
+    user, err := h.biz.Users().Create(c.Context(), &req)
     core.WriteResponse(c, err, user)
 }
 ```
@@ -337,7 +337,7 @@ func (s *userStore) Get(ctx context.Context, id uint64) (*model.User, error) {
 
 ### 1. 关注点分离
 每层只关注自己的职责:
-- Controller 关注 HTTP 协议
+- Handler 关注 HTTP 协议
 - Biz 关注业务规则
 - Store 关注数据访问
 
@@ -355,41 +355,41 @@ func TestUserBiz_Create(t *testing.T) {
 ```
 
 ### 3. 代码复用
-Biz 层可以被多个 Controller 复用:
+Biz 层可以被多个 Handler 复用:
 ```
-HTTP Controller  ──┐
-                   ├──→  User Biz  ──→  User Store
-gRPC Service    ──┘
+HTTP Handler  ──┐
+                ├──→  User Biz  ──→  User Store
+gRPC Service  ──┘
 ```
 
 ### 4. 易于维护
 - 修改数据库操作:只改 Store 层
 - 修改业务规则:只改 Biz 层
-- 修改 API 格式:只改 Controller 层
+- 修改 API 格式:只改 Handler 层
 
 ### 5. 团队协作
 不同层可以并行开发:
-- 前端开发者:先 Mock Controller,并行开发
+- 前端开发者:先 Mock Handler,并行开发
 - 后端开发者:先定义接口,分层开发
 
 ## 常见错误
 
 ### 错误1:跨层调用
 
-❌ **Controller 直接调用 Store**
+❌ **Handler 直接调用 Store**
 ```go
 // 错误
-func (ctrl *UserController) Get(c *gin.Context) {
-    // ❌ Controller 不应该直接调用 Store
-    user, err := ctrl.store.Users().Get(ctx, id)
+func (h *UserHandler) Get(c *gin.Context) {
+    // ❌ Handler 不应该直接调用 Store
+    user, err := h.store.Users().Get(ctx, id)
 }
 ```
 
 ✅ **应该通过 Biz 层**
 ```go
 // 正确
-func (ctrl *UserController) Get(c *gin.Context) {
-    user, err := ctrl.biz.Users().Get(ctx, id)
+func (h *UserHandler) Get(c *gin.Context) {
+    user, err := h.biz.Users().Get(ctx, id)
 }
 ```
 

@@ -22,7 +22,7 @@ hero:
 
 features:
   - title: 🏗️ 清晰的架构设计
-    details: 采用 Controller → Biz → Store 三层架构,支持微服务拆分,让团队快速理解和维护代码。
+    details: 采用 Handler → Biz → Store 三层架构,支持微服务拆分,让团队快速理解和维护代码。
   - title: 🚀 工程能力完备
     details: 内置代码生成、热重启、自动化测试、Docker 支持,提高开发效率。
   - title: 📚 技术栈齐全

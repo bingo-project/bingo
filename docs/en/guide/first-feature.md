@@ -1,6 +1,6 @@
 ---
 title: Develop Your First Feature - Bingo Go Development Tutorial
-description: Learn the complete Bingo Go microservices framework development workflow by building an article management feature, including Model, Store, Biz, and Controller layer implementations.
+description: Learn the complete Bingo Go microservices framework development workflow by building an article management feature, including Model, Store, Biz, and Handler layer implementations.
 ---
 
 # Develop Your First Feature
@@ -24,7 +24,7 @@ This automatically generates:
 - `internal/pkg/model/post.go` - Data model
 - `internal/apiserver/store/post.go` - Data access layer
 - `internal/apiserver/biz/post/post.go` - Business logic layer
-- `internal/apiserver/controller/v1/post/post.go` - HTTP handler
+- `internal/apiserver/handler/http/post/post.go` - HTTP handler
 - `pkg/api/v1/post.go` - API request/response definitions
 
 ### Step 2: Define the Data Model
@@ -196,9 +196,9 @@ func (b *postBiz) modelToDTO(post *model.Post) *Post {
 }
 ```
 
-### Step 5: Implement HTTP Handler (Controller)
+### Step 5: Implement HTTP Handler
 
-Edit `internal/apiserver/controller/v1/post/post.go`:
+Edit `internal/apiserver/handler/http/post/post.go`:
 
 ```go
 package post
@@ -208,12 +208,12 @@ import (
     "github.com/myorg/myapp/internal/apiserver/biz/post"
 )
 
-type PostController struct {
+type PostHandler struct {
     biz post.PostBiz
 }
 
-func NewPostController(b post.PostBiz) *PostController {
-    return &PostController{biz: b}
+func NewPostHandler(b post.PostBiz) *PostHandler {
+    return &PostHandler{biz: b}
 }
 
 // Create godoc
@@ -224,14 +224,14 @@ func NewPostController(b post.PostBiz) *PostController {
 // @Param post body CreatePostRequest true "Post data"
 // @Success 201 {object} post.Post
 // @Router /v1/posts [post]
-func (c *PostController) CreatePost(ctx *gin.Context) {
+func (h *PostHandler) CreatePost(ctx *gin.Context) {
     var req post.CreatePostRequest
     if err := ctx.ShouldBindJSON(&req); err != nil {
         ctx.JSON(400, gin.H{"error": err.Error()})
         return
     }
 
-    p, err := c.biz.CreatePost(ctx, &req)
+    p, err := h.biz.CreatePost(ctx, &req)
     if err != nil {
         ctx.JSON(500, gin.H{"error": err.Error()})
         return
@@ -247,9 +247,9 @@ func (c *PostController) CreatePost(ctx *gin.Context) {
 // @Param id path string true "Post ID"
 // @Success 200 {object} post.Post
 // @Router /v1/posts/{id} [get]
-func (c *PostController) GetPost(ctx *gin.Context) {
+func (h *PostHandler) GetPost(ctx *gin.Context) {
     id := ctx.Param("id")
-    p, err := c.biz.GetPost(ctx, id)
+    p, err := h.biz.GetPost(ctx, id)
     if err != nil {
         ctx.JSON(404, gin.H{"error": "post not found"})
         return
@@ -267,20 +267,20 @@ package router
 
 import (
     "github.com/gin-gonic/gin"
-    postctrl "github.com/myorg/myapp/internal/apiserver/controller/v1/post"
+    posthandler "github.com/myorg/myapp/internal/apiserver/handler/http/post"
 )
 
-func RegisterRoutes(engine *gin.Engine, postController *postctrl.PostController) {
+func RegisterRoutes(engine *gin.Engine, postHandler *posthandler.PostHandler) {
     v1 := engine.Group("/v1")
 
     // Post routes
     posts := v1.Group("/posts")
     {
-        posts.POST("", postController.CreatePost)
-        posts.GET("/:id", postController.GetPost)
-        posts.PUT("/:id", postController.UpdatePost)
-        posts.DELETE("/:id", postController.DeletePost)
-        posts.GET("", postController.ListPosts)
+        posts.POST("", postHandler.CreatePost)
+        posts.GET("/:id", postHandler.GetPost)
+        posts.PUT("/:id", postHandler.UpdatePost)
+        posts.DELETE("/:id", postHandler.DeletePost)
+        posts.GET("", postHandler.ListPosts)
     }
 }
 ```
