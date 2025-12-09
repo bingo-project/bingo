@@ -109,3 +109,38 @@ func TestHealthServerName(t *testing.T) {
 		t.Fatalf("Name() = %q, want %q", srv.Name(), "health")
 	}
 }
+
+func TestHealthServerAsRunnable(t *testing.T) {
+	// Verify HealthServer implements the Runnable pattern correctly
+	// by testing it can be started and stopped via context
+	srv := NewHealthServer(":0")
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- srv.Start(ctx)
+	}()
+
+	time.Sleep(50 * time.Millisecond)
+
+	// Server should be running
+	addr := srv.Addr()
+	resp, err := http.Get("http://" + addr + "/healthz")
+	if err != nil {
+		t.Fatalf("server not running: %v", err)
+	}
+	resp.Body.Close()
+
+	// Cancel context to stop server
+	cancel()
+
+	select {
+	case err := <-errCh:
+		if err != nil && err != http.ErrServerClosed {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("server did not stop")
+	}
+}
