@@ -33,4 +33,5 @@ func RecoveryWithLogger(logger ws.Logger) ws.Middleware {
 }
 
 // Recovery catches panics and returns an error response.
-var Recovery = RecoveryWithLogger(ws.DefaultLogger())
+// Uses NopLogger by default; use RecoveryWithLogger to inject a real logger.
+var Recovery = RecoveryWithLogger(ws.NopLogger())

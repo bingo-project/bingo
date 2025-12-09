@@ -15,6 +15,7 @@ import (
 	"bingo/internal/pkg/bootstrap"
 	"bingo/internal/pkg/config"
 	"bingo/internal/pkg/facade"
+	"bingo/internal/pkg/log"
 	"bingo/pkg/contextx"
 	"bingo/pkg/ws"
 	"bingo/pkg/ws/middleware"
@@ -25,14 +26,18 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	// Create rate limiter store
 	rateLimitStore := middleware.NewRateLimiterStore()
 
+	// Create logger for WebSocket
+	wsLogger := log.NewWSLogger()
+
 	// Create hub with disconnect callback to cleanup rate limiters
 	hub := ws.NewHub(
+		ws.WithLogger(wsLogger),
 		ws.WithClientDisconnectCallback(rateLimitStore.Remove),
 	)
 
 	// Create router and register handlers
 	wsRouter := ws.NewRouter()
-	router.RegisterWSHandlers(wsRouter, rateLimitStore)
+	router.RegisterWSHandlers(wsRouter, rateLimitStore, wsLogger)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGinForWebSocket()

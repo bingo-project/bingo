@@ -41,4 +41,5 @@ func LoggerWithLogger(logger ws.Logger) ws.Middleware {
 }
 
 // Logger logs request details after handling.
-var Logger = LoggerWithLogger(ws.DefaultLogger())
+// Uses NopLogger by default; use LoggerWithLogger to inject a real logger.
+var Logger = LoggerWithLogger(ws.NopLogger())

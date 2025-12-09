@@ -98,7 +98,7 @@ func NewHub(opts ...HubOption) *Hub {
 func NewHubWithConfig(cfg *HubConfig, opts ...HubOption) *Hub {
 	h := &Hub{
 		config:      cfg,
-		logger:      defaultLogger{},
+		logger:      nopLogger{},
 		anonymous:   make(map[*Client]bool),
 		clients:     make(map[*Client]bool),
 		users:       make(map[string]*Client),

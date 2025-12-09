@@ -9,12 +9,12 @@ import (
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.
-func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore) {
+func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore, logger ws.Logger) {
 	// Global middleware
 	router.Use(
-		middleware.Recovery,
+		middleware.RecoveryWithLogger(logger),
 		middleware.RequestID,
-		middleware.Logger,
+		middleware.LoggerWithLogger(logger),
 		middleware.RateLimitWithStore(&middleware.RateLimitConfig{
 			Default: 10,
 			Methods: map[string]float64{
