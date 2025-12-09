@@ -1,36 +1,39 @@
 // ABOUTME: Application entry point for apiserver.
-// ABOUTME: Assembles and runs all enabled servers.
+// ABOUTME: Assembles and runs all enabled servers using pkg/app.
 
 package apiserver
 
 import (
-	"context"
-	"os/signal"
-	"syscall"
-
 	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/server"
+	"bingo/pkg/app"
+	"bingo/pkg/server"
 )
 
 // run starts all enabled servers based on configuration.
 func run() error {
-	// Create context that listens for interrupt signals
-	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
+	cfg := &facade.Config
 
-	// Initialize servers
-	ginEngine := initGinEngine()
-	grpcServer := initGRPCServer(facade.Config.GRPC)
-	wsEngine, wsHub := initWebSocket()
-
-	// Assemble servers based on configuration
-	runner := server.Assemble(
-		&facade.Config,
-		server.WithGinEngine(ginEngine),
-		server.WithGRPCServer(grpcServer),
-		server.WithWebSocket(wsEngine, wsHub),
+	application, err := app.New(
+		app.WithConfig(cfg),
 	)
+	if err != nil {
+		return err
+	}
 
-	// Run all servers
-	return runner.Run(ctx)
+	// Add servers based on configuration
+	if cfg.GRPC.Enabled {
+		application.Add(server.NewGRPCServer(cfg.GRPC.Addr, initGRPCServer(cfg.GRPC)))
+	}
+
+	if cfg.HTTP.Enabled {
+		application.Add(server.NewHTTPServer(cfg.HTTP.Addr, initGinEngine()))
+	}
+
+	if cfg.WebSocket.Enabled {
+		wsEngine, hub := initWebSocket()
+		application.Add(RunnableFunc(hub.Run))
+		application.Add(server.NewWebSocketServer(cfg.WebSocket.Addr, wsEngine))
+	}
+
+	return application.Run(app.SetupSignalHandler())
 }

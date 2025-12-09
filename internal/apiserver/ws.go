@@ -118,3 +118,13 @@ func tokenParser(tokenStr string) (*ws.TokenInfo, error) {
 func contextUpdater(ctx context.Context, userID string) context.Context {
 	return contextx.WithUserID(ctx, userID)
 }
+
+// RunnableFunc adapts a function to the Runnable interface.
+// Useful for wrapping functions that don't return error.
+type RunnableFunc func(ctx context.Context)
+
+// Start implements Runnable.
+func (f RunnableFunc) Start(ctx context.Context) error {
+	f(ctx)
+	return nil
+}
