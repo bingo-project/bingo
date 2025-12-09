@@ -40,3 +40,11 @@ func WithInitFunc(fn func() error) Option {
 		app.initFunc = fn
 	}
 }
+
+// WithHealthAddr enables the health server on the given address.
+// When set, App automatically manages the health server lifecycle.
+func WithHealthAddr(addr string) Option {
+	return func(app *App) {
+		app.healthAddr = addr
+	}
+}

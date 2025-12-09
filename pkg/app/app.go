@@ -8,6 +8,8 @@ import (
 	"sync"
 	"time"
 
+	"bingo/pkg/server"
+
 	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 )
@@ -28,6 +30,9 @@ type App struct {
 	initOnce sync.Once
 	initErr  error
 	initFunc func() error
+
+	healthAddr   string
+	healthServer *server.HealthServer
 
 	mu sync.Mutex
 }
@@ -80,6 +85,12 @@ func (app *App) Run(ctx context.Context) error {
 		return err
 	}
 
+	// Start health server if configured
+	if app.healthAddr != "" {
+		app.healthServer = server.NewHealthServer(app.healthAddr)
+		app.runnables = append([]Runnable{app.healthServer}, app.runnables...)
+	}
+
 	// Phase 1: Register (serial, in order)
 	for _, reg := range app.registrars {
 		if err := reg.Register(app); err != nil {
@@ -119,6 +130,9 @@ func (app *App) Ready() <-chan struct{} {
 
 func (app *App) markReady() {
 	app.readyOnce.Do(func() {
+		if app.healthServer != nil {
+			app.healthServer.SetReady(true)
+		}
 		close(app.ready)
 	})
 }
@@ -161,4 +175,13 @@ func (app *App) Init() error {
 func (app *App) Close() error {
 	// Future: close DB, Cache connections
 	return nil
+}
+
+// HealthAddr returns the actual health server address.
+// Only valid after Run() is called with WithHealthAddr.
+func (app *App) HealthAddr() string {
+	if app.healthServer != nil {
+		return app.healthServer.Addr()
+	}
+	return app.healthAddr
 }

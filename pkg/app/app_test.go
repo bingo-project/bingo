@@ -6,6 +6,7 @@ package app
 import (
 	"context"
 	"errors"
+	"net/http"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -258,5 +259,45 @@ func TestRunWithExplicitInit(t *testing.T) {
 
 	if initCount != 1 {
 		t.Fatalf("Init was called %d times, want 1", initCount)
+	}
+}
+
+func TestAppWithHealthAddr(t *testing.T) {
+	app, _ := New(WithHealthAddr(":0"))
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- app.Run(ctx)
+	}()
+
+	<-app.Ready()
+
+	// Give health server time to bind to port
+	time.Sleep(50 * time.Millisecond)
+
+	// Health server should be running and ready
+	addr := app.HealthAddr()
+	if addr == "" || addr == ":0" {
+		t.Fatalf("HealthAddr() = %q, want actual address", addr)
+	}
+
+	resp, err := http.Get("http://" + addr + "/readyz")
+	if err != nil {
+		t.Fatalf("GET /readyz failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("/readyz status = %d, want %d", resp.StatusCode, http.StatusOK)
+	}
+
+	cancel()
+
+	select {
+	case <-errCh:
+	case <-time.After(5 * time.Second):
+		t.Fatal("Run did not return")
 	}
 }
