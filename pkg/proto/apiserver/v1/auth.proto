@@ -4,7 +4,7 @@ package apiserver.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "bingo/pkg/proto/apiserver/v1/pb";
+option go_package = "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb";
 
 message LoginRequest {
   string username = 1;

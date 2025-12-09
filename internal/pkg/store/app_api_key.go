@@ -5,10 +5,10 @@ import (
 
 	"github.com/bingo-project/component-base/util/gormutil"
 
-	"bingo/internal/pkg/model"
-	v1 "bingo/pkg/api/apiserver/v1"
-	genericstore "bingo/pkg/store"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 // ApiKeyStore defines the interface for API key operations.

@@ -3,11 +3,11 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	bizauth "bingo/internal/apiserver/biz/auth"
-	authhandler "bingo/internal/apiserver/handler/http/auth"
-	"bingo/internal/apiserver/middleware"
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/store"
+	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
+	authhandler "github.com/bingo-project/bingo/internal/apiserver/handler/http/auth"
+	"github.com/bingo-project/bingo/internal/apiserver/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func MapApiRouters(g *gin.Engine) {

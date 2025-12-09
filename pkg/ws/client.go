@@ -12,8 +12,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 const (

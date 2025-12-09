@@ -3,9 +3,9 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/bot/biz IBiz
 
 import (
-	"bingo/internal/bot/biz/bot"
-	"bingo/internal/bot/biz/syscfg"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/bot/biz/bot"
+	"github.com/bingo-project/bingo/internal/bot/biz/syscfg"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.

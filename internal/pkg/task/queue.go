@@ -6,7 +6,7 @@ import (
 	"github.com/duke-git/lancet/v2/convertor"
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 type queue struct {

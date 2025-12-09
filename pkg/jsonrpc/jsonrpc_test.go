@@ -10,8 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 func TestRequest_Unmarshal(t *testing.T) {

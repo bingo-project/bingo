@@ -5,10 +5,10 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	"bingo/internal/scheduler/biz/syscfg"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/scheduler/biz/syscfg"
 )
 
 func InitScheduler() {

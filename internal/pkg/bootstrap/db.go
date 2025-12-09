@@ -3,10 +3,10 @@ package bootstrap
 import (
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/logger"
-	"bingo/pkg/db"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/logger"
+	"github.com/bingo-project/bingo/pkg/db"
 )
 
 func InitDB() *gorm.DB {

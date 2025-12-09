@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"gopkg.in/telebot.v3"
 
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 var Ctx = context.Background()

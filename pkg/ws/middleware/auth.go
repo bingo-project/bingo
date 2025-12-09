@@ -4,10 +4,10 @@
 package middleware
 
 import (
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // Auth requires the client to be authenticated.

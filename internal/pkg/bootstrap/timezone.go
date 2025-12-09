@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 )
 
 func InitTimezone() {

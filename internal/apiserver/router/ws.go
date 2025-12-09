@@ -4,10 +4,10 @@
 package router
 
 import (
-	wshandler "bingo/internal/apiserver/handler/ws"
-	"bingo/internal/pkg/store"
-	"bingo/pkg/ws"
-	"bingo/pkg/ws/middleware"
+	wshandler "github.com/bingo-project/bingo/internal/apiserver/handler/ws"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/ws/middleware"
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.

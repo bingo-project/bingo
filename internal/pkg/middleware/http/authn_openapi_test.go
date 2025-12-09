@@ -16,11 +16,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

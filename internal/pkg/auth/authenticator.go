@@ -9,8 +9,8 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 // UserLoader loads user information into context.

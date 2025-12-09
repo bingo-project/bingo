@@ -7,7 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/google/uuid"
 
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 var Ctx = context.Background()

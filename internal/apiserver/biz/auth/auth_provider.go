@@ -8,11 +8,11 @@ import (
 	"github.com/jinzhu/copier"
 	"golang.org/x/oauth2"
 
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 type AuthProviderBiz interface {

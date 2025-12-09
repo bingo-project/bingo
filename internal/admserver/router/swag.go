@@ -5,7 +5,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	docs "bingo/api/swagger/admserver"
+	docs "github.com/bingo-project/bingo/api/swagger/admserver"
 )
 
 // MapSwagRouters

@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 func Recover() {

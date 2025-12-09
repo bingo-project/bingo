@@ -4,8 +4,8 @@
 package ws
 
 import (
-	"bingo/internal/apiserver/biz"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/apiserver/biz"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // Handler handles WebSocket business methods.

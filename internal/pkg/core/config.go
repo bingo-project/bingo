@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 const (

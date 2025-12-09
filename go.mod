@@ -1,4 +1,4 @@
-module bingo
+module github.com/bingo-project/bingo
 
 go 1.25
 

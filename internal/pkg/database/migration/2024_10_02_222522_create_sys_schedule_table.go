@@ -4,7 +4,7 @@ import (
 	"github.com/bingo-project/bingoctl/pkg/migrate"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/model"
 )
 
 type CreateSysScheduleTable struct {

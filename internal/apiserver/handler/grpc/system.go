@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"bingo/internal/pkg/log"
-	v1 "bingo/pkg/proto/apiserver/v1/pb"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	v1 "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 func (h *Handler) Healthz(ctx context.Context, req *v1.HealthzRequest) (*v1.HealthzReply, error) {

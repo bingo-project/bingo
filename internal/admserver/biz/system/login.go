@@ -5,10 +5,10 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/known"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {

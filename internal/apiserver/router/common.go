@@ -3,14 +3,14 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	bizauth "bingo/internal/apiserver/biz/auth"
-	"bingo/internal/apiserver/handler/http/common"
-	"bingo/internal/apiserver/handler/http/file"
-	"bingo/internal/apiserver/middleware"
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/store"
+	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
+	"github.com/bingo-project/bingo/internal/apiserver/handler/http/common"
+	"github.com/bingo-project/bingo/internal/apiserver/handler/http/file"
+	"github.com/bingo-project/bingo/internal/apiserver/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func MapCommonRouters(g *gin.Engine) {

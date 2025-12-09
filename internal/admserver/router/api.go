@@ -5,14 +5,14 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	bizauth "bingo/internal/admserver/biz/auth"
-	"bingo/internal/admserver/handler/http/app"
-	"bingo/internal/admserver/handler/http/config"
-	"bingo/internal/admserver/handler/http/system"
-	"bingo/internal/admserver/handler/http/user"
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
+	bizauth "github.com/bingo-project/bingo/internal/admserver/biz/auth"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/config"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/system"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/user"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func MapApiRouters(g *gin.Engine) {

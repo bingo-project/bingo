@@ -6,9 +6,9 @@ package admserver
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/admserver/router"
-	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/admserver/router"
+	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 )
 
 // initGinEngine initializes the Gin engine with routes.

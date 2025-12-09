@@ -13,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/core"
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 const (

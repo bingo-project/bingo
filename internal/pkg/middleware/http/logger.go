@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 // 自定义 ResponseWriter 用于捕获响应数据.

@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 func TestLogger_Success(t *testing.T) {

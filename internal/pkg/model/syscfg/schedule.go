@@ -1,6 +1,6 @@
 package syscfg
 
-import "bingo/internal/pkg/model"
+import "github.com/bingo-project/bingo/internal/pkg/model"
 
 type Schedule struct {
 	model.Base

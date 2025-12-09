@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 func TestClient_Platform(t *testing.T) {

@@ -5,9 +5,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"bingo/internal/bot/discord"
-	"bingo/internal/bot/telegram"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/bot/discord"
+	"github.com/bingo-project/bingo/internal/bot/telegram"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 func run() error {

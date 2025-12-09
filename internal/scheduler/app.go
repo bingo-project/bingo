@@ -6,9 +6,9 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // NewSchedulerCommand creates an App object with default parameters.

@@ -3,10 +3,10 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 
-	_ "bingo/pkg/api/apiserver/v1"
+	_ "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 // Providers

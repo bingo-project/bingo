@@ -10,9 +10,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 func TestContext_RequestID(t *testing.T) {

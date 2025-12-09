@@ -6,7 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 //go:generate mockgen -destination mock_store.go -package store bingo/internal/pkg/store IStore

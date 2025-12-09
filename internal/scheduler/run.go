@@ -3,11 +3,11 @@ package scheduler
 import (
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
-	"bingo/internal/scheduler/job"
-	"bingo/internal/scheduler/middleware"
-	"bingo/internal/scheduler/scheduler"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/scheduler/job"
+	"github.com/bingo-project/bingo/internal/scheduler/middleware"
+	"github.com/bingo-project/bingo/internal/scheduler/scheduler"
 )
 
 // run 函数是实际的业务代码入口函数.

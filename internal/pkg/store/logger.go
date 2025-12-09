@@ -3,7 +3,7 @@ package store
 import (
 	"context"
 
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 // Logger is a logger that implements the Logger interface.

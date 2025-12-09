@@ -3,7 +3,7 @@
 
 package jsonrpc
 
-import "bingo/pkg/errorsx"
+import "github.com/bingo-project/bingo/pkg/errorsx"
 
 // NewResponse creates a success response.
 func NewResponse(id any, result any) *Response {

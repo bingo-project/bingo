@@ -10,9 +10,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // WebSocketServer implements Server interface for WebSocket protocol.

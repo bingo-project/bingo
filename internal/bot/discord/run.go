@@ -3,8 +3,8 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 type DiscordServer struct {

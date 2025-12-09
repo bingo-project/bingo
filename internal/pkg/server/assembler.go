@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 
-	"bingo/internal/pkg/config"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // AssemblerOption configures the assembler.

@@ -8,10 +8,10 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 // UserLoader loads user information for apiserver.

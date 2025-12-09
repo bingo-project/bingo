@@ -3,7 +3,7 @@ package errno
 import (
 	"net/http"
 
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 var (

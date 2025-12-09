@@ -10,7 +10,7 @@ PROJ_ROOT_DIR := $(abspath $(shell cd $(COMMON_SELF_DIR)/../../ && pwd -P))
 OUTPUT_DIR := $(PROJ_ROOT_DIR)/_output
 
 # 定义包名
-ROOT_PACKAGE=bingo
+ROOT_PACKAGE=github.com/bingo-project/bingo
 
 # Protobuf 文件存放路径
 PROTO_ROOT=$(PROJ_ROOT_DIR)/pkg/proto

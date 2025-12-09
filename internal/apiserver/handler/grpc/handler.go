@@ -6,9 +6,9 @@ package grpc
 import (
 	"github.com/go-playground/validator/v10"
 
-	"bingo/internal/apiserver/biz"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/proto/apiserver/v1/pb"
+	"github.com/bingo-project/bingo/internal/apiserver/biz"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 var validate = validator.New(validator.WithRequiredStructEnabled())

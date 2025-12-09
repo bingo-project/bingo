@@ -10,8 +10,8 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/pkg/store"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 const (

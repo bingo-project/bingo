@@ -5,9 +5,9 @@ import (
 
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/bot/telegram/middleware"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/bot/telegram/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 type TelegramServer struct {

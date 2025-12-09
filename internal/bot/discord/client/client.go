@@ -3,8 +3,8 @@ package client
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/bot/discord/middleware"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/bot/discord/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 type Client struct {

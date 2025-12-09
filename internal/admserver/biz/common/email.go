@@ -7,13 +7,13 @@ import (
 
 	"github.com/duke-git/lancet/v2/random"
 
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	"bingo/internal/pkg/task"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/task"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 type EmailBiz interface {

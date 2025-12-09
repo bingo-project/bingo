@@ -3,13 +3,13 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/apiserver/biz IBiz
 
 import (
-	"bingo/internal/apiserver/biz/app"
-	"bingo/internal/apiserver/biz/auth"
-	"bingo/internal/apiserver/biz/common"
-	"bingo/internal/apiserver/biz/file"
-	"bingo/internal/apiserver/biz/syscfg"
-	"bingo/internal/apiserver/biz/user"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/app"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/auth"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/common"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/file"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/syscfg"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/user"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // IBiz 定义了 Biz 层需要实现的方法.

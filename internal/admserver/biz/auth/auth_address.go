@@ -8,12 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/eth/sign"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/model"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/eth/sign"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error) {

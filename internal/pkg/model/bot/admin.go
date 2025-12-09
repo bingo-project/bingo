@@ -1,6 +1,6 @@
 package bot
 
-import "bingo/internal/pkg/model"
+import "github.com/bingo-project/bingo/internal/pkg/model"
 
 type Admin struct {
 	model.Base

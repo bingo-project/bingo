@@ -12,10 +12,10 @@ import (
 	"google.golang.org/grpc/peer"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"bingo/internal/admserver/biz"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/proto/apiserver/v1/pb"
+	"github.com/bingo-project/bingo/internal/admserver/biz"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 type Handler struct {

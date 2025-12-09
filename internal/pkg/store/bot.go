@@ -5,10 +5,10 @@ import (
 
 	"github.com/bingo-project/component-base/util/gormutil"
 
-	model "bingo/internal/pkg/model/bot"
-	v1 "bingo/pkg/api/apiserver/v1/bot"
-	genericstore "bingo/pkg/store"
-	"bingo/pkg/store/where"
+	model "github.com/bingo-project/bingo/internal/pkg/model/bot"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1/bot"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 // BotStore 定义了 Bot 相关操作的接口.

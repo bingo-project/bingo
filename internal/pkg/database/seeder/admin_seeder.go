@@ -3,10 +3,10 @@ package seeder
 import (
 	"context"
 
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 type AdminSeeder struct {

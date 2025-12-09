@@ -3,8 +3,8 @@ package syscfg
 import (
 	"context"
 
-	model "bingo/internal/pkg/model/syscfg"
-	"bingo/internal/pkg/store"
+	model "github.com/bingo-project/bingo/internal/pkg/model/syscfg"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 type ServerBiz interface {

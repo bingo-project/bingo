@@ -10,10 +10,10 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gookit/goutil/fsutil"
 
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	imageutil "bingo/internal/pkg/util/image"
-	v1 "bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	imageutil "github.com/bingo-project/bingo/internal/pkg/util/image"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 type FileBiz interface {

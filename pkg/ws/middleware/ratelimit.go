@@ -8,9 +8,9 @@ import (
 
 	"golang.org/x/time/rate"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // RateLimitConfig configures rate limiting.

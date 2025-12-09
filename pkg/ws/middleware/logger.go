@@ -6,8 +6,8 @@ package middleware
 import (
 	"time"
 
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // LoggerWithLogger logs request details after handling using the provided logger.

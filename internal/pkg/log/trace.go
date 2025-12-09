@@ -5,7 +5,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 // 日志字段名常量.

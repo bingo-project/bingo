@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 func InitLog() {

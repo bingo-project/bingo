@@ -3,9 +3,9 @@ package telegram
 import (
 	"gopkg.in/telebot.v3"
 
-	"bingo/internal/bot/telegram/handler"
-	"bingo/internal/bot/telegram/middleware"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/bot/telegram/handler"
+	"github.com/bingo-project/bingo/internal/bot/telegram/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func RegisterRouters(b *telebot.Bot) {

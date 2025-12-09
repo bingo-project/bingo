@@ -6,10 +6,10 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/log"
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 // Middleware returns a Gin middleware that authenticates requests.

@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/store"
-	"bingo/pkg/util/ip"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/pkg/util/ip"
 )
 
 // AuthnOpenAPI 开放接口校验.

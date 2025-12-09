@@ -6,8 +6,8 @@ package ws
 import (
 	"time"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 // HeartbeatHandler responds to heartbeat requests.

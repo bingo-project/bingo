@@ -6,8 +6,8 @@ import (
 	"github.com/bingo-project/component-base/cache"
 	"github.com/bingo-project/component-base/redis"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 var (

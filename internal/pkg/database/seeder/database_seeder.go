@@ -4,7 +4,7 @@ import (
 	"github.com/gookit/color"
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // Init initializes the seeder with database connection.

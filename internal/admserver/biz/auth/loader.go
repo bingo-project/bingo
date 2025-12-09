@@ -8,11 +8,11 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/pkg/known"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/contextx"
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 // AdminLoader loads admin information for admserver.

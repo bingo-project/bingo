@@ -8,12 +8,12 @@ import (
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	apiv1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/contextx"
-	v1 "bingo/pkg/proto/apiserver/v1/pb"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	apiv1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	v1 "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 func (h *Handler) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginReply, error) {

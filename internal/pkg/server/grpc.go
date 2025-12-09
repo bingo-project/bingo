@@ -9,8 +9,8 @@ import (
 
 	"google.golang.org/grpc"
 
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 // GRPCServer implements Server interface for gRPC protocol.

@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"bingo/internal/pkg/facade"
-	"bingo/pkg/mail"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/pkg/mail"
 )
 
 func InitMail() {

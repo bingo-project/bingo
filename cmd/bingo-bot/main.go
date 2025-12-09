@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/spf13/cobra"
 
-	"bingo/internal/bot"
+	"github.com/bingo-project/bingo/internal/bot"
 )
 
 func main() {

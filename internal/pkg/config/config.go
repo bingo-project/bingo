@@ -4,9 +4,9 @@
 package config
 
 import (
-	"bingo/internal/pkg/log"
-	"bingo/pkg/db"
-	"bingo/pkg/mail"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/pkg/db"
+	"github.com/bingo-project/bingo/pkg/mail"
 )
 
 type Config struct {

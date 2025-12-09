@@ -3,11 +3,11 @@ package middleware
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	model "bingo/internal/pkg/model/syscfg"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	model "github.com/bingo-project/bingo/internal/pkg/model/syscfg"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func Maintenance() gin.HandlerFunc {

@@ -6,8 +6,8 @@ package ws
 import (
 	"sync"
 
-	"bingo/pkg/errorsx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 // Router routes JSON-RPC methods to handlers with middleware.

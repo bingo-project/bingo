@@ -3,7 +3,7 @@ package job
 import (
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/task"
+	"github.com/bingo-project/bingo/internal/pkg/task"
 )
 
 // Register jobs here.

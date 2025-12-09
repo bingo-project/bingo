@@ -3,9 +3,9 @@ package router
 import (
 	"google.golang.org/grpc"
 
-	grpchandler "bingo/internal/apiserver/handler/grpc"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/proto/apiserver/v1/pb"
+	grpchandler "github.com/bingo-project/bingo/internal/apiserver/handler/grpc"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 func GRPC(g *grpc.Server) {

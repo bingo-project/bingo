@@ -3,9 +3,9 @@ package store
 import (
 	"context"
 
-	"bingo/internal/pkg/model/syscfg"
-	genericstore "bingo/pkg/store"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/internal/pkg/model/syscfg"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 type ScheduleStore interface {

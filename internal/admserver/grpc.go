@@ -8,10 +8,10 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 
-	"bingo/internal/admserver/router"
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
-	interceptor "bingo/internal/pkg/middleware/grpc"
+	"github.com/bingo-project/bingo/internal/admserver/router"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	interceptor "github.com/bingo-project/bingo/internal/pkg/middleware/grpc"
 )
 
 // initGRPCServer initializes the gRPC server with services and TLS support.

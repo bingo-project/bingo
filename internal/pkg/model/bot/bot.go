@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/model"
 )
 
 type Bot struct {

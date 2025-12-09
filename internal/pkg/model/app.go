@@ -3,7 +3,7 @@ package model
 import (
 	"gorm.io/gorm"
 
-	"bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 )
 
 type App struct {

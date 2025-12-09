@@ -8,9 +8,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"bingo/pkg/contextx"
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // RequestID adds request ID to context.

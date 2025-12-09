@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 )
 
 var CfgFile string

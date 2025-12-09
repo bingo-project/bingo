@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/server"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/server"
 )
 
 // run starts all enabled servers based on configuration.

@@ -8,8 +8,8 @@ import (
 
 	"github.com/bingo-project/component-base/version"
 
-	"bingo/pkg/jsonrpc"
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // Healthz returns server health status.

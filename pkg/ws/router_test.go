@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 func TestRouter_Handle(t *testing.T) {

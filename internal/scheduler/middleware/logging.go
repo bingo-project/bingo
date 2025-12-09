@@ -6,8 +6,8 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/log"
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 func Logging(h asynq.Handler) asynq.Handler {

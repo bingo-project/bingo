@@ -7,9 +7,9 @@ import (
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/model"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/model"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func InitSystemAPI(g *gin.Engine) {

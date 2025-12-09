@@ -3,11 +3,11 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 // Login returns a JWT token.

@@ -7,8 +7,8 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/redis/go-redis/v9"
 
-	"bingo/internal/pkg/config"
-	"bingo/pkg/mail"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/pkg/mail"
 )
 
 var (

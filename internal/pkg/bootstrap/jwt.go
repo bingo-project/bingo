@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"github.com/bingo-project/component-base/web/token"
 
-	"bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 )
 
 func InitJwt() {

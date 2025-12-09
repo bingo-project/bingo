@@ -11,14 +11,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 
-	"bingo/internal/admserver/router"
-	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/facade"
-	"bingo/internal/pkg/log"
-	"bingo/pkg/contextx"
-	"bingo/pkg/ws"
-	"bingo/pkg/ws/middleware"
+	"github.com/bingo-project/bingo/internal/admserver/router"
+	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/ws/middleware"
 )
 
 // initWebSocket initializes the WebSocket engine and hub.

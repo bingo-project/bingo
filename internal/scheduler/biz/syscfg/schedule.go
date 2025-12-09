@@ -5,9 +5,9 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"bingo/internal/pkg/model/syscfg"
-	"bingo/internal/pkg/store"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/internal/pkg/model/syscfg"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 type ScheduleBiz interface {

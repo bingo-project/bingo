@@ -8,7 +8,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // callerSkip adjusts the caller frame to show the actual calling code instead of this wrapper.

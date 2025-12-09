@@ -13,10 +13,10 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
-	middleware "bingo/internal/pkg/middleware/http"
-	pb "bingo/pkg/proto/apiserver/v1/pb"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	middleware "github.com/bingo-project/bingo/internal/pkg/middleware/http"
+	pb "github.com/bingo-project/bingo/pkg/proto/apiserver/v1/pb"
 )
 
 // GatewayServer implements Server interface for gRPC-Gateway.

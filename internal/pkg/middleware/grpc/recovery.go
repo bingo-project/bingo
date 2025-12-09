@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 // Recovery catch panic & recover.

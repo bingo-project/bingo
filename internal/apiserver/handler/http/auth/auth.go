@@ -3,14 +3,14 @@ package auth
 import (
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/apiserver/biz"
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/core"
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/api/apiserver/v1"
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/internal/apiserver/biz"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 type AuthHandler struct {

@@ -24,7 +24,7 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(bingo)
+        - prefix(github.com/bingo-project/bingo/)
         - blank
         - dot
       custom-order: false

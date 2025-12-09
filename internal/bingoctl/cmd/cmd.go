@@ -8,11 +8,11 @@ import (
 	"github.com/bingo-project/component-base/cli/templates"
 	"github.com/spf13/cobra"
 
-	"bingo/internal/bingoctl/cmd/key"
-	"bingo/internal/bingoctl/cmd/user"
-	"bingo/internal/bingoctl/cmd/version"
-	"bingo/internal/pkg/bootstrap"
-	"bingo/internal/pkg/store"
+	"github.com/bingo-project/bingo/internal/bingoctl/cmd/key"
+	"github.com/bingo-project/bingo/internal/bingoctl/cmd/user"
+	"github.com/bingo-project/bingo/internal/bingoctl/cmd/version"
+	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 func NewDefaultBingoCtlCommand() *cobra.Command {

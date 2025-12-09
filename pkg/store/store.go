@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"bingo/pkg/store/logger/empty"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/pkg/store/logger/empty"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 // DBProvider defines an interface for providing a database connection.

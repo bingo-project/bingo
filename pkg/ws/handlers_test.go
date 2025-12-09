@@ -11,7 +11,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 func TestHeartbeatHandler(t *testing.T) {

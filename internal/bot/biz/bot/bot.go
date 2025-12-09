@@ -6,12 +6,12 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	"bingo/internal/pkg/errno"
-	"bingo/internal/pkg/log"
-	model "bingo/internal/pkg/model/bot"
-	"bingo/internal/pkg/store"
-	v1 "bingo/pkg/api/apiserver/v1/bot"
-	"bingo/pkg/store/where"
+	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	model "github.com/bingo-project/bingo/internal/pkg/model/bot"
+	"github.com/bingo-project/bingo/internal/pkg/store"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1/bot"
+	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
 type BotBiz interface {

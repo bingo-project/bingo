@@ -10,8 +10,8 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	"bingo/pkg/contextx"
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 // validate is the singleton validator instance.

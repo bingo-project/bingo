@@ -10,8 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 // HTTPServer implements Server interface for HTTP protocol.

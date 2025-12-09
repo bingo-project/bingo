@@ -8,13 +8,13 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 
-	bizauth "bingo/internal/apiserver/biz/auth"
-	"bingo/internal/apiserver/router"
-	"bingo/internal/pkg/auth"
-	"bingo/internal/pkg/config"
-	"bingo/internal/pkg/log"
-	interceptor "bingo/internal/pkg/middleware/grpc"
-	"bingo/internal/pkg/store"
+	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
+	"github.com/bingo-project/bingo/internal/apiserver/router"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
+	"github.com/bingo-project/bingo/internal/pkg/config"
+	"github.com/bingo-project/bingo/internal/pkg/log"
+	interceptor "github.com/bingo-project/bingo/internal/pkg/middleware/grpc"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // gRPC methods that don't require authentication.

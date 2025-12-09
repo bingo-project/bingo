@@ -3,7 +3,7 @@ package discord
 import (
 	"github.com/bwmarrin/discordgo"
 
-	"bingo/internal/pkg/log"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 )
 
 var (

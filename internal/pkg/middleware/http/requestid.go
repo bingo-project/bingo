@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"bingo/internal/pkg/known"
-	"bingo/pkg/contextx"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 // RequestID is a middleware that injects a 'X-Request-ID' into the context and request/response header of each request.

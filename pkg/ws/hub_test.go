@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"bingo/pkg/ws"
+	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 func TestHub_RegisterAndUnregister(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/status"
 
-	"bingo/pkg/errorsx"
+	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
 func TestErrorX_NewAndToString(t *testing.T) {

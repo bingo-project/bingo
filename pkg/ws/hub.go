@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"bingo/pkg/jsonrpc"
+	"github.com/bingo-project/bingo/pkg/jsonrpc"
 )
 
 // ClientDisconnectCallback is called when a client disconnects.
