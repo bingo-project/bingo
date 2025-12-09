@@ -3,7 +3,11 @@
 
 package app
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // Option configures an App.
 type Option func(*App)
@@ -12,5 +16,19 @@ type Option func(*App)
 func WithShutdownTimeout(d time.Duration) Option {
 	return func(app *App) {
 		app.shutdownTimeout = d
+	}
+}
+
+// WithConfig sets the application configuration.
+func WithConfig(cfg any) Option {
+	return func(app *App) {
+		app.config = cfg
+	}
+}
+
+// WithDB sets the database connection.
+func WithDB(db *gorm.DB) Option {
+	return func(app *App) {
+		app.db = db
 	}
 }

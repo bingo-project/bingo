@@ -151,3 +151,25 @@ type registrarFunc func(app *App) error
 func (f registrarFunc) Register(app *App) error {
 	return f(app)
 }
+
+func TestAppConfig(t *testing.T) {
+	cfg := &struct{ Name string }{Name: "test"}
+	app := New(WithConfig(cfg))
+
+	got := app.Config()
+	if got != cfg {
+		t.Fatal("Config() did not return configured value")
+	}
+}
+
+func TestAppDBPanic(t *testing.T) {
+	app := New()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("DB() should panic when not configured")
+		}
+	}()
+
+	app.DB()
+}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"golang.org/x/sync/errgroup"
+	"gorm.io/gorm"
 )
 
 // App is the main application container.
@@ -20,6 +21,9 @@ type App struct {
 	readyOnce sync.Once
 
 	shutdownTimeout time.Duration
+
+	config any
+	db     *gorm.DB
 
 	mu sync.Mutex
 }
@@ -114,4 +118,18 @@ func getName(r any) string {
 		return n.Name()
 	}
 	return ""
+}
+
+// Config returns the application configuration.
+func (app *App) Config() any {
+	return app.config
+}
+
+// DB returns the database connection.
+// Panics if not configured.
+func (app *App) DB() *gorm.DB {
+	if app.db == nil {
+		panic("database not configured")
+	}
+	return app.db
 }
