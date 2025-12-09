@@ -1669,3 +1669,464 @@ Total: ~11 tasks, each with TDD approach (test first, implement, commit).
 - Existing `internal/pkg/server` remains unchanged during implementation
 - Migration happens after new packages are stable
 - Phase 3 (separating starter) happens after Phase 2 is complete
+
+---
+
+## Sub-Phase 2.7: Complete App Lifecycle (补充)
+
+根据设计文档 review，补充以下缺失的 tasks。
+
+### Task 12: Update New() to return error
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Update tests**
+
+```go
+// Update existing tests to handle error return
+func TestNew(t *testing.T) {
+    app, err := New()
+    if err != nil {
+        t.Fatalf("New() returned error: %v", err)
+    }
+    if app == nil {
+        t.Fatal("New() returned nil")
+    }
+}
+```
+
+**Step 2: Update New() signature**
+
+```go
+func New(opts ...Option) (*App, error) {
+    app := &App{
+        ready:           make(chan struct{}),
+        shutdownTimeout: 30 * time.Second,
+    }
+    for _, opt := range opts {
+        opt(app)
+    }
+    return app, nil  // 暂时总是返回 nil error，后续配置解析时可能返回 error
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): update New() to return error for future config parsing"
+```
+
+---
+
+### Task 13: Add Init() method with sync.Once
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Write the test**
+
+```go
+func TestAppInit(t *testing.T) {
+    app, _ := New()
+
+    // First Init should succeed
+    if err := app.Init(); err != nil {
+        t.Fatalf("Init() returned error: %v", err)
+    }
+
+    // Second Init should be no-op (idempotent)
+    if err := app.Init(); err != nil {
+        t.Fatalf("Second Init() returned error: %v", err)
+    }
+}
+
+func TestAppInitIdempotent(t *testing.T) {
+    var initCount int
+    app, _ := New(WithInitFunc(func() error {
+        initCount++
+        return nil
+    }))
+
+    app.Init()
+    app.Init()
+    app.Init()
+
+    if initCount != 1 {
+        t.Fatalf("Init was called %d times, want 1", initCount)
+    }
+}
+```
+
+**Step 2: Implement Init()**
+
+```go
+// Add to App struct:
+    initOnce sync.Once
+    initErr  error
+
+// Init initializes dependencies (DB, Cache, etc).
+// Safe to call multiple times - only executes once.
+func (app *App) Init() error {
+    app.initOnce.Do(func() {
+        // Future: initialize DB, Cache, Logger based on config
+        // For now, just mark as initialized
+    })
+    return app.initErr
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app -run TestAppInit`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): add Init() method with sync.Once for idempotent initialization"
+```
+
+---
+
+### Task 14: Add Close() method
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Write the test**
+
+```go
+func TestAppClose(t *testing.T) {
+    app, _ := New()
+    app.Init()
+
+    if err := app.Close(); err != nil {
+        t.Fatalf("Close() returned error: %v", err)
+    }
+}
+
+func TestAppCloseBeforeInit(t *testing.T) {
+    app, _ := New()
+
+    // Close before Init should be safe (no-op)
+    if err := app.Close(); err != nil {
+        t.Fatalf("Close() returned error: %v", err)
+    }
+}
+```
+
+**Step 2: Implement Close()**
+
+```go
+// Close releases resources (DB connections, etc).
+// Safe to call multiple times.
+func (app *App) Close() error {
+    // Future: close DB, Cache connections
+    // For now, just a placeholder
+    return nil
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app -run TestAppClose`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): add Close() method for resource cleanup"
+```
+
+---
+
+### Task 15: Update Run() to call Init() automatically
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Write the test**
+
+```go
+func TestRunCallsInit(t *testing.T) {
+    var initCalled bool
+    app, _ := New(WithInitFunc(func() error {
+        initCalled = true
+        return nil
+    }))
+
+    ctx, cancel := context.WithCancel(context.Background())
+    cancel() // cancel immediately
+
+    app.Run(ctx)
+
+    if !initCalled {
+        t.Fatal("Run() did not call Init()")
+    }
+}
+
+func TestRunWithExplicitInit(t *testing.T) {
+    var initCount int
+    app, _ := New(WithInitFunc(func() error {
+        initCount++
+        return nil
+    }))
+
+    app.Init() // explicit init
+
+    ctx, cancel := context.WithCancel(context.Background())
+    cancel()
+
+    app.Run(ctx) // should not init again
+
+    if initCount != 1 {
+        t.Fatalf("Init was called %d times, want 1", initCount)
+    }
+}
+```
+
+**Step 2: Update Run()**
+
+```go
+func (app *App) Run(ctx context.Context) error {
+    // Auto-init if not already done
+    if err := app.Init(); err != nil {
+        return err
+    }
+
+    // ... rest of existing Run() implementation
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): Run() automatically calls Init()"
+```
+
+---
+
+### Task 16: Add WithHealthAddr and HealthServer integration
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/options.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Write the test**
+
+```go
+func TestAppWithHealthAddr(t *testing.T) {
+    app, _ := New(WithHealthAddr(":0"))
+
+    ctx, cancel := context.WithCancel(context.Background())
+
+    errCh := make(chan error, 1)
+    go func() {
+        errCh <- app.Run(ctx)
+    }()
+
+    <-app.Ready()
+
+    // Health server should be running and ready
+    addr := app.HealthAddr()
+    resp, err := http.Get("http://" + addr + "/readyz")
+    if err != nil {
+        t.Fatalf("GET /readyz failed: %v", err)
+    }
+    defer resp.Body.Close()
+
+    if resp.StatusCode != http.StatusOK {
+        t.Fatalf("/readyz status = %d, want %d", resp.StatusCode, http.StatusOK)
+    }
+
+    cancel()
+
+    select {
+    case <-errCh:
+    case <-time.After(5 * time.Second):
+        t.Fatal("Run did not return")
+    }
+}
+```
+
+**Step 2: Implement**
+
+Add to `pkg/app/options.go`:
+```go
+func WithHealthAddr(addr string) Option {
+    return func(app *App) {
+        app.healthAddr = addr
+    }
+}
+```
+
+Add to `pkg/app/app.go`:
+```go
+// Add to App struct:
+    healthAddr   string
+    healthServer *server.HealthServer
+
+// Add method:
+func (app *App) HealthAddr() string {
+    if app.healthServer != nil {
+        return app.healthServer.Addr()
+    }
+    return app.healthAddr
+}
+
+// Update Run() to start health server:
+func (app *App) Run(ctx context.Context) error {
+    if err := app.Init(); err != nil {
+        return err
+    }
+
+    // Start health server if configured
+    if app.healthAddr != "" {
+        app.healthServer = server.NewHealthServer(app.healthAddr)
+        app.runnables = append([]Runnable{app.healthServer}, app.runnables...)
+    }
+
+    // ... rest of Run()
+
+    // Update markReady to set health server ready
+}
+
+func (app *App) markReady() {
+    app.readyOnce.Do(func() {
+        if app.healthServer != nil {
+            app.healthServer.SetReady(true)
+        }
+        close(app.ready)
+    })
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app -run TestAppWithHealthAddr`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): add WithHealthAddr for integrated health server"
+```
+
+---
+
+### Task 17: Implement shutdown timeout
+
+**Files:**
+- Modify: `pkg/app/app.go`
+- Modify: `pkg/app/app_test.go`
+
+**Step 1: Write the test**
+
+```go
+func TestAppShutdownTimeout(t *testing.T) {
+    app, _ := New(WithShutdownTimeout(100 * time.Millisecond))
+
+    // Add a runnable that never stops
+    app.Add(runnableFunc(func(ctx context.Context) error {
+        <-ctx.Done()
+        time.Sleep(5 * time.Second) // simulate slow shutdown
+        return nil
+    }))
+
+    ctx, cancel := context.WithCancel(context.Background())
+
+    errCh := make(chan error, 1)
+    go func() {
+        errCh <- app.Run(ctx)
+    }()
+
+    <-app.Ready()
+    cancel()
+
+    select {
+    case err := <-errCh:
+        // Should return timeout error, not wait 5 seconds
+        if err == nil {
+            t.Log("Run returned nil (shutdown completed within timeout)")
+        }
+    case <-time.After(500 * time.Millisecond):
+        t.Fatal("Run did not return within shutdown timeout")
+    }
+}
+```
+
+**Step 2: Update Run() with timeout**
+
+```go
+func (app *App) Run(ctx context.Context) error {
+    // ... existing init and start logic ...
+
+    // Wait for completion with timeout
+    done := make(chan error, 1)
+    go func() {
+        done <- g.Wait()
+    }()
+
+    select {
+    case err := <-done:
+        return err
+    case <-time.After(app.shutdownTimeout):
+        return errors.New("shutdown timeout exceeded")
+    }
+}
+```
+
+**Step 3: Run tests**
+
+Run: `go test -v bingo/pkg/app -run TestAppShutdownTimeout`
+Expected: PASS
+
+**Step 4: Commit**
+
+```bash
+git add pkg/app/
+git commit -m "feat(app): implement shutdown timeout"
+```
+
+---
+
+## Updated Summary
+
+Phase 2 implementation now includes:
+
+1. **Core Interfaces** (Tasks 1-3): Runnable, Registrar, Named, App basics ✅
+2. **Server Adapters** (Tasks 4-6): HTTP, gRPC, WebSocket servers ✅
+3. **Health Check** (Task 7): Independent health server ✅
+4. **Signals** (Task 8): SetupSignalHandler ✅
+5. **Integration** (Tasks 9-10): Dependency access ✅
+6. **Migration** (Task 11): Documentation ✅
+7. **Complete Lifecycle** (Tasks 12-17): **NEW**
+   - Task 12: New() returns error
+   - Task 13: Init() with sync.Once
+   - Task 14: Close() for cleanup
+   - Task 15: Run() calls Init() automatically
+   - Task 16: WithHealthAddr integration
+   - Task 17: Shutdown timeout
+
+Total: 17 tasks
