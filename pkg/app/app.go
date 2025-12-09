@@ -25,6 +25,10 @@ type App struct {
 	config any
 	db     *gorm.DB
 
+	initOnce sync.Once
+	initErr  error
+	initFunc func() error
+
 	mu sync.Mutex
 }
 
@@ -133,4 +137,15 @@ func (app *App) DB() *gorm.DB {
 		panic("database not configured")
 	}
 	return app.db
+}
+
+// Init initializes dependencies (DB, Cache, etc).
+// Safe to call multiple times - only executes once.
+func (app *App) Init() error {
+	app.initOnce.Do(func() {
+		if app.initFunc != nil {
+			app.initErr = app.initFunc()
+		}
+	})
+	return app.initErr
 }

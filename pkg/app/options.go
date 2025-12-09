@@ -32,3 +32,11 @@ func WithDB(db *gorm.DB) Option {
 		app.db = db
 	}
 }
+
+// WithInitFunc sets a custom initialization function.
+// Used for testing to verify Init() behavior.
+func WithInitFunc(fn func() error) Option {
+	return func(app *App) {
+		app.initFunc = fn
+	}
+}

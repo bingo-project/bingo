@@ -176,3 +176,33 @@ func TestAppDBPanic(t *testing.T) {
 
 	app.DB()
 }
+
+func TestAppInit(t *testing.T) {
+	app, _ := New()
+
+	// First Init should succeed
+	if err := app.Init(); err != nil {
+		t.Fatalf("Init() returned error: %v", err)
+	}
+
+	// Second Init should be no-op (idempotent)
+	if err := app.Init(); err != nil {
+		t.Fatalf("Second Init() returned error: %v", err)
+	}
+}
+
+func TestAppInitIdempotent(t *testing.T) {
+	var initCount int
+	app, _ := New(WithInitFunc(func() error {
+		initCount++
+		return nil
+	}))
+
+	_ = app.Init()
+	_ = app.Init()
+	_ = app.Init()
+
+	if initCount != 1 {
+		t.Fatalf("Init was called %d times, want 1", initCount)
+	}
+}
