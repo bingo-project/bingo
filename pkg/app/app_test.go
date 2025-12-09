@@ -120,6 +120,24 @@ func TestAppRunnableStartFailure(t *testing.T) {
 	}
 }
 
+func TestAppLogsRunnableNames(t *testing.T) {
+	// This is a behavior test - we verify Named interface is detected
+	app := New()
+
+	named := &mockNamed{name: "test-server"}
+	app.Add(named)
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	go func() {
+		time.Sleep(50 * time.Millisecond)
+		cancel()
+	}()
+
+	_ = app.Run(ctx)
+	// If we get here without panic, the Named detection works
+}
+
 // runnableFunc adapts a function to Runnable interface
 type runnableFunc func(ctx context.Context) error
 

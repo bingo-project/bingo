@@ -107,3 +107,11 @@ func (app *App) markReady() {
 		close(app.ready)
 	})
 }
+
+// getName returns the name of a component if it implements Named.
+func getName(r any) string {
+	if n, ok := r.(Named); ok {
+		return n.Name()
+	}
+	return ""
+}
