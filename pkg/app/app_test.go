@@ -301,3 +301,36 @@ func TestAppWithHealthAddr(t *testing.T) {
 		t.Fatal("Run did not return")
 	}
 }
+
+func TestAppShutdownTimeout(t *testing.T) {
+	app, _ := New(WithShutdownTimeout(100 * time.Millisecond))
+
+	// Add a runnable that ignores context cancellation (simulates slow shutdown)
+	app.Add(runnableFunc(func(ctx context.Context) error {
+		<-ctx.Done()
+		time.Sleep(5 * time.Second) // simulate slow shutdown
+		return nil
+	}))
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- app.Run(ctx)
+	}()
+
+	<-app.Ready()
+	cancel()
+
+	select {
+	case err := <-errCh:
+		// Should return timeout error, not wait 5 seconds
+		if err == nil {
+			t.Log("Run returned nil (shutdown completed within timeout)")
+		} else {
+			t.Logf("Run returned error (expected timeout): %v", err)
+		}
+	case <-time.After(500 * time.Millisecond):
+		t.Fatal("Run did not return within shutdown timeout")
+	}
+}

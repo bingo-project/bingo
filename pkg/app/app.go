@@ -5,6 +5,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"time"
 
@@ -120,7 +121,25 @@ func (app *App) Run(ctx context.Context) error {
 	// Mark ready after all runnables started
 	app.markReady()
 
-	return g.Wait()
+	// Wait for runnables to complete
+	done := make(chan error, 1)
+	go func() {
+		done <- g.Wait()
+	}()
+
+	// Wait for either: normal completion, context cancel, or runnable error
+	select {
+	case err := <-done:
+		return err
+	case <-ctx.Done():
+		// Context canceled - apply shutdown timeout
+		select {
+		case err := <-done:
+			return err
+		case <-time.After(app.shutdownTimeout):
+			return errors.New("shutdown timeout exceeded")
+		}
+	}
 }
 
 // Ready returns a channel that is closed when the App is ready.
