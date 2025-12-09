@@ -149,3 +149,10 @@ func (app *App) Init() error {
 	})
 	return app.initErr
 }
+
+// Close releases resources (DB connections, etc).
+// Safe to call multiple times.
+func (app *App) Close() error {
+	// Future: close DB, Cache connections
+	return nil
+}

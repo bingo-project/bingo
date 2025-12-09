@@ -206,3 +206,21 @@ func TestAppInitIdempotent(t *testing.T) {
 		t.Fatalf("Init was called %d times, want 1", initCount)
 	}
 }
+
+func TestAppClose(t *testing.T) {
+	app, _ := New()
+	_ = app.Init()
+
+	if err := app.Close(); err != nil {
+		t.Fatalf("Close() returned error: %v", err)
+	}
+}
+
+func TestAppCloseBeforeInit(t *testing.T) {
+	app, _ := New()
+
+	// Close before Init should be safe (no-op)
+	if err := app.Close(); err != nil {
+		t.Fatalf("Close() returned error: %v", err)
+	}
+}
