@@ -73,7 +73,13 @@ func (app *App) Register(r Registrar) *App {
 }
 
 // Run starts all runnables and blocks until ctx is canceled.
+// Automatically calls Init() if not already called.
 func (app *App) Run(ctx context.Context) error {
+	// Auto-init if not already done
+	if err := app.Init(); err != nil {
+		return err
+	}
+
 	// Phase 1: Register (serial, in order)
 	for _, reg := range app.registrars {
 		if err := reg.Register(app); err != nil {

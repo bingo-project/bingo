@@ -224,3 +224,39 @@ func TestAppCloseBeforeInit(t *testing.T) {
 		t.Fatalf("Close() returned error: %v", err)
 	}
 }
+
+func TestRunCallsInit(t *testing.T) {
+	var initCalled bool
+	app, _ := New(WithInitFunc(func() error {
+		initCalled = true
+		return nil
+	}))
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // cancel immediately
+
+	_ = app.Run(ctx)
+
+	if !initCalled {
+		t.Fatal("Run() did not call Init()")
+	}
+}
+
+func TestRunWithExplicitInit(t *testing.T) {
+	var initCount int
+	app, _ := New(WithInitFunc(func() error {
+		initCount++
+		return nil
+	}))
+
+	_ = app.Init() // explicit init
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	_ = app.Run(ctx) // should not init again
+
+	if initCount != 1 {
+		t.Fatalf("Init was called %d times, want 1", initCount)
+	}
+}
