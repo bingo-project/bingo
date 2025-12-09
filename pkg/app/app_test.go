@@ -12,14 +12,17 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	app := New()
+	app, err := New()
+	if err != nil {
+		t.Fatalf("New() returned error: %v", err)
+	}
 	if app == nil {
 		t.Fatal("New() returned nil")
 	}
 }
 
 func TestAppAddAndRun(t *testing.T) {
-	app := New()
+	app, _ := New()
 
 	var started atomic.Bool
 
@@ -63,7 +66,7 @@ func TestAppAddAndRun(t *testing.T) {
 }
 
 func TestAppRegister(t *testing.T) {
-	app := New()
+	app, _ := New()
 
 	var registered bool
 	app.Register(registrarFunc(func(a *App) error {
@@ -82,7 +85,7 @@ func TestAppRegister(t *testing.T) {
 }
 
 func TestAppRegisterOrder(t *testing.T) {
-	app := New()
+	app, _ := New()
 
 	var order []int
 	app.Register(registrarFunc(func(a *App) error {
@@ -105,7 +108,7 @@ func TestAppRegisterOrder(t *testing.T) {
 }
 
 func TestAppRunnableStartFailure(t *testing.T) {
-	app := New()
+	app, _ := New()
 
 	expectedErr := errors.New("start failed")
 	app.Add(runnableFunc(func(ctx context.Context) error {
@@ -122,7 +125,7 @@ func TestAppRunnableStartFailure(t *testing.T) {
 
 func TestAppLogsRunnableNames(t *testing.T) {
 	// This is a behavior test - we verify Named interface is detected
-	app := New()
+	app, _ := New()
 
 	named := &mockNamed{name: "test-server"}
 	app.Add(named)
@@ -154,7 +157,7 @@ func (f registrarFunc) Register(app *App) error {
 
 func TestAppConfig(t *testing.T) {
 	cfg := &struct{ Name string }{Name: "test"}
-	app := New(WithConfig(cfg))
+	app, _ := New(WithConfig(cfg))
 
 	got := app.Config()
 	if got != cfg {
@@ -163,7 +166,7 @@ func TestAppConfig(t *testing.T) {
 }
 
 func TestAppDBPanic(t *testing.T) {
-	app := New()
+	app, _ := New()
 
 	defer func() {
 		if r := recover(); r == nil {

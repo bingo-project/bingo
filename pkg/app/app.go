@@ -29,7 +29,8 @@ type App struct {
 }
 
 // New creates a new App with the given options.
-func New(opts ...Option) *App {
+// Returns error if configuration parsing fails.
+func New(opts ...Option) (*App, error) {
 	app := &App{
 		ready:           make(chan struct{}),
 		shutdownTimeout: 30 * time.Second,
@@ -37,7 +38,7 @@ func New(opts ...Option) *App {
 	for _, opt := range opts {
 		opt(app)
 	}
-	return app
+	return app, nil
 }
 
 // Add adds a Runnable to the App.
