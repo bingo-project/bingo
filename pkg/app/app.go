@@ -3,7 +3,107 @@
 
 package app
 
+import (
+	"context"
+	"sync"
+	"time"
+
+	"golang.org/x/sync/errgroup"
+)
+
 // App is the main application container.
 type App struct {
-	// placeholder - will be filled in Task 2
+	runnables  []Runnable
+	registrars []Registrar
+
+	ready     chan struct{}
+	readyOnce sync.Once
+
+	shutdownTimeout time.Duration
+
+	mu sync.Mutex
+}
+
+// New creates a new App with the given options.
+func New(opts ...Option) *App {
+	app := &App{
+		ready:           make(chan struct{}),
+		shutdownTimeout: 30 * time.Second,
+	}
+	for _, opt := range opts {
+		opt(app)
+	}
+	return app
+}
+
+// Add adds a Runnable to the App.
+// If the Runnable also implements Registrar, it will be registered.
+// Returns the App for chaining.
+func (app *App) Add(r Runnable) *App {
+	app.mu.Lock()
+	defer app.mu.Unlock()
+
+	app.runnables = append(app.runnables, r)
+
+	// If it also implements Registrar, add to registrars
+	if reg, ok := r.(Registrar); ok {
+		app.registrars = append(app.registrars, reg)
+	}
+
+	return app
+}
+
+// Register adds a Registrar to the App.
+// Returns the App for chaining.
+func (app *App) Register(r Registrar) *App {
+	app.mu.Lock()
+	defer app.mu.Unlock()
+
+	app.registrars = append(app.registrars, r)
+	return app
+}
+
+// Run starts all runnables and blocks until ctx is canceled.
+func (app *App) Run(ctx context.Context) error {
+	// Phase 1: Register (serial, in order)
+	for _, reg := range app.registrars {
+		if err := reg.Register(app); err != nil {
+			return err
+		}
+	}
+
+	// Phase 2: Start all runnables (concurrent)
+	if len(app.runnables) == 0 {
+		app.markReady()
+		<-ctx.Done()
+		return nil
+	}
+
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	g, ctx := errgroup.WithContext(ctx)
+
+	for _, r := range app.runnables {
+		r := r
+		g.Go(func() error {
+			return r.Start(ctx)
+		})
+	}
+
+	// Mark ready after all runnables started
+	app.markReady()
+
+	return g.Wait()
+}
+
+// Ready returns a channel that is closed when the App is ready.
+func (app *App) Ready() <-chan struct{} {
+	return app.ready
+}
+
+func (app *App) markReady() {
+	app.readyOnce.Do(func() {
+		close(app.ready)
+	})
 }
