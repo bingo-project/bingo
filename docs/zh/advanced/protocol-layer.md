@@ -23,7 +23,7 @@
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                       Biz 层                                 │
-│              (Proto message 作为参数/返回值)                  │
+│                    (协议无关的业务逻辑)                        │
 └─────────────────────────────────────────────────────────────┘
                          │
                          ▼
@@ -47,7 +47,7 @@ internal/apiserver/
 ├── biz/                    # 业务逻辑（协议无关）
 │   ├── biz.go              # interface 定义
 │   └── user/
-│       └── user.go         # 实现，参数用 proto message
+│       └── user.go         # 实现（参数类型见「Biz 层参数类型」章节）
 │
 ├── handler/                # 协议处理器（可插拔）
 │   ├── http/               # 独立 HTTP（Gin）
@@ -175,6 +175,42 @@ func Run(cfg *config.Config) error {
 - **依赖注入**：Handler 由调用方创建，Server 只管生命周期
 - **单一职责**：`internal/pkg/server` 不依赖任何业务代码
 - **可复用**：所有服务（apiserver、admserver 等）共用同一套基础设施
+
+## Biz 层参数类型
+
+Biz 层的方法参数和返回值支持两种方案：
+
+### 方案一：Go Struct（本项目示例）
+
+```go
+// pkg/api/apiserver/v1/auth.go
+type LoginRequest struct {
+    Username string `json:"username" binding:"required"`
+    Password string `json:"password" binding:"required"`
+}
+
+// internal/apiserver/biz/auth/auth.go
+func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error)
+```
+
+**特点**：
+- 使用 `binding` tag 做请求验证，Gin 原生支持
+- 支持 Go 原生类型（`time.Time`、`*string` 可选字段等）
+- gRPC Handler 需要做 Go Struct ↔ Proto Message 转换
+
+### 方案二：Proto Message
+
+```go
+// 由 proto 文件生成
+// internal/apiserver/biz/auth/auth.go
+func (b *authBiz) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error)
+```
+
+**特点**：
+- Proto 文件作为唯一类型定义
+- gRPC Handler 无需类型转换
+- HTTP Handler 需要 JSON ↔ Proto 转换
+- 验证逻辑需使用 protoc-gen-validate 或手写
 
 ## Handler 实现
 

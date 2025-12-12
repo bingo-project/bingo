@@ -23,7 +23,7 @@ This document describes Bingo's pluggable protocol layer design, supporting any 
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                        Biz Layer                            │
-│              (Proto message as params/returns)              │
+│                (Protocol-agnostic business logic)           │
 └─────────────────────────────────────────────────────────────┘
                          │
                          ▼
@@ -47,7 +47,7 @@ internal/apiserver/
 ├── biz/                    # Business logic (protocol-agnostic)
 │   ├── biz.go              # Interface definitions
 │   └── user/
-│       └── user.go         # Implementation, uses proto messages
+│       └── user.go         # Implementation (see "Biz Layer Parameter Types" section)
 │
 ├── handler/                # Protocol handlers (pluggable)
 │   ├── http/               # Standalone HTTP (Gin)
@@ -175,6 +175,42 @@ func Run(cfg *config.Config) error {
 - **Dependency Injection**: Handlers created by caller, Server only manages lifecycle
 - **Single Responsibility**: `internal/pkg/server` has no business code dependencies
 - **Reusable**: All services (apiserver, admserver, etc.) share the same infrastructure
+
+## Biz Layer Parameter Types
+
+The Biz layer method parameters and return values support two approaches:
+
+### Approach 1: Go Struct (used in this project)
+
+```go
+// pkg/api/apiserver/v1/auth.go
+type LoginRequest struct {
+    Username string `json:"username" binding:"required"`
+    Password string `json:"password" binding:"required"`
+}
+
+// internal/apiserver/biz/auth/auth.go
+func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error)
+```
+
+**Characteristics**:
+- Uses `binding` tags for request validation, natively supported by Gin
+- Supports native Go types (`time.Time`, `*string` for optional fields, etc.)
+- gRPC Handler requires Go Struct ↔ Proto Message conversion
+
+### Approach 2: Proto Message
+
+```go
+// Generated from proto file
+// internal/apiserver/biz/auth/auth.go
+func (b *authBiz) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error)
+```
+
+**Characteristics**:
+- Proto file serves as single source of truth for type definitions
+- gRPC Handler requires no type conversion
+- HTTP Handler requires JSON ↔ Proto conversion
+- Validation logic requires protoc-gen-validate or manual implementation
 
 ## Handler Implementation
 
