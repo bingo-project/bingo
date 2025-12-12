@@ -13,9 +13,10 @@
 5. [认证流程](#认证流程)
 6. [连接管理](#连接管理)
 7. [推送与订阅](#推送与订阅)
-8. [适用场景](#适用场景)
-9. [目录结构](#目录结构)
-10. [未来规划](#未来规划)
+8. [Prometheus 指标](#prometheus-指标)
+9. [连接限制](#连接限制)
+10. [适用场景](#适用场景)
+11. [目录结构](#目录结构)
 
 ---
 
@@ -540,6 +541,74 @@ Topic 用于发布/订阅模式，支持多种实时数据场景：
 
 ---
 
+## Prometheus 指标
+
+WebSocket 库内置 Prometheus 指标支持，便于监控连接状态和消息吞吐。
+
+### 启用指标
+
+```go
+import "github.com/prometheus/client_golang/prometheus"
+
+// 创建并注册指标
+metrics := websocket.NewMetrics("myapp", "websocket")
+metrics.MustRegister(prometheus.DefaultRegisterer)
+
+// 将指标附加到 Hub
+hub := websocket.NewHub(websocket.WithMetrics(metrics))
+```
+
+### 可用指标
+
+| 指标名 | 类型 | 说明 |
+|-------|------|------|
+| `{namespace}_{subsystem}_connections_total` | Counter | 连接总数 |
+| `{namespace}_{subsystem}_connections_current` | Gauge | 当前连接数 |
+| `{namespace}_{subsystem}_connections_authenticated` | Gauge | 已认证连接数 |
+| `{namespace}_{subsystem}_connections_anonymous` | Gauge | 匿名连接数 |
+| `{namespace}_{subsystem}_messages_sent_total` | Counter | 发送消息总数 |
+| `{namespace}_{subsystem}_broadcasts_total` | Counter | 广播总数 |
+| `{namespace}_{subsystem}_errors_total` | Counter | 错误总数（按类型分组） |
+| `{namespace}_{subsystem}_topics_current` | Gauge | 当前主题数 |
+| `{namespace}_{subsystem}_subscriptions_total` | Counter | 订阅总数 |
+
+---
+
+## 连接限制
+
+WebSocket 库支持配置最大连接数和单用户连接数限制，防止资源耗尽。
+
+### 配置
+
+```go
+cfg := &websocket.HubConfig{
+    MaxConnections: 10000,  // 最大总连接数 (0 = 不限制)
+    MaxConnsPerUser: 5,     // 每用户最大连接数 (0 = 不限制)
+    // ... 其他配置
+}
+
+hub := websocket.NewHubWithConfig(cfg)
+```
+
+### 使用
+
+```go
+// 接受连接前检查（可选，用于提前拒绝）
+if !hub.CanAcceptConnection() {
+    http.Error(w, "连接数过多", http.StatusServiceUnavailable)
+    return
+}
+
+// 登录前检查（可选）
+if !hub.CanUserConnect(userID) {
+    return c.Error(errors.New(429, "TooManyConnections", "已达到最大连接数"))
+}
+
+// 限制也会在 Hub 内部自动执行
+```
+
+---
+
 ## 适用场景
 
 | 场景 | Topic 示例 | 消息特点 |
@@ -575,37 +644,6 @@ internal/apiserver/
     ├── handler.go      # Handler 定义
     ├── auth.go         # 认证相关
     └── system.go       # 系统方法
-```
-
----
-
-## 未来规划
-
-> 以下功能已设计但尚未实现
-
-### Metrics 中间件
-
-集成 Prometheus 监控：
-
-```go
-// 计划实现
-var (
-    requestsTotal = prometheus.NewCounterVec(...)
-    requestDuration = prometheus.NewHistogramVec(...)
-)
-
-func Metrics(next Handler) Handler {
-    // 记录请求数和延迟
-}
-```
-
-### 连接数限制
-
-```go
-// 计划实现
-type HubConfig struct {
-    MaxConnectionsPerUser int  // 单用户最大连接数
-}
 ```
 
 ---

@@ -13,9 +13,10 @@ This document describes Bingo's WebSocket implementation, using JSON-RPC 2.0 pro
 5. [Authentication Flow](#authentication-flow)
 6. [Connection Management](#connection-management)
 7. [Push and Subscribe](#push-and-subscribe)
-8. [Use Cases](#use-cases)
-9. [Directory Structure](#directory-structure)
-10. [Future Plans](#future-plans)
+8. [Prometheus Metrics](#prometheus-metrics)
+9. [Connection Limits](#connection-limits)
+10. [Use Cases](#use-cases)
+11. [Directory Structure](#directory-structure)
 
 ---
 
@@ -540,6 +541,74 @@ Topics are used for publish/subscribe pattern, supporting various real-time data
 
 ---
 
+## Prometheus Metrics
+
+The WebSocket library includes built-in Prometheus metrics support for monitoring connection status and message throughput.
+
+### Enable Metrics
+
+```go
+import "github.com/prometheus/client_golang/prometheus"
+
+// Create and register metrics
+metrics := websocket.NewMetrics("myapp", "websocket")
+metrics.MustRegister(prometheus.DefaultRegisterer)
+
+// Attach metrics to Hub
+hub := websocket.NewHub(websocket.WithMetrics(metrics))
+```
+
+### Available Metrics
+
+| Metric Name | Type | Description |
+|-------------|------|-------------|
+| `{namespace}_{subsystem}_connections_total` | Counter | Total connections |
+| `{namespace}_{subsystem}_connections_current` | Gauge | Current connections |
+| `{namespace}_{subsystem}_connections_authenticated` | Gauge | Authenticated connections |
+| `{namespace}_{subsystem}_connections_anonymous` | Gauge | Anonymous connections |
+| `{namespace}_{subsystem}_messages_sent_total` | Counter | Total messages sent |
+| `{namespace}_{subsystem}_broadcasts_total` | Counter | Total broadcasts |
+| `{namespace}_{subsystem}_errors_total` | Counter | Total errors (grouped by type) |
+| `{namespace}_{subsystem}_topics_current` | Gauge | Current topics |
+| `{namespace}_{subsystem}_subscriptions_total` | Counter | Total subscriptions |
+
+---
+
+## Connection Limits
+
+The WebSocket library supports configuring maximum connections and per-user connection limits to prevent resource exhaustion.
+
+### Configuration
+
+```go
+cfg := &websocket.HubConfig{
+    MaxConnections: 10000,  // Max total connections (0 = unlimited)
+    MaxConnsPerUser: 5,     // Max connections per user (0 = unlimited)
+    // ... other config
+}
+
+hub := websocket.NewHubWithConfig(cfg)
+```
+
+### Usage
+
+```go
+// Check before accepting connection (optional, for early rejection)
+if !hub.CanAcceptConnection() {
+    http.Error(w, "Too many connections", http.StatusServiceUnavailable)
+    return
+}
+
+// Check before login (optional)
+if !hub.CanUserConnect(userID) {
+    return c.Error(errors.New(429, "TooManyConnections", "Max connections reached"))
+}
+
+// Limits are also enforced automatically within Hub
+```
+
+---
+
 ## Use Cases
 
 | Scenario | Topic Example | Message Characteristics |
@@ -575,37 +644,6 @@ internal/apiserver/
     ├── handler.go      # Handler definition
     ├── auth.go         # Authentication related
     └── system.go       # System methods
-```
-
----
-
-## Future Plans
-
-> The following features are designed but not yet implemented
-
-### Metrics Middleware
-
-Prometheus monitoring integration:
-
-```go
-// Planned implementation
-var (
-    requestsTotal = prometheus.NewCounterVec(...)
-    requestDuration = prometheus.NewHistogramVec(...)
-)
-
-func Metrics(next Handler) Handler {
-    // Record request counts and latency
-}
-```
-
-### Connection Limits
-
-```go
-// Planned implementation
-type HubConfig struct {
-    MaxConnectionsPerUser int  // Max connections per user
-}
 ```
 
 ---
