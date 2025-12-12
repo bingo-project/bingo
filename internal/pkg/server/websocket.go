@@ -10,21 +10,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/bingo-project/websocket"
+
 	"github.com/bingo-project/bingo/internal/pkg/config"
 	"github.com/bingo-project/bingo/internal/pkg/log"
-	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // WebSocketServer implements Server interface for WebSocket protocol.
 type WebSocketServer struct {
 	server *http.Server
 	cfg    *config.WebSocket
-	hub    *ws.Hub
+	hub    *websocket.Hub
 }
 
 // NewWebSocketServer creates a new WebSocket server.
 // The caller is responsible for creating the Gin engine with routes and the Hub.
-func NewWebSocketServer(cfg *config.WebSocket, engine *gin.Engine, hub *ws.Hub) *WebSocketServer {
+func NewWebSocketServer(cfg *config.WebSocket, engine *gin.Engine, hub *websocket.Hub) *WebSocketServer {
 	return &WebSocketServer{
 		server: &http.Server{
 			Addr:    cfg.Addr,
@@ -71,6 +72,6 @@ func (s *WebSocketServer) Shutdown(ctx context.Context) error {
 }
 
 // Hub returns the WebSocket hub for external access.
-func (s *WebSocketServer) Hub() *ws.Hub {
+func (s *WebSocketServer) Hub() *websocket.Hub {
 	return s.hub
 }

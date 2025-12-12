@@ -4,12 +4,12 @@
 package router
 
 import (
-	"github.com/bingo-project/bingo/pkg/ws"
-	"github.com/bingo-project/bingo/pkg/ws/middleware"
+	"github.com/bingo-project/websocket"
+	"github.com/bingo-project/websocket/middleware"
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.
-func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore, logger ws.Logger) {
+func RegisterWSHandlers(router *websocket.Router, rateLimitStore *middleware.RateLimiterStore, logger websocket.Logger) {
 	// Global middleware
 	router.Use(
 		middleware.RecoveryWithLogger(logger),
@@ -25,7 +25,7 @@ func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimite
 
 	// Public methods (no auth required)
 	public := router.Group()
-	public.Handle("heartbeat", ws.HeartbeatHandler)
+	public.Handle("heartbeat", websocket.HeartbeatHandler)
 
 	// Private methods (require auth)
 	// private := router.Group(middleware.Auth)

@@ -8,12 +8,12 @@ import (
 
 	"github.com/bingo-project/component-base/version"
 
-	"github.com/bingo-project/bingo/pkg/jsonrpc"
-	"github.com/bingo-project/bingo/pkg/ws"
+	"github.com/bingo-project/websocket"
+	"github.com/bingo-project/websocket/jsonrpc"
 )
 
 // Healthz returns server health status.
-func (h *Handler) Healthz(c *ws.Context) *jsonrpc.Response {
+func (h *Handler) Healthz(c *websocket.Context) *jsonrpc.Response {
 	status, err := h.b.Servers().Status(c)
 	if err != nil {
 		return c.Error(err)
@@ -26,6 +26,6 @@ func (h *Handler) Healthz(c *ws.Context) *jsonrpc.Response {
 }
 
 // Version returns server version info.
-func (h *Handler) Version(c *ws.Context) *jsonrpc.Response {
+func (h *Handler) Version(c *websocket.Context) *jsonrpc.Response {
 	return c.JSON(version.Get())
 }

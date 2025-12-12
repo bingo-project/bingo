@@ -1,5 +1,7 @@
 # WebSocket Design and Implementation
 
+> **Standalone Library Available**: The WebSocket module is now available as a standalone library at [github.com/bingo-project/websocket](https://github.com/bingo-project/websocket). You can use it independently without the full Bingo framework.
+
 This document describes Bingo's WebSocket implementation, using JSON-RPC 2.0 protocol with middleware, grouped routing, and connection management support.
 
 ## Table of Contents
@@ -552,30 +554,19 @@ Topics are used for publish/subscribe pattern, supporting various real-time data
 
 ## Directory Structure
 
+The WebSocket module is now a standalone library. Import paths:
+
+```go
+import (
+    "github.com/bingo-project/websocket"          // Core types (Hub, Client, Router, Context)
+    "github.com/bingo-project/websocket/jsonrpc"  // JSON-RPC message types
+    "github.com/bingo-project/websocket/middleware" // Built-in middleware
+)
 ```
-pkg/ws/
-├── client.go           # Client connection
-├── hub.go              # Connection management
-├── hub_config.go       # Hub configuration
-├── router.go           # Router and groups
-├── middleware.go       # Middleware type definitions
-├── handlers.go         # Built-in handlers
-├── platform.go         # Platform constants
-└── middleware/         # Built-in middleware
-    ├── recovery.go
-    ├── requestid.go
-    ├── logger.go
-    ├── auth.go
-    ├── ratelimit.go
-    └── login.go
 
-pkg/jsonrpc/
-├── message.go          # Request/Response types
-└── response.go         # Response constructors
+Bingo integration files:
 
-pkg/contextx/           # Context utilities
-└── contextx.go         # UserID/RequestID extraction
-
+```
 internal/apiserver/
 ├── ws.go               # WebSocket initialization
 ├── router/

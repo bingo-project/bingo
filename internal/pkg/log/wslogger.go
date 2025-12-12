@@ -8,17 +8,17 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/bingo-project/bingo/pkg/ws"
+	"github.com/bingo-project/websocket"
 )
 
 // callerSkip adjusts the caller frame to show the actual calling code instead of this wrapper.
 var callerSkip = zap.AddCallerSkip(1)
 
-// wsLogger wraps the bingo log package to implement ws.Logger.
+// wsLogger wraps the bingo log package to implement websocket.Logger.
 type wsLogger struct{}
 
-// NewWSLogger returns a ws.Logger that uses the internal log package.
-func NewWSLogger() ws.Logger {
+// NewWSLogger returns a websocket.Logger that uses the internal log package.
+func NewWSLogger() websocket.Logger {
 	return wsLogger{}
 }
 
@@ -38,7 +38,7 @@ func (wsLogger) Errorw(msg string, keysAndValues ...any) {
 	std.z.WithOptions(callerSkip).Sugar().Errorw(msg, keysAndValues...)
 }
 
-func (wsLogger) WithContext(ctx context.Context) ws.Logger {
+func (wsLogger) WithContext(ctx context.Context) websocket.Logger {
 	return &wsContextLogger{ctx: ctx}
 }
 
@@ -63,6 +63,6 @@ func (l *wsContextLogger) Errorw(msg string, keysAndValues ...any) {
 	C(l.ctx).z.WithOptions(callerSkip).Sugar().Errorw(msg, keysAndValues...)
 }
 
-func (l *wsContextLogger) WithContext(ctx context.Context) ws.Logger {
+func (l *wsContextLogger) WithContext(ctx context.Context) websocket.Logger {
 	return &wsContextLogger{ctx: ctx}
 }

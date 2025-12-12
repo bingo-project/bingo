@@ -4,14 +4,15 @@
 package router
 
 import (
+	"github.com/bingo-project/websocket"
+	"github.com/bingo-project/websocket/middleware"
+
 	wshandler "github.com/bingo-project/bingo/internal/apiserver/handler/ws"
 	"github.com/bingo-project/bingo/internal/pkg/store"
-	"github.com/bingo-project/bingo/pkg/ws"
-	"github.com/bingo-project/bingo/pkg/ws/middleware"
 )
 
 // RegisterWSHandlers registers all WebSocket handlers with the router.
-func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimiterStore, logger ws.Logger) {
+func RegisterWSHandlers(router *websocket.Router, rateLimitStore *middleware.RateLimiterStore, logger websocket.Logger) {
 	h := wshandler.NewHandler(store.S)
 
 	// Global middleware
@@ -29,7 +30,7 @@ func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimite
 
 	// Public methods (no auth required)
 	public := router.Group()
-	public.Handle("heartbeat", ws.HeartbeatHandler)
+	public.Handle("heartbeat", websocket.HeartbeatHandler)
 	public.Handle("system.healthz", h.Healthz)
 	public.Handle("system.version", h.Version)
 	// LoginStateUpdater runs after Login handler succeeds, parsing the returned
@@ -38,7 +39,7 @@ func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimite
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
-	private.Handle("subscribe", ws.SubscribeHandler)
-	private.Handle("unsubscribe", ws.UnsubscribeHandler)
+	private.Handle("subscribe", websocket.SubscribeHandler)
+	private.Handle("unsubscribe", websocket.UnsubscribeHandler)
 	private.Handle("auth.user-info", h.UserInfo)
 }

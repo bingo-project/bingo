@@ -4,16 +4,17 @@
 package ws
 
 import (
+	"github.com/bingo-project/websocket"
+	"github.com/bingo-project/websocket/jsonrpc"
+
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
-	"github.com/bingo-project/bingo/pkg/jsonrpc"
-	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // Login handles user login and returns JWT token.
-func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
+func (h *Handler) Login(c *websocket.Context) *jsonrpc.Response {
 	log.C(c).Debugw("Login function called")
 
 	var req v1.LoginRequest
@@ -30,7 +31,7 @@ func (h *Handler) Login(c *ws.Context) *jsonrpc.Response {
 }
 
 // UserInfo returns the current user's info.
-func (h *Handler) UserInfo(c *ws.Context) *jsonrpc.Response {
+func (h *Handler) UserInfo(c *websocket.Context) *jsonrpc.Response {
 	uid := c.UserID()
 	if uid == "" {
 		return c.Error(errno.ErrTokenInvalid)

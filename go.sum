@@ -120,6 +120,8 @@ github.com/bingo-project/bingoctl v1.6.3 h1:lipA7rm5TBQfDF0i5YF24AapKbWhxWJVFsnv
 github.com/bingo-project/bingoctl v1.6.3/go.mod h1:E8bhy/ZSlzwrfT3XAbK+xJWC/Eu8Jtmj/OpPvIi/7sc=
 github.com/bingo-project/component-base v0.4.4 h1:4o7SWMqs1P/VadDrd4b476c5BpafQkXVEYL03IXlAE8=
 github.com/bingo-project/component-base v0.4.4/go.mod h1:RCBb/oZu/r6qoHoAnpJ7Gb8bC12Wb5wucxznYkPW7cU=
+github.com/bingo-project/websocket v0.1.0 h1:D5S5MiqJJuLeUb+GKYhnooGmjPTzJNIgBs8ucwsV9m0=
+github.com/bingo-project/websocket v0.1.0/go.mod h1:7jKZJTOwQ35ncOALAQzc0rJwb/oxZmlrzwxh1E6iBzY=
 github.com/bits-and-blooms/bitset v1.24.4 h1:95H15Og1clikBrKr/DuzMXkQzECs1M6hhoGXLwLQOZE=
 github.com/bits-and-blooms/bitset v1.24.4/go.mod h1:7hO7Gc7Pp1vODcmWvKMRA9BNmbv6a/7QIWpPxHddWR8=
 github.com/bmatcuk/doublestar/v4 v4.6.1/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=

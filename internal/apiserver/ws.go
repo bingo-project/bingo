@@ -9,20 +9,20 @@ import (
 
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
+	gorillaWS "github.com/gorilla/websocket"
+
+	"github.com/bingo-project/websocket"
+	"github.com/bingo-project/websocket/middleware"
 
 	"github.com/bingo-project/bingo/internal/apiserver/router"
 	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
 	"github.com/bingo-project/bingo/internal/pkg/config"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
-	"github.com/bingo-project/bingo/pkg/contextx"
-	"github.com/bingo-project/bingo/pkg/ws"
-	"github.com/bingo-project/bingo/pkg/ws/middleware"
 )
 
 // initWebSocket initializes the WebSocket engine and hub.
-func initWebSocket() (*gin.Engine, *ws.Hub) {
+func initWebSocket() (*gin.Engine, *websocket.Hub) {
 	// Create rate limiter store
 	rateLimitStore := middleware.NewRateLimiterStore()
 
@@ -30,20 +30,20 @@ func initWebSocket() (*gin.Engine, *ws.Hub) {
 	wsLogger := log.NewWSLogger()
 
 	// Create hub with disconnect callback to cleanup rate limiters
-	hub := ws.NewHub(
-		ws.WithLogger(wsLogger),
-		ws.WithClientDisconnectCallback(rateLimitStore.Remove),
+	hub := websocket.NewHub(
+		websocket.WithLogger(wsLogger),
+		websocket.WithClientDisconnectCallback(rateLimitStore.Remove),
 	)
 
 	// Create router and register handlers
-	wsRouter := ws.NewRouter()
+	wsRouter := websocket.NewRouter()
 	router.RegisterWSHandlers(wsRouter, rateLimitStore, wsLogger)
 
 	// Create Gin engine for WebSocket
 	engine := bootstrap.InitGinForWebSocket()
 
 	// Configure WebSocket upgrader
-	upgrader := websocket.Upgrader{
+	upgrader := gorillaWS.Upgrader{
 		ReadBufferSize:  4096,
 		WriteBufferSize: 4096,
 		CheckOrigin:     checkOrigin(facade.Config.WebSocket),
@@ -75,10 +75,10 @@ func checkOrigin(cfg *config.WebSocket) func(r *http.Request) bool {
 }
 
 // serveWS handles WebSocket upgrade requests.
-func serveWS(c *gin.Context, hub *ws.Hub, router *ws.Router, upgrader websocket.Upgrader) {
+func serveWS(c *gin.Context, hub *websocket.Hub, router *websocket.Router, upgrader gorillaWS.Upgrader) {
 	// Create base context with request ID
 	ctx := context.Background()
-	ctx = contextx.WithRequestID(ctx, c.GetHeader("X-Request-ID"))
+	ctx = websocket.WithRequestID(ctx, c.GetHeader("X-Request-ID"))
 
 	// Upgrade connection
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
@@ -87,10 +87,10 @@ func serveWS(c *gin.Context, hub *ws.Hub, router *ws.Router, upgrader websocket.
 	}
 
 	// Create anonymous client with router, token parser, and context updater
-	client := ws.NewClient(hub, conn, ctx,
-		ws.WithRouter(router),
-		ws.WithTokenParser(tokenParser),
-		ws.WithContextUpdater(contextUpdater),
+	client := websocket.NewClient(hub, conn, ctx,
+		websocket.WithRouter(router),
+		websocket.WithTokenParser(tokenParser),
+		websocket.WithContextUpdater(contextUpdater),
 	)
 
 	// Register with hub (as anonymous)
@@ -102,13 +102,13 @@ func serveWS(c *gin.Context, hub *ws.Hub, router *ws.Router, upgrader websocket.
 }
 
 // tokenParser parses JWT token and returns user info.
-func tokenParser(tokenStr string) (*ws.TokenInfo, error) {
+func tokenParser(tokenStr string) (*websocket.TokenInfo, error) {
 	payload, err := token.Parse(tokenStr)
 	if err != nil {
 		return nil, err
 	}
 
-	return &ws.TokenInfo{
+	return &websocket.TokenInfo{
 		UserID:    payload.Subject,
 		ExpiresAt: payload.ExpiresAt.Unix(),
 	}, nil
@@ -116,5 +116,5 @@ func tokenParser(tokenStr string) (*ws.TokenInfo, error) {
 
 // contextUpdater updates context with user ID after login.
 func contextUpdater(ctx context.Context, userID string) context.Context {
-	return contextx.WithUserID(ctx, userID)
+	return websocket.WithUserID(ctx, userID)
 }

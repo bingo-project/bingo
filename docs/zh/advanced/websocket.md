@@ -1,5 +1,7 @@
 # WebSocket 设计与实现
 
+> **独立库已发布**：WebSocket 模块现已作为独立库发布在 [github.com/bingo-project/websocket](https://github.com/bingo-project/websocket)。你可以在不依赖完整 Bingo 框架的情况下单独使用它。
+
 本文档介绍 Bingo 的 WebSocket 实现，采用 JSON-RPC 2.0 协议，支持中间件、分组路由和连接管理。
 
 ## 目录
@@ -552,30 +554,19 @@ Topic 用于发布/订阅模式，支持多种实时数据场景：
 
 ## 目录结构
 
+WebSocket 模块现已作为独立库发布。导入路径：
+
+```go
+import (
+    "github.com/bingo-project/websocket"          // 核心类型 (Hub, Client, Router, Context)
+    "github.com/bingo-project/websocket/jsonrpc"  // JSON-RPC 消息类型
+    "github.com/bingo-project/websocket/middleware" // 内置中间件
+)
 ```
-pkg/ws/
-├── client.go           # 客户端连接
-├── hub.go              # 连接管理
-├── hub_config.go       # Hub 配置
-├── router.go           # 路由器和分组
-├── middleware.go       # 中间件类型定义
-├── handlers.go         # 内置 Handler
-├── platform.go         # 平台常量
-└── middleware/         # 内置中间件
-    ├── recovery.go
-    ├── requestid.go
-    ├── logger.go
-    ├── auth.go
-    ├── ratelimit.go
-    └── login.go
 
-pkg/jsonrpc/
-├── message.go          # Request/Response 类型
-└── response.go         # 响应构造函数
+Bingo 集成文件：
 
-pkg/contextx/           # 上下文工具
-└── contextx.go         # UserID/RequestID 提取
-
+```
 internal/apiserver/
 ├── ws.go               # WebSocket 初始化
 ├── router/

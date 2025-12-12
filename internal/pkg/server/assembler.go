@@ -7,8 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 
+	"github.com/bingo-project/websocket"
+
 	"github.com/bingo-project/bingo/internal/pkg/config"
-	"github.com/bingo-project/bingo/pkg/ws"
 )
 
 // AssemblerOption configures the assembler.
@@ -18,7 +19,7 @@ type assemblerConfig struct {
 	ginEngine  *gin.Engine
 	grpcServer *grpc.Server
 	wsEngine   *gin.Engine
-	wsHub      *ws.Hub
+	wsHub      *websocket.Hub
 }
 
 // WithGinEngine sets the Gin engine for HTTP server.
@@ -37,7 +38,7 @@ func WithGRPCServer(server *grpc.Server) AssemblerOption {
 
 // WithWebSocket sets the Gin engine and Hub for WebSocket server.
 // The caller is responsible for creating the engine with routes registered.
-func WithWebSocket(engine *gin.Engine, hub *ws.Hub) AssemblerOption {
+func WithWebSocket(engine *gin.Engine, hub *websocket.Hub) AssemblerOption {
 	return func(c *assemblerConfig) {
 		c.wsEngine = engine
 		c.wsHub = hub
