@@ -1,43 +1,264 @@
 ---
 title: Testing Guide - Bingo Go Project Testing Standards
-description: Learn about Bingo Go microservices project testing standards, including test categories, testing tools, test styles, mock strategies, and CI/CD integration.
+description: Learn about Bingo Go microservices project testing standards, including layered testing strategy, mock organization, and test styles.
 ---
 
 # Testing Guide
 
-## Test Categories
+## Quick Start
 
-| Type | Scope | Dependencies | Speed | Purpose |
-|------|-------|--------------|-------|---------|
-| **Unit Test** | Single function/method | Mock isolation | Milliseconds | Verify logic |
-| **Integration Test** | Multi-component | Real dependencies | Seconds | Verify interaction |
-| **E2E Test** | Complete flow | Full real environment | Minutes | Verify business flow |
+### Three-Layer Testing Strategy
 
-### Test Pyramid
+| Layer | Test Method | What to Mock | Use Real Database? |
+|-------|-------------|--------------|-------------------|
+| **Store Layer** | SQLite in-memory database | No mock | ✅ Use SQLite |
+| **Biz Layer** | Mock Store | Mock `store.IStore` | ❌ No |
+| **Handler Layer** | Mock Biz | Mock `biz.IBiz` | ❌ No |
 
 ```
-        /\
-       /  \      E2E (few, slowest)
-      /────\
-     /      \    Integration (moderate)
-    /────────\
-   /          \  Unit tests (many, fastest)
-  /────────────\
+┌─────────────────────────────────────────────────────────────┐
+│ Handler Layer Tests                                          │
+│   - Use httptest for requests                                │
+│   - Mock biz.IBiz                                           │
+│   - Verify: parameter parsing, response format, error handling│
+└───────────────────────────┬─────────────────────────────────┘
+                            │ Mock
+┌───────────────────────────▼─────────────────────────────────┐
+│ Biz Layer Tests                                              │
+│   - Mock store.IStore (in-memory map implementation)         │
+│   - Verify: business logic, flow orchestration, transactions │
+└───────────────────────────┬─────────────────────────────────┘
+                            │ Mock
+┌───────────────────────────▼─────────────────────────────────┐
+│ Store Layer Tests                                            │
+│   - SQLite in-memory database                                │
+│   - Verify: SQL query logic, GORM behavior, edge cases       │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Principle**: More tests at the bottom, fewer at the top. Unit tests cover logic branches, integration tests cover critical paths.
+### Core Principles
+
+- **Store Layer**: Test real SQL logic, don't mock the database
+- **Biz Layer**: Test business logic only, mock Store dependencies
+- **Handler Layer**: Test parameter parsing and response format only, mock Biz dependencies
+- **Each layer tests only its own responsibilities**, no cross-layer testing
+
+## Store Layer Testing
+
+Store layer uses SQLite in-memory database for testing, no mocks.
+
+**Why SQLite instead of Mock?**
+- Store layer's core responsibility is SQL query logic
+- Mocks lead to "testing mock behavior instead of real logic"
+- SQLite can verify real SQL syntax and GORM behavior
+
+### Test Template
+
+```go
+func setupTestDB(t *testing.T) *gorm.DB {
+    db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+    require.NoError(t, err)
+
+    err = db.AutoMigrate(&model.User{})
+    require.NoError(t, err)
+
+    return db
+}
+
+func TestUserStore_Create(t *testing.T) {
+    db := setupTestDB(t)
+    s := NewUserStore(&datastore{db: db})
+    ctx := context.Background()
+
+    t.Run("success", func(t *testing.T) {
+        user := &model.User{Username: "test", Email: "test@example.com"}
+        err := s.Create(ctx, user)
+
+        require.NoError(t, err)
+        assert.NotZero(t, user.ID)
+    })
+
+    t.Run("duplicate_username", func(t *testing.T) {
+        user := &model.User{Username: "test", Email: "other@example.com"}
+        err := s.Create(ctx, user)
+
+        assert.Error(t, err)
+    })
+}
+```
+
+### Notes
+
+1. **Prefer AutoMigrate**: GORM AutoMigrate works normally on SQLite
+2. **Each test is independent**: Use `:memory:` to ensure test isolation
+3. **MySQL-specific features**: If using MySQL-specific functions like `JSON_EXTRACT`, mark as integration test
+
+## Biz Layer Testing
+
+Biz layer uses Mock Store to test business logic, no real database dependency.
+
+**Test Focus**:
+- Business rule validation
+- Flow orchestration logic
+- Exception path handling
+
+### Test Template
+
+```go
+import mockstore "your-project/internal/pkg/testing/mock/store"
+
+func TestUserBiz_Create(t *testing.T) {
+    store := mockstore.NewStore()
+    biz := user.New(store)
+    ctx := context.Background()
+
+    t.Run("success", func(t *testing.T) {
+        req := &CreateUserRequest{
+            Username: "test",
+            Age:      20,
+        }
+
+        user, err := biz.Create(ctx, req)
+
+        require.NoError(t, err)
+        assert.Equal(t, "test", user.Username)
+    })
+
+    t.Run("age_too_young", func(t *testing.T) {
+        req := &CreateUserRequest{
+            Username: "test",
+            Age:      16,
+        }
+
+        _, err := biz.Create(ctx, req)
+
+        assert.ErrorIs(t, err, errno.ErrUserAgeTooYoung)
+    })
+
+    t.Run("store_error", func(t *testing.T) {
+        store.UserStore().CreateErr = errors.New("db error")
+        defer func() { store.UserStore().CreateErr = nil }()
+
+        req := &CreateUserRequest{Username: "test", Age: 20}
+        _, err := biz.Create(ctx, req)
+
+        assert.Error(t, err)
+    })
+}
+```
+
+## Handler Layer Testing
+
+Handler layer uses Mock Biz for testing, verifying parameter parsing, response format, and error handling.
+
+**Test Focus**:
+- Request parameter binding and validation
+- Response format correctness
+- Error code mapping
+
+### Test Template
+
+```go
+import mockbiz "your-project/internal/pkg/testing/mock/biz"
+
+func TestUserHandler_Get(t *testing.T) {
+    biz := mockbiz.NewBiz()
+    handler := NewUserHandler(biz)
+
+    t.Run("success", func(t *testing.T) {
+        biz.UserBiz().GetResult = &model.User{ID: 1, Username: "test"}
+
+        w := httptest.NewRecorder()
+        ctx, _ := gin.CreateTestContext(w)
+        ctx.Params = gin.Params{{Key: "id", Value: "1"}}
+        ctx.Request, _ = http.NewRequest("GET", "/users/1", nil)
+
+        handler.Get(ctx)
+
+        assert.Equal(t, http.StatusOK, w.Code)
+        // Verify response JSON structure
+    })
+
+    t.Run("invalid_id", func(t *testing.T) {
+        w := httptest.NewRecorder()
+        ctx, _ := gin.CreateTestContext(w)
+        ctx.Params = gin.Params{{Key: "id", Value: "abc"}}
+        ctx.Request, _ = http.NewRequest("GET", "/users/abc", nil)
+
+        handler.Get(ctx)
+
+        assert.Equal(t, http.StatusBadRequest, w.Code)
+    })
+
+    t.Run("not_found", func(t *testing.T) {
+        biz.UserBiz().GetErr = errno.ErrUserNotFound
+
+        w := httptest.NewRecorder()
+        ctx, _ := gin.CreateTestContext(w)
+        ctx.Params = gin.Params{{Key: "id", Value: "999"}}
+        ctx.Request, _ = http.NewRequest("GET", "/users/999", nil)
+
+        handler.Get(ctx)
+
+        assert.Equal(t, http.StatusNotFound, w.Code)
+    })
+}
+```
+
+## Mock Code Organization
+
+All mock code is centralized in `internal/pkg/testing/mock/` directory.
+
+### Directory Structure
+
+```
+internal/pkg/testing/mock/
+├── store/           # Store layer mock
+│   └── store.go     # Implements store.IStore interface
+├── biz/             # Biz layer mock
+│   └── biz.go       # Implements biz.IBiz interface
+└── ...              # Other module mocks
+```
+
+### Implementation Standards
+
+1. **ABOUTME comments**: Each mock file must have ABOUTME comments explaining its purpose
+
+2. **Interface verification**: Use compile-time checks to ensure complete implementation
+   ```go
+   var _ store.IStore = (*Store)(nil)
+   ```
+
+3. **Configurable errors**: Support error injection for testing exception paths
+   ```go
+   type UserStore struct {
+       CreateErr error
+       GetErr    error
+       GetResult *model.User
+   }
+   ```
+
+4. **State exposure**: Provide helper methods to expose internal state for assertions
+   ```go
+   func (m *UserStore) Users() map[uint64]*model.User
+   ```
+
+### Steps to Add New Mock
+
+1. Find or create the corresponding module directory under `internal/pkg/testing/mock/`
+2. Create mock file with ABOUTME comments
+3. Implement target interface with compile-time check
+4. Add configurable error fields and state exposure methods
 
 ## Testing Tools
 
 | Tool | Purpose | Description |
 |------|---------|-------------|
 | **testify** | Assertions | `assert` (continues) / `require` (stops immediately) |
-| **goconvey** | BDD style testing | Nested `Convey` for scenarios, `So` for assertions |
-| **gomonkey** | Runtime Mock | Monkey patching, supports private methods |
-| **sqlmock** | Store unit tests | Verify SQL structure without real DB |
+| **SQLite** | Store layer tests | In-memory database, verify real SQL behavior |
 | **testcontainers-go** | Integration tests | Dynamically start Docker containers (MySQL, etc.) |
 
-## Testing Standards
+## Test Styles
 
 The project supports two testing styles, choose based on scenario:
 
@@ -84,151 +305,62 @@ func TestXxx(t *testing.T) {
 - Use `tt` for current test case variable
 - Use `want`/`wantErr` for expected results
 
-### GoConvey BDD Style (Recommended for Complex Scenarios)
+### Subtest Style (Recommended for Complex Scenarios)
 
-Suitable for scenarios requiring shared setup, multiple branches, HTTP middleware, etc.:
+Suitable for scenarios requiring shared setup, multiple branches:
 
 ```go
 func TestMiddleware(t *testing.T) {
-    Convey("TestMiddleware", t, func() {
-        // Shared setup
+    // Shared setup
+    setupTest := func() (*httptest.ResponseRecorder, *gin.Context) {
         w := httptest.NewRecorder()
         ctx, _ := gin.CreateTestContext(w)
+        return w, ctx
+    }
 
-        Convey("disabled", func() {
-            config.Enabled = false
-            Middleware()(ctx)
-            So(ctx.IsAborted(), ShouldBeFalse)
-        })
+    t.Run("disabled", func(t *testing.T) {
+        w, ctx := setupTest()
+        config.Enabled = false
 
-        Convey("invalid request", func() {
-            ctx.Request, _ = http.NewRequest("GET", "/path", nil)
-            Middleware()(ctx)
-            So(ctx.IsAborted(), ShouldBeTrue)
-        })
+        Middleware()(ctx)
 
-        Convey("valid request", func() {
-            // Use gomonkey to mock dependencies
-            patches := gomonkey.ApplyPrivateMethod(store.S.Users(), "Get",
-                func(ctx context.Context, id uint64) (*model.User, error) {
-                    return &model.User{ID: 1}, nil
-                })
-            defer patches.Reset()
+        assert.False(t, ctx.IsAborted())
+    })
 
-            Middleware()(ctx)
-            So(ctx.IsAborted(), ShouldBeFalse)
-        })
+    t.Run("invalid_request", func(t *testing.T) {
+        w, ctx := setupTest()
+        ctx.Request, _ = http.NewRequest("GET", "/path", nil)
+
+        Middleware()(ctx)
+
+        assert.True(t, ctx.IsAborted())
     })
 }
 ```
 
-**GoConvey Conventions**:
-- Outer `Convey` first parameter matches function name
-- Inner `Convey` describes specific scenarios
-- Use `So(actual, ShouldXxx, expected)` for assertions
+## Integration Tests
 
-### Integration Test Markers
+Integration tests verify multi-component collaboration using real dependencies (like MySQL, Redis).
+
+### Marking Method
 
 Use `-short` flag to distinguish unit tests from integration tests:
 
 ```go
-func TestStore_Integration(t *testing.T) {
+func TestUserStore_Integration(t *testing.T) {
     if testing.Short() {
         t.Skip("skipping integration test")
     }
-    // Integration test code
+    // Test code using real database
 }
 ```
 
-Run commands:
+### Run Commands
+
 ```bash
 go test ./...              # Run all tests
-go test -short ./...       # Run unit tests only
+go test -short ./...       # Run unit tests only (skip integration tests)
 go test -run Integration   # Run integration tests only
-```
-
-## Mock Strategies
-
-### Option 1: gomonkey (Runtime Mock)
-
-Suitable for mocking private methods, third-party libraries, global functions:
-
-```go
-import "github.com/agiledragon/gomonkey/v2"
-
-// Mock struct method (including private methods)
-patches := gomonkey.ApplyPrivateMethod(store.S.Users(), "Get",
-    func(ctx context.Context, id uint64) (*model.User, error) {
-        return &model.User{ID: id, Name: "test"}, nil
-    })
-defer patches.Reset()
-
-// Mock global function
-patches := gomonkey.ApplyFunc(time.Now, func() time.Time {
-    return time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
-})
-defer patches.Reset()
-```
-
-**Note**: gomonkey on macOS ARM64 requires disabling inline optimization:
-```bash
-go test -gcflags="all=-N -l" ./...
-```
-
-### Option 2: Interface Mock (Dependency Injection)
-
-Suitable for dependencies defined through interfaces, following k8s client-go/testing design.
-
-#### Layering Standards
-
-| Level | Location | Use Case |
-|-------|----------|----------|
-| Shared mock | `internal/pkg/testing/mock/` | Multi-package needs (IStore, BlockchainClient) |
-| Package-private mock | `xxx_test.go` | Single package only (mockAddressCache, etc.) |
-
-#### Naming Conventions
-
-- Shared mock: `mock.Xxx` (exported, for other packages' `_test.go` files)
-- Package-private mock: `mockXxx` (unexported, only for current package tests)
-
-#### Directory Structure
-
-```
-internal/pkg/testing/
-└── mock/
-    ├── store.go              # mock.Store (IStore)
-    ├── blockchain.go         # mock.BlockchainClient
-    ├── account.go            # mock.AccountService
-    └── scanner/
-        ├── loader.go         # mock.AddressLoader
-        └── cache.go          # mock.AddressCache, mock.TokenCache
-```
-
-## Store Layer Testing Strategy
-
-| Level | Tool | Purpose |
-|-------|------|---------|
-| Unit Test | sqlmock | Verify GORM-generated SQL structure |
-| Integration Test | testcontainers-go | Verify real MySQL behavior |
-
-### sqlmock Example
-
-```go
-func TestUserStore_GetByID(t *testing.T) {
-    db, mock, _ := sqlmock.New()
-    gormDB, _ := gorm.Open(mysql.New(mysql.Config{Conn: db}), &gorm.Config{})
-
-    mock.ExpectQuery("SELECT .* FROM `users` WHERE `id` = ?").
-        WithArgs(1).
-        WillReturnRows(sqlmock.NewRows([]string{"id", "name"}).AddRow(1, "test"))
-
-    store := NewUserStore(gormDB)
-    user, err := store.GetByID(context.Background(), 1)
-
-    require.NoError(t, err)
-    assert.Equal(t, "test", user.Name)
-    assert.NoError(t, mock.ExpectationsWereMet())
-}
 ```
 
 ## CI/CD Integration
@@ -253,7 +385,7 @@ test:
       run: go test -run Integration ./...
 ```
 
-## Next Step
+## Next Steps
 
 - [Docker Deployment](../deployment/docker.md) - Deploy Bingo projects using Docker
 - [Microservice Decomposition](../advanced/microservices.md) - Learn how to decompose monolith into microservices
