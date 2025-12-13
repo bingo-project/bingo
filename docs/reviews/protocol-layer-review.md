@@ -5,6 +5,8 @@
 **Branch**: feature/protocol-layer
 **Status**: Review Complete - Issues Found
 
+> **Note**: WebSocket 相关代码（`pkg/ws/`、`pkg/jsonrpc/`）现位于独立库 [github.com/bingo-project/websocket](https://github.com/bingo-project/websocket)。
+
 ## Executive Summary
 
 Protocol Layer 实现成功交付了清晰、可插拔的协议层架构。代码质量较高，测试覆盖全面。但发现 **4 个关键问题** 需要在合并前修复。

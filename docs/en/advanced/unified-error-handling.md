@@ -297,7 +297,7 @@ func CustomErrorHandler(
 WebSocket layer uses JSON-RPC 2.0 protocol, error codes follow JSON-RPC specification:
 
 ```go
-// pkg/jsonrpc/message.go
+// github.com/bingo-project/websocket/jsonrpc/message.go
 
 // Response represents a JSON-RPC 2.0 response.
 type Response struct {
@@ -318,7 +318,7 @@ type Error struct {
 ```
 
 ```go
-// pkg/jsonrpc/response.go
+// github.com/bingo-project/websocket/jsonrpc/response.go
 
 // NewErrorResponse creates an error response from an error.
 func NewErrorResponse(id any, err error) *Response {

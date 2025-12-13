@@ -144,7 +144,7 @@ WebSocket Message
 ### 核心类型
 
 ```go
-// pkg/ws/middleware.go
+// github.com/bingo-project/websocket/context.go
 
 // Context 中间件上下文，嵌入 context.Context 可直接传递给 Biz 层
 type Context struct {
@@ -173,12 +173,12 @@ func Chain(middlewares ...Middleware) Middleware
 
 | 中间件 | 位置 | 说明 |
 |-------|------|------|
-| Recovery / RecoveryWithLogger | `pkg/ws/middleware/recovery.go` | 捕获 panic，返回 500 错误；WithLogger 版本支持自定义日志记录器 |
-| RequestID | `pkg/ws/middleware/requestid.go` | 注入 request-id 到 context |
-| Logger / LoggerWithLogger | `pkg/ws/middleware/logger.go` | 记录请求日志和延迟；WithLogger 版本支持自定义日志记录器 |
-| Auth | `pkg/ws/middleware/auth.go` | 验证用户已登录 |
-| RateLimitWithStore | `pkg/ws/middleware/ratelimit.go` | 令牌桶限流，使用 Redis 存储 |
-| LoginStateUpdater | `pkg/ws/middleware/login.go` | 登录成功后更新客户端状态 |
+| Recovery / RecoveryWithLogger | `middleware/recovery.go` | 捕获 panic，返回 500 错误；WithLogger 版本支持自定义日志记录器 |
+| RequestID | `middleware/requestid.go` | 注入 request-id 到 context |
+| Logger / LoggerWithLogger | `middleware/logger.go` | 记录请求日志和延迟；WithLogger 版本支持自定义日志记录器 |
+| Auth | `middleware/auth.go` | 验证用户已登录 |
+| RateLimitWithStore | `middleware/ratelimit.go` | 令牌桶限流，使用 Redis 存储 |
+| LoginStateUpdater | `middleware/login.go` | 登录成功后更新客户端状态 |
 
 **自定义日志记录器**：
 
@@ -199,7 +199,7 @@ router.Use(
 ### Router
 
 ```go
-// pkg/ws/router.go
+// github.com/bingo-project/websocket/router.go
 
 // Router WebSocket 方法路由器
 type Router struct {
@@ -263,7 +263,7 @@ func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimite
 所有 Handler 使用统一的签名，类似 Gin 的 `func(c *gin.Context)`：
 
 ```go
-// pkg/ws/middleware.go
+// github.com/bingo-project/websocket/context.go
 
 // Handler 消息处理函数
 type Handler func(*Context) *jsonrpc.Response
@@ -369,7 +369,7 @@ ws://example.com/ws?token=xxx
 ### 认证状态管理
 
 ```go
-// pkg/ws/client.go
+// github.com/bingo-project/websocket/client.go
 
 // IsAuthenticated 检查是否已登录
 func (c *Client) IsAuthenticated() bool {
@@ -393,7 +393,7 @@ Hub 是 WebSocket 连接的中央管理器，负责：
 - 连接清理
 
 ```go
-// pkg/ws/hub.go
+// github.com/bingo-project/websocket/hub.go
 
 type Hub struct {
     anonymous   map[*Client]bool  // 匿名连接

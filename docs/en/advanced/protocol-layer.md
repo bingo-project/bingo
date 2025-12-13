@@ -56,14 +56,10 @@ internal/apiserver/
 │
 └── store/                  # Data access
 
-pkg/ws/                     # WebSocket infrastructure
-├── hub.go                  # Connection management
-└── client.go               # Client connection
-
-pkg/jsonrpc/                # JSON-RPC 2.0 support
-├── message.go              # Message types
-├── response.go             # Response construction
-└── adapter.go              # Method routing adapter
+# WebSocket infrastructure provided by standalone library: github.com/bingo-project/websocket
+# - Hub, Client, Router, Context and other core types
+# - jsonrpc subpackage: JSON-RPC 2.0 message types
+# - middleware subpackage: Built-in middleware
 
 pkg/proto/                  # Proto definitions (data layer)
 ├── user/v1/

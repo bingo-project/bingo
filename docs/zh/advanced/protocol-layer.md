@@ -56,14 +56,10 @@ internal/apiserver/
 │
 └── store/                  # 数据访问
 
-pkg/ws/                     # WebSocket 基础设施
-├── hub.go                  # 连接管理
-└── client.go               # 客户端连接
-
-pkg/jsonrpc/                # JSON-RPC 2.0 支持
-├── message.go              # 消息类型
-├── response.go             # 响应构造
-└── adapter.go              # 方法路由适配器
+# WebSocket 基础设施由独立库提供：github.com/bingo-project/websocket
+# - Hub, Client, Router, Context 等核心类型
+# - jsonrpc 子包：JSON-RPC 2.0 消息类型
+# - middleware 子包：内置中间件
 
 pkg/proto/                  # Proto 定义（数据层）
 ├── user/v1/

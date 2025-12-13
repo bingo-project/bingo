@@ -144,7 +144,7 @@ WebSocket Message
 ### Core Types
 
 ```go
-// pkg/ws/middleware.go
+// github.com/bingo-project/websocket/context.go
 
 // Context middleware context, embeds context.Context for direct Biz layer passing
 type Context struct {
@@ -173,12 +173,12 @@ func Chain(middlewares ...Middleware) Middleware
 
 | Middleware | Location | Description |
 |------------|----------|-------------|
-| Recovery / RecoveryWithLogger | `pkg/ws/middleware/recovery.go` | Catch panic, return 500 error; WithLogger version supports custom logger |
-| RequestID | `pkg/ws/middleware/requestid.go` | Inject request-id into context |
-| Logger / LoggerWithLogger | `pkg/ws/middleware/logger.go` | Log requests and latency; WithLogger version supports custom logger |
-| Auth | `pkg/ws/middleware/auth.go` | Verify user is logged in |
-| RateLimitWithStore | `pkg/ws/middleware/ratelimit.go` | Token bucket rate limiting with Redis storage |
-| LoginStateUpdater | `pkg/ws/middleware/login.go` | Update client state after successful login |
+| Recovery / RecoveryWithLogger | `middleware/recovery.go` | Catch panic, return 500 error; WithLogger version supports custom logger |
+| RequestID | `middleware/requestid.go` | Inject request-id into context |
+| Logger / LoggerWithLogger | `middleware/logger.go` | Log requests and latency; WithLogger version supports custom logger |
+| Auth | `middleware/auth.go` | Verify user is logged in |
+| RateLimitWithStore | `middleware/ratelimit.go` | Token bucket rate limiting with Redis storage |
+| LoginStateUpdater | `middleware/login.go` | Update client state after successful login |
 
 **Custom Logger:**
 
@@ -199,7 +199,7 @@ router.Use(
 ### Router
 
 ```go
-// pkg/ws/router.go
+// github.com/bingo-project/websocket/router.go
 
 // Router WebSocket method router
 type Router struct {
@@ -263,7 +263,7 @@ func RegisterWSHandlers(router *ws.Router, rateLimitStore *middleware.RateLimite
 All Handlers use a unified signature, similar to Gin's `func(c *gin.Context)`:
 
 ```go
-// pkg/ws/middleware.go
+// github.com/bingo-project/websocket/context.go
 
 // Handler message processing function
 type Handler func(*Context) *jsonrpc.Response
@@ -369,7 +369,7 @@ ws://example.com/ws?token=xxx
 ### Authentication State Management
 
 ```go
-// pkg/ws/client.go
+// github.com/bingo-project/websocket/client.go
 
 // IsAuthenticated checks if logged in
 func (c *Client) IsAuthenticated() bool {
@@ -393,7 +393,7 @@ Hub is the central manager for WebSocket connections, responsible for:
 - Connection cleanup
 
 ```go
-// pkg/ws/hub.go
+// github.com/bingo-project/websocket/hub.go
 
 type Hub struct {
     anonymous   map[*Client]bool  // Anonymous connections
