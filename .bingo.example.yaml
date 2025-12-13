@@ -1,6 +1,6 @@
 version: v1
 
-rootPackage: bingo
+rootPackage: github.com/bingo-project/bingo
 
 directory:
   cmd: internal/bingoctl/cmd
