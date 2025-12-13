@@ -5,7 +5,7 @@ rootPackage: bingo
 directory:
   cmd: internal/bingoctl/cmd
   model: internal/pkg/model
-  store: internal/apiserver/store
+  store: internal/pkg/store
   biz: internal/apiserver/biz
   handler: internal/apiserver/handler/http
   middleware: internal/pkg/middleware/http
@@ -16,7 +16,7 @@ directory:
 registries:
   router: internal/apiserver/router/api.go
   store:
-    filePath: internal/apiserver/store/store.go
+    filePath: internal/pkg/store/store.go
     interface: "IStore"
   biz:
     filePath: internal/apiserver/biz/biz.go
@@ -27,3 +27,7 @@ mysql:
   username: root
   password:
   database: bingo
+
+# Migration configuration (optional)
+migrate:
+  table: bingo_migration  # Migration records table name, default: bingo_migration
