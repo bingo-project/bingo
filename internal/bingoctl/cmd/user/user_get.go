@@ -7,7 +7,6 @@ import (
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
 	cmdutil "github.com/bingo-project/component-base/cli/util"
-	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -102,11 +101,10 @@ func (o *GetOptions) Run(args []string) error {
 		},
 	}
 
-	table := tablewriter.NewWriter(o.Out)
-	table = setHeader(table)
-	table = cmdutil.TableWriterDefaultConfig(table)
-	table.AppendBulk(data)
-	table.Render()
+	table := cmdutil.NewTableWriter(o.Out)
+	table.Header("Username", "Nickname", "Email", "Phone", "Created At", "Updated At")
+	_ = table.Bulk(data)
+	_ = table.Render()
 
 	return nil
 }
