@@ -393,7 +393,6 @@ definitions:
     properties:
       description:
         maxLength: 255
-        minLength: 1
         type: string
       name:
         maxLength: 20
@@ -401,12 +400,14 @@ definitions:
         type: string
       remark:
         maxLength: 255
-        minLength: 1
+        type: string
+      status:
+        enum:
+        - enabled
+        - disabled
         type: string
     required:
-    - description
     - name
-    - remark
     type: object
   v1.CreateUserRequest:
     properties:
@@ -603,6 +604,8 @@ definitions:
         type: string
       remark:
         type: string
+      status:
+        type: string
       updatedAt:
         type: string
     type: object
@@ -751,7 +754,11 @@ definitions:
         type: string
       remark:
         maxLength: 255
-        minLength: 1
+        type: string
+      status:
+        enum:
+        - enabled
+        - disabled
         type: string
     type: object
   v1.UserInfo:
@@ -2448,6 +2455,15 @@ paths:
       consumes:
       - application/json
       parameters:
+      - in: query
+        name: createdAtFrom
+        type: string
+      - in: query
+        name: createdAtTo
+        type: string
+      - in: query
+        name: description
+        type: string
       - description: Limit
         in: query
         name: limit
@@ -2470,6 +2486,9 @@ paths:
       - description: Sort field.
         in: query
         name: sort
+        type: string
+      - in: query
+        name: status
         type: string
       produces:
       - application/json

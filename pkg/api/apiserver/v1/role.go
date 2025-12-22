@@ -13,13 +13,18 @@ type RoleInfo struct {
 
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Status      string `json:"status"`
 	Remark      string `json:"remark"`
 }
 
 type ListRoleRequest struct {
 	gormutil.ListOptions
 
-	Name string `form:"name"`
+	Name          string     `form:"name"`
+	Description   string     `form:"description"`
+	Status        string     `form:"status"`
+	CreatedAtFrom *time.Time `form:"createdAtFrom" time_format:"2006-01-02T15:04:05Z07:00"`
+	CreatedAtTo   *time.Time `form:"createdAtTo" time_format:"2006-01-02T15:04:05Z07:00"`
 }
 
 type ListRoleResponse struct {
@@ -28,14 +33,16 @@ type ListRoleResponse struct {
 }
 
 type CreateRoleRequest struct {
-	Name        string `json:"name" binding:"required,alphanum,min=2,max=20"`
-	Description string `json:"description" binding:"required,min=1,max=255"`
-	Remark      string `json:"remark" binding:"required,min=1,max=255"`
+	Name        string `json:"name" binding:"required,alphanumdash,min=2,max=20"`
+	Description string `json:"description" binding:"omitempty,max=255"`
+	Status      string `json:"status" binding:"omitempty,oneof=enabled disabled"`
+	Remark      string `json:"remark" binding:"omitempty,max=255"`
 }
 
 type UpdateRoleRequest struct {
-	Description *string `json:"description" binding:"min=1,max=255"`
-	Remark      *string `json:"remark" binding:"min=1,max=255"`
+	Description *string `json:"description" binding:"omitempty,min=1,max=255"`
+	Status      *string `json:"status" binding:"omitempty,oneof=enabled disabled"`
+	Remark      *string `json:"remark" binding:"omitempty,max=255"`
 }
 
 type SetApisRequest struct {

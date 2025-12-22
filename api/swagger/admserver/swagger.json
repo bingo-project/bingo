@@ -2621,6 +2621,21 @@
                 "summary": "List roles",
                 "parameters": [
                     {
+                        "type": "string",
+                        "name": "createdAtFrom",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "createdAtTo",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "description",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
@@ -2653,6 +2668,11 @@
                         "type": "string",
                         "description": "Sort field.",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -4068,15 +4088,12 @@
         "v1.CreateRoleRequest": {
             "type": "object",
             "required": [
-                "description",
-                "name",
-                "remark"
+                "name"
             ],
             "properties": {
                 "description": {
                     "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
+                    "maxLength": 255
                 },
                 "name": {
                     "type": "string",
@@ -4085,8 +4102,14 @@
                 },
                 "remark": {
                     "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
+                    "maxLength": 255
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
                 }
             }
         },
@@ -4375,6 +4398,9 @@
                 "remark": {
                     "type": "string"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -4587,8 +4613,14 @@
                 },
                 "remark": {
                     "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
+                    "maxLength": 255
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
                 }
             }
         },

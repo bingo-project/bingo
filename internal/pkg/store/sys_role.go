@@ -55,7 +55,23 @@ func (s *sysRoleStore) ListWithRequest(ctx context.Context, req *v1.ListRoleRequ
 	opts := where.NewWhere()
 
 	if req.Name != "" {
-		opts = opts.F("name", req.Name)
+		opts = opts.Q("name LIKE ?", "%"+req.Name+"%")
+	}
+
+	if req.Description != "" {
+		opts = opts.Q("description LIKE ?", "%"+req.Description+"%")
+	}
+
+	if req.Status != "" {
+		opts = opts.F("status", req.Status)
+	}
+
+	if req.CreatedAtFrom != nil {
+		opts = opts.Q("created_at >= ?", req.CreatedAtFrom)
+	}
+
+	if req.CreatedAtTo != nil {
+		opts = opts.Q("created_at <= ?", req.CreatedAtTo)
 	}
 
 	db := s.DB(ctx, opts).Where("name != ?", known.RoleRoot)

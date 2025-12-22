@@ -8,10 +8,14 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	middleware "github.com/bingo-project/bingo/internal/pkg/middleware/http"
+	"github.com/bingo-project/bingo/internal/pkg/validation"
 )
 
 func InitGin() *gin.Engine {
 	gin.SetMode(facade.Config.HTTP.GinMode)
+
+	// Register custom validators
+	validation.Init()
 
 	g := gin.New()
 

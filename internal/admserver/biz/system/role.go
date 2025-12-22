@@ -101,6 +101,9 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 	if req.Description != nil {
 		roleM.Description = *req.Description
 	}
+	if req.Status != nil {
+		roleM.Status = *req.Status
+	}
 	if req.Remark != nil {
 		roleM.Remark = *req.Remark
 	}
