@@ -35,14 +35,14 @@ func NewAuthHandler(ds store.IStore, a *auth.Authorizer) *AuthHandler {
 func (ctrl *AuthHandler) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
-	admin, ok := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
+	admin, ok := contextx.UserInfo[*v1.AdminInfo](c.Request.Context())
 	if !ok {
 		core.Response(c, nil, errno.ErrNotFound)
 
 		return
 	}
 
-	core.Response(c, admin, nil)
+	core.Response(c, *admin, nil)
 }
 
 // Menus
