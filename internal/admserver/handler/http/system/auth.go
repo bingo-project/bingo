@@ -58,7 +58,7 @@ func (ctrl *AuthHandler) UserInfo(c *gin.Context) {
 func (ctrl *AuthHandler) Menus(c *gin.Context) {
 	log.C(c).Infow("Menus function called")
 
-	admin, _ := contextx.UserInfo[v1.AdminInfo](c.Request.Context())
+	admin, _ := contextx.UserInfo[*v1.AdminInfo](c.Request.Context())
 
 	resp, err := ctrl.b.Roles().GetMenuTree(c, admin.RoleName)
 	if err != nil {
