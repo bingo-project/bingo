@@ -119,8 +119,8 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 		adminM.Avatar = *req.Avatar
 	}
 
-	if req.Status != nil {
-		adminM.Status = model.AdminStatus(*req.Status)
+	if req.Status != "" {
+		adminM.Status = model.AdminStatus(req.Status)
 	}
 
 	// Update roles & current role

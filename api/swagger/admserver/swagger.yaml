@@ -170,7 +170,7 @@ definitions:
           $ref: '#/definitions/v1.RoleInfo'
         type: array
       status:
-        type: integer
+        type: string
       updatedAt:
         type: string
       username:
@@ -186,6 +186,8 @@ definitions:
         type: string
       id:
         type: integer
+      internal:
+        type: boolean
       method:
         type: string
       path:
@@ -360,6 +362,13 @@ definitions:
     type: object
   v1.CreateMenuRequest:
     properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+      authCode:
+        maxLength: 100
+        type: string
       component:
         maxLength: 255
         minLength: 1
@@ -372,7 +381,7 @@ definitions:
         type: string
       name:
         type: string
-      parentID:
+      parentId:
         type: integer
       path:
         maxLength: 255
@@ -380,9 +389,22 @@ definitions:
         type: string
       sort:
         type: integer
+      status:
+        enum:
+        - enabled
+        - disabled
+        type: string
       title:
         maxLength: 255
         minLength: 1
+        type: string
+      type:
+        enum:
+        - catalog
+        - menu
+        - button
+        - embedded
+        - link
         type: string
     required:
     - component
@@ -563,6 +585,12 @@ definitions:
     type: object
   v1.MenuInfo:
     properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+      authCode:
+        type: string
       children:
         items:
           $ref: '#/definitions/v1.MenuInfo'
@@ -579,7 +607,7 @@ definitions:
         type: integer
       name:
         type: string
-      parentID:
+      parentId:
         type: integer
       path:
         type: string
@@ -587,7 +615,11 @@ definitions:
         type: string
       sort:
         type: integer
+      status:
+        type: string
       title:
+        type: string
+      type:
         type: string
       updatedAt:
         type: string
@@ -611,14 +643,14 @@ definitions:
     type: object
   v1.SetApisRequest:
     properties:
-      apiIDs:
+      apiIds:
         items:
           type: integer
         type: array
     type: object
   v1.SetMenusRequest:
     properties:
-      menuIDs:
+      menuIds:
         items:
           type: integer
         type: array
@@ -660,7 +692,7 @@ definitions:
           type: string
         type: array
       status:
-        type: integer
+        type: string
     type: object
   v1.UpdateApiKeyRequest:
     properties:
@@ -691,6 +723,8 @@ definitions:
         maxLength: 255
         minLength: 1
         type: string
+      internal:
+        type: boolean
       method:
         maxLength: 255
         minLength: 1
@@ -717,6 +751,13 @@ definitions:
     type: object
   v1.UpdateMenuRequest:
     properties:
+      apiIds:
+        items:
+          type: integer
+        type: array
+      authCode:
+        maxLength: 100
+        type: string
       component:
         maxLength: 255
         minLength: 1
@@ -729,7 +770,7 @@ definitions:
         type: string
       name:
         type: string
-      parentID:
+      parentId:
         type: integer
       path:
         maxLength: 255
@@ -741,9 +782,22 @@ definitions:
         type: string
       sort:
         type: integer
+      status:
+        enum:
+        - enabled
+        - disabled
+        type: string
       title:
         maxLength: 255
         minLength: 1
+        type: string
+      type:
+        enum:
+        - catalog
+        - menu
+        - button
+        - embedded
+        - link
         type: string
     type: object
   v1.UpdateRoleRequest:
@@ -883,7 +937,7 @@ paths:
         type: string
       - in: query
         name: status
-        type: integer
+        type: string
       - in: query
         name: username
         type: string

@@ -59,8 +59,8 @@ func (s *adminStore) ListWithRequest(ctx context.Context, req *v1.ListAdminReque
 	if req.Nickname != "" {
 		opts = opts.Q("nickname like ?", "%"+req.Nickname+"%")
 	}
-	if req.Status != nil {
-		opts = opts.F("status", *req.Status)
+	if req.Status != "" {
+		opts = opts.F("status", req.Status)
 	}
 	if req.RoleName != "" {
 		opts = opts.F("role_name", req.RoleName)

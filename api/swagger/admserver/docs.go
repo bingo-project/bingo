@@ -118,7 +118,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     },
@@ -3781,7 +3781,7 @@ const docTemplate = `{
                     }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -3805,6 +3805,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "internal": {
+                    "type": "boolean"
                 },
                 "method": {
                     "type": "string"
@@ -4059,6 +4062,16 @@ const docTemplate = `{
                 "sort"
             ],
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
                 "component": {
                     "type": "string",
                     "maxLength": 255,
@@ -4075,7 +4088,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4086,10 +4099,27 @@ const docTemplate = `{
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "catalog",
+                        "menu",
+                        "button",
+                        "embedded",
+                        "link"
+                    ]
                 }
             }
         },
@@ -4344,6 +4374,15 @@ const docTemplate = `{
         "v1.MenuInfo": {
             "type": "object",
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string"
+                },
                 "children": {
                     "type": "array",
                     "items": {
@@ -4368,7 +4407,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4380,7 +4419,13 @@ const docTemplate = `{
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "title": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -4417,7 +4462,7 @@ const docTemplate = `{
         "v1.SetApisRequest": {
             "type": "object",
             "properties": {
-                "apiIDs": {
+                "apiIds": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -4428,7 +4473,7 @@ const docTemplate = `{
         "v1.SetMenusRequest": {
             "type": "object",
             "properties": {
-                "menuIDs": {
+                "menuIds": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -4490,7 +4535,7 @@ const docTemplate = `{
                     }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -4535,6 +4580,9 @@ const docTemplate = `{
                     "maxLength": 255,
                     "minLength": 1
                 },
+                "internal": {
+                    "type": "boolean"
+                },
                 "method": {
                     "type": "string",
                     "maxLength": 255,
@@ -4572,6 +4620,16 @@ const docTemplate = `{
         "v1.UpdateMenuRequest": {
             "type": "object",
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
                 "component": {
                     "type": "string",
                     "maxLength": 255,
@@ -4588,7 +4646,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4604,10 +4662,27 @@ const docTemplate = `{
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "catalog",
+                        "menu",
+                        "button",
+                        "embedded",
+                        "link"
+                    ]
                 }
             }
         },

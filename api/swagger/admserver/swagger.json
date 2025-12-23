@@ -110,7 +110,7 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     },
@@ -3773,7 +3773,7 @@
                     }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -3797,6 +3797,9 @@
                 },
                 "id": {
                     "type": "integer"
+                },
+                "internal": {
+                    "type": "boolean"
                 },
                 "method": {
                     "type": "string"
@@ -4051,6 +4054,16 @@
                 "sort"
             ],
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
                 "component": {
                     "type": "string",
                     "maxLength": 255,
@@ -4067,7 +4080,7 @@
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4078,10 +4091,27 @@
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "catalog",
+                        "menu",
+                        "button",
+                        "embedded",
+                        "link"
+                    ]
                 }
             }
         },
@@ -4336,6 +4366,15 @@
         "v1.MenuInfo": {
             "type": "object",
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string"
+                },
                 "children": {
                     "type": "array",
                     "items": {
@@ -4360,7 +4399,7 @@
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4372,7 +4411,13 @@
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string"
+                },
                 "title": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -4409,7 +4454,7 @@
         "v1.SetApisRequest": {
             "type": "object",
             "properties": {
-                "apiIDs": {
+                "apiIds": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -4420,7 +4465,7 @@
         "v1.SetMenusRequest": {
             "type": "object",
             "properties": {
-                "menuIDs": {
+                "menuIds": {
                     "type": "array",
                     "items": {
                         "type": "integer"
@@ -4482,7 +4527,7 @@
                     }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
@@ -4527,6 +4572,9 @@
                     "maxLength": 255,
                     "minLength": 1
                 },
+                "internal": {
+                    "type": "boolean"
+                },
                 "method": {
                     "type": "string",
                     "maxLength": 255,
@@ -4564,6 +4612,16 @@
         "v1.UpdateMenuRequest": {
             "type": "object",
             "properties": {
+                "apiIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "authCode": {
+                    "type": "string",
+                    "maxLength": 100
+                },
                 "component": {
                     "type": "string",
                     "maxLength": 255,
@@ -4580,7 +4638,7 @@
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parentId": {
                     "type": "integer"
                 },
                 "path": {
@@ -4596,10 +4654,27 @@
                 "sort": {
                     "type": "integer"
                 },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "enabled",
+                        "disabled"
+                    ]
+                },
                 "title": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "catalog",
+                        "menu",
+                        "button",
+                        "embedded",
+                        "link"
+                    ]
                 }
             }
         },

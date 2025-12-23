@@ -15,7 +15,7 @@ type AdminM struct {
 	Email    *string     `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
 	Phone    *string     `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
 	Avatar   string      `gorm:"type:varchar(255);not null;default:''"`
-	Status   AdminStatus `gorm:"type:tinyint;default:1;comment:状态：1正常，2冻结"`
+	Status   AdminStatus `gorm:"type:varchar(20);default:'enabled';comment:状态：enabled正常，disabled禁用"`
 	RoleName string      `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
 
 	// Relation
@@ -27,11 +27,11 @@ func (u *AdminM) TableName() string {
 	return "sys_auth_admin"
 }
 
-type AdminStatus uint
+type AdminStatus string
 
 const (
-	AdminStatusEnabled  AdminStatus = 1
-	AdminStatusDisabled AdminStatus = 2
+	AdminStatusEnabled  AdminStatus = "enabled"
+	AdminStatusDisabled AdminStatus = "disabled"
 )
 
 func (u *AdminM) BeforeCreate(tx *gorm.DB) (err error) {

@@ -15,7 +15,7 @@ type AdminInfo struct {
 	Email    string `json:"email"`
 	Phone    string `json:"phone"`
 	Avatar   string `json:"avatar"`
-	Status   int    `json:"status"`
+	Status   string `json:"status"`
 	RoleName string `json:"roleName"`
 
 	Role  *RoleInfo  `json:"role,omitempty"`
@@ -27,7 +27,7 @@ type ListAdminRequest struct {
 
 	Username string `form:"username"`
 	Nickname string `form:"nickname"`
-	Status   *int   `form:"status"`
+	Status   string `form:"status"`
 	RoleName string `form:"roleName"`
 	Email    string `form:"email"`
 	Phone    string `form:"phone"`
@@ -54,7 +54,7 @@ type UpdateAdminRequest struct {
 	Email     *string  `json:"email" binding:"omitempty,email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
-	Status    *int     `json:"status"`
+	Status    string   `json:"status"`
 	RoleNames []string `json:"roleNames"`
 }
 
