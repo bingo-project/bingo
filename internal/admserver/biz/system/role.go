@@ -24,7 +24,7 @@ type RoleBiz interface {
 
 	SetApis(ctx context.Context, a *auth.Authorizer, roleName string, apiIDs []uint) error
 	GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName string) (v1.GetApiIDsResponse, error)
-	SetMenus(ctx context.Context, roleName string, menuIDs []uint) error
+	SetMenus(ctx context.Context, a *auth.Authorizer, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
 	GetMenuTree(ctx context.Context, roleName string) ([]*v1.MenuInfo, error)
 
@@ -190,7 +190,7 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName st
 	return resp, nil
 }
 
-func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint) error {
+func (b *roleBiz) SetMenus(ctx context.Context, a *auth.Authorizer, roleName string, menuIDs []uint) error {
 	if roleName == known.RoleRoot {
 		return errno.ErrPermissionDenied
 	}
@@ -200,15 +200,68 @@ func (b *roleBiz) SetMenus(ctx context.Context, roleName string, menuIDs []uint)
 		return errno.ErrNotFound
 	}
 
-	// Update menus
-	roleM.Menus, _ = b.ds.SysMenu().GetByIDs(ctx, menuIDs)
-
-	err = b.ds.SysRole().UpdateWithMenus(ctx, roleM)
+	// Get menus with APIs
+	menus, err := b.ds.SysMenu().GetByIDsWithApis(ctx, menuIDs)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	// Update role menus
+	roleM.Menus = menus
+	if err := b.ds.SysRole().UpdateWithMenus(ctx, roleM); err != nil {
+		return err
+	}
+
+	// Extract API IDs from menus and sync to Casbin
+	apiIDs := extractApiIDsFromMenus(menus)
+
+	return b.syncRoleApis(ctx, a, roleM.Name, apiIDs)
+}
+
+// extractApiIDsFromMenus extracts unique API IDs from menus.
+func extractApiIDsFromMenus(menus []*model.MenuM) []uint {
+	idSet := make(map[uint]struct{})
+	for _, menu := range menus {
+		for _, api := range menu.Apis {
+			idSet[api.ID] = struct{}{}
+		}
+	}
+
+	ids := make([]uint, 0, len(idSet))
+	for id := range idSet {
+		ids = append(ids, id)
+	}
+
+	return ids
+}
+
+// syncRoleApis syncs role's API permissions to Casbin.
+func (b *roleBiz) syncRoleApis(ctx context.Context, a *auth.Authorizer, roleName string, apiIDs []uint) error {
+	// Remove existing policies
+	_, err := a.Enforcer().RemoveFilteredPolicy(0, known.RolePrefix+roleName)
+	if err != nil {
+		return err
+	}
+
+	if len(apiIDs) == 0 {
+		return nil
+	}
+
+	// Get APIs by IDs
+	apis, err := b.ds.SysApi().GetByIDs(ctx, apiIDs)
+	if err != nil {
+		return err
+	}
+
+	// Add new policies
+	rules := make([][]string, 0, len(apis))
+	for _, api := range apis {
+		rules = append(rules, []string{known.RolePrefix + roleName, api.Path, api.Method})
+	}
+
+	_, err = a.Enforcer().AddPolicies(rules)
+
+	return err
 }
 
 func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error) {

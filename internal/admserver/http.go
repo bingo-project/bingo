@@ -31,8 +31,5 @@ func initGinEngine() *gin.Engine {
 	// System
 	router.MapApiRouters(g)
 
-	// Init System API
-	router.InitSystemAPI(g)
-
 	return g
 }

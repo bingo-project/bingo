@@ -32,7 +32,9 @@ type SysApiExpansion interface {
 	GetByID(ctx context.Context, id uint) (*model.ApiM, error)
 	DeleteByID(ctx context.Context, id uint) error
 	All(ctx context.Context) ([]*model.ApiM, error)
+	AllPublic(ctx context.Context) ([]*model.ApiM, error)
 	GetByIDs(ctx context.Context, ids []uint) ([]*model.ApiM, error)
+	GetByMethodPath(ctx context.Context, method, path string) (*model.ApiM, error)
 	GetIDsByPathAndMethod(ctx context.Context, pathAndMethod [][]string) ([]uint, error)
 }
 
@@ -85,6 +87,25 @@ func (s *sysApiStore) All(ctx context.Context) ([]*model.ApiM, error) {
 	err := s.DB(ctx).Find(&ret).Error
 
 	return ret, err
+}
+
+// AllPublic retrieves all non-internal APIs for menu association.
+func (s *sysApiStore) AllPublic(ctx context.Context) ([]*model.ApiM, error) {
+	var ret []*model.ApiM
+	err := s.DB(ctx).Where("internal = ?", false).Find(&ret).Error
+
+	return ret, err
+}
+
+// GetByMethodPath retrieves an API by method and path.
+func (s *sysApiStore) GetByMethodPath(ctx context.Context, method, path string) (*model.ApiM, error) {
+	var ret model.ApiM
+	err := s.DB(ctx).Where("method = ? AND path = ?", method, path).First(&ret).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
 }
 
 // GetByIDs retrieves APIs by IDs.

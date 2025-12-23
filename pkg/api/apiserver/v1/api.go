@@ -15,6 +15,7 @@ type ApiInfo struct {
 	Path        string `json:"path"`
 	Group       string `json:"group"`
 	Description string `json:"description"`
+	Internal    bool   `json:"internal"`
 }
 
 type ListApiRequest struct {
@@ -42,6 +43,7 @@ type UpdateApiRequest struct {
 	Path        *string `json:"path" binding:"min=1,max=255"`
 	Group       *string `json:"group" binding:"min=1,max=255"`
 	Description *string `json:"description" binding:"min=1,max=255"`
+	Internal    *bool   `json:"internal"`
 }
 
 type GetApiIDsResponse []uint

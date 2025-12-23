@@ -29,14 +29,20 @@ type SysMenuStore interface {
 type SysMenuExpansion interface {
 	ListWithRequest(ctx context.Context, req *v1.ListMenuRequest) (int64, []*model.MenuM, error)
 	GetByID(ctx context.Context, id uint) (*model.MenuM, error)
+	GetByIDWithApis(ctx context.Context, id uint) (*model.MenuM, error)
 	DeleteByID(ctx context.Context, id uint) error
 	All(ctx context.Context) ([]*model.MenuM, error)
 	AllEnabled(ctx context.Context) ([]*model.MenuM, error)
+	AllWithApis(ctx context.Context) ([]*model.MenuM, error)
 	GetByIDs(ctx context.Context, ids []uint) ([]*model.MenuM, error)
+	GetByIDsWithApis(ctx context.Context, ids []uint) ([]*model.MenuM, error)
 	GetByParentID(ctx context.Context, parentID uint) ([]*model.MenuM, error)
 	FilterByParentID(ctx context.Context, all []*model.MenuM, parentID uint) ([]*model.MenuM, error)
 	GetChildren(ctx context.Context, all []*model.MenuM, menu *model.MenuM) error
 	Tree(ctx context.Context, all []*model.MenuM) ([]*model.MenuM, error)
+	CreateWithApis(ctx context.Context, menu *model.MenuM) error
+	FirstOrCreateWithApis(ctx context.Context, menu *model.MenuM) error
+	UpdateWithApis(ctx context.Context, menu *model.MenuM) error
 }
 
 type sysMenuStore struct {
@@ -65,6 +71,14 @@ func (s *sysMenuStore) GetByID(ctx context.Context, id uint) (*model.MenuM, erro
 	return s.Get(ctx, where.F("id", id))
 }
 
+// GetByIDWithApis retrieves a menu by ID with preloaded Apis.
+func (s *sysMenuStore) GetByIDWithApis(ctx context.Context, id uint) (*model.MenuM, error) {
+	var ret model.MenuM
+	err := s.DB(ctx).Preload("Apis").Where("id = ?", id).First(&ret).Error
+
+	return &ret, err
+}
+
 // DeleteByID deletes a menu by ID.
 func (s *sysMenuStore) DeleteByID(ctx context.Context, id uint) error {
 	return s.Delete(ctx, where.F("id", id))
@@ -90,12 +104,37 @@ func (s *sysMenuStore) AllEnabled(ctx context.Context) ([]*model.MenuM, error) {
 	return ret, err
 }
 
+// AllWithApis retrieves all menus with preloaded Apis.
+func (s *sysMenuStore) AllWithApis(ctx context.Context) ([]*model.MenuM, error) {
+	var ret []*model.MenuM
+	err := s.DB(ctx).
+		Preload("Apis").
+		Order("sort asc").
+		Find(&ret).
+		Error
+
+	return ret, err
+}
+
 // GetByIDs retrieves enabled menus by IDs.
 func (s *sysMenuStore) GetByIDs(ctx context.Context, ids []uint) ([]*model.MenuM, error) {
 	var ret []*model.MenuM
 	err := s.DB(ctx).
 		Where("id IN ?", ids).
 		Where("hidden = ?", false).
+		Order("sort asc").
+		Find(&ret).
+		Error
+
+	return ret, err
+}
+
+// GetByIDsWithApis retrieves menus by IDs with preloaded Apis.
+func (s *sysMenuStore) GetByIDsWithApis(ctx context.Context, ids []uint) ([]*model.MenuM, error) {
+	var ret []*model.MenuM
+	err := s.DB(ctx).
+		Preload("Apis").
+		Where("id IN ?", ids).
 		Order("sort asc").
 		Find(&ret).
 		Error
@@ -167,4 +206,36 @@ func (s *sysMenuStore) Tree(ctx context.Context, all []*model.MenuM) ([]*model.M
 	}
 
 	return ret, nil
+}
+
+// CreateWithApis creates a menu with associated APIs.
+func (s *sysMenuStore) CreateWithApis(ctx context.Context, menu *model.MenuM) error {
+	return s.DB(ctx).Create(menu).Error
+}
+
+// FirstOrCreateWithApis finds or creates a menu by name, and updates API associations.
+func (s *sysMenuStore) FirstOrCreateWithApis(ctx context.Context, menu *model.MenuM) error {
+	var existing model.MenuM
+	err := s.DB(ctx).Where("name = ?", menu.Name).First(&existing).Error
+	if err == nil {
+		// Menu exists, update ID for parent lookup
+		menu.ID = existing.ID
+		return nil
+	}
+
+	// Create new menu with APIs
+	return s.DB(ctx).Create(menu).Error
+}
+
+// UpdateWithApis updates a menu and replaces its API associations.
+func (s *sysMenuStore) UpdateWithApis(ctx context.Context, menu *model.MenuM) error {
+	db := s.DB(ctx)
+
+	// Replace API associations
+	if err := db.Model(menu).Association("Apis").Replace(menu.Apis); err != nil {
+		return err
+	}
+
+	// Update menu fields
+	return db.Save(menu).Error
 }

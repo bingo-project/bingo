@@ -21,6 +21,11 @@ type Seeder interface {
 // Seeders is the registry of all available seeders.
 var Seeders = []Seeder{
 	AdminSeeder{},
+	ApiSeeder{},
+	RoleSeeder{},
+	MenuSeeder{},
+	RoleMenuSeeder{},
+	SystemSeeder{},
 }
 
 type DatabaseSeeder struct {

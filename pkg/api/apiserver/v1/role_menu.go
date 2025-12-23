@@ -4,7 +4,7 @@ import "github.com/bingo-project/component-base/util/gormutil"
 
 type RoleMenuInfo struct {
 	RoleName string `json:"roleName"`
-	MenuID   uint   `json:"menuID"`
+	MenuID   uint   `json:"menuId"`
 }
 
 type ListRoleMenuRequest struct {

@@ -241,7 +241,7 @@ func (ctrl *RoleHandler) SetMenus(c *gin.Context) {
 	}
 
 	roleName := c.Param("name")
-	err := ctrl.b.Roles().SetMenus(c, roleName, req.MenuIDs)
+	err := ctrl.b.Roles().SetMenus(c, ctrl.a, roleName, req.MenuIDs)
 	if err != nil {
 		core.Response(c, nil, err)
 

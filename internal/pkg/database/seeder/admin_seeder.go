@@ -31,14 +31,14 @@ func (AdminSeeder) Run() error {
 	}
 
 	// Init admin account.
-	err := store.S.Admin().Create(ctx, &admin)
-	if err != nil {
+	where := &model.AdminM{Username: admin.Username}
+	if err := store.S.Admin().FirstOrCreate(ctx, where, &admin); err != nil {
 		return err
 	}
 
 	// Init permission
 	authz, _ := auth.NewAuthorizer(store.S.DB(ctx), nil)
-	_, err = authz.Enforcer().AddNamedPolicy("p", known.RolePrefix+known.RoleRoot, "*", auth.AclDefaultMethods)
+	_, err := authz.Enforcer().AddNamedPolicy("p", known.RolePrefix+known.RoleRoot, "*", auth.AclDefaultMethods)
 	if err != nil {
 		return err
 	}

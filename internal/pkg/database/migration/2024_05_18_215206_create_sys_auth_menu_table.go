@@ -17,6 +17,9 @@ type CreateSysAuthMenuTable struct {
 	Title     string `gorm:"type:varchar(255);not null;default:''"`
 	Icon      string `gorm:"type:varchar(255);not null;default:''"`
 	Hidden    bool   `gorm:"type:tinyint;not null;default:0;comment:Is Hidden"`
+	Type      string `gorm:"type:varchar(20);not null;default:'menu'"`
+	AuthCode  string `gorm:"type:varchar(100);not null;default:''"`
+	Status    string `gorm:"type:varchar(20);not null;default:'enabled'"`
 	Component string `gorm:"type:varchar(255);not null;default:''"`
 	Redirect  string `gorm:"type:varchar(255);not null;default:''"`
 }

@@ -11,7 +11,7 @@ type MenuInfo struct {
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 
-	ParentID  int    `json:"parentID"`
+	ParentID  int    `json:"parentId"`
 	Name      string `json:"name"`
 	Path      string `json:"path"`
 	Sort      int    `json:"sort"`
@@ -20,8 +20,12 @@ type MenuInfo struct {
 	Hidden    bool   `json:"hidden"`
 	Component string `json:"component"`
 	Redirect  string `json:"redirect"`
+	Type      string `json:"type"`
+	AuthCode  string `json:"authCode"`
+	Status    string `json:"status"`
 
 	Children []MenuInfo `json:"children,omitempty"`
+	ApiIDs   []uint     `json:"apiIds,omitempty"`
 }
 
 type ListMenuRequest struct {
@@ -34,7 +38,7 @@ type ListMenuResponse struct {
 }
 
 type CreateMenuRequest struct {
-	ParentID  int    `json:"parentID" binding:"int"`
+	ParentID  int    `json:"parentId" binding:"int"`
 	Title     string `json:"title" binding:"min=1,max=255"`
 	Name      string `json:"name"`
 	Path      string `json:"path" binding:"required,min=1,max=255"`
@@ -42,10 +46,14 @@ type CreateMenuRequest struct {
 	Sort      int    `json:"sort" binding:"required,int"`
 	Icon      string `json:"icon" binding:"min=1,max=255"`
 	Component string `json:"component" binding:"required,min=1,max=255"`
+	Type      string `json:"type" binding:"omitempty,oneof=catalog menu button embedded link"`
+	AuthCode  string `json:"authCode" binding:"omitempty,max=100"`
+	Status    string `json:"status" binding:"omitempty,oneof=enabled disabled"`
+	ApiIDs    []uint `json:"apiIds"`
 }
 
 type UpdateMenuRequest struct {
-	ParentID  *uint   `json:"parentID" binding:"omitempty,number"`
+	ParentID  *uint   `json:"parentId" binding:"omitempty,number"`
 	Title     *string `json:"title" binding:"omitempty,min=1,max=255"`
 	Name      *string `json:"name"`
 	Path      *string `json:"path" binding:"omitempty,min=1,max=255"`
@@ -54,4 +62,8 @@ type UpdateMenuRequest struct {
 	Icon      *string `json:"icon" binding:"omitempty,min=1,max=255"`
 	Component *string `json:"component" binding:"omitempty,min=1,max=255"`
 	Redirect  *string `json:"redirect" binding:"omitempty,min=1,max=255"`
+	Type      *string `json:"type" binding:"omitempty,oneof=catalog menu button embedded link"`
+	AuthCode  *string `json:"authCode" binding:"omitempty,max=100"`
+	Status    *string `json:"status" binding:"omitempty,oneof=enabled disabled"`
+	ApiIDs    []uint  `json:"apiIds"`
 }

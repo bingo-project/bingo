@@ -58,7 +58,16 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 	var menuM model.MenuM
 	_ = copier.Copy(&menuM, req)
 
-	err := b.ds.SysMenu().Create(ctx, &menuM)
+	// Get APIs by IDs
+	if len(req.ApiIDs) > 0 {
+		apis, err := b.ds.SysApi().GetByIDs(ctx, req.ApiIDs)
+		if err != nil {
+			return nil, err
+		}
+		menuM.Apis = apis
+	}
+
+	err := b.ds.SysMenu().CreateWithApis(ctx, &menuM)
 	if err != nil {
 		// Check exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*' for key", err.Error()); match {
@@ -70,18 +79,24 @@ func (b *menuBiz) Create(ctx context.Context, req *v1.CreateMenuRequest) (*v1.Me
 
 	var resp v1.MenuInfo
 	_ = copier.Copy(&resp, menuM)
+	resp.ApiIDs = req.ApiIDs
 
 	return &resp, nil
 }
 
 func (b *menuBiz) Get(ctx context.Context, ID uint) (*v1.MenuInfo, error) {
-	menu, err := b.ds.SysMenu().GetByID(ctx, ID)
+	menu, err := b.ds.SysMenu().GetByIDWithApis(ctx, ID)
 	if err != nil {
 		return nil, errno.ErrNotFound
 	}
 
 	var resp v1.MenuInfo
 	_ = copier.Copy(&resp, menu)
+
+	// Extract API IDs
+	for _, api := range menu.Apis {
+		resp.ApiIDs = append(resp.ApiIDs, api.ID)
+	}
 
 	return &resp, nil
 }
@@ -128,12 +143,38 @@ func (b *menuBiz) Update(ctx context.Context, ID uint, req *v1.UpdateMenuRequest
 		menuM.Redirect = *req.Redirect
 	}
 
-	if err := b.ds.SysMenu().Update(ctx, menuM); err != nil {
-		return nil, err
+	if req.Type != nil {
+		menuM.Type = *req.Type
+	}
+
+	if req.AuthCode != nil {
+		menuM.AuthCode = *req.AuthCode
+	}
+
+	if req.Status != nil {
+		menuM.Status = *req.Status
+	}
+
+	// Update API associations if provided
+	if req.ApiIDs != nil {
+		apis, err := b.ds.SysApi().GetByIDs(ctx, req.ApiIDs)
+		if err != nil {
+			return nil, err
+		}
+		menuM.Apis = apis
+
+		if err := b.ds.SysMenu().UpdateWithApis(ctx, menuM); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := b.ds.SysMenu().Update(ctx, menuM); err != nil {
+			return nil, err
+		}
 	}
 
 	var resp v1.MenuInfo
 	_ = copier.Copy(&resp, menuM)
+	resp.ApiIDs = req.ApiIDs
 
 	return &resp, nil
 }

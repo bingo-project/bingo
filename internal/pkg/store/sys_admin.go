@@ -21,6 +21,7 @@ type AdminStore interface {
 	Delete(ctx context.Context, opts *where.Options) error
 	Get(ctx context.Context, opts *where.Options) (*model.AdminM, error)
 	List(ctx context.Context, opts *where.Options) (int64, []*model.AdminM, error)
+	FirstOrCreate(ctx context.Context, where any, obj *model.AdminM) error
 
 	AdminExpansion
 }

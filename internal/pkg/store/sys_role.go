@@ -23,6 +23,7 @@ type SysRoleStore interface {
 	Delete(ctx context.Context, opts *where.Options) error
 	Get(ctx context.Context, opts *where.Options) (*model.RoleM, error)
 	List(ctx context.Context, opts *where.Options) (int64, []*model.RoleM, error)
+	FirstOrCreate(ctx context.Context, where any, obj *model.RoleM) error
 
 	SysRoleExpansion
 }
