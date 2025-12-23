@@ -3,6 +3,7 @@ package system
 import (
 	"context"
 	"regexp"
+	"slices"
 
 	"github.com/jinzhu/copier"
 
@@ -106,38 +107,40 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	if req.Nickname != nil {
 		adminM.Nickname = *req.Nickname
 	}
-
 	if req.Email != nil {
 		adminM.Email = req.Email
 	}
-
 	if req.Phone != nil {
 		adminM.Phone = req.Phone
 	}
-
 	if req.Avatar != nil {
 		adminM.Avatar = *req.Avatar
 	}
-
 	if req.Status != "" {
 		adminM.Status = model.AdminStatus(req.Status)
 	}
-
-	// Update roles & current role
-	adminM.RoleName = ""
-	if len(req.RoleNames) > 0 {
-		roles, _ := b.ds.SysRole().GetByNames(ctx, req.RoleNames)
-		if len(adminM.Roles) > 0 {
-			adminM.RoleName = roles[0].Name
-		}
-	}
-
-	// Update password
 	if req.Password != nil {
 		adminM.Password, _ = auth.Encrypt(*req.Password)
 	}
 
-	if err := b.ds.Admin().Update(ctx, adminM); err != nil {
+	// Update roles
+	updateRoles := len(req.RoleNames) > 0
+	if updateRoles {
+		adminM.Roles, _ = b.ds.SysRole().GetByNames(ctx, req.RoleNames)
+		if len(adminM.Roles) == 0 {
+			return nil, errno.ErrInvalidArgument
+		}
+		if !slices.ContainsFunc(adminM.Roles, func(r model.RoleM) bool { return r.Name == adminM.RoleName }) {
+			adminM.RoleName = adminM.Roles[0].Name
+		}
+	}
+
+	if updateRoles {
+		err = b.ds.Admin().UpdateWithRoles(ctx, adminM)
+	} else {
+		err = b.ds.Admin().Update(ctx, adminM)
+	}
+	if err != nil {
 		return nil, err
 	}
 
@@ -158,8 +161,13 @@ func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRol
 	}
 
 	// Update roles & current role
-	adminM.RoleName = req.RoleNames[0]
 	adminM.Roles, _ = b.ds.SysRole().GetByNames(ctx, req.RoleNames)
+	if len(adminM.Roles) == 0 {
+		return nil, errno.ErrInvalidArgument
+	}
+	if !slices.ContainsFunc(adminM.Roles, func(r model.RoleM) bool { return r.Name == adminM.RoleName }) {
+		adminM.RoleName = adminM.Roles[0].Name
+	}
 
 	err = b.ds.Admin().UpdateWithRoles(ctx, adminM)
 	if err != nil {
@@ -169,7 +177,7 @@ func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRol
 	var resp v1.AdminInfo
 	_ = copier.Copy(&resp, adminM)
 
-	return &resp, err
+	return &resp, nil
 }
 
 func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.SwitchRoleRequest) (*v1.AdminInfo, error) {
