@@ -9,6 +9,7 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/known"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -59,6 +60,11 @@ func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.List
 }
 
 func (b *adminBiz) Create(ctx context.Context, req *v1.CreateAdminRequest) (*v1.AdminInfo, error) {
+	// Block creating root user
+	if req.Username == known.UserRoot {
+		return nil, errno.ErrInvalidArgument.WithMessage("该用户名不可用")
+	}
+
 	var adminM model.AdminM
 	_ = copier.Copy(&adminM, req)
 
@@ -151,6 +157,11 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 }
 
 func (b *adminBiz) Delete(ctx context.Context, username string) error {
+	// Hide root user existence
+	if username == known.UserRoot {
+		return errno.ErrNotFound
+	}
+
 	return b.ds.Admin().DeleteByUsername(ctx, username)
 }
 
@@ -184,6 +195,19 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return nil, errno.ErrNotFound
+	}
+
+	// Root user can switch back to root
+	if username == known.UserRoot && req.RoleName == known.UserRoot {
+		adminM.RoleName = known.UserRoot
+		err = b.ds.Admin().Update(ctx, adminM, "role_name")
+		if err != nil {
+			return nil, err
+		}
+
+		var resp v1.AdminInfo
+		_ = copier.Copy(&resp, adminM)
+		return &resp, nil
 	}
 
 	// Check if the user has the role
