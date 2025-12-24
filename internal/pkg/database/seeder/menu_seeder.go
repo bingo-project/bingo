@@ -52,6 +52,7 @@ var defaultMenus = []menuSeedData{
 	{ParentPath: "/system/admin", Title: "common.create", Name: "SystemAdminCreate", Type: "button", AuthCode: "System:Admin:Create", ApiRefs: []string{"POST:/v1/admins", "GET:/v1/roles/all"}},
 	{ParentPath: "/system/admin", Title: "common.edit", Name: "SystemAdminEdit", Type: "button", AuthCode: "System:Admin:Edit", ApiRefs: []string{"PUT:/v1/admins/:name", "GET:/v1/roles/all"}},
 	{ParentPath: "/system/admin", Title: "common.delete", Name: "SystemAdminDelete", Type: "button", AuthCode: "System:Admin:Delete", ApiRefs: []string{"DELETE:/v1/admins/:name"}},
+	{ParentPath: "/system/admin", Title: "system.admin.setRoles", Name: "SystemAdminSetRoles", Type: "button", AuthCode: "System:Admin:SetRoles", ApiRefs: []string{"PUT:/v1/admins/:name/roles", "GET:/v1/roles/all"}},
 
 	// About
 	{Title: "demos.vben.about", Name: "About", Path: "/about", Icon: "lucide:copyright", Component: "/_core/about/index", Sort: 9999, Type: "menu"},
