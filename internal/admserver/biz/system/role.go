@@ -124,16 +124,16 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 }
 
 func (b *roleBiz) Delete(ctx context.Context, roleName string) error {
-	if roleName == known.RoleRoot {
-		return errno.ErrPermissionDenied
+	if roleName == known.UserRoot {
+		return errno.ErrNotFound
 	}
 
 	return b.ds.SysRole().DeleteByName(ctx, roleName)
 }
 
 func (b *roleBiz) SetApis(ctx context.Context, a *auth.Authorizer, roleName string, apiIDs []uint) error {
-	if roleName == known.RoleRoot {
-		return errno.ErrPermissionDenied
+	if roleName == known.UserRoot {
+		return errno.ErrNotFound
 	}
 
 	// 1. Get apis by ids
@@ -196,8 +196,8 @@ func (b *roleBiz) GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName st
 }
 
 func (b *roleBiz) SetMenus(ctx context.Context, a *auth.Authorizer, roleName string, menuIDs []uint) error {
-	if roleName == known.RoleRoot {
-		return errno.ErrPermissionDenied
+	if roleName == known.UserRoot {
+		return errno.ErrNotFound
 	}
 
 	roleM, err := b.ds.SysRole().GetByName(ctx, roleName)

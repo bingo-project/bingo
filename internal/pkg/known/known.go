@@ -21,7 +21,6 @@ const (
 
 // 角色常量.
 const (
-	RoleRoot   = "root"
 	RoleAdmin  = "admin"
 	RoleUser   = "user"
 	RolePrefix = "role::" // Casbin 规则中的角色前缀.

@@ -3,8 +3,6 @@ package seeder
 import (
 	"context"
 
-	"github.com/bingo-project/bingo/internal/pkg/auth"
-	"github.com/bingo-project/bingo/internal/pkg/known"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 )
@@ -30,17 +28,20 @@ func (AdminSeeder) Run() error {
 		RoleName: "root",
 	}
 
-	// Init admin account.
+	// Init admin account
 	where := &model.AdminM{Username: admin.Username}
 	if err := store.S.Admin().FirstOrCreate(ctx, where, &admin); err != nil {
 		return err
 	}
 
-	// Init permission
-	authz, _ := auth.NewAuthorizer(store.S.DB(ctx), nil)
-	_, err := authz.Enforcer().AddNamedPolicy("p", known.RolePrefix+known.RoleRoot, "*", auth.AclDefaultMethods)
-	if err != nil {
-		return err
+	// Associate super-admin role for role switching
+	roles, _ := store.S.SysRole().GetByNames(ctx, []string{"super-admin"})
+	if len(roles) > 0 {
+		adminM, _ := store.S.Admin().GetByUsername(ctx, admin.Username)
+		if adminM != nil {
+			adminM.Roles = roles
+			_ = store.S.Admin().UpdateWithRoles(ctx, adminM)
+		}
 	}
 
 	return nil
