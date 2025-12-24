@@ -17,7 +17,7 @@ bot:
 
 # MySQL
 mysql:
-  host: mysql:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
+  host: localhost:3306 # MySQL 机器 ip 和端口，默认 127.0.0.1:3306
   username: root # MySQL 用户名(建议授权最小权限集)
   password: root # MySQL 用户密码
   database: bingo # 系统所用的数据库名
@@ -28,7 +28,7 @@ mysql:
 
 # Redis
 redis:
-  host: redis:6379 # redis 地址，默认 127.0.0.1:6379
+  host: localhost:6379 # redis 地址，默认 127.0.0.1:6379
   password:  # redis 密码
   database: 1 # redis 数据库
 
