@@ -60,7 +60,7 @@ func (ctrl *AuthHandler) Menus(c *gin.Context) {
 
 	admin, _ := contextx.UserInfo[*v1.AdminInfo](c.Request.Context())
 
-	resp, err := ctrl.b.Roles().GetMenuTree(c, admin.RoleName)
+	resp, err := ctrl.b.Roles().GetMenuTree(c, admin.Username, admin.RoleName)
 	if err != nil {
 		core.Response(c, nil, err)
 

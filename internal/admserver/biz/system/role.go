@@ -26,7 +26,7 @@ type RoleBiz interface {
 	GetApiIDs(ctx context.Context, a *auth.Authorizer, roleName string) (v1.GetApiIDsResponse, error)
 	SetMenus(ctx context.Context, a *auth.Authorizer, roleName string, menuIDs []uint) error
 	GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuIDsResponse, error)
-	GetMenuTree(ctx context.Context, roleName string) ([]*v1.MenuInfo, error)
+	GetMenuTree(ctx context.Context, username, roleName string) ([]*v1.MenuInfo, error)
 
 	All(ctx context.Context) ([]*v1.RoleInfo, error)
 }
@@ -61,6 +61,11 @@ func (b *roleBiz) List(ctx context.Context, req *v1.ListRoleRequest) (*v1.ListRo
 }
 
 func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*v1.RoleInfo, error) {
+	// Block creating root role
+	if req.Name == known.UserRoot {
+		return nil, errno.ErrInvalidArgument.WithMessage("该名称不可用")
+	}
+
 	var roleM model.RoleM
 	_ = copier.Copy(&roleM, req)
 
@@ -268,9 +273,9 @@ func (b *roleBiz) GetMenuIDs(ctx context.Context, roleName string) (v1.GetMenuID
 	return b.ds.SysRoleMenu().GetMenuIDsByRoleName(ctx, roleName)
 }
 
-func (b *roleBiz) GetMenuTree(ctx context.Context, roleName string) (ret []*v1.MenuInfo, err error) {
+func (b *roleBiz) GetMenuTree(ctx context.Context, username, roleName string) (ret []*v1.MenuInfo, err error) {
 	var menus []*model.MenuM
-	if roleName == known.RoleRoot {
+	if known.IsRoot(username, roleName) {
 		menus, _ = b.ds.SysMenu().AllEnabled(ctx)
 	} else {
 		// Auto-fill parent menu
