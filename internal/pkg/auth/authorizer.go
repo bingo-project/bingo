@@ -14,6 +14,9 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/bingo-project/bingo/internal/pkg/core"
+	"github.com/bingo-project/bingo/internal/pkg/known"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
 	"github.com/bingo-project/bingo/pkg/errorsx"
 )
 
@@ -113,6 +116,13 @@ func (a *Authorizer) Enforcer() *casbin.SyncedEnforcer {
 // AuthzMiddleware returns a Gin middleware that checks authorization.
 func AuthzMiddleware(a *Authorizer) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Root user bypass: skip authorization check if user is root
+		admin, ok := contextx.UserInfo[*v1.AdminInfo](c.Request.Context())
+		if ok && known.IsRoot(admin.Username, admin.RoleName) {
+			c.Next()
+			return
+		}
+
 		obj := c.Request.URL.Path
 		act := c.Request.Method
 
