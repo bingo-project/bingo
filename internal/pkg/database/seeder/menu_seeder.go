@@ -36,8 +36,8 @@ var defaultMenus = []menuSeedData{
 
 	// Menu management
 	{ParentPath: "/system", Title: "system.menu.title", Name: "SystemMenu", Path: "/system/menu", Icon: "carbon:menu", Component: "/system/menu/list", Sort: 1, Type: "menu", AuthCode: "System:Menu:List", ApiRefs: []string{"GET:/v1/menus"}},
-	{ParentPath: "/system/menu", Title: "common.create", Name: "SystemMenuCreate", Type: "button", AuthCode: "System:Menu:Create", ApiRefs: []string{"POST:/v1/menus"}},
-	{ParentPath: "/system/menu", Title: "common.edit", Name: "SystemMenuEdit", Type: "button", AuthCode: "System:Menu:Edit", ApiRefs: []string{"PUT:/v1/menus/:id"}},
+	{ParentPath: "/system/menu", Title: "common.create", Name: "SystemMenuCreate", Type: "button", AuthCode: "System:Menu:Create", ApiRefs: []string{"POST:/v1/menus", "GET:/v1/menus/tree", "GET:/v1/apis/tree"}},
+	{ParentPath: "/system/menu", Title: "common.edit", Name: "SystemMenuEdit", Type: "button", AuthCode: "System:Menu:Edit", ApiRefs: []string{"PUT:/v1/menus/:id", "GET:/v1/menus/:id", "GET:/v1/menus/tree", "GET:/v1/apis/tree"}},
 	{ParentPath: "/system/menu", Title: "common.delete", Name: "SystemMenuDelete", Type: "button", AuthCode: "System:Menu:Delete", ApiRefs: []string{"DELETE:/v1/menus/:id"}},
 
 	// Role management
@@ -49,8 +49,8 @@ var defaultMenus = []menuSeedData{
 
 	// Admin management
 	{ParentPath: "/system", Title: "system.admin.title", Name: "SystemAdmin", Path: "/system/admin", Icon: "carbon:user-admin", Component: "/system/admin/list", Sort: 3, Type: "menu", AuthCode: "System:Admin:List", ApiRefs: []string{"GET:/v1/admins"}},
-	{ParentPath: "/system/admin", Title: "common.create", Name: "SystemAdminCreate", Type: "button", AuthCode: "System:Admin:Create", ApiRefs: []string{"POST:/v1/admins"}},
-	{ParentPath: "/system/admin", Title: "common.edit", Name: "SystemAdminEdit", Type: "button", AuthCode: "System:Admin:Edit", ApiRefs: []string{"PUT:/v1/admins/:name"}},
+	{ParentPath: "/system/admin", Title: "common.create", Name: "SystemAdminCreate", Type: "button", AuthCode: "System:Admin:Create", ApiRefs: []string{"POST:/v1/admins", "GET:/v1/roles/all"}},
+	{ParentPath: "/system/admin", Title: "common.edit", Name: "SystemAdminEdit", Type: "button", AuthCode: "System:Admin:Edit", ApiRefs: []string{"PUT:/v1/admins/:name", "GET:/v1/roles/all"}},
 	{ParentPath: "/system/admin", Title: "common.delete", Name: "SystemAdminDelete", Type: "button", AuthCode: "System:Admin:Delete", ApiRefs: []string{"DELETE:/v1/admins/:name"}},
 
 	// About
