@@ -40,6 +40,32 @@ func NewAdmin(ds store.IStore) *adminBiz {
 	return &adminBiz{ds: ds}
 }
 
+// getAllRolesForRoot returns virtual root role + all real roles for root user.
+func (b *adminBiz) getAllRolesForRoot(ctx context.Context) []v1.RoleInfo {
+	rootRole := v1.RoleInfo{
+		Name:        known.UserRoot,
+		Description: "Root",
+		Status:      string(model.AdminStatusEnabled),
+	}
+
+	roles := []v1.RoleInfo{rootRole}
+
+	allRoles, err := b.ds.SysRole().All(ctx)
+	if err != nil {
+		return roles
+	}
+
+	for _, r := range allRoles {
+		roles = append(roles, v1.RoleInfo{
+			Name:        r.Name,
+			Description: r.Description,
+			Status:      string(r.Status),
+		})
+	}
+
+	return roles
+}
+
 func (b *adminBiz) List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListAdminResponse, error) {
 	count, list, err := b.ds.Admin().ListWithRequest(ctx, req)
 	if err != nil {
@@ -101,14 +127,9 @@ func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, err
 	var resp v1.AdminInfo
 	_ = copier.Copy(&resp, admin)
 
-	// Add virtual root role for root user
+	// Root user gets virtual root role + all real roles
 	if username == known.UserRoot {
-		rootRole := v1.RoleInfo{
-			Name:        known.UserRoot,
-			Description: "Root",
-			Status:      string(model.AdminStatusEnabled),
-		}
-		resp.Roles = append([]v1.RoleInfo{rootRole}, resp.Roles...)
+		resp.Roles = b.getAllRolesForRoot(ctx)
 	}
 
 	return &resp, nil
@@ -139,8 +160,8 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 		adminM.Password, _ = auth.Encrypt(*req.Password)
 	}
 
-	// Update roles
-	updateRoles := len(req.RoleNames) > 0
+	// Update roles (skip for root user - root role is virtual)
+	updateRoles := len(req.RoleNames) > 0 && username != known.UserRoot
 	if updateRoles {
 		adminM.Roles, _ = b.ds.SysRole().GetByNames(ctx, req.RoleNames)
 		if len(adminM.Roles) == 0 {
@@ -175,6 +196,11 @@ func (b *adminBiz) Delete(ctx context.Context, username string) error {
 }
 
 func (b *adminBiz) SetRoles(ctx context.Context, username string, req *v1.SetRolesRequest) (*v1.AdminInfo, error) {
+	// Block setting roles for root user (root role is virtual)
+	if username == known.UserRoot {
+		return nil, errno.ErrPermissionDenied
+	}
+
 	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
 	if err != nil {
 		return nil, errno.ErrNotFound

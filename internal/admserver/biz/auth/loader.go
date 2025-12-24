@@ -36,20 +36,41 @@ func (l *AdminLoader) LoadUser(ctx context.Context, userID string) (context.Cont
 	var adminInfo v1.AdminInfo
 	_ = copier.Copy(&adminInfo, admin)
 
-	// Add virtual root role for root user
+	// Root user gets virtual root role + all real roles
 	if userID == known.UserRoot {
-		rootRole := v1.RoleInfo{
-			Name:        known.UserRoot,
-			Description: "Root",
-			Status:      string(model.AdminStatusEnabled),
-		}
-		adminInfo.Roles = append([]v1.RoleInfo{rootRole}, adminInfo.Roles...)
+		adminInfo.Roles = l.getAllRolesForRoot(ctx)
 	}
 
 	ctx = contextx.WithUserInfo(ctx, &adminInfo)
 	ctx = contextx.WithUsername(ctx, adminInfo.Username)
 
 	return ctx, nil
+}
+
+// getAllRolesForRoot returns virtual root role + all real roles for root user.
+func (l *AdminLoader) getAllRolesForRoot(ctx context.Context) []v1.RoleInfo {
+	rootRole := v1.RoleInfo{
+		Name:        known.UserRoot,
+		Description: "Root",
+		Status:      string(model.AdminStatusEnabled),
+	}
+
+	roles := []v1.RoleInfo{rootRole}
+
+	allRoles, err := l.store.SysRole().All(ctx)
+	if err != nil {
+		return roles
+	}
+
+	for _, r := range allRoles {
+		roles = append(roles, v1.RoleInfo{
+			Name:        r.Name,
+			Description: r.Description,
+			Status:      string(r.Status),
+		})
+	}
+
+	return roles
 }
 
 // AdminSubjectResolver resolves authorization subject from admin info.
