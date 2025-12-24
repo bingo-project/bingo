@@ -92,11 +92,11 @@ func (s *sysMenuStore) All(ctx context.Context) ([]*model.MenuM, error) {
 	return ret, err
 }
 
-// AllEnabled retrieves all enabled (visible) menus ordered by sort.
+// AllEnabled retrieves all enabled menus ordered by sort.
+// Hidden field is not filtered here as it's a frontend display concern.
 func (s *sysMenuStore) AllEnabled(ctx context.Context) ([]*model.MenuM, error) {
 	var ret []*model.MenuM
 	err := s.DB(ctx).
-		Where("hidden = ?", false).
 		Where("status = ?", "enabled").
 		Order("sort asc").
 		Find(&ret).
@@ -118,11 +118,11 @@ func (s *sysMenuStore) AllWithApis(ctx context.Context) ([]*model.MenuM, error) 
 }
 
 // GetByIDs retrieves enabled menus by IDs.
+// Hidden field is not filtered here as it's a frontend display concern.
 func (s *sysMenuStore) GetByIDs(ctx context.Context, ids []uint) ([]*model.MenuM, error) {
 	var ret []*model.MenuM
 	err := s.DB(ctx).
 		Where("id IN ?", ids).
-		Where("hidden = ?", false).
 		Where("status = ?", "enabled").
 		Order("sort asc").
 		Find(&ret).
