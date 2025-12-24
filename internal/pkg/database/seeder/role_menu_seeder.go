@@ -20,12 +20,8 @@ type roleMenuAssignment struct {
 
 var roleMenuAssignments = []roleMenuAssignment{
 	{
-		RoleName:   "root",
-		AllMenus:   true,
-	},
-	{
-		RoleName:   "super-admin",
-		AllMenus:   true,
+		RoleName: "super-admin",
+		AllMenus: true,
 	},
 	{
 		RoleName: "admin",

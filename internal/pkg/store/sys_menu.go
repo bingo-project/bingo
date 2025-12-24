@@ -218,8 +218,11 @@ func (s *sysMenuStore) CreateWithApis(ctx context.Context, menu *model.MenuM) er
 // FirstOrCreateWithApis finds or creates a menu by name, and updates API associations.
 func (s *sysMenuStore) FirstOrCreateWithApis(ctx context.Context, menu *model.MenuM) error {
 	var existing model.MenuM
-	err := s.DB(ctx).Where("name = ?", menu.Name).First(&existing).Error
-	if err == nil {
+	result := s.DB(ctx).Where("name = ?", menu.Name).Find(&existing)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected > 0 {
 		// Menu exists, update ID for parent lookup
 		menu.ID = existing.ID
 		return nil
