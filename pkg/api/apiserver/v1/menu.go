@@ -43,8 +43,8 @@ type CreateMenuRequest struct {
 	Name      string `json:"name"`
 	Path      string `json:"path" binding:"required,min=1,max=255"`
 	Hidden    bool   `json:"hidden"`
-	Sort      int    `json:"sort" binding:"required"`
-	Icon      string `json:"icon" binding:"min=1,max=255"`
+	Sort      int    `json:"sort"`
+	Icon      string `json:"icon" binding:"omitempty,min=1,max=255"`
 	Component string `json:"component" binding:"required,min=1,max=255"`
 	Type      string `json:"type" binding:"omitempty,oneof=catalog menu button embedded link"`
 	AuthCode  string `json:"authCode" binding:"omitempty,max=100"`
