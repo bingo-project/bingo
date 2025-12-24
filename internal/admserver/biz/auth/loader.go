@@ -35,6 +35,16 @@ func (l *AdminLoader) LoadUser(ctx context.Context, userID string) (context.Cont
 	var adminInfo v1.AdminInfo
 	_ = copier.Copy(&adminInfo, admin)
 
+	// Add virtual root role for root user
+	if userID == known.UserRoot {
+		rootRole := v1.RoleInfo{
+			Name:        known.UserRoot,
+			Description: "Root",
+			Status:      "enabled",
+		}
+		adminInfo.Roles = append([]v1.RoleInfo{rootRole}, adminInfo.Roles...)
+	}
+
 	ctx = contextx.WithUserInfo(ctx, &adminInfo)
 	ctx = contextx.WithUsername(ctx, adminInfo.Username)
 
