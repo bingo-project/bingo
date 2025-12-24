@@ -103,3 +103,4 @@ bingoctl.yaml
 node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+.worktrees/
