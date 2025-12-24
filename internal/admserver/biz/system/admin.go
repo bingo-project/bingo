@@ -106,7 +106,7 @@ func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, err
 		rootRole := v1.RoleInfo{
 			Name:        known.UserRoot,
 			Description: "Root",
-			Status:      "enabled",
+			Status:      string(model.AdminStatusEnabled),
 		}
 		resp.Roles = append([]v1.RoleInfo{rootRole}, resp.Roles...)
 	}

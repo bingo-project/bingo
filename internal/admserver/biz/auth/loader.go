@@ -9,6 +9,7 @@ import (
 	"github.com/jinzhu/copier"
 
 	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 	"github.com/bingo-project/bingo/pkg/contextx"
@@ -40,7 +41,7 @@ func (l *AdminLoader) LoadUser(ctx context.Context, userID string) (context.Cont
 		rootRole := v1.RoleInfo{
 			Name:        known.UserRoot,
 			Description: "Root",
-			Status:      "enabled",
+			Status:      string(model.AdminStatusEnabled),
 		}
 		adminInfo.Roles = append([]v1.RoleInfo{rootRole}, adminInfo.Roles...)
 	}
