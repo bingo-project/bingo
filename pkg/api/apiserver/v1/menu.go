@@ -38,12 +38,12 @@ type ListMenuResponse struct {
 }
 
 type CreateMenuRequest struct {
-	ParentID  int    `json:"parentId" binding:"int"`
+	ParentID  int    `json:"parentId"`
 	Title     string `json:"title" binding:"min=1,max=255"`
 	Name      string `json:"name"`
 	Path      string `json:"path" binding:"required,min=1,max=255"`
 	Hidden    bool   `json:"hidden"`
-	Sort      int    `json:"sort" binding:"required,int"`
+	Sort      int    `json:"sort" binding:"required"`
 	Icon      string `json:"icon" binding:"min=1,max=255"`
 	Component string `json:"component" binding:"required,min=1,max=255"`
 	Type      string `json:"type" binding:"omitempty,oneof=catalog menu button embedded link"`
