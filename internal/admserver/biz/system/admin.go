@@ -101,6 +101,16 @@ func (b *adminBiz) Get(ctx context.Context, username string) (*v1.AdminInfo, err
 	var resp v1.AdminInfo
 	_ = copier.Copy(&resp, admin)
 
+	// Add virtual root role for root user
+	if username == known.UserRoot {
+		rootRole := v1.RoleInfo{
+			Name:        known.UserRoot,
+			Description: "Root",
+			Status:      "enabled",
+		}
+		resp.Roles = append([]v1.RoleInfo{rootRole}, resp.Roles...)
+	}
+
 	return &resp, nil
 }
 
