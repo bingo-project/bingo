@@ -35,7 +35,7 @@ var defaultMenus = []menuSeedData{
 	{Title: "system.title", Name: "System", Path: "/system", Icon: "carbon:settings", Sort: 9997, Type: "catalog"},
 
 	// Menu management
-	{ParentPath: "/system", Title: "system.menu.title", Name: "SystemMenu", Path: "/system/menu", Icon: "carbon:menu", Component: "/system/menu/list", Sort: 1, Type: "menu", AuthCode: "System:Menu:List", ApiRefs: []string{"GET:/v1/menus"}},
+	{ParentPath: "/system", Title: "system.menu.title", Name: "SystemMenu", Path: "/system/menu", Icon: "carbon:menu", Component: "/system/menu/list", Sort: 1, Type: "menu", AuthCode: "System:Menu:List", ApiRefs: []string{"GET:/v1/menus", "GET:/v1/menus/tree"}},
 	{ParentPath: "/system/menu", Title: "common.create", Name: "SystemMenuCreate", Type: "button", AuthCode: "System:Menu:Create", ApiRefs: []string{"POST:/v1/menus", "GET:/v1/menus/tree", "GET:/v1/apis/tree"}},
 	{ParentPath: "/system/menu", Title: "common.edit", Name: "SystemMenuEdit", Type: "button", AuthCode: "System:Menu:Edit", ApiRefs: []string{"PUT:/v1/menus/:id", "GET:/v1/menus/:id", "GET:/v1/menus/tree", "GET:/v1/apis/tree"}},
 	{ParentPath: "/system/menu", Title: "common.delete", Name: "SystemMenuDelete", Type: "button", AuthCode: "System:Menu:Delete", ApiRefs: []string{"DELETE:/v1/menus/:id"}},
