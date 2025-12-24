@@ -16,7 +16,7 @@ type CreateSysAuthAdminTable struct {
 	Email    *string `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
 	Phone    *string `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
 	Avatar   string  `gorm:"type:varchar(255);not null;default:''"`
-	Status   uint    `gorm:"type:tinyint;default:1;comment:状态：1正常，2冻结"`
+	Status   string  `gorm:"type:varchar(20);not null;default:'enabled'"`
 	RoleName string  `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
 }
 
