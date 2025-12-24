@@ -20,6 +20,8 @@ func NewSchedulerCommand() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			verflag.PrintAndExitIfRequested()
+
+			initConfig()
 			defer log.Sync() // Sync 将缓存中的日志刷新到磁盘文件中
 
 			return run()
@@ -35,11 +37,6 @@ func NewSchedulerCommand() *cobra.Command {
 			return nil
 		},
 	}
-
-	// 以下设置，使得 InitConfig 函数在每个命令运行时都会被调用以读取配置
-	cobra.OnInitialize(initConfig)
-
-	// 在这里您将定义标志和配置设置。
 
 	// Cobra 支持持久性标志(PersistentFlag)，该标志可用于它所分配的命令以及该命令下的每个子命令
 	cmd.PersistentFlags().StringVarP(&bootstrap.CfgFile, "config", "c", "", "The path to the configuration file. Empty string for no configuration file.")

@@ -34,10 +34,10 @@ endif
 GIT_COMMIT:=$(shell git rev-parse HEAD)
 
 GO_LDFLAGS += \
-	-X $(VERSION_PACKAGE).gitVersion=$(VERSION) \
-	-X $(VERSION_PACKAGE).gitCommit=$(GIT_COMMIT) \
-	-X $(VERSION_PACKAGE).gitTreeState=$(GIT_TREE_STATE) \
-	-X $(VERSION_PACKAGE).buildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+	-X $(VERSION_PACKAGE).GitVersion=$(VERSION) \
+	-X $(VERSION_PACKAGE).GitCommit=$(GIT_COMMIT) \
+	-X $(VERSION_PACKAGE).GitTreeState=$(GIT_TREE_STATE) \
+	-X $(VERSION_PACKAGE).BuildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 # The OS can be linux/darwin/windows when building binaries
 PLATFORMS ?= linux_amd64 linux_arm64 darwin_amd64 darwin_arm64 windows_amd64

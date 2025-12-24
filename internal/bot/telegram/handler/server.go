@@ -42,9 +42,7 @@ func (ctrl *ServerHandler) Healthz(c telebot.Context) error {
 func (ctrl *ServerHandler) Version(c telebot.Context) error {
 	log.C(mw.Ctx).Infow("Version function called")
 
-	v := version.Get().GitVersion
-
-	return c.Send(v)
+	return c.Send(version.Get().GitVersion)
 }
 
 func (ctrl *ServerHandler) ToggleMaintenance(c telebot.Context) error {

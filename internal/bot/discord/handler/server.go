@@ -48,9 +48,7 @@ func (ctrl *ServerHandler) Healthz() {
 func (ctrl *ServerHandler) Version() {
 	log.C(mw.Ctx).Infow("Version function called")
 
-	v := version.Get().GitVersion
-
-	ctrl.WriteResponse(v)
+	ctrl.WriteResponse(version.Get().GitVersion)
 }
 
 func (ctrl *ServerHandler) ToggleMaintenance() {

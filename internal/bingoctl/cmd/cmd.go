@@ -6,6 +6,7 @@ import (
 
 	"github.com/bingo-project/component-base/cli/genericclioptions"
 	"github.com/bingo-project/component-base/cli/templates"
+	"github.com/bingo-project/component-base/cmd/options"
 	"github.com/spf13/cobra"
 
 	"github.com/bingo-project/bingo/internal/bingoctl/cmd/key"
@@ -57,6 +58,7 @@ func NewBingoCtlCommand(in io.Reader, out, err io.Writer) *cobra.Command {
 
 	// Add commands
 	cmds.AddCommand(version.NewCmdVersion(ioStreams))
+	cmds.AddCommand(options.NewCmdOptions())
 
 	return cmds
 }
