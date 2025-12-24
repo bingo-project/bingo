@@ -11,7 +11,6 @@ import (
 )
 
 var defaultRoles = []model.RoleM{
-	{Name: "root", Description: "Root", Status: "enabled"},
 	{Name: "super-admin", Description: "Super admin", Status: "enabled"},
 	{Name: "admin", Description: "System administrator", Status: "enabled"},
 }
