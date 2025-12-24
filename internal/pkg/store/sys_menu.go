@@ -97,6 +97,7 @@ func (s *sysMenuStore) AllEnabled(ctx context.Context) ([]*model.MenuM, error) {
 	var ret []*model.MenuM
 	err := s.DB(ctx).
 		Where("hidden = ?", false).
+		Where("status = ?", "enabled").
 		Order("sort asc").
 		Find(&ret).
 		Error
@@ -122,6 +123,7 @@ func (s *sysMenuStore) GetByIDs(ctx context.Context, ids []uint) ([]*model.MenuM
 	err := s.DB(ctx).
 		Where("id IN ?", ids).
 		Where("hidden = ?", false).
+		Where("status = ?", "enabled").
 		Order("sort asc").
 		Find(&ret).
 		Error
