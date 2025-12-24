@@ -167,9 +167,8 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 }
 
 func (b *adminBiz) Delete(ctx context.Context, username string) error {
-	// Hide root user existence
 	if username == known.UserRoot {
-		return errno.ErrNotFound
+		return errno.ErrPermissionDenied
 	}
 
 	return b.ds.Admin().DeleteByUsername(ctx, username)
