@@ -13,6 +13,12 @@ const (
 	XForwardedFor = "x-forwarded-for"
 )
 
+// 用户常量.
+const (
+	// UserRoot is the reserved root username
+	UserRoot = "root"
+)
+
 // 角色常量.
 const (
 	RoleRoot   = "root"
@@ -20,6 +26,11 @@ const (
 	RoleUser   = "user"
 	RolePrefix = "role::" // Casbin 规则中的角色前缀.
 )
+
+// IsRoot checks if the user is root and currently in root privilege mode.
+func IsRoot(username, roleName string) bool {
+	return username == UserRoot && roleName == UserRoot
+}
 
 // 并发与批量处理参数.
 const (
