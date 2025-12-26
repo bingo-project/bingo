@@ -17,27 +17,41 @@ func MapApiRouters(g *gin.Engine) {
 
 	authHandler := authhandler.NewAuthHandler(store.S, nil)
 
-	// Login
-	v1.POST("auth/code/email", authHandler.SendEmailCode)
-	v1.POST("auth/register", authHandler.Register)
-	v1.POST("auth/login", authHandler.Login)
+	// Auth routes
+	authGroup := v1.Group("/auth")
+	{
+		// 公开接口
+		authGroup.POST("/register", authHandler.Register)
+		authGroup.POST("/login", authHandler.Login)
+		authGroup.POST("/code", authHandler.SendCode)
+		authGroup.POST("/code/email", authHandler.SendEmailCode)
+		authGroup.POST("/reset-password", authHandler.ResetPassword)
 
-	// Login by Address
-	v1.GET("auth/nonce", authHandler.Nonce)
-	v1.POST("auth/login/address", authHandler.LoginByAddress)
+		// Login by Address
+		authGroup.GET("/nonce", authHandler.Nonce)
+		authGroup.POST("/login/address", authHandler.LoginByAddress)
 
-	// Login by Third Party
-	v1.GET("auth/providers", authHandler.Providers)
-	v1.GET("auth/login/:provider", authHandler.GetAuthCode)
-	v1.POST("auth/login/:provider", authHandler.LoginByProvider)
+		// OAuth
+		authGroup.GET("/providers", authHandler.Providers)
+		authGroup.GET("/login/:provider", authHandler.GetAuthCode)
+		authGroup.POST("/login/:provider", authHandler.LoginByProvider)
+	}
 
 	// Authentication middleware
 	loader := bizauth.NewUserLoader(store.S)
 	authn := auth.New(loader)
 	v1.Use(auth.Middleware(authn))
 
-	// Auth
-	v1.GET("auth/user-info", authHandler.UserInfo)             // 获取登录账号信息
-	v1.PUT("auth/change-password", authHandler.ChangePassword) // 修改用户密码
-	v1.POST("auth/bind/:provider", authHandler.BindProvider)
+	// 需要登录的接口
+	authAuthed := v1.Group("/auth")
+	{
+		authAuthed.GET("/user-info", authHandler.UserInfo)
+		authAuthed.PUT("/user", authHandler.UpdateProfile)
+		authAuthed.PUT("/change-password", authHandler.ChangePassword)
+
+		// 社交账号管理
+		authAuthed.GET("/bindings", authHandler.ListBindings)
+		authAuthed.POST("/bindings/:provider", authHandler.BindProvider)
+		authAuthed.DELETE("/bindings/:provider", authHandler.Unbind)
+	}
 }
