@@ -47,6 +47,15 @@ redis:
   password:  # redis 密码
   database: 1 # redis 数据库
 
+# 认证配置
+auth:
+  defaulttype: email # 默认认证类型
+  allowedtypes: # 允许的认证类型
+    - email
+    - phone
+  emailverification: true # 邮箱验证
+  phoneverification: true # 手机验证
+
 # JWT 配置
 jwt:
   secretKey: dfVpOK8LZeJLZHYmHdb1VdyRrACKpqoo # 服务端密钥
