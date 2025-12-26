@@ -28,6 +28,10 @@ type UserAccountExpansion interface {
 	CheckExist(ctx context.Context, provider, accountID string) bool
 	GetAccount(ctx context.Context, provider, accountID string) (*model.UserAccount, error)
 	FirstOrCreate(ctx context.Context, where model.UserAccount, account *model.UserAccount) error
+	FindByUID(ctx context.Context, uid string) ([]*model.UserAccount, error)
+	FindByUIDAndProvider(ctx context.Context, uid, provider string) (*model.UserAccount, error)
+	CountByUID(ctx context.Context, uid string) (int64, error)
+	DeleteByID(ctx context.Context, id uint) error
 }
 
 type userAccountStore struct {
@@ -107,4 +111,30 @@ func (s *userAccountStore) GetAccount(ctx context.Context, provider, accountID s
 // FirstOrCreate finds first record matching the given conditions or creates a new one.
 func (s *userAccountStore) FirstOrCreate(ctx context.Context, where model.UserAccount, account *model.UserAccount) error {
 	return s.DB(ctx).Where(where).FirstOrCreate(account).Error
+}
+
+// FindByUID retrieves all accounts for a user by UID.
+func (s *userAccountStore) FindByUID(ctx context.Context, uid string) ([]*model.UserAccount, error) {
+	var ret []*model.UserAccount
+	err := s.DB(ctx).Where("uid = ?", uid).Find(&ret).Error
+	return ret, err
+}
+
+// FindByUIDAndProvider retrieves a user account by UID and provider.
+func (s *userAccountStore) FindByUIDAndProvider(ctx context.Context, uid, provider string) (*model.UserAccount, error) {
+	var ret model.UserAccount
+	err := s.DB(ctx).Where("uid = ?", uid).Where("provider = ?", provider).Take(&ret).Error
+	return &ret, err
+}
+
+// CountByUID counts the number of accounts for a user by UID.
+func (s *userAccountStore) CountByUID(ctx context.Context, uid string) (int64, error) {
+	var count int64
+	err := s.DB(ctx).Model(&model.UserAccount{}).Where("uid = ?", uid).Count(&count).Error
+	return count, err
+}
+
+// DeleteByID deletes a user account by ID.
+func (s *userAccountStore) DeleteByID(ctx context.Context, id uint) error {
+	return s.DB(ctx).Delete(&model.UserAccount{}, id).Error
 }
