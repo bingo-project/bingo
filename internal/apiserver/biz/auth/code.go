@@ -24,6 +24,7 @@ const (
 	CodeSceneRegister      CodeScene = "register"
 	CodeSceneResetPassword CodeScene = "reset_password"
 	CodeSceneBind          CodeScene = "bind"
+	CodeSceneSecurity      CodeScene = "security"
 )
 
 // CodeBiz 验证码业务接口

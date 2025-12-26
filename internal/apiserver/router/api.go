@@ -54,4 +54,22 @@ func MapApiRouters(g *gin.Engine) {
 		authAuthed.POST("/bindings/:provider", authHandler.BindProvider)
 		authAuthed.DELETE("/bindings/:provider", authHandler.Unbind)
 	}
+
+	// Security settings
+	securityHandler := authhandler.NewSecurityHandler(store.S)
+	securityGroup := v1.Group("/auth/security")
+	{
+		securityGroup.GET("/status", securityHandler.GetSecurityStatus)
+
+		// Pay password
+		securityGroup.PUT("/pay-password", securityHandler.SetPayPassword)
+		securityGroup.POST("/verify-pay-password", securityHandler.VerifyPayPassword)
+
+		// TOTP
+		securityGroup.GET("/totp/status", securityHandler.GetTOTPStatus)
+		securityGroup.POST("/totp/setup", securityHandler.SetupTOTP)
+		securityGroup.POST("/totp/enable", securityHandler.EnableTOTP)
+		securityGroup.POST("/totp/verify", securityHandler.VerifyTOTP)
+		securityGroup.POST("/totp/disable", securityHandler.DisableTOTP)
+	}
 }

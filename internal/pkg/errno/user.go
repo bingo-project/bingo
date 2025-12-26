@@ -87,4 +87,39 @@ var (
 		Reason:  "InvalidArgument.CannotUnbindLastLogin",
 		Message: "Cannot unbind the only login method.",
 	}
+
+	// ErrPayPasswordInvalid 支付密码错误
+	ErrPayPasswordInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.PayPasswordInvalid",
+		Message: "Pay password is incorrect.",
+	}
+
+	// ErrPayPasswordNotSet 未设置支付密码
+	ErrPayPasswordNotSet = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.PayPasswordNotSet",
+		Message: "Pay password is not set.",
+	}
+
+	// ErrTOTPNotEnabled TOTP未启用
+	ErrTOTPNotEnabled = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.TOTPNotEnabled",
+		Message: "TOTP is not enabled.",
+	}
+
+	// ErrTOTPAlreadyEnabled TOTP已启用
+	ErrTOTPAlreadyEnabled = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.TOTPAlreadyEnabled",
+		Message: "TOTP is already enabled.",
+	}
+
+	// ErrTOTPInvalid TOTP验证码错误
+	ErrTOTPInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.TOTPInvalid",
+		Message: "TOTP code is invalid.",
+	}
 )

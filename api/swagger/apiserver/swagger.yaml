@@ -130,6 +130,13 @@ definitions:
     - code
     - password
     type: object
+  v1.SecurityStatusResponse:
+    properties:
+      payPasswordSet:
+        type: boolean
+      totpEnabled:
+        type: boolean
+    type: object
   v1.SendCodeRequest:
     properties:
       account:
@@ -153,6 +160,63 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  v1.SetPayPasswordRequest:
+    properties:
+      code:
+        example: "123456"
+        type: string
+      loginPassword:
+        example: "123456"
+        type: string
+      payPassword:
+        example: "654321"
+        minLength: 6
+        type: string
+    required:
+    - code
+    - loginPassword
+    - payPassword
+    type: object
+  v1.TOTPDisableRequest:
+    properties:
+      totpCode:
+        example: "123456"
+        type: string
+      verifyCode:
+        example: "123456"
+        type: string
+    required:
+    - totpCode
+    - verifyCode
+    type: object
+  v1.TOTPEnableRequest:
+    properties:
+      code:
+        example: "123456"
+        type: string
+    required:
+    - code
+    type: object
+  v1.TOTPSetupResponse:
+    properties:
+      otpauthUrl:
+        type: string
+      secret:
+        type: string
+    type: object
+  v1.TOTPStatusResponse:
+    properties:
+      enabled:
+        type: boolean
+    type: object
+  v1.TOTPVerifyRequest:
+    properties:
+      code:
+        example: "123456"
+        type: string
+    required:
+    - code
     type: object
   v1.UpdateProfileRequest:
     properties:
@@ -207,6 +271,14 @@ definitions:
         type: string
       username:
         type: string
+    type: object
+  v1.VerifyPayPasswordRequest:
+    properties:
+      payPassword:
+        example: "654321"
+        type: string
+    required:
+    - payPassword
     type: object
   version.Info:
     properties:
@@ -668,6 +740,223 @@ paths:
       summary: Reset password
       tags:
       - Auth
+  /v1/auth/security/pay-password:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SetPayPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Set pay password
+      tags:
+      - Security
+  /v1/auth/security/status:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.SecurityStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get security status
+      tags:
+      - Security
+  /v1/auth/security/totp/disable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.TOTPDisableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Disable TOTP
+      tags:
+      - Security
+  /v1/auth/security/totp/enable:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.TOTPEnableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Enable TOTP (verify code and enable)
+      tags:
+      - Security
+  /v1/auth/security/totp/setup:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.TOTPSetupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Setup TOTP (get secret and QR code URL)
+      tags:
+      - Security
+  /v1/auth/security/totp/status:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.TOTPStatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get TOTP status
+      tags:
+      - Security
+  /v1/auth/security/totp/verify:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.TOTPVerifyRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Verify TOTP code
+      tags:
+      - Security
+  /v1/auth/security/verify-pay-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.VerifyPayPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Verify pay password
+      tags:
+      - Security
   /v1/auth/user:
     put:
       consumes:
