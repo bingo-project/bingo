@@ -152,12 +152,14 @@ type User struct {
 
 type AuthProvider struct {
     // ... 现有字段
-    UserInfoURL  string `gorm:"column:user_info_url"`  // 用户信息端点
-    FieldMapping string `gorm:"column:field_mapping"`  // 字段映射（JSON）
+    UserInfoURL  string `gorm:"column:user_info_url"`   // 用户信息端点
+    FieldMapping string `gorm:"column:field_mapping"`   // 字段映射（JSON）
+    TokenInQuery bool   `gorm:"column:token_in_query"`  // token 放在 query 而非 header（Facebook）
+    ExtraHeaders string `gorm:"column:extra_headers"`   // 额外 HTTP headers（JSON）
 }
 ```
 
-字段映射示例：
+字段映射示例（支持嵌套路径如 `data.id`、`picture.data.url`）：
 
 ```json
 // GitHub
@@ -178,6 +180,26 @@ type AuthProvider struct {
   "email": "email",
   "avatar": "picture",
   "bio": ""
+}
+
+// Facebook（嵌套字段）
+{
+  "account_id": "id",
+  "username": "email",
+  "nickname": "name",
+  "email": "email",
+  "avatar": "picture.data.url",
+  "bio": ""
+}
+
+// Twitter/X（嵌套字段）
+{
+  "account_id": "data.id",
+  "username": "data.username",
+  "nickname": "data.name",
+  "email": "",
+  "avatar": "data.profile_image_url",
+  "bio": "data.description"
 }
 ```
 
@@ -339,9 +361,32 @@ Verify(account, "bind", code)
 
 ```go
 func (b *authBiz) GetUserInfo(ctx context.Context, provider *model.AuthProvider, token string) (*model.UserAccount, error) {
-    // 1. 调用 user_info_url
-    req, _ := http.NewRequest("GET", provider.UserInfoURL, nil)
-    req.Header.Set("Authorization", "Bearer "+token)
+    url := provider.UserInfoURL
+
+    // Facebook: token 放在 query parameter
+    if provider.TokenInQuery {
+        if strings.Contains(url, "?") {
+            url += "&access_token=" + token
+        } else {
+            url += "?access_token=" + token
+        }
+    }
+
+    req, _ := http.NewRequest("GET", url, nil)
+
+    // 标准 Bearer token（非 TokenInQuery 模式）
+    if !provider.TokenInQuery {
+        req.Header.Set("Authorization", "Bearer "+token)
+    }
+
+    // 额外 headers（如 GitHub 需要 Accept header）
+    if provider.ExtraHeaders != "" {
+        var headers map[string]string
+        json.Unmarshal([]byte(provider.ExtraHeaders), &headers)
+        for k, v := range headers {
+            req.Header.Set(k, v)
+        }
+    }
 
     resp, err := http.DefaultClient.Do(req)
     if err != nil {
@@ -349,35 +394,69 @@ func (b *authBiz) GetUserInfo(ctx context.Context, provider *model.AuthProvider,
     }
     defer resp.Body.Close()
 
-    // 2. 解析 JSON 响应
+    // 解析 JSON 响应
     var data map[string]any
     json.NewDecoder(resp.Body).Decode(&data)
 
-    // 3. 根据 field_mapping 提取字段
+    // 根据 field_mapping 提取字段
     var mapping map[string]string
     json.Unmarshal([]byte(provider.FieldMapping), &mapping)
 
     account := &model.UserAccount{
         Provider:  provider.Name,
-        AccountID: getString(data, mapping["account_id"]),
-        Username:  getString(data, mapping["username"]),
-        Nickname:  getString(data, mapping["nickname"]),
-        Email:     getString(data, mapping["email"]),
-        Avatar:    getString(data, mapping["avatar"]),
-        Bio:       getString(data, mapping["bio"]),
+        AccountID: getNestedString(data, mapping["account_id"]),
+        Username:  getNestedString(data, mapping["username"]),
+        Nickname:  getNestedString(data, mapping["nickname"]),
+        Email:     getNestedString(data, mapping["email"]),
+        Avatar:    getNestedString(data, mapping["avatar"]),
+        Bio:       getNestedString(data, mapping["bio"]),
     }
 
     return account, nil
+}
+
+// getNestedString 支持嵌套路径如 "data.id" 或 "picture.data.url"
+func getNestedString(data map[string]any, path string) string {
+    if path == "" {
+        return ""
+    }
+    parts := strings.Split(path, ".")
+    current := data
+    for i, part := range parts {
+        if i == len(parts)-1 {
+            return cast.ToString(current[part])
+        }
+        if next, ok := current[part].(map[string]any); ok {
+            current = next
+        } else {
+            return ""
+        }
+    }
+    return ""
 }
 ```
 
 ### 常见 Provider 配置参考
 
-| Provider | UserInfoURL | AuthURL | TokenURL |
-|----------|-------------|---------|----------|
-| GitHub | `https://api.github.com/user` | `https://github.com/login/oauth/authorize` | `https://github.com/login/oauth/access_token` |
-| Google | `https://www.googleapis.com/oauth2/v3/userinfo` | `https://accounts.google.com/o/oauth2/v2/auth` | `https://oauth2.googleapis.com/token` |
-| Facebook | `https://graph.facebook.com/me?fields=id,name,email,picture` | `https://www.facebook.com/v18.0/dialog/oauth` | `https://graph.facebook.com/v18.0/oauth/access_token` |
+| Provider | UserInfoURL | TokenInQuery | ExtraHeaders |
+|----------|-------------|--------------|--------------|
+| GitHub | `https://api.github.com/user` | false | `{"Accept":"application/json"}` |
+| Google | `https://www.googleapis.com/oauth2/v3/userinfo` | false | - |
+| Facebook | `https://graph.facebook.com/me?fields=id,name,email,picture` | true | - |
+| Twitter/X | `https://api.twitter.com/2/users/me?user.fields=profile_image_url,description` | false | - |
+| Microsoft | `https://graph.microsoft.com/v1.0/me` | false | - |
+| Discord | `https://discord.com/api/users/@me` | false | - |
+
+### OAuth URLs 参考
+
+| Provider | AuthURL | TokenURL |
+|----------|---------|----------|
+| GitHub | `https://github.com/login/oauth/authorize` | `https://github.com/login/oauth/access_token` |
+| Google | `https://accounts.google.com/o/oauth2/v2/auth` | `https://oauth2.googleapis.com/token` |
+| Facebook | `https://www.facebook.com/v18.0/dialog/oauth` | `https://graph.facebook.com/v18.0/oauth/access_token` |
+| Twitter/X | `https://twitter.com/i/oauth2/authorize` | `https://api.twitter.com/2/oauth2/token` |
+| Microsoft | `https://login.microsoftonline.com/common/oauth2/v2.0/authorize` | `https://login.microsoftonline.com/common/oauth2/v2.0/token` |
+| Discord | `https://discord.com/api/oauth2/authorize` | `https://discord.com/api/oauth2/token` |
 
 ## 错误码
 
