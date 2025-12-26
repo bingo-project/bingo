@@ -31,4 +31,60 @@ var (
 	}
 
 	ErrUserNotFound = &errorsx.ErrorX{Code: http.StatusNotFound, Reason: "NotFound.UserNotFound", Message: "User was not found."}
+
+	// ErrInvalidAccountFormat 账号格式错误
+	ErrInvalidAccountFormat = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.InvalidAccountFormat",
+		Message: "Invalid account format, please enter email or phone number.",
+	}
+
+	// ErrInvalidCode 验证码错误
+	ErrInvalidCode = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.InvalidCode",
+		Message: "Verification code is invalid or expired.",
+	}
+
+	// ErrAuthTypeNotAllowed 注册方式未开放
+	ErrAuthTypeNotAllowed = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AuthTypeNotAllowed",
+		Message: "This registration method is not allowed.",
+	}
+
+	// ErrAlreadyBound 已绑定该类型账号
+	ErrAlreadyBound = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AlreadyBound",
+		Message: "Already bound to this account type.",
+	}
+
+	// ErrAccountOccupied 账号已被占用
+	ErrAccountOccupied = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AccountOccupied",
+		Message: "This account is already in use by another user.",
+	}
+
+	// ErrSMSNotConfigured 短信服务未配置
+	ErrSMSNotConfigured = &errorsx.ErrorX{
+		Code:    http.StatusServiceUnavailable,
+		Reason:  "InternalError.SMSNotConfigured",
+		Message: "SMS service is not configured.",
+	}
+
+	// ErrNotBound 未绑定该账号
+	ErrNotBound = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.NotBound",
+		Message: "This provider is not bound to your account.",
+	}
+
+	// ErrCannotUnbindLastLogin 不能解绑唯一登录方式
+	ErrCannotUnbindLastLogin = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.CannotUnbindLastLogin",
+		Message: "Cannot unbind the only login method.",
+	}
 )
