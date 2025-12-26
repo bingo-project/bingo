@@ -13,7 +13,7 @@ import (
 
 func (b *adminBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
 	// Get user
-	user, err := b.ds.Admin().GetByUsername(ctx, req.Username)
+	user, err := b.ds.Admin().GetByUsername(ctx, req.Account)
 	if err != nil {
 		return nil, errno.ErrNotFound
 	}

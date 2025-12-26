@@ -48,10 +48,24 @@ func NewAuth(ds store.IStore) *authBiz {
 }
 
 func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.LoginResponse, error) {
+	// Detect account type
+	accountType, err := DetectAccountType(req.Account)
+	if err != nil {
+		return nil, err
+	}
+
 	user := &model.UserM{
-		Username: req.Username,
 		Nickname: req.Nickname,
 		Password: req.Password,
+		Status:   model.UserStatusEnabled,
+	}
+
+	// Set email or phone based on type
+	switch accountType {
+	case AccountTypeEmail:
+		user.Email = req.Account
+	case AccountTypePhone:
+		user.Phone = req.Account
 	}
 
 	// Check exist
@@ -89,8 +103,14 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 }
 
 func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
+	// Detect account type
+	accountType, err := DetectAccountType(req.Account)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get user
-	user, err := b.ds.User().GetByUsername(ctx, req.Username)
+	user, err := b.ds.User().FindByAccount(ctx, req.Account, string(accountType))
 	if err != nil {
 		return nil, errno.ErrUserNotFound
 	}
