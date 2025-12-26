@@ -20,7 +20,7 @@ func (h *Handler) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRep
 	log.C(ctx).Infow("Login function called.")
 
 	loginReq := &apiv1.LoginRequest{
-		Account:  req.Username, // gRPC proto still uses Username field
+		Account:  req.Account,
 		Password: req.Password,
 	}
 
