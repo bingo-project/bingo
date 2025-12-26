@@ -109,7 +109,7 @@ Response:
 }
 ```
 
-### 绑定账号
+### 绑定 email/phone
 
 ```
 POST /v1/auth/bind (需登录)
@@ -122,6 +122,42 @@ Response:
 {
   "message": "绑定成功"
 }
+```
+
+### 社交账号管理
+
+```
+# 查询已绑定的社交账号
+GET /v1/auth/bindings (需登录)
+Response:
+{
+  "data": [
+    {
+      "provider": "github",
+      "accountId": "12345",
+      "username": "jesse",
+      "avatar": "https://...",
+      "bindTime": "2025-01-01T00:00:00Z"
+    }
+  ]
+}
+
+# 绑定社交账号（已有）
+POST /v1/auth/bind/{provider}
+Request:
+{
+  "code": "oauth_authorization_code"
+}
+
+# 解绑社交账号
+DELETE /v1/auth/bindings/{provider} (需登录)
+Response:
+{
+  "message": "解绑成功"
+}
+
+# 解绑限制：至少保留一种登录方式
+# 如果用户没有设置 email/phone + 密码，不允许解绑最后一个社交账号
 ```
 
 ## 数据模型
@@ -337,7 +373,7 @@ Verify(account, "reset_password", code)
 返回成功
 ```
 
-### 绑定流程
+### 绑定 email/phone 流程
 
 ```
 POST /v1/auth/bind (需登录)
@@ -351,6 +387,25 @@ DetectAccountType(account)
 Verify(account, "bind", code)
     ↓
 更新用户 email/phone 字段
+    ↓
+返回成功
+```
+
+### 社交账号解绑流程
+
+```
+DELETE /v1/auth/bindings/{provider} (需登录)
+    ↓
+检查用户是否绑定了该 provider
+    ↓ 未绑定
+报错 "未绑定该账号"
+    ↓ 已绑定
+检查是否为最后一种登录方式
+    ├─ 有 email/phone + 密码 → 允许解绑
+    ├─ 有其他社交账号 → 允许解绑
+    └─ 唯一登录方式 → 报错 "不能解绑唯一登录方式"
+    ↓
+删除 user_account 记录
     ↓
 返回成功
 ```
@@ -505,6 +560,20 @@ var (
         Reason:  "InternalError.SMSNotConfigured",
         Message: "SMS service is not configured.",
     }
+
+    // 未绑定该账号
+    ErrNotBound = &errorsx.ErrorX{
+        Code:    http.StatusBadRequest,
+        Reason:  "InvalidArgument.NotBound",
+        Message: "This provider is not bound to your account.",
+    }
+
+    // 不能解绑唯一登录方式
+    ErrCannotUnbindLastLogin = &errorsx.ErrorX{
+        Code:    http.StatusBadRequest,
+        Reason:  "InvalidArgument.CannotUnbindLastLogin",
+        Message: "Cannot unbind the only login method.",
+    }
 )
 
 // 复用现有：ErrTooManyRequests、ErrUserAlreadyExist、ErrUserNotFound
@@ -554,7 +623,8 @@ internal/apiserver/http/auth.go      # 修改：更新 handler
 internal/apiserver/biz/auth/auth.go           # 修改：重构 Register/Login，通用化 GetUserInfo
 internal/apiserver/biz/auth/account.go        # 新增：账号类型识别
 internal/apiserver/biz/auth/code.go           # 新增：验证码业务逻辑
-internal/apiserver/biz/auth/bind.go           # 新增：绑定逻辑
+internal/apiserver/biz/auth/bind.go           # 新增：email/phone 绑定逻辑
+internal/apiserver/biz/auth/bindings.go       # 新增：社交账号查询/解绑逻辑
 internal/apiserver/biz/auth/reset_password.go # 新增：密码重置逻辑
 ```
 
