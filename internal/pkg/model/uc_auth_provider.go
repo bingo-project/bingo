@@ -15,6 +15,10 @@ type AuthProvider struct {
 	TokenURL     string             `gorm:"type:varchar(1024);not null;default:'';comment:Token URL"`
 	LogoutURI    string             `gorm:"type:varchar(1024);not null;default:'';comment:Logout URI"`
 	Info         string             `gorm:"type:json;comment:Ext info"`
+	UserInfoURL  string             `gorm:"column:user_info_url;type:varchar(500)"`
+	FieldMapping string             `gorm:"column:field_mapping;type:text"`
+	TokenInQuery bool               `gorm:"column:token_in_query;default:false"`
+	ExtraHeaders string             `gorm:"column:extra_headers;type:text"`
 }
 
 func (*AuthProvider) TableName() string {
