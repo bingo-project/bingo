@@ -13,6 +13,7 @@ import (
 func MapApiRouters(g *gin.Engine) {
 	// v1 group
 	v1 := g.Group("/v1")
+	v1.Use(middleware.Lang())
 	v1.Use(middleware.Maintenance())
 
 	authHandler := authhandler.NewAuthHandler(store.S, nil)

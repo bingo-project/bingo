@@ -19,6 +19,7 @@ type (
 	objectKey      struct{}
 	instanceKey    struct{}
 	messageKey     struct{}
+	langKey        struct{}
 )
 
 // WithUserInfo 将用户信息存放到上下文中.
@@ -137,4 +138,16 @@ func Message(ctx context.Context) string {
 	username, _ := ctx.Value(messageKey{}).(string)
 
 	return username
+}
+
+// WithLang 将语言偏好存放到上下文中.
+func WithLang(ctx context.Context, lang string) context.Context {
+	return context.WithValue(ctx, langKey{}, lang)
+}
+
+// Lang 从上下文中提取语言偏好.
+func Lang(ctx context.Context) string {
+	lang, _ := ctx.Value(langKey{}).(string)
+
+	return lang
 }

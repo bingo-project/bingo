@@ -12,9 +12,11 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/i18n"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/sms"
 	"github.com/bingo-project/bingo/internal/pkg/task"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 // CodeScene 验证码场景
@@ -72,9 +74,9 @@ func (b *codeBiz) Send(ctx context.Context, account string, scene CodeScene) err
 	// 发送验证码
 	switch accountType {
 	case AccountTypeEmail:
-		return b.sendEmail(ctx, account, code)
+		return b.sendEmail(ctx, account, code, scene)
 	case AccountTypePhone:
-		return b.sendSMS(ctx, account, code)
+		return b.sendSMS(ctx, account, code, scene)
 	}
 
 	return nil
@@ -92,9 +94,15 @@ func (b *codeBiz) Verify(ctx context.Context, account string, scene CodeScene, c
 	return nil
 }
 
-func (b *codeBiz) sendEmail(ctx context.Context, email, code string) error {
-	subject := "Email Verification code " + code
-	msg := fmt.Sprintf("Your verification code is: %s, please note that it will expire in %d minutes.", code, b.codeTTL)
+func (b *codeBiz) sendEmail(ctx context.Context, email, code string, scene CodeScene) error {
+	lang := contextx.Lang(ctx)
+	data := map[string]interface{}{
+		"Code": code,
+		"TTL":  b.codeTTL,
+	}
+
+	subject := i18n.T(lang, "code_"+string(scene)+"_subject", nil)
+	msg := i18n.T(lang, "code_"+string(scene)+"_body", data)
 
 	// Email task payload
 	payload := &task.EmailVerificationCodePayload{
@@ -110,15 +118,24 @@ func (b *codeBiz) sendEmail(ctx context.Context, email, code string) error {
 		return err
 	}
 
-	log.C(ctx).Infow("sendEmail succeed", "email", email)
+	log.C(ctx).Infow("sendEmail succeed", "email", email, "scene", scene, "lang", lang)
 	return nil
 }
 
-func (b *codeBiz) sendSMS(ctx context.Context, phone, code string) error {
+func (b *codeBiz) sendSMS(ctx context.Context, phone, code string, scene CodeScene) error {
 	if !sms.IsConfigured() {
 		return errno.ErrSMSNotConfigured
 	}
-	// TODO: 实际发送
-	log.C(ctx).Infow("sendSMS succeed", "phone", phone)
+
+	lang := contextx.Lang(ctx)
+	data := map[string]interface{}{
+		"Code": code,
+		"TTL":  b.codeTTL,
+	}
+	msg := i18n.T(lang, "code_"+string(scene)+"_body", data)
+
+	// TODO: 实际发送短信，使用 msg 作为内容
+	_ = msg
+	log.C(ctx).Infow("sendSMS succeed", "phone", phone, "scene", scene, "lang", lang)
 	return nil
 }

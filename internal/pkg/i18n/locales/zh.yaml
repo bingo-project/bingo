@@ -1,0 +1,20 @@
+# 验证码消息
+code_register_subject:
+  other: "注册验证码"
+code_register_body:
+  other: "您正在注册账号，验证码：{{.Code}}，{{.TTL}}分钟内有效。"
+
+code_reset_password_subject:
+  other: "密码重置验证码"
+code_reset_password_body:
+  other: "您正在重置密码，验证码：{{.Code}}，{{.TTL}}分钟内有效。如非本人操作请忽略。"
+
+code_bind_subject:
+  other: "账号绑定验证码"
+code_bind_body:
+  other: "您正在绑定账号，验证码：{{.Code}}，{{.TTL}}分钟内有效。"
+
+code_security_subject:
+  other: "安全验证码"
+code_security_body:
+  other: "您正在进行安全操作，验证码：{{.Code}}，{{.TTL}}分钟内有效。"
