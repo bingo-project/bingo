@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
+	"net/http"
 	"regexp"
 	"strings"
 	"time"
@@ -9,7 +11,6 @@ import (
 	"github.com/bingo-project/component-base/web/token"
 	"github.com/duke-git/lancet/v2/pointer"
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/v62/github"
 	"github.com/jinzhu/copier"
 	"github.com/spf13/cast"
 	"golang.org/x/oauth2"
@@ -165,7 +166,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 		return nil, err
 	}
 
-	account, err := b.GetUserInfo(ctx, provider, oauthToken.AccessToken)
+	account, err := b.GetUserInfo(ctx, oauthProvider, oauthToken.AccessToken)
 	if err != nil {
 		return nil, err
 	}
@@ -203,8 +204,8 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	return resp, nil
 }
 
-func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error) {
-	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
+func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error) {
+	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, providerName)
 	if err != nil {
 		return nil, errno.ErrNotFound
 	}
@@ -226,13 +227,13 @@ func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProvide
 		return nil, err
 	}
 
-	account, err := b.GetUserInfo(ctx, provider, oauthToken.AccessToken)
+	account, err := b.GetUserInfo(ctx, oauthProvider, oauthToken.AccessToken)
 	if err != nil {
 		return nil, err
 	}
 
 	// Check exist
-	exist := b.ds.UserAccount().CheckExist(ctx, provider, account.AccountID)
+	exist := b.ds.UserAccount().CheckExist(ctx, providerName, account.AccountID)
 	if exist {
 		return nil, errno.ErrUserAccountAlreadyExist
 	}
@@ -250,26 +251,82 @@ func (b *authBiz) Bind(ctx *gin.Context, provider string, req *v1.LoginByProvide
 	return &resp, err
 }
 
-// GetUserInfo todo::other provider.
-func (b *authBiz) GetUserInfo(ctx context.Context, provider, token string) (ret *model.UserAccount, err error) {
-	// Get User info
-	client := github.NewClient(nil).WithAuthToken(token)
-	data, _, err := client.Users.Get(ctx, "")
+// GetUserInfo fetches user info from OAuth provider using configurable field mapping.
+func (b *authBiz) GetUserInfo(ctx context.Context, provider *model.AuthProvider, accessToken string) (ret *model.UserAccount, err error) {
+	url := provider.UserInfoURL
+
+	// Facebook: token 放在 query parameter
+	if provider.TokenInQuery {
+		if strings.Contains(url, "?") {
+			url += "&access_token=" + accessToken
+		} else {
+			url += "?access_token=" + accessToken
+		}
+	}
+
+	req, _ := http.NewRequestWithContext(ctx, "GET", url, nil)
+
+	// 标准 Bearer token
+	if !provider.TokenInQuery {
+		req.Header.Set("Authorization", "Bearer "+accessToken)
+	}
+
+	// 额外 headers
+	if provider.ExtraHeaders != "" {
+		var headers map[string]string
+		_ = json.Unmarshal([]byte(provider.ExtraHeaders), &headers)
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
+	defer resp.Body.Close()
 
-	ret = &model.UserAccount{
-		Provider:  provider,
-		AccountID: cast.ToString(&data.ID),
-		Username:  cast.ToString(data.Login),
-		Nickname:  cast.ToString(data.Name),
-		Email:     cast.ToString(data.Email),
-		Bio:       cast.ToString(data.Bio),
-		Avatar:    cast.ToString(data.AvatarURL),
+	var data map[string]any
+	_ = json.NewDecoder(resp.Body).Decode(&data)
+
+	var mapping map[string]string
+	_ = json.Unmarshal([]byte(provider.FieldMapping), &mapping)
+
+	account := &model.UserAccount{
+		Provider:  provider.Name,
+		AccountID: getNestedString(data, mapping["account_id"]),
+		Username:  getNestedString(data, mapping["username"]),
+		Nickname:  getNestedString(data, mapping["nickname"]),
+		Email:     getNestedString(data, mapping["email"]),
+		Avatar:    getNestedString(data, mapping["avatar"]),
+		Bio:       getNestedString(data, mapping["bio"]),
 	}
 
-	return
+	return account, nil
+}
+
+// getNestedString extracts a string value from nested map using dot notation path (e.g., "data.id").
+func getNestedString(data map[string]any, path string) string {
+	if path == "" {
+		return ""
+	}
+	parts := strings.Split(path, ".")
+	current := data
+	for i, part := range parts {
+		val, ok := current[part]
+		if !ok {
+			return ""
+		}
+		if i == len(parts)-1 {
+			return cast.ToString(val)
+		}
+		if next, ok := val.(map[string]any); ok {
+			current = next
+		} else {
+			return ""
+		}
+	}
+	return ""
 }
 
 func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.ChangePasswordRequest) error {
