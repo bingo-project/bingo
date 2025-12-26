@@ -1,0 +1,20 @@
+# Verification code messages
+code_register_subject:
+  other: "Registration Verification Code"
+code_register_body:
+  other: "You are registering an account. Your verification code is: {{.Code}}. Valid for {{.TTL}} minutes."
+
+code_reset_password_subject:
+  other: "Password Reset Verification Code"
+code_reset_password_body:
+  other: "You are resetting your password. Your verification code is: {{.Code}}. Valid for {{.TTL}} minutes. Ignore this if you didn't request it."
+
+code_bind_subject:
+  other: "Account Binding Verification Code"
+code_bind_body:
+  other: "You are binding your account. Your verification code is: {{.Code}}. Valid for {{.TTL}} minutes."
+
+code_security_subject:
+  other: "Security Verification Code"
+code_security_body:
+  other: "You are performing a security operation. Your verification code is: {{.Code}}. Valid for {{.TTL}} minutes."
