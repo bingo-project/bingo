@@ -100,30 +100,44 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 }
 
 func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
-	// Get user
-	user, err := b.ds.User().GetByUsername(ctx, req.Username)
+	// 检测账号类型
+	accountType, err := DetectAccountType(req.Account)
+	if err != nil {
+		return nil, err
+	}
+
+	// 查找用户
+	var user *model.UserM
+	switch accountType {
+	case AccountTypeEmail:
+		user, err = b.ds.User().FindByEmail(ctx, req.Account)
+	case AccountTypePhone:
+		user, err = b.ds.User().FindByPhone(ctx, req.Account)
+	}
 	if err != nil {
 		return nil, errno.ErrUserNotFound
 	}
 
-	// Check password
-	err = auth.Compare(user.Password, req.Password)
-	if err != nil {
+	// 验证密码
+	if err := auth.Compare(user.Password, req.Password); err != nil {
 		return nil, errno.ErrPasswordInvalid
 	}
 
-	// Generate token
+	// 更新登录信息
+	user.LastLoginTime = pointer.Of(time.Now())
+	user.LastLoginType = string(accountType)
+	_ = b.ds.User().Update(ctx, user)
+
+	// 生成 token
 	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	resp := &v1.LoginResponse{
+	return &v1.LoginResponse{
 		AccessToken: t.AccessToken,
 		ExpiresAt:   t.ExpiresAt,
-	}
-
-	return resp, nil
+	}, nil
 }
 
 func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error) {
