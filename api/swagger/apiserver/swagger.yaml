@@ -26,6 +26,19 @@ definitions:
         description: Redirect URL
         type: string
     type: object
+  v1.BindingInfo:
+    properties:
+      accountId:
+        type: string
+      avatar:
+        type: string
+      bindTime:
+        type: string
+      provider:
+        type: string
+      username:
+        type: string
+    type: object
   v1.ChangePasswordRequest:
     properties:
       passwordNew:
@@ -45,21 +58,26 @@ definitions:
       status:
         type: string
     type: object
+  v1.ListBindingsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.BindingInfo'
+        type: array
+    type: object
   v1.LoginRequest:
     properties:
+      account:
+        maxLength: 255
+        minLength: 5
+        type: string
       password:
-        example: "123123"
         maxLength: 18
         minLength: 6
         type: string
-      username:
-        example: peter
-        maxLength: 255
-        minLength: 2
-        type: string
     required:
+    - account
     - password
-    - username
     type: object
   v1.LoginResponse:
     properties:
@@ -76,24 +94,57 @@ definitions:
     type: object
   v1.RegisterRequest:
     properties:
+      account:
+        maxLength: 255
+        minLength: 5
+        type: string
+      code:
+        description: 验证码（验证开启时必填）
+        type: string
       nickname:
-        example: Peter
         maxLength: 255
         minLength: 2
         type: string
       password:
-        example: "123123"
         maxLength: 18
         minLength: 6
         type: string
-      username:
-        example: peter
+    required:
+    - account
+    - password
+    type: object
+  v1.ResetPasswordRequest:
+    properties:
+      account:
         maxLength: 255
-        minLength: 2
+        minLength: 5
+        type: string
+      code:
+        type: string
+      password:
+        maxLength: 18
+        minLength: 6
         type: string
     required:
+    - account
+    - code
     - password
-    - username
+    type: object
+  v1.SendCodeRequest:
+    properties:
+      account:
+        maxLength: 255
+        minLength: 5
+        type: string
+      scene:
+        enum:
+        - register
+        - reset_password
+        - bind
+        type: string
+    required:
+    - account
+    - scene
     type: object
   v1.SendEmailRequest:
     properties:
@@ -102,6 +153,21 @@ definitions:
         type: string
     required:
     - email
+    type: object
+  v1.UpdateProfileRequest:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+      nickname:
+        maxLength: 255
+        minLength: 2
+        type: string
+      phone:
+        maxLength: 11
+        minLength: 11
+        type: string
     type: object
   v1.UserInfo:
     properties:
@@ -220,6 +286,58 @@ paths:
       summary: Bind provider
       tags:
       - Auth
+  /v1/auth/bindings:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListBindingsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List social account bindings
+      tags:
+      - Auth
+  /v1/auth/bindings/{provider}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Provider name
+        in: path
+        name: provider
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Unbind social account
+      tags:
+      - Auth
   /v1/auth/change-password:
     put:
       consumes:
@@ -247,6 +365,33 @@ paths:
       security:
       - Bearer: []
       summary: Change password
+      tags:
+      - Auth
+  /v1/auth/code:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.SendCodeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Send verification code
       tags:
       - Auth
   /v1/auth/code/email:
@@ -494,6 +639,62 @@ paths:
       security:
       - Bearer: []
       summary: Register
+      tags:
+      - Auth
+  /v1/auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      summary: Reset password
+      tags:
+      - Auth
+  /v1/auth/user:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update user profile
       tags:
       - Auth
   /v1/auth/user-info:

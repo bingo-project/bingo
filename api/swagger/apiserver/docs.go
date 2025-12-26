@@ -103,6 +103,90 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/bindings": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "List social account bindings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ListBindingsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/bindings/{provider}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Unbind social account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Provider name",
+                        "name": "provider",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/change-password": {
             "put": {
                 "security": [
@@ -128,6 +212,48 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/v1.ChangePasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/code": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Send verification code",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SendCodeRequest"
                         }
                     }
                 ],
@@ -545,6 +671,95 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/reset-password": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset password",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/auth/user": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/user-info": {
             "get": {
                 "security": [
@@ -706,6 +921,26 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.BindingInfo": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "string"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "bindTime": {
+                    "type": "string"
+                },
+                "provider": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.ChangePasswordRequest": {
             "type": "object",
             "required": [
@@ -733,24 +968,33 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ListBindingsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.BindingInfo"
+                    }
+                }
+            }
+        },
         "v1.LoginRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "account",
+                "password"
             ],
             "properties": {
+                "account": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 5
+                },
                 "password": {
                     "type": "string",
                     "maxLength": 18,
-                    "minLength": 6,
-                    "example": "123123"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 2,
-                    "example": "peter"
+                    "minLength": 6
                 }
             }
         },
@@ -777,27 +1021,73 @@ const docTemplate = `{
         "v1.RegisterRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "account",
+                "password"
             ],
             "properties": {
+                "account": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 5
+                },
+                "code": {
+                    "description": "验证码（验证开启时必填）",
+                    "type": "string"
+                },
                 "nickname": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 2,
-                    "example": "Peter"
+                    "minLength": 2
                 },
                 "password": {
                     "type": "string",
                     "maxLength": 18,
-                    "minLength": 6,
-                    "example": "123123"
-                },
-                "username": {
+                    "minLength": 6
+                }
+            }
+        },
+        "v1.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "account",
+                "code",
+                "password"
+            ],
+            "properties": {
+                "account": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 2,
-                    "example": "peter"
+                    "minLength": 5
+                },
+                "code": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
+                }
+            }
+        },
+        "v1.SendCodeRequest": {
+            "type": "object",
+            "required": [
+                "account",
+                "scene"
+            ],
+            "properties": {
+                "account": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 5
+                },
+                "scene": {
+                    "type": "string",
+                    "enum": [
+                        "register",
+                        "reset_password",
+                        "bind"
+                    ]
                 }
             }
         },
@@ -810,6 +1100,27 @@ const docTemplate = `{
                 "email": {
                     "type": "string",
                     "example": "peter@gmail.com"
+                }
+            }
+        },
+        "v1.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 11,
+                    "minLength": 11
                 }
             }
         },

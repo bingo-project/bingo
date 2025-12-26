@@ -409,7 +409,6 @@ definitions:
     required:
     - component
     - path
-    - sort
     type: object
   v1.CreateRoleRequest:
     properties:
@@ -562,19 +561,17 @@ definitions:
     type: object
   v1.LoginRequest:
     properties:
+      account:
+        maxLength: 255
+        minLength: 5
+        type: string
       password:
-        example: "123123"
         maxLength: 18
         minLength: 6
         type: string
-      username:
-        example: peter
-        maxLength: 255
-        minLength: 2
-        type: string
     required:
+    - account
     - password
-    - username
     type: object
   v1.LoginResponse:
     properties:

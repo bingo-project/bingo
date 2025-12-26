@@ -4058,8 +4058,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "component",
-                "path",
-                "sort"
+                "path"
             ],
             "properties": {
                 "apiIds": {
@@ -4342,21 +4341,19 @@ const docTemplate = `{
         "v1.LoginRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "account",
+                "password"
             ],
             "properties": {
+                "account": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 5
+                },
                 "password": {
                     "type": "string",
                     "maxLength": 18,
-                    "minLength": 6,
-                    "example": "123123"
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 2,
-                    "example": "peter"
+                    "minLength": 6
                 }
             }
         },

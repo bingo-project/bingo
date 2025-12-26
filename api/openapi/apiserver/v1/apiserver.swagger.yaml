@@ -132,8 +132,9 @@ definitions:
   v1LoginRequest:
     type: object
     properties:
-      username:
+      account:
         type: string
+        title: email or phone
       password:
         type: string
   v1UserInfoReply:
