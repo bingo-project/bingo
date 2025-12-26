@@ -109,22 +109,24 @@ Response:
 }
 ```
 
-### 绑定 email/phone
+### 更新用户信息（绑定 email/phone）
 
 ```
-POST /v1/auth/bind (需登录)
+PUT /v1/auth/user (需登录)
 Request:
 {
-  "account": "13800138000",  // 要绑定的 email 或 phone
-  "code": "123456"
+  "email": "jesse@example.com",  // 可选，新绑定的 email
+  "phone": "13800138000",        // 可选，新绑定的 phone
+  "code": "123456",              // 验证码（修改 email/phone 时必填）
+  "nickname": "Jesse"            // 可选，修改昵称
 }
 Response:
 {
-  "message": "绑定成功"
+  "message": "更新成功"
 }
 ```
 
-### 社交账号管理
+### 社交账号管理（/bindings）
 
 ```
 # 查询已绑定的社交账号
@@ -142,11 +144,18 @@ Response:
   ]
 }
 
-# 绑定社交账号（已有）
-POST /v1/auth/bind/{provider}
+# 绑定社交账号
+POST /v1/auth/bindings/{provider} (需登录)
 Request:
 {
   "code": "oauth_authorization_code"
+}
+Response:
+{
+  "provider": "github",
+  "accountId": "12345",
+  "username": "jesse",
+  ...
 }
 
 # 解绑社交账号
@@ -373,20 +382,20 @@ Verify(account, "reset_password", code)
 返回成功
 ```
 
-### 绑定 email/phone 流程
+### 更新用户信息流程
 
 ```
-POST /v1/auth/bind (需登录)
+PUT /v1/auth/user (需登录)
     ↓
-DetectAccountType(account)
+解析请求（email/phone/nickname）
     ↓
-当前用户已绑定该类型? → 报错 "已绑定"
+如果修改 email/phone:
+    ├─ 该 email/phone 已被其他用户使用? → 报错 "已被占用"
+    ├─ Verify(email/phone, "bind", code) → 验证失败则报错
+    └─ 更新用户 email/phone 字段
     ↓
-该 account 已被其他用户使用? → 报错 "已被占用"
-    ↓
-Verify(account, "bind", code)
-    ↓
-更新用户 email/phone 字段
+如果修改 nickname:
+    └─ 直接更新
     ↓
 返回成功
 ```
@@ -623,8 +632,8 @@ internal/apiserver/http/auth.go      # 修改：更新 handler
 internal/apiserver/biz/auth/auth.go           # 修改：重构 Register/Login，通用化 GetUserInfo
 internal/apiserver/biz/auth/account.go        # 新增：账号类型识别
 internal/apiserver/biz/auth/code.go           # 新增：验证码业务逻辑
-internal/apiserver/biz/auth/bind.go           # 新增：email/phone 绑定逻辑
-internal/apiserver/biz/auth/bindings.go       # 新增：社交账号查询/解绑逻辑
+internal/apiserver/biz/auth/user.go           # 新增：更新用户信息（email/phone/nickname）
+internal/apiserver/biz/auth/bindings.go       # 新增：社交账号查询/绑定/解绑逻辑
 internal/apiserver/biz/auth/reset_password.go # 新增：密码重置逻辑
 ```
 
