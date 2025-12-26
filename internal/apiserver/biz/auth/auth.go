@@ -48,13 +48,28 @@ func NewAuth(ds store.IStore) *authBiz {
 }
 
 func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.LoginResponse, error) {
-	user := &model.UserM{
-		Username: req.Username,
-		Nickname: req.Nickname,
-		Password: req.Password,
+	// 检测账号类型
+	accountType, err := DetectAccountType(req.Account)
+	if err != nil {
+		return nil, err
 	}
 
-	// Check exist
+	// 构建用户
+	user := &model.UserM{
+		Nickname: req.Nickname,
+		Password: req.Password,
+		Status:   model.UserStatusEnabled,
+	}
+
+	// 根据类型设置 email 或 phone
+	switch accountType {
+	case AccountTypeEmail:
+		user.Email = req.Account
+	case AccountTypePhone:
+		user.Phone = req.Account
+	}
+
+	// 检查用户是否存在
 	exist, err := b.ds.User().IsExist(ctx, user)
 	if err != nil {
 		return nil, err
@@ -63,29 +78,25 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 		return nil, errno.ErrUserAlreadyExist
 	}
 
-	// Create user
+	// 创建用户
 	err = b.ds.User().Create(ctx, user)
 	if err != nil {
-		// User exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
 			return nil, errno.ErrUserAlreadyExist
 		}
-
 		return nil, err
 	}
 
-	// Generate token
+	// 生成 token
 	t, err := token.Sign(user.UID, known.RoleUser)
 	if err != nil {
 		return nil, errno.ErrSignToken
 	}
 
-	resp := &v1.LoginResponse{
+	return &v1.LoginResponse{
 		AccessToken: t.AccessToken,
 		ExpiresAt:   t.ExpiresAt,
-	}
-
-	return resp, nil
+	}, nil
 }
 
 func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginResponse, error) {
