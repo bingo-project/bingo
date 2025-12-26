@@ -7,6 +7,7 @@ import (
 	"github.com/bingo-project/component-base/util/gormutil"
 	"gorm.io/gorm"
 
+	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 	genericstore "github.com/bingo-project/bingo/pkg/store"
@@ -34,6 +35,9 @@ type UserExpansion interface {
 	FindAccounts(ctx context.Context, uid string) ([]*model.UserAccount, error)
 	CountAccounts(ctx context.Context, uid string) (int64, error)
 	FirstOrCreate(ctx context.Context, where *model.UserM, user *model.UserM) error
+	FindByEmail(ctx context.Context, email string) (*model.UserM, error)
+	FindByPhone(ctx context.Context, phone string) (*model.UserM, error)
+	FindByAccount(ctx context.Context, account string, accountType string) (*model.UserM, error)
 }
 
 type userStore struct {
@@ -164,4 +168,34 @@ func (s *userStore) CountAccounts(ctx context.Context, uid string) (int64, error
 // FirstOrCreate finds first record matching the given conditions or creates a new one.
 func (s *userStore) FirstOrCreate(ctx context.Context, where *model.UserM, user *model.UserM) error {
 	return s.DB(ctx).Where(where).FirstOrCreate(user).Error
+}
+
+// FindByEmail retrieves a user by email.
+func (s *userStore) FindByEmail(ctx context.Context, email string) (*model.UserM, error) {
+	var user model.UserM
+	if err := s.DB(ctx).Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// FindByPhone retrieves a user by phone.
+func (s *userStore) FindByPhone(ctx context.Context, phone string) (*model.UserM, error) {
+	var user model.UserM
+	if err := s.DB(ctx).Where("phone = ?", phone).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// FindByAccount retrieves a user by account identifier and type.
+func (s *userStore) FindByAccount(ctx context.Context, account string, accountType string) (*model.UserM, error) {
+	switch accountType {
+	case "email":
+		return s.FindByEmail(ctx, account)
+	case "phone":
+		return s.FindByPhone(ctx, account)
+	default:
+		return nil, errno.ErrInvalidAccountFormat
+	}
 }
