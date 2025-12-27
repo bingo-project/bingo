@@ -1,15 +1,22 @@
 package seeder
 
 import (
+	"github.com/bwmarrin/snowflake"
 	"github.com/gookit/color"
 	"gorm.io/gorm"
 
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
 // Init initializes the seeder with database connection.
 func Init(db *gorm.DB) {
 	store.NewStore(db)
+
+	// Initialize Snowflake for UID generation
+	if facade.Snowflake == nil {
+		facade.Snowflake, _ = snowflake.NewNode(1)
+	}
 }
 
 // Seeder defines the interface for database seeders.

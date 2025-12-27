@@ -47,6 +47,7 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			UserInfoURL:  "https://www.googleapis.com/oauth2/v3/userinfo",
 			Scopes:       "openid email profile",
 			PKCEEnabled:  true,
+			Info:         "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "sub",
 				"email":      "email",
@@ -79,6 +80,7 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			UserInfoURL:  "https://api.github.com/user",
 			Scopes:       "read:user user:email",
 			PKCEEnabled:  false,
+			Info:         "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "id",
 				"username":   "login",
@@ -96,6 +98,7 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			UserInfoURL:  "https://discord.com/api/users/@me",
 			Scopes:       "identify email",
 			PKCEEnabled:  true,
+			Info:         "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "id",
 				"username":   "username",
@@ -112,6 +115,7 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			UserInfoURL:  "https://api.twitter.com/2/users/me",
 			Scopes:       "users.read tweet.read",
 			PKCEEnabled:  true,
+			Info:         "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "data.id",
 				"username":   "data.username",
