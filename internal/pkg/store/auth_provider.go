@@ -81,7 +81,7 @@ func (s *authProviderStore) DeleteByID(ctx context.Context, id uint) error {
 func (s *authProviderStore) FindEnabled(ctx context.Context) ([]*model.AuthProvider, error) {
 	var ret []*model.AuthProvider
 	err := s.DB(ctx).
-		Where(&model.AuthProvider{Status: model.AuthProviderStatusEnabled}).
+		Where("status = ?", model.AuthProviderStatusEnabled).
 		Find(&ret).
 		Error
 
