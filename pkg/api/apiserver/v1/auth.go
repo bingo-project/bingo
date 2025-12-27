@@ -19,7 +19,7 @@ type LoginRequest struct {
 // SendCodeRequest 发送验证码请求
 type SendCodeRequest struct {
 	Account string `json:"account" binding:"required,min=5,max=255"`
-	Scene   string `json:"scene" binding:"required,oneof=register reset_password bind"`
+	Scene   string `json:"scene" binding:"required,oneof=register reset_password bind security"`
 }
 
 // ResetPasswordRequest 重置密码请求

@@ -1402,7 +1402,8 @@ const docTemplate = `{
                     "enum": [
                         "register",
                         "reset_password",
-                        "bind"
+                        "bind",
+                        "security"
                     ]
                 }
             }

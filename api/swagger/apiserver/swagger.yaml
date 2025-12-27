@@ -148,6 +148,7 @@ definitions:
         - register
         - reset_password
         - bind
+        - security
         type: string
     required:
     - account
