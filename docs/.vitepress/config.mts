@@ -206,6 +206,7 @@ export default defineConfig({
                 { text: 'WebSocket', link: '/advanced/websocket' },
                 { text: 'gRPC-Gateway', link: '/advanced/grpc-gateway' },
                 { text: '统一认证授权', link: '/advanced/unified-auth' },
+                { text: 'OAuth 平台配置', link: '/advanced/oauth-providers' },
                 { text: '统一错误处理', link: '/advanced/unified-error-handling' },
                 { text: '微服务拆分', link: '/advanced/microservices' }
               ]
@@ -301,6 +302,7 @@ export default defineConfig({
                 { text: 'WebSocket', link: '/en/advanced/websocket' },
                 { text: 'gRPC-Gateway', link: '/en/advanced/grpc-gateway' },
                 { text: 'Unified Authentication', link: '/en/advanced/unified-auth' },
+                { text: 'OAuth Provider Configuration', link: '/en/advanced/oauth-providers' },
                 { text: 'Unified Error Handling', link: '/en/advanced/unified-error-handling' },
                 { text: 'Microservice Decomposition', link: '/en/advanced/microservices' }
               ]
