@@ -18,6 +18,7 @@ func InitGin() *gin.Engine {
 	validation.Init()
 
 	g := gin.New()
+	g.ContextWithFallback = true
 
 	// Register global middlewares
 	registerGlobalMiddleWare(g)
@@ -80,6 +81,7 @@ func InitGinForWebSocket() *gin.Engine {
 	gin.SetMode(facade.Config.HTTP.GinMode)
 
 	g := gin.New()
+	g.ContextWithFallback = true
 	g.Use(
 		gin.Recovery(),
 		middleware.Cors,
