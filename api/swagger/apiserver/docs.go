@@ -31,1376 +31,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.HealthzResponse"
+                            "$ref": "#/definitions/v1.HealthzResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/admins": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "List admins",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "nickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "roleName",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAdminResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Create admin",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAdminRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/admins/{name}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Get admin info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Update admin info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAdminRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Delete a admin",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/admins/{name}/change-password": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Change password",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/admins/{name}/roles": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin"
-                ],
-                "summary": "Set admin roles",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Query params",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/api-keys": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "List apiKeys",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "accessKey",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "appId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Status, 1-enabled, 2-disabled",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "uid",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiKeyResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Create apiKey",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiKeyRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/api-keys/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Get apiKey info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Update apiKey info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiKeyRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Delete apiKey",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apis": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "List apis",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "group",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "method",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "path",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "Create a api",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apis/all": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "All apis",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apis/tree": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "API Tree",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.GroupApiResponse"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apis/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "Get api info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "Update api info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Api"
-                ],
-                "summary": "Delete api",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apps": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "List apps",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "appId",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "logo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Status, 1-enabled, 2-disabled",
-                        "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "uid",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAppResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Create app",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAppRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/apps/{appid}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Get app info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "appid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Update app info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "appid",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAppRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "App"
-                ],
-                "summary": "Delete app",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "appid",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1427,19 +70,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListBindingsResponse"
+                            "$ref": "#/definitions/v1.ListBindingsResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1493,19 +136,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse"
+                            "$ref": "#/definitions/v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1542,13 +185,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1578,7 +221,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/v1.ChangePasswordRequest"
                         }
                     }
                 ],
@@ -1589,13 +232,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1620,7 +263,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SendCodeRequest"
+                            "$ref": "#/definitions/v1.SendCodeRequest"
                         }
                     }
                 ],
@@ -1631,13 +274,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1667,7 +310,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginRequest"
+                            "$ref": "#/definitions/v1.LoginRequest"
                         }
                     }
                 ],
@@ -1675,19 +318,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse"
+                            "$ref": "#/definitions/v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1730,19 +373,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse"
+                            "$ref": "#/definitions/v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1778,19 +421,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.GetAuthCodeResponse"
+                            "$ref": "#/definitions/v1.GetAuthCodeResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1842,58 +485,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse"
+                            "$ref": "#/definitions/v1.LoginResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/auth/menus": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Get menu tree",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1929,19 +533,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.NonceResponse"
+                            "$ref": "#/definitions/v1.NonceResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -1970,20 +574,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AuthProviderBrief"
+                                "$ref": "#/definitions/v1.AuthProviderBrief"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2013,7 +617,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RegisterRequest"
+                            "$ref": "#/definitions/v1.RegisterRequest"
                         }
                     }
                 ],
@@ -2024,13 +628,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2055,7 +659,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ResetPasswordRequest"
+                            "$ref": "#/definitions/v1.ResetPasswordRequest"
                         }
                     }
                 ],
@@ -2066,13 +670,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2102,7 +706,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetPayPasswordRequest"
+                            "$ref": "#/definitions/v1.SetPayPasswordRequest"
                         }
                     }
                 ],
@@ -2113,13 +717,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2146,19 +750,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SecurityStatusResponse"
+                            "$ref": "#/definitions/v1.SecurityStatusResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2188,7 +792,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPDisableRequest"
+                            "$ref": "#/definitions/v1.TOTPDisableRequest"
                         }
                     }
                 ],
@@ -2199,13 +803,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2235,7 +839,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPEnableRequest"
+                            "$ref": "#/definitions/v1.TOTPEnableRequest"
                         }
                     }
                 ],
@@ -2246,13 +850,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2279,19 +883,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPSetupResponse"
+                            "$ref": "#/definitions/v1.TOTPSetupResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2318,19 +922,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPStatusResponse"
+                            "$ref": "#/definitions/v1.TOTPStatusResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2360,7 +964,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPVerifyRequest"
+                            "$ref": "#/definitions/v1.TOTPVerifyRequest"
                         }
                     }
                 ],
@@ -2371,13 +975,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2407,7 +1011,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.VerifyPayPasswordRequest"
+                            "$ref": "#/definitions/v1.VerifyPayPasswordRequest"
                         }
                     }
                 ],
@@ -2418,63 +1022,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/auth/switch-role": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Switch role",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SwitchRoleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2504,7 +1058,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateProfileRequest"
+                            "$ref": "#/definitions/v1.UpdateProfileRequest"
                         }
                     }
                 ],
@@ -2515,13 +1069,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -2548,595 +1102,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo"
+                            "$ref": "#/definitions/v1.UserInfo"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/cfg/apps": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "List apps",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "aboutUs",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Is enabled",
-                        "name": "enabled",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "logo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "version",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListAppVersionResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Create app",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateAppVersionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/cfg/apps/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Get app info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Update app info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateAppVersionRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Delete app",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/cfg/configs": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "List configs",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "key",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListConfigResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Create config",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateConfigRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/cfg/configs/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Get config info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Update config info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateConfigRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Config"
-                ],
-                "summary": "Delete config",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -3178,1252 +1156,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/menus": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "List menus",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Create menu",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateMenuRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/menus/tree": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get menu tree",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/menus/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get menu info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Update menu info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateMenuRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Delete menu",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/menus/{id}/toggle-hidden": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "ToggleHidden",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/roles": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "List roles",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "name": "createdAtFrom",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "createdAtTo",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "description",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Create a role",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateRoleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/roles/all": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "All roles",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/roles/{name}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Get role info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Update role info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateRoleRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Delete a role",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/roles/{name}/apis": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Get apis",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Set apis",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetApisRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/roles/{name}/menus": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Get menuIDs of role",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Role"
-                ],
-                "summary": "Set menus",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Role name",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetMenusRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/users": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "List users",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Order asc or desc.",
-                        "name": "order",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort field.",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListUserResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Create a user",
-                "parameters": [
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateUserRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/users/{name}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get user info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Update user info",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "name": "age",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "avatar",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "male",
-                            "female",
-                            "secret"
-                        ],
-                        "type": "string",
-                        "description": "Gender, male female secret",
-                        "name": "gender",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "nickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Status, 1-enabled, 2-disabled",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete a user",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/users/{name}/change-password": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Change password",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Username",
-                        "name": "name",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Param",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -4451,13 +1190,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse"
+                            "$ref": "#/definitions/core.ErrResponse"
                         }
                     }
                 }
@@ -4465,7 +1204,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "github_com_bingo-project_bingo_internal_pkg_core.ErrResponse": {
+        "core.ErrResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -4482,155 +1221,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "role": {
-                    "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                },
-                "roleName": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                    }
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "group": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "internal": {
-                    "type": "boolean"
-                },
-                "method": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo": {
-            "type": "object",
-            "properties": {
-                "accessKey": {
-                    "type": "string"
-                },
-                "acl": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "appId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expiredAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "secretKey": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo": {
-            "type": "object",
-            "properties": {
-                "appId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer"
-                },
-                "uid": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.AuthProviderBrief": {
+        "v1.AuthProviderBrief": {
             "type": "object",
             "properties": {
                 "authUrl": {
@@ -4651,7 +1242,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.BindingInfo": {
+        "v1.BindingInfo": {
             "type": "object",
             "properties": {
                 "accountId": {
@@ -4671,7 +1262,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest": {
+        "v1.ChangePasswordRequest": {
             "type": "object",
             "required": [
                 "passwordNew",
@@ -4690,308 +1281,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAdminRequest": {
-            "type": "object",
-            "required": [
-                "nickname",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 2
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 18,
-                    "minLength": 6
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "roleNames": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "username": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 2
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiKeyRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "status"
-            ],
-            "properties": {
-                "acl": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "appId": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expiredAt": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 2
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiRequest": {
-            "type": "object",
-            "required": [
-                "description",
-                "group",
-                "method",
-                "path"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "group": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "method": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "path": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAppRequest": {
-            "type": "object",
-            "required": [
-                "name",
-                "status"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ]
-                },
-                "uid": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateMenuRequest": {
-            "type": "object",
-            "required": [
-                "component",
-                "path"
-            ],
-            "properties": {
-                "apiIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "authCode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "component": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "hidden": {
-                    "type": "boolean"
-                },
-                "icon": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "integer"
-                },
-                "path": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "sort": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "enabled",
-                        "disabled"
-                    ]
-                },
-                "title": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "catalog",
-                        "menu",
-                        "button",
-                        "embedded",
-                        "link"
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateRoleRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 2
-                },
-                "remark": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "enabled",
-                        "disabled"
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateUserRequest": {
-            "type": "object",
-            "required": [
-                "countryCode",
-                "nickname",
-                "password",
-                "username"
-            ],
-            "properties": {
-                "age": {
-                    "type": "integer",
-                    "maximum": 130,
-                    "minimum": 0,
-                    "example": 0
-                },
-                "avatar": {
-                    "type": "string"
-                },
-                "countryCode": {
-                    "type": "string",
-                    "example": "us"
-                },
-                "email": {
-                    "type": "string",
-                    "example": "peter@gmail.com"
-                },
-                "gender": {
-                    "description": "Gender, male female secret",
-                    "type": "string",
-                    "enum": [
-                        "male",
-                        "female",
-                        "secret"
-                    ],
-                    "example": "male"
-                },
-                "nickname": {
-                    "type": "string",
-                    "example": "Peter"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 6,
-                    "example": "123456"
-                },
-                "phone": {
-                    "type": "string",
-                    "example": "9999999999"
-                },
-                "pid": {
-                    "type": "string",
-                    "example": "88888888"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "default": 1,
-                    "enum": [
-                        1,
-                        2
-                    ]
-                },
-                "username": {
-                    "type": "string",
-                    "example": "peter"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.GetAuthCodeResponse": {
+        "v1.GetAuthCodeResponse": {
             "type": "object",
             "properties": {
                 "authUrl": {
@@ -5008,21 +1298,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.GroupApiResponse": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                    }
-                },
-                "key": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.HealthzResponse": {
+        "v1.HealthzResponse": {
             "type": "object",
             "properties": {
                 "status": {
@@ -5030,116 +1306,18 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAdminResponse": {
+        "v1.ListBindingsResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiKeyResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAppResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListBindingsResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.BindingInfo"
+                        "$ref": "#/definitions/v1.BindingInfo"
                     }
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListUserResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginRequest": {
+        "v1.LoginRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -5158,7 +1336,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse": {
+        "v1.LoginResponse": {
             "type": "object",
             "properties": {
                 "accessToken": {
@@ -5169,69 +1347,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo": {
-            "type": "object",
-            "properties": {
-                "apiIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "authCode": {
-                    "type": "string"
-                },
-                "children": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo"
-                    }
-                },
-                "component": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "hidden": {
-                    "type": "boolean"
-                },
-                "icon": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "integer"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "redirect": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.NonceResponse": {
+        "v1.NonceResponse": {
             "type": "object",
             "properties": {
                 "nonce": {
@@ -5240,7 +1356,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.RegisterRequest": {
+        "v1.RegisterRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -5268,7 +1384,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.ResetPasswordRequest": {
+        "v1.ResetPasswordRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -5291,33 +1407,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SecurityStatusResponse": {
+        "v1.SecurityStatusResponse": {
             "type": "object",
             "properties": {
                 "payPasswordSet": {
@@ -5328,7 +1418,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SendCodeRequest": {
+        "v1.SendCodeRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -5351,29 +1441,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetApisRequest": {
-            "type": "object",
-            "properties": {
-                "apiIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetMenusRequest": {
-            "type": "object",
-            "properties": {
-                "menuIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetPayPasswordRequest": {
+        "v1.SetPayPasswordRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -5399,32 +1467,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetRolesRequest": {
-            "type": "object",
-            "required": [
-                "roleNames"
-            ],
-            "properties": {
-                "roleNames": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.SwitchRoleRequest": {
-            "type": "object",
-            "required": [
-                "roleName"
-            ],
-            "properties": {
-                "roleName": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPDisableRequest": {
+        "v1.TOTPDisableRequest": {
             "type": "object",
             "required": [
                 "totpCode",
@@ -5441,7 +1484,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPEnableRequest": {
+        "v1.TOTPEnableRequest": {
             "type": "object",
             "required": [
                 "code"
@@ -5453,7 +1496,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPSetupResponse": {
+        "v1.TOTPSetupResponse": {
             "type": "object",
             "properties": {
                 "otpauthUrl": {
@@ -5464,7 +1507,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPStatusResponse": {
+        "v1.TOTPStatusResponse": {
             "type": "object",
             "properties": {
                 "enabled": {
@@ -5472,7 +1515,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPVerifyRequest": {
+        "v1.TOTPVerifyRequest": {
             "type": "object",
             "required": [
                 "code"
@@ -5484,187 +1527,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAdminRequest": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "nickname": {
-                    "type": "string",
-                    "maxLength": 20,
-                    "minLength": 2
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 18,
-                    "minLength": 6
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "roleNames": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiKeyRequest": {
-            "type": "object",
-            "properties": {
-                "acl": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "description": {
-                    "type": "string"
-                },
-                "expiredAt": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "group": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "internal": {
-                    "type": "boolean"
-                },
-                "method": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "path": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAppRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "enum": [
-                        1,
-                        2
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateMenuRequest": {
-            "type": "object",
-            "properties": {
-                "apiIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "authCode": {
-                    "type": "string",
-                    "maxLength": 100
-                },
-                "component": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "hidden": {
-                    "type": "boolean"
-                },
-                "icon": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "name": {
-                    "type": "string"
-                },
-                "parentId": {
-                    "type": "integer"
-                },
-                "path": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "redirect": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "sort": {
-                    "type": "integer"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "enabled",
-                        "disabled"
-                    ]
-                },
-                "title": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "catalog",
-                        "menu",
-                        "button",
-                        "embedded",
-                        "link"
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateProfileRequest": {
+        "v1.UpdateProfileRequest": {
             "type": "object",
             "properties": {
                 "avatar": {
@@ -5689,28 +1552,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateRoleRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                },
-                "remark": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "status": {
-                    "type": "string",
-                    "enum": [
-                        "enabled",
-                        "disabled"
-                    ]
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo": {
+        "v1.UserInfo": {
             "type": "object",
             "properties": {
                 "age": {
@@ -5768,7 +1610,7 @@ const docTemplate = `{
                 }
             }
         },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1.VerifyPayPasswordRequest": {
+        "v1.VerifyPayPasswordRequest": {
             "type": "object",
             "required": [
                 "payPassword"
@@ -5777,209 +1619,6 @@ const docTemplate = `{
                 "payPassword": {
                     "type": "string",
                     "example": "654321"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo": {
-            "type": "object",
-            "properties": {
-                "aboutUs": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "description": "Is enabled",
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "deletedAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "operatorId": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateAppVersionRequest": {
-            "type": "object",
-            "required": [
-                "aboutUs",
-                "description",
-                "logo",
-                "name",
-                "version"
-            ],
-            "properties": {
-                "aboutUs": {
-                    "type": "string",
-                    "maxLength": 2000
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "enabled": {
-                    "description": "Is enabled",
-                    "type": "integer"
-                },
-                "logo": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "version": {
-                    "type": "string",
-                    "maxLength": 255
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateConfigRequest": {
-            "type": "object",
-            "required": [
-                "key",
-                "name"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "operatorId": {
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListAppVersionResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListConfigResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo"
-                    }
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateAppVersionRequest": {
-            "type": "object",
-            "properties": {
-                "aboutUs": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "enabled": {
-                    "description": "Is enabled",
-                    "type": "integer"
-                },
-                "logo": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255
-                },
-                "version": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateConfigRequest": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "key": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "operatorId": {
-                    "type": "integer"
-                },
-                "value": {
-                    "type": "string"
                 }
             }
         },
@@ -6009,16 +1648,23 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "1.0",
 	Host:             "",
-	BasePath:         "",
+	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "",
+	Title:            "API Docs",
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

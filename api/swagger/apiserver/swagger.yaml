@@ -1,5 +1,6 @@
+basePath: /
 definitions:
-  github_com_bingo-project_bingo_internal_pkg_core.ErrResponse:
+  core.ErrResponse:
     properties:
       message:
         type: string
@@ -10,105 +11,7 @@ definitions:
       reason:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo:
-    properties:
-      avatar:
-        type: string
-      createdAt:
-        type: string
-      email:
-        type: string
-      nickname:
-        type: string
-      phone:
-        type: string
-      role:
-        $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-      roleName:
-        type: string
-      roles:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-        type: array
-      status:
-        type: string
-      updatedAt:
-        type: string
-      username:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo:
-    properties:
-      createdAt:
-        type: string
-      description:
-        type: string
-      group:
-        type: string
-      id:
-        type: integer
-      internal:
-        type: boolean
-      method:
-        type: string
-      path:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo:
-    properties:
-      accessKey:
-        type: string
-      acl:
-        items:
-          type: string
-        type: array
-      appId:
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      expiredAt:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      secretKey:
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        type: integer
-      uid:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo:
-    properties:
-      appId:
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      logo:
-        type: string
-      name:
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        type: integer
-      uid:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.AuthProviderBrief:
+  v1.AuthProviderBrief:
     properties:
       authUrl:
         description: Auth URL
@@ -123,7 +26,7 @@ definitions:
         description: Redirect URL
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.BindingInfo:
+  v1.BindingInfo:
     properties:
       accountId:
         type: string
@@ -136,7 +39,7 @@ definitions:
       username:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest:
+  v1.ChangePasswordRequest:
     properties:
       passwordNew:
         maxLength: 18
@@ -150,228 +53,7 @@ definitions:
     - passwordNew
     - passwordOld
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAdminRequest:
-    properties:
-      avatar:
-        type: string
-      email:
-        type: string
-      nickname:
-        maxLength: 20
-        minLength: 2
-        type: string
-      password:
-        maxLength: 18
-        minLength: 6
-        type: string
-      phone:
-        type: string
-      roleNames:
-        items:
-          type: string
-        type: array
-      username:
-        maxLength: 255
-        minLength: 2
-        type: string
-    required:
-    - nickname
-    - password
-    - username
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiKeyRequest:
-    properties:
-      acl:
-        items:
-          type: string
-        type: array
-      appId:
-        type: string
-      description:
-        type: string
-      expiredAt:
-        type: string
-      name:
-        maxLength: 255
-        minLength: 2
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        enum:
-        - 1
-        - 2
-        type: integer
-    required:
-    - name
-    - status
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiRequest:
-    properties:
-      description:
-        maxLength: 255
-        minLength: 1
-        type: string
-      group:
-        maxLength: 255
-        minLength: 1
-        type: string
-      method:
-        maxLength: 255
-        minLength: 1
-        type: string
-      path:
-        maxLength: 255
-        minLength: 1
-        type: string
-    required:
-    - description
-    - group
-    - method
-    - path
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAppRequest:
-    properties:
-      description:
-        type: string
-      logo:
-        type: string
-      name:
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        enum:
-        - 1
-        - 2
-        type: integer
-      uid:
-        type: string
-    required:
-    - name
-    - status
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateMenuRequest:
-    properties:
-      apiIds:
-        items:
-          type: integer
-        type: array
-      authCode:
-        maxLength: 100
-        type: string
-      component:
-        maxLength: 255
-        minLength: 1
-        type: string
-      hidden:
-        type: boolean
-      icon:
-        maxLength: 255
-        minLength: 1
-        type: string
-      name:
-        type: string
-      parentId:
-        type: integer
-      path:
-        maxLength: 255
-        minLength: 1
-        type: string
-      sort:
-        type: integer
-      status:
-        enum:
-        - enabled
-        - disabled
-        type: string
-      title:
-        maxLength: 255
-        minLength: 1
-        type: string
-      type:
-        enum:
-        - catalog
-        - menu
-        - button
-        - embedded
-        - link
-        type: string
-    required:
-    - component
-    - path
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateRoleRequest:
-    properties:
-      description:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 20
-        minLength: 2
-        type: string
-      remark:
-        maxLength: 255
-        type: string
-      status:
-        enum:
-        - enabled
-        - disabled
-        type: string
-    required:
-    - name
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateUserRequest:
-    properties:
-      age:
-        example: 0
-        maximum: 130
-        minimum: 0
-        type: integer
-      avatar:
-        type: string
-      countryCode:
-        example: us
-        type: string
-      email:
-        example: peter@gmail.com
-        type: string
-      gender:
-        description: Gender, male female secret
-        enum:
-        - male
-        - female
-        - secret
-        example: male
-        type: string
-      nickname:
-        example: Peter
-        type: string
-      password:
-        example: "123456"
-        minLength: 6
-        type: string
-      phone:
-        example: "9999999999"
-        type: string
-      pid:
-        example: "88888888"
-        type: string
-      status:
-        default: 1
-        description: Status, 1-enabled, 2-disabled
-        enum:
-        - 1
-        - 2
-        type: integer
-      username:
-        example: peter
-        type: string
-    required:
-    - countryCode
-    - nickname
-    - password
-    - username
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.GetAuthCodeResponse:
+  v1.GetAuthCodeResponse:
     properties:
       authUrl:
         description: OAuth authorization URL
@@ -383,91 +65,19 @@ definitions:
         description: State parameter
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.GroupApiResponse:
-    properties:
-      children:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-        type: array
-      key:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.HealthzResponse:
+  v1.HealthzResponse:
     properties:
       status:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAdminResponse:
+  v1.ListBindingsResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiKeyResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAppResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListBindingsResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.BindingInfo'
+          $ref: '#/definitions/v1.BindingInfo'
         type: array
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListUserResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginRequest:
+  v1.LoginRequest:
     properties:
       account:
         maxLength: 255
@@ -481,61 +91,20 @@ definitions:
     - account
     - password
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse:
+  v1.LoginResponse:
     properties:
       accessToken:
         type: string
       expiresAt:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo:
-    properties:
-      apiIds:
-        items:
-          type: integer
-        type: array
-      authCode:
-        type: string
-      children:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        type: array
-      component:
-        type: string
-      createdAt:
-        type: string
-      hidden:
-        type: boolean
-      icon:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      parentId:
-        type: integer
-      path:
-        type: string
-      redirect:
-        type: string
-      sort:
-        type: integer
-      status:
-        type: string
-      title:
-        type: string
-      type:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.NonceResponse:
+  v1.NonceResponse:
     properties:
       nonce:
         description: Nonce
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.RegisterRequest:
+  v1.RegisterRequest:
     properties:
       account:
         maxLength: 255
@@ -556,7 +125,7 @@ definitions:
     - account
     - password
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.ResetPasswordRequest:
+  v1.ResetPasswordRequest:
     properties:
       account:
         maxLength: 255
@@ -573,31 +142,14 @@ definitions:
     - code
     - password
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo:
-    properties:
-      createdAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      remark:
-        type: string
-      status:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SecurityStatusResponse:
+  v1.SecurityStatusResponse:
     properties:
       payPasswordSet:
         type: boolean
       totpEnabled:
         type: boolean
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SendCodeRequest:
+  v1.SendCodeRequest:
     properties:
       account:
         maxLength: 255
@@ -614,21 +166,7 @@ definitions:
     - account
     - scene
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetApisRequest:
-    properties:
-      apiIds:
-        items:
-          type: integer
-        type: array
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetMenusRequest:
-    properties:
-      menuIds:
-        items:
-          type: integer
-        type: array
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetPayPasswordRequest:
+  v1.SetPayPasswordRequest:
     properties:
       code:
         example: "123456"
@@ -647,23 +185,7 @@ definitions:
     - code
     - payPassword
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetRolesRequest:
-    properties:
-      roleNames:
-        items:
-          type: string
-        type: array
-    required:
-    - roleNames
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.SwitchRoleRequest:
-    properties:
-      roleName:
-        type: string
-    required:
-    - roleName
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPDisableRequest:
+  v1.TOTPDisableRequest:
     properties:
       totpCode:
         example: "123456"
@@ -675,7 +197,7 @@ definitions:
     - totpCode
     - verifyCode
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPEnableRequest:
+  v1.TOTPEnableRequest:
     properties:
       code:
         example: "123456"
@@ -683,19 +205,19 @@ definitions:
     required:
     - code
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPSetupResponse:
+  v1.TOTPSetupResponse:
     properties:
       otpauthUrl:
         type: string
       secret:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPStatusResponse:
+  v1.TOTPStatusResponse:
     properties:
       enabled:
         type: boolean
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPVerifyRequest:
+  v1.TOTPVerifyRequest:
     properties:
       code:
         example: "123456"
@@ -703,136 +225,7 @@ definitions:
     required:
     - code
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAdminRequest:
-    properties:
-      avatar:
-        type: string
-      email:
-        type: string
-      nickname:
-        maxLength: 20
-        minLength: 2
-        type: string
-      password:
-        maxLength: 18
-        minLength: 6
-        type: string
-      phone:
-        type: string
-      roleNames:
-        items:
-          type: string
-        type: array
-      status:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiKeyRequest:
-    properties:
-      acl:
-        items:
-          type: string
-        type: array
-      description:
-        type: string
-      expiredAt:
-        type: string
-      name:
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        enum:
-        - 1
-        - 2
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiRequest:
-    properties:
-      description:
-        maxLength: 255
-        minLength: 1
-        type: string
-      group:
-        maxLength: 255
-        minLength: 1
-        type: string
-      internal:
-        type: boolean
-      method:
-        maxLength: 255
-        minLength: 1
-        type: string
-      path:
-        maxLength: 255
-        minLength: 1
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAppRequest:
-    properties:
-      description:
-        type: string
-      logo:
-        type: string
-      name:
-        type: string
-      status:
-        description: Status, 1-enabled, 2-disabled
-        enum:
-        - 1
-        - 2
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateMenuRequest:
-    properties:
-      apiIds:
-        items:
-          type: integer
-        type: array
-      authCode:
-        maxLength: 100
-        type: string
-      component:
-        maxLength: 255
-        minLength: 1
-        type: string
-      hidden:
-        type: boolean
-      icon:
-        maxLength: 255
-        minLength: 1
-        type: string
-      name:
-        type: string
-      parentId:
-        type: integer
-      path:
-        maxLength: 255
-        minLength: 1
-        type: string
-      redirect:
-        maxLength: 255
-        minLength: 1
-        type: string
-      sort:
-        type: integer
-      status:
-        enum:
-        - enabled
-        - disabled
-        type: string
-      title:
-        maxLength: 255
-        minLength: 1
-        type: string
-      type:
-        enum:
-        - catalog
-        - menu
-        - button
-        - embedded
-        - link
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateProfileRequest:
+  v1.UpdateProfileRequest:
     properties:
       avatar:
         maxLength: 255
@@ -850,22 +243,7 @@ definitions:
         minLength: 11
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateRoleRequest:
-    properties:
-      description:
-        maxLength: 255
-        minLength: 1
-        type: string
-      remark:
-        maxLength: 255
-        type: string
-      status:
-        enum:
-        - enabled
-        - disabled
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo:
+  v1.UserInfo:
     properties:
       age:
         type: integer
@@ -904,151 +282,13 @@ definitions:
       username:
         type: string
     type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1.VerifyPayPasswordRequest:
+  v1.VerifyPayPasswordRequest:
     properties:
       payPassword:
         example: "654321"
         type: string
     required:
     - payPassword
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo:
-    properties:
-      aboutUs:
-        type: string
-      createdAt:
-        type: string
-      deletedAt:
-        type: string
-      description:
-        type: string
-      enabled:
-        description: Is enabled
-        type: integer
-      id:
-        type: integer
-      logo:
-        type: string
-      name:
-        type: string
-      updatedAt:
-        type: string
-      version:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo:
-    properties:
-      createdAt:
-        type: string
-      deletedAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      key:
-        type: string
-      name:
-        type: string
-      operatorId:
-        type: integer
-      updatedAt:
-        type: string
-      value:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateAppVersionRequest:
-    properties:
-      aboutUs:
-        maxLength: 2000
-        type: string
-      description:
-        maxLength: 1000
-        type: string
-      enabled:
-        description: Is enabled
-        type: integer
-      logo:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      version:
-        maxLength: 255
-        type: string
-    required:
-    - aboutUs
-    - description
-    - logo
-    - name
-    - version
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateConfigRequest:
-    properties:
-      description:
-        type: string
-      key:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      operatorId:
-        type: integer
-      value:
-        type: string
-    required:
-    - key
-    - name
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListAppVersionResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListConfigResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo'
-        type: array
-      total:
-        type: integer
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateAppVersionRequest:
-    properties:
-      aboutUs:
-        type: string
-      description:
-        type: string
-      enabled:
-        description: Is enabled
-        type: integer
-      logo:
-        type: string
-      name:
-        maxLength: 255
-        type: string
-      version:
-        type: string
-    type: object
-  github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateConfigRequest:
-    properties:
-      description:
-        type: string
-      key:
-        type: string
-      name:
-        type: string
-      operatorId:
-        type: integer
-      value:
-        type: string
     type: object
   version.Info:
     properties:
@@ -1069,6 +309,8 @@ definitions:
     type: object
 info:
   contact: {}
+  title: API Docs
+  version: "1.0"
 paths:
   /healthz:
     get:
@@ -1080,870 +322,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.HealthzResponse'
+            $ref: '#/definitions/v1.HealthzResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       summary: Heath check
       tags:
       - Common
-  /v1/admins:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: email
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: nickname
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - in: query
-        name: phone
-        type: string
-      - in: query
-        name: roleName
-        type: string
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      - in: query
-        name: status
-        type: string
-      - in: query
-        name: username
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAdminResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List admins
-      tags:
-      - Admin
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAdminRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create admin
-      tags:
-      - Admin
-  /v1/admins/{name}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete a admin
-      tags:
-      - Admin
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get admin info
-      tags:
-      - Admin
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAdminRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update admin info
-      tags:
-      - Admin
-  /v1/admins/{name}/change-password:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Change password
-      tags:
-      - Admin
-  /v1/admins/{name}/roles:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Query params
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetRolesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Set admin roles
-      tags:
-      - Admin
-  /v1/api-keys:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: accessKey
-        type: string
-      - in: query
-        name: appId
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: name
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      - description: Status, 1-enabled, 2-disabled
-        in: query
-        name: status
-        type: integer
-      - in: query
-        name: uid
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiKeyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List apiKeys
-      tags:
-      - App
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiKeyRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create apiKey
-      tags:
-      - App
-  /v1/api-keys/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete apiKey
-      tags:
-      - App
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get apiKey info
-      tags:
-      - App
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiKeyRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiKeyInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update apiKey info
-      tags:
-      - App
-  /v1/apis:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: group
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: method
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - in: query
-        name: path
-        type: string
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListApiResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List apis
-      tags:
-      - Api
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateApiRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create a api
-      tags:
-      - Api
-  /v1/apis/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete api
-      tags:
-      - Api
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get api info
-      tags:
-      - Api
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateApiRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update api info
-      tags:
-      - Api
-  /v1/apis/all:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ApiInfo'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: All apis
-      tags:
-      - Api
-  /v1/apis/tree:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.GroupApiResponse'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: API Tree
-      tags:
-      - Api
-  /v1/apps:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: appId
-        type: string
-      - in: query
-        name: description
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: logo
-        type: string
-      - in: query
-        name: name
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      - description: Status, 1-enabled, 2-disabled
-        in: query
-        name: status
-        type: integer
-      - in: query
-        name: uid
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListAppResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List apps
-      tags:
-      - App
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateAppRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create app
-      tags:
-      - App
-  /v1/apps/{appid}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: appid
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete app
-      tags:
-      - App
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: appid
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get app info
-      tags:
-      - App
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: appid
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateAppRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AppInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update app info
-      tags:
-      - App
   /v1/auth/bindings:
     get:
       consumes:
@@ -1954,15 +344,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListBindingsResponse'
+            $ref: '#/definitions/v1.ListBindingsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: List social account bindings
@@ -1986,11 +376,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Unbind social account
@@ -2023,15 +413,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse'
+            $ref: '#/definitions/v1.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Bind provider
@@ -2047,7 +437,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest'
+          $ref: '#/definitions/v1.ChangePasswordRequest'
       produces:
       - application/json
       responses:
@@ -2056,11 +446,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Change password
@@ -2076,7 +466,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SendCodeRequest'
+          $ref: '#/definitions/v1.SendCodeRequest'
       produces:
       - application/json
       responses:
@@ -2085,11 +475,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       summary: Send verification code
       tags:
       - Auth
@@ -2103,22 +493,22 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginRequest'
+          $ref: '#/definitions/v1.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse'
+            $ref: '#/definitions/v1.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Login
@@ -2140,15 +530,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.GetAuthCodeResponse'
+            $ref: '#/definitions/v1.GetAuthCodeResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get OAuth authorization URL
@@ -2181,15 +571,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse'
+            $ref: '#/definitions/v1.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Login by provider
@@ -2216,42 +606,18 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.LoginResponse'
+            $ref: '#/definitions/v1.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Login by provider
-      tags:
-      - Auth
-  /v1/auth/menus:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get menu tree
       tags:
       - Auth
   /v1/auth/nonce:
@@ -2270,15 +636,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.NonceResponse'
+            $ref: '#/definitions/v1.NonceResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get Address auth nonce
@@ -2295,16 +661,16 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AuthProviderBrief'
+              $ref: '#/definitions/v1.AuthProviderBrief'
             type: array
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get auth providers
@@ -2320,7 +686,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RegisterRequest'
+          $ref: '#/definitions/v1.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -2329,11 +695,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Register
@@ -2349,7 +715,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ResetPasswordRequest'
+          $ref: '#/definitions/v1.ResetPasswordRequest'
       produces:
       - application/json
       responses:
@@ -2358,11 +724,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       summary: Reset password
       tags:
       - Auth
@@ -2376,7 +742,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetPayPasswordRequest'
+          $ref: '#/definitions/v1.SetPayPasswordRequest'
       produces:
       - application/json
       responses:
@@ -2385,11 +751,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Set pay password
@@ -2405,15 +771,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SecurityStatusResponse'
+            $ref: '#/definitions/v1.SecurityStatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get security status
@@ -2429,7 +795,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPDisableRequest'
+          $ref: '#/definitions/v1.TOTPDisableRequest'
       produces:
       - application/json
       responses:
@@ -2438,11 +804,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Disable TOTP
@@ -2458,7 +824,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPEnableRequest'
+          $ref: '#/definitions/v1.TOTPEnableRequest'
       produces:
       - application/json
       responses:
@@ -2467,11 +833,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Enable TOTP (verify code and enable)
@@ -2487,15 +853,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPSetupResponse'
+            $ref: '#/definitions/v1.TOTPSetupResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Setup TOTP (get secret and QR code URL)
@@ -2511,15 +877,15 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPStatusResponse'
+            $ref: '#/definitions/v1.TOTPStatusResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get TOTP status
@@ -2535,7 +901,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.TOTPVerifyRequest'
+          $ref: '#/definitions/v1.TOTPVerifyRequest'
       produces:
       - application/json
       responses:
@@ -2544,11 +910,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Verify TOTP code
@@ -2564,7 +930,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.VerifyPayPasswordRequest'
+          $ref: '#/definitions/v1.VerifyPayPasswordRequest'
       produces:
       - application/json
       responses:
@@ -2573,47 +939,16 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Verify pay password
       tags:
       - Security
-  /v1/auth/switch-role:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SwitchRoleRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.AdminInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Switch role
-      tags:
-      - Auth
   /v1/auth/user:
     put:
       consumes:
@@ -2624,7 +959,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateProfileRequest'
+          $ref: '#/definitions/v1.UpdateProfileRequest'
       produces:
       - application/json
       responses:
@@ -2633,11 +968,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Update user profile
@@ -2653,382 +988,20 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo'
+            $ref: '#/definitions/v1.UserInfo'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Get user info
       tags:
       - Auth
-  /v1/cfg/apps:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: aboutUs
-        type: string
-      - in: query
-        name: description
-        type: string
-      - description: Is enabled
-        in: query
-        name: enabled
-        type: integer
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: logo
-        type: string
-      - in: query
-        name: name
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      - in: query
-        name: version
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListAppVersionResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List apps
-      tags:
-      - Config
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateAppVersionRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create app
-      tags:
-      - Config
-  /v1/cfg/apps/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete app
-      tags:
-      - Config
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get app info
-      tags:
-      - Config
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateAppVersionRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.AppVersionInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update app info
-      tags:
-      - Config
-  /v1/cfg/configs:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: description
-        type: string
-      - in: query
-        name: key
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: name
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ListConfigResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List configs
-      tags:
-      - Config
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.CreateConfigRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create config
-      tags:
-      - Config
-  /v1/cfg/configs/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete config
-      tags:
-      - Config
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get config info
-      tags:
-      - Config
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.UpdateConfigRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1_syscfg.ConfigInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update config info
-      tags:
-      - Config
   /v1/file/upload:
     post:
       consumes:
@@ -3049,795 +1022,16 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
       summary: Upload file
       tags:
       - File
-  /v1/menus:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListMenuResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List menus
-      tags:
-      - Menu
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateMenuRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create menu
-      tags:
-      - Menu
-  /v1/menus/{id}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete menu
-      tags:
-      - Menu
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get menu info
-      tags:
-      - Menu
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateMenuRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update menu info
-      tags:
-      - Menu
-  /v1/menus/{id}/toggle-hidden:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: ToggleHidden
-      tags:
-      - Menu
-  /v1/menus/tree:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.MenuInfo'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get menu tree
-      tags:
-      - Menu
-  /v1/roles:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - in: query
-        name: createdAtFrom
-        type: string
-      - in: query
-        name: createdAtTo
-        type: string
-      - in: query
-        name: description
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - in: query
-        name: name
-        type: string
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      - in: query
-        name: status
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List roles
-      tags:
-      - Role
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateRoleRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create a role
-      tags:
-      - Role
-  /v1/roles/{name}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete a role
-      tags:
-      - Role
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get role info
-      tags:
-      - Role
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UpdateRoleRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.RoleInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update role info
-      tags:
-      - Role
-  /v1/roles/{name}/apis:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: integer
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get apis
-      tags:
-      - Role
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetApisRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Set apis
-      tags:
-      - Role
-  /v1/roles/{name}/menus:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: integer
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get menuIDs of role
-      tags:
-      - Role
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Role name
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.SetMenusRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Set menus
-      tags:
-      - Role
-  /v1/roles/all:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListRoleResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: All roles
-      tags:
-      - Role
-  /v1/users:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      - description: Order asc or desc.
-        in: query
-        name: order
-        type: string
-      - description: Page
-        in: query
-        name: page
-        type: integer
-      - description: Sort field.
-        in: query
-        name: sort
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ListUserResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: List users
-      tags:
-      - User
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.CreateUserRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Create a user
-      tags:
-      - User
-  /v1/users/{name}:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Delete a user
-      tags:
-      - User
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.UserInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get user info
-      tags:
-      - User
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      - in: query
-        name: age
-        type: integer
-      - in: query
-        name: avatar
-        type: string
-      - in: query
-        name: email
-        type: string
-      - description: Gender, male female secret
-        enum:
-        - male
-        - female
-        - secret
-        in: query
-        name: gender
-        type: string
-      - in: query
-        name: nickname
-        type: string
-      - in: query
-        name: phone
-        type: string
-      - description: Status, 1-enabled, 2-disabled
-        in: query
-        name: status
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Update user info
-      tags:
-      - User
-  /v1/users/{name}/change-password:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: Username
-        in: path
-        name: name
-        required: true
-        type: string
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_bingo-project_bingo_pkg_api_apiserver_v1.ChangePasswordRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Change password
-      tags:
-      - User
   /version:
     get:
       consumes:
@@ -3852,12 +1046,17 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/github_com_bingo-project_bingo_internal_pkg_core.ErrResponse'
+            $ref: '#/definitions/core.ErrResponse'
       summary: Get App Version
       tags:
       - Common
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
