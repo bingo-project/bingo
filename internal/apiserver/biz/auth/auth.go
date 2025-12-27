@@ -127,7 +127,7 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	// 更新登录信息
 	user.LastLoginTime = pointer.Of(time.Now())
 	user.LastLoginType = string(accountType)
-	_ = b.ds.User().Update(ctx, user)
+	_ = b.ds.User().Update(ctx, user, "last_login_time", "last_login_type")
 
 	// 生成 token
 	t, err := token.Sign(user.UID, known.RoleUser)
@@ -342,9 +342,6 @@ func (b *authBiz) ChangePassword(ctx context.Context, uid string, req *v1.Change
 
 	// Update password
 	userM.Password, _ = auth.Encrypt(req.PasswordNew)
-	if err := b.ds.User().Update(ctx, userM); err != nil {
-		return err
-	}
 
-	return nil
+	return b.ds.User().Update(ctx, userM, "password")
 }

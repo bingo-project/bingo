@@ -92,23 +92,28 @@ func (b *userBiz) Update(ctx context.Context, username string, req *v1.UpdateUse
 		return err
 	}
 
+	var fields []string
+
 	if req.Email != nil {
 		userM.Email = *req.Email
+		fields = append(fields, "email")
 	}
 
 	if req.Nickname != nil {
 		userM.Nickname = *req.Nickname
+		fields = append(fields, "nickname")
 	}
 
 	if req.Phone != nil {
 		userM.Phone = *req.Phone
+		fields = append(fields, "phone")
 	}
 
-	if err := b.ds.User().Update(ctx, userM); err != nil {
-		return err
+	if len(fields) == 0 {
+		return nil
 	}
 
-	return nil
+	return b.ds.User().Update(ctx, userM, fields...)
 }
 
 func (b *userBiz) Delete(ctx context.Context, username string) error {

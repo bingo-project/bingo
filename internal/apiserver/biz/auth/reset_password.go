@@ -52,5 +52,6 @@ func (b *resetPasswordBiz) ResetPassword(ctx context.Context, req *v1.ResetPassw
 
 	// 更新密码
 	user.Password, _ = auth.Encrypt(req.Password)
-	return b.ds.User().Update(ctx, user)
+
+	return b.ds.User().Update(ctx, user, "password")
 }
