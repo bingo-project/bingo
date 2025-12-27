@@ -322,40 +322,6 @@ paths:
       summary: Heath check
       tags:
       - Common
-  /v1/auth/bind/{provider}:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Auth provider name
-        in: path
-        name: provider
-        required: true
-        type: string
-      - description: Auth code
-        in: query
-        name: code
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.LoginResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Bind provider
-      tags:
-      - Auth
   /v1/auth/bindings:
     get:
       consumes:
@@ -406,6 +372,39 @@ paths:
       security:
       - Bearer: []
       summary: Unbind social account
+      tags:
+      - Auth
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Auth provider name
+        in: path
+        name: provider
+        required: true
+        type: string
+      - description: Auth code
+        in: query
+        name: code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Bind provider
       tags:
       - Auth
   /v1/auth/change-password:

@@ -110,7 +110,7 @@ func (ctrl *AuthHandler) LoginByProvider(c *gin.Context) {
 // @Success	    200		{object}	v1.LoginResponse
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
-// @Router		/v1/auth/bind/{provider} [POST].
+// @Router		/v1/auth/bindings/{provider} [POST].
 func (ctrl *AuthHandler) BindProvider(c *gin.Context) {
 	log.C(c).Infow("BindProvider function called")
 
