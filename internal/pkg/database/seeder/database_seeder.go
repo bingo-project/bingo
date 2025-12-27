@@ -27,6 +27,7 @@ var Seeders = []Seeder{
 	RoleMenuSeeder{},
 	SystemSeeder{},
 	AuthProviderSeeder{},
+	UserSeeder{},
 }
 
 type DatabaseSeeder struct {

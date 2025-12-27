@@ -47,7 +47,8 @@
 4. [错误处理](#4-错误处理)
 5. [日志规范](#5-日志规范)
 6. [测试规范](#6-测试规范)
-7. [生成代码检查清单](#7-生成代码检查清单)
+7. [数据库迁移与初始化](#7-数据库迁移与初始化)
+8. [生成代码检查清单](#8-生成代码检查清单)
 
 ---
 
@@ -511,7 +512,48 @@ internal/pkg/testing/mock/
 
 ---
 
-## 7. 生成代码检查清单
+## 7. 数据库迁移与初始化
+
+### 7.1 目录结构
+
+```
+internal/pkg/database/
+├── migration/          # 数据库迁移文件
+└── seeder/             # 数据初始化文件
+```
+
+### 7.2 Migration（数据库迁移）
+
+新增或变更表结构时，必须编写 migration 文件。
+
+```bash
+bingo migrate up        # 执行迁移
+bingo migrate rollback  # 回滚上一次迁移
+bingo migrate reset     # 重置所有迁移（⚠️ 仅开发环境）
+```
+
+### 7.3 Seeder（数据初始化）
+
+```bash
+bingo db seed                       # 执行所有 seeder
+bingo db seed --seeder=UserSeeder   # 执行指定 seeder
+```
+
+### 7.4 开发阶段 Migration 管理
+
+功能分支合并前，可将多次表变更合并为单个 migration：
+
+1. 新增 alter table migration 时，同步更新原 create table migration
+2. 执行 `bingo migrate reset && bingo migrate up && bingo db seed` 验证
+3. 删除临时的 alter table migration
+
+### 7.5 测试数据 Seeder
+
+维护 `UserSeeder` 等测试数据 seeder，便于 reset 后快速恢复开发环境。
+
+---
+
+## 8. 生成代码检查清单
 
 **生成任何代码前，必须逐条确认：**
 
@@ -545,6 +587,12 @@ internal/pkg/testing/mock/
 - [ ] Store 层使用 SQLite 测试
 - [ ] Biz/Handler 层使用 Mock
 - [ ] 测试覆盖正常和异常路径
+
+### 数据库变更
+
+- [ ] 表结构变更有对应的 migration 文件
+- [ ] migration 支持 rollback
+- [ ] 必要的初始化数据有 seeder
 
 ---
 
