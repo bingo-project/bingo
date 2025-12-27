@@ -155,6 +155,19 @@ func (b *codeBiz) sendSMS(ctx context.Context, phone, code string, scene CodeSce
 }
 
 func (b *codeBiz) checkUserExists(ctx context.Context, account string, accountType AccountType) (bool, error) {
-	provider := string(accountType)
-	return b.ds.UserAccount().CheckExist(ctx, provider, account), nil
+	switch accountType {
+	case AccountTypeEmail:
+		_, err := b.ds.User().FindByEmail(ctx, account)
+		if err != nil {
+			return false, nil
+		}
+		return true, nil
+	case AccountTypePhone:
+		_, err := b.ds.User().FindByPhone(ctx, account)
+		if err != nil {
+			return false, nil
+		}
+		return true, nil
+	}
+	return false, nil
 }
