@@ -5,7 +5,6 @@ package biz
 import (
 	"github.com/bingo-project/bingo/internal/apiserver/biz/app"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/auth"
-	"github.com/bingo-project/bingo/internal/apiserver/biz/common"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/file"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/syscfg"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/user"
@@ -19,7 +18,6 @@ type IBiz interface {
 	Users() user.UserBiz
 
 	Servers() syscfg.ServerBiz
-	Email() common.EmailBiz
 	Files() file.FileBiz
 
 	AppVersions() syscfg.AppVersionBiz
@@ -57,10 +55,6 @@ func (b *biz) Users() user.UserBiz {
 
 func (b *biz) Servers() syscfg.ServerBiz {
 	return syscfg.NewServer(b.ds)
-}
-
-func (b *biz) Email() common.EmailBiz {
-	return common.NewEmail(b.ds)
 }
 
 func (b *biz) Files() file.FileBiz {

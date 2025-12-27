@@ -24,7 +24,7 @@ type AuthHandler struct {
 }
 
 func NewAuthHandler(ds store.IStore, a *auth.Authorizer) *AuthHandler {
-	codeBiz := bizauth.NewCodeBiz()
+	codeBiz := bizauth.NewCodeBiz(ds)
 	return &AuthHandler{
 		a:                a,
 		b:                biz.NewBiz(ds),
@@ -33,37 +33,6 @@ func NewAuthHandler(ds store.IStore, a *auth.Authorizer) *AuthHandler {
 		userBiz:          bizauth.NewUserBiz(ds, codeBiz),
 		bindingsBiz:      bizauth.NewBindingsBiz(ds),
 	}
-}
-
-// SendEmailCode
-// @Summary    Send email code
-// @Security   Bearer
-// @Tags       Auth
-// @Accept     application/json
-// @Produce    json
-// @Param      request	 body	    v1.SendEmailRequest	 true  "Param"
-// @Success	   200		{object}	nil
-// @Failure	   400		{object}	core.ErrResponse
-// @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/auth/code/email [POST].
-func (ctrl *AuthHandler) SendEmailCode(c *gin.Context) {
-	log.C(c).Infow("SendEmailCode function called")
-
-	var req v1.SendEmailRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
-
-		return
-	}
-
-	err := ctrl.b.Email().SendEmailVerifyCode(c, &req)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	core.Response(c, nil, nil)
 }
 
 // Register

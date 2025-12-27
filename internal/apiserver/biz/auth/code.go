@@ -11,6 +11,7 @@ import (
 	"github.com/duke-git/lancet/v2/random"
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/i18n"
 	"github.com/bingo-project/bingo/internal/pkg/log"
@@ -36,13 +37,15 @@ type CodeBiz interface {
 }
 
 type codeBiz struct {
+	ds         store.IStore
 	codeLength int
 	codeTTL    int // 分钟
 	codeWait   int // 分钟
 }
 
-func NewCodeBiz() CodeBiz {
+func NewCodeBiz(ds store.IStore) CodeBiz {
 	return &codeBiz{
+		ds:         ds,
 		codeLength: 6,
 		codeTTL:    5,
 		codeWait:   1,
@@ -53,6 +56,17 @@ func (b *codeBiz) Send(ctx context.Context, account string, scene CodeScene) err
 	accountType, err := DetectAccountType(account)
 	if err != nil {
 		return err
+	}
+
+	// 注册场景检查用户是否已存在
+	if scene == CodeSceneRegister {
+		exists, err := b.checkUserExists(ctx, account, accountType)
+		if err != nil {
+			return err
+		}
+		if exists {
+			return errno.ErrUserAccountAlreadyExist
+		}
 	}
 
 	// 检查发送频率
@@ -138,4 +152,9 @@ func (b *codeBiz) sendSMS(ctx context.Context, phone, code string, scene CodeSce
 	_ = msg
 	log.C(ctx).Infow("sendSMS succeed", "phone", phone, "scene", scene, "lang", lang)
 	return nil
+}
+
+func (b *codeBiz) checkUserExists(ctx context.Context, account string, accountType AccountType) (bool, error) {
+	provider := string(accountType)
+	return b.ds.UserAccount().CheckExist(ctx, provider, account), nil
 }

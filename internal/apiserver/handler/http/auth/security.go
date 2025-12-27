@@ -22,7 +22,7 @@ type SecurityHandler struct {
 
 // NewSecurityHandler creates a new SecurityHandler.
 func NewSecurityHandler(ds store.IStore) *SecurityHandler {
-	codeBiz := bizauth.NewCodeBiz()
+	codeBiz := bizauth.NewCodeBiz(ds)
 	return &SecurityHandler{
 		securityBiz: bizauth.NewSecurityBiz(ds, codeBiz),
 	}

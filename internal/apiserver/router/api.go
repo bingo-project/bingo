@@ -25,7 +25,6 @@ func MapApiRouters(g *gin.Engine) {
 		authGroup.POST("/register", authHandler.Register)
 		authGroup.POST("/login", authHandler.Login)
 		authGroup.POST("/code", authHandler.SendCode)
-		authGroup.POST("/code/email", authHandler.SendEmailCode)
 		authGroup.POST("/reset-password", authHandler.ResetPassword)
 
 		// Login by Address
