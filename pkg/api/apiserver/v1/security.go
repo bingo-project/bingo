@@ -4,8 +4,11 @@
 package v1
 
 // SetPayPasswordRequest sets or updates pay password.
+// If TOTP is enabled, requires TOTPCode + Code.
+// Otherwise, requires LoginPassword + Code.
 type SetPayPasswordRequest struct {
-	LoginPassword string `json:"loginPassword" binding:"required" example:"123456"`
+	LoginPassword string `json:"loginPassword" binding:"omitempty" example:"123456"`
+	TOTPCode      string `json:"totpCode" binding:"omitempty,len=6" example:"123456"`
 	Code          string `json:"code" binding:"required" example:"123456"`
 	PayPassword   string `json:"payPassword" binding:"required,min=6" example:"654321"`
 }

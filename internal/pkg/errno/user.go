@@ -122,4 +122,18 @@ var (
 		Reason:  "InvalidArgument.TOTPInvalid",
 		Message: "TOTP code is invalid.",
 	}
+
+	// ErrTOTPCodeRequired TOTP验证码必填
+	ErrTOTPCodeRequired = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.TOTPCodeRequired",
+		Message: "TOTP code is required.",
+	}
+
+	// ErrPasswordRequired 登录密码必填
+	ErrPasswordRequired = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.PasswordRequired",
+		Message: "Login password is required.",
+	}
 )

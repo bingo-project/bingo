@@ -56,16 +56,12 @@ func NewSecurityBiz(ds store.IStore, codeBiz CodeBiz) SecurityBiz {
 }
 
 // SetPayPassword sets or updates pay password.
-// Requires login password and verification code.
+// If TOTP is enabled, requires TOTP code + verification code.
+// Otherwise, requires login password + verification code.
 func (b *securityBiz) SetPayPassword(ctx context.Context, uid string, req *v1.SetPayPasswordRequest) error {
 	user, err := b.ds.User().GetByUID(ctx, uid)
 	if err != nil {
 		return errno.ErrUserNotFound
-	}
-
-	// Verify login password
-	if err := auth.Compare(user.Password, req.LoginPassword); err != nil {
-		return errno.ErrPasswordInvalid
 	}
 
 	// Get user account for verification code
@@ -77,7 +73,33 @@ func (b *securityBiz) SetPayPassword(ctx context.Context, uid string, req *v1.Se
 		return errno.ErrInvalidAccountFormat
 	}
 
-	// Verify code
+	// Verify based on TOTP status
+	if user.GoogleStatus == GoogleStatusEnabled {
+		// TOTP enabled: verify TOTP code
+		if req.TOTPCode == "" {
+			return errno.ErrTOTPCodeRequired
+		}
+
+		secret, err := facade.AES.DecryptString(user.GoogleKey)
+		if err != nil {
+			return err
+		}
+
+		if !auth.ValidateTOTP(req.TOTPCode, secret) {
+			return errno.ErrTOTPInvalid
+		}
+	} else {
+		// TOTP not enabled: verify login password
+		if req.LoginPassword == "" {
+			return errno.ErrPasswordRequired
+		}
+
+		if err := auth.Compare(user.Password, req.LoginPassword); err != nil {
+			return errno.ErrPasswordInvalid
+		}
+	}
+
+	// Verify email/phone code
 	if err := b.codeBiz.Verify(ctx, account, CodeSceneSecurity, req.Code); err != nil {
 		return err
 	}

@@ -1404,7 +1404,6 @@
             "type": "object",
             "required": [
                 "code",
-                "loginPassword",
                 "payPassword"
             ],
             "properties": {
@@ -1420,6 +1419,10 @@
                     "type": "string",
                     "minLength": 6,
                     "example": "654321"
+                },
+                "totpCode": {
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },

@@ -1412,7 +1412,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "code",
-                "loginPassword",
                 "payPassword"
             ],
             "properties": {
@@ -1428,6 +1427,10 @@ const docTemplate = `{
                     "type": "string",
                     "minLength": 6,
                     "example": "654321"
+                },
+                "totpCode": {
+                    "type": "string",
+                    "example": "123456"
                 }
             }
         },

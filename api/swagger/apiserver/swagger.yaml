@@ -166,9 +166,11 @@ definitions:
         example: "654321"
         minLength: 6
         type: string
+      totpCode:
+        example: "123456"
+        type: string
     required:
     - code
-    - loginPassword
     - payPassword
     type: object
   v1.TOTPDisableRequest:
