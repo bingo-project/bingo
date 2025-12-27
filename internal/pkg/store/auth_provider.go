@@ -29,6 +29,7 @@ type AuthProviderExpansion interface {
 	DeleteByID(ctx context.Context, id uint) error
 	FindEnabled(ctx context.Context) ([]*model.AuthProvider, error)
 	FirstEnabled(ctx context.Context, provider string) (*model.AuthProvider, error)
+	FindByName(ctx context.Context, name string) (*model.AuthProvider, error)
 }
 
 type authProviderStore struct {
@@ -98,4 +99,15 @@ func (s *authProviderStore) FirstEnabled(ctx context.Context, provider string) (
 		Error
 
 	return &ret, err
+}
+
+// FindByName finds an auth provider by name regardless of status.
+func (s *authProviderStore) FindByName(ctx context.Context, name string) (*model.AuthProvider, error) {
+	var ret model.AuthProvider
+	err := s.DB(ctx).Where("name = ?", name).First(&ret).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
 }

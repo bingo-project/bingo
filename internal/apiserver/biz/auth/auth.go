@@ -224,9 +224,23 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 		scopes = []string{"user"}
 	}
 
+	clientSecret := oauthProvider.ClientSecret
+
+	// Apple: Generate JWT client_secret dynamically
+	if provider == model.AuthProviderApple && oauthProvider.Info != "" {
+		appleConfig, err := auth.ParseAppleConfig(oauthProvider.Info)
+		if err == nil && appleConfig.PrivateKey != "" {
+			generatedSecret, err := auth.GenerateAppleClientSecret(oauthProvider.ClientID, appleConfig)
+			if err != nil {
+				return nil, err
+			}
+			clientSecret = generatedSecret
+		}
+	}
+
 	conf := oauth2.Config{
 		ClientID:     oauthProvider.ClientID,
-		ClientSecret: oauthProvider.ClientSecret,
+		ClientSecret: clientSecret,
 		RedirectURL:  oauthProvider.RedirectURL,
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  oauthProvider.AuthURL,
@@ -297,9 +311,23 @@ func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByPro
 		scopes = []string{"user"}
 	}
 
+	clientSecret := oauthProvider.ClientSecret
+
+	// Apple: Generate JWT client_secret dynamically
+	if providerName == model.AuthProviderApple && oauthProvider.Info != "" {
+		appleConfig, err := auth.ParseAppleConfig(oauthProvider.Info)
+		if err == nil && appleConfig.PrivateKey != "" {
+			generatedSecret, err := auth.GenerateAppleClientSecret(oauthProvider.ClientID, appleConfig)
+			if err != nil {
+				return nil, err
+			}
+			clientSecret = generatedSecret
+		}
+	}
+
 	conf := oauth2.Config{
 		ClientID:     oauthProvider.ClientID,
-		ClientSecret: oauthProvider.ClientSecret,
+		ClientSecret: clientSecret,
 		RedirectURL:  oauthProvider.RedirectURL,
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  oauthProvider.AuthURL,
