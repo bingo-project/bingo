@@ -53,7 +53,15 @@ type ListBindingsResponse struct {
 }
 
 type LoginByProviderRequest struct {
-	Code string `json:"code" form:"code"` // Auth code
+	Code         string `json:"code" form:"code"`                 // Auth code
+	State        string `json:"state" form:"state"`               // State for CSRF protection
+	CodeVerifier string `json:"codeVerifier" form:"codeVerifier"` // PKCE code verifier
+}
+
+type GetAuthCodeResponse struct {
+	AuthURL      string `json:"authUrl"`                // OAuth authorization URL
+	State        string `json:"state"`                  // State parameter
+	CodeVerifier string `json:"codeVerifier,omitempty"` // PKCE code verifier (if PKCE enabled)
 }
 
 type LoginResponse struct {

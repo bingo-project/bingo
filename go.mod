@@ -22,6 +22,7 @@ require (
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-kratos/kratos/v2 v2.9.2
 	github.com/go-playground/validator/v10 v10.28.0
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/go-github/v62 v62.0.0
 	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.6.0

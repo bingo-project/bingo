@@ -19,7 +19,7 @@ type AuthProviderInfo struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 
 	Name         string `json:"name"`         // Auth provider name
-	Status       int    `json:"status"`       // Status, 1-enabled, 2-disabled
+	Status       string `json:"status"`       // Status: enabled/disabled
 	IsDefault    int    `json:"isDefault"`    // Is default provider, 0-not, 1-yes
 	AppID        string `json:"appId"`        // App ID
 	ClientID     string `json:"clientId"`     // Client ID
@@ -32,6 +32,8 @@ type AuthProviderInfo struct {
 	FieldMapping string `json:"fieldMapping"` // Field mapping JSON
 	TokenInQuery bool   `json:"tokenInQuery"` // Token in query string
 	ExtraHeaders string `json:"extraHeaders"` // Extra headers JSON
+	Scopes       string `json:"scopes"`       // OAuth scopes
+	PKCEEnabled  bool   `json:"pkceEnabled"`  // PKCE enabled
 	LogoutURI    string `json:"logoutUri"`    // Logout URI
 	Info         string `json:"info"`         // Ext info
 }
@@ -40,7 +42,7 @@ type ListAuthProviderRequest struct {
 	gormutil.ListOptions
 
 	Name      *string `json:"name"`      // Auth provider name
-	Status    *int    `json:"status"`    // Status, 1-enabled, 2-disabled
+	Status    *string `json:"status"`    // Status: enabled/disabled
 	IsDefault *int    `json:"isDefault"` // Is default provider, 0-not, 1-yes
 }
 
@@ -51,7 +53,7 @@ type ListAuthProviderResponse struct {
 
 type CreateAuthProviderRequest struct {
 	Name         string  `json:"name"`         // Auth provider name
-	Status       int     `json:"status"`       // Status, 1-enabled, 2-disabled
+	Status       string  `json:"status"`       // Status: enabled/disabled
 	IsDefault    int     `json:"isDefault"`    // Is default provider, 0-not, 1-yes
 	AppID        string  `json:"appId"`        // App ID
 	ClientID     string  `json:"clientId"`     // Client ID
@@ -64,13 +66,15 @@ type CreateAuthProviderRequest struct {
 	FieldMapping *string `json:"fieldMapping"` // Field mapping JSON
 	TokenInQuery *bool   `json:"tokenInQuery"` // Token in query string
 	ExtraHeaders *string `json:"extraHeaders"` // Extra headers JSON
+	Scopes       *string `json:"scopes"`       // OAuth scopes
+	PKCEEnabled  *bool   `json:"pkceEnabled"`  // PKCE enabled
 	LogoutURI    string  `json:"logoutUri"`    // Logout URI
 	Info         string  `json:"info"`         // Ext info
 }
 
 type UpdateAuthProviderRequest struct {
 	Name         *string `json:"name"`         // Auth provider name
-	Status       *int    `json:"status"`       // Status, 1-enabled, 2-disabled
+	Status       *string `json:"status"`       // Status: enabled/disabled
 	IsDefault    *int    `json:"isDefault"`    // Is default provider, 0-not, 1-yes
 	AppID        *string `json:"appId"`        // App ID
 	ClientID     *string `json:"clientId"`     // Client ID
@@ -83,6 +87,8 @@ type UpdateAuthProviderRequest struct {
 	FieldMapping *string `json:"fieldMapping"` // Field mapping JSON
 	TokenInQuery *bool   `json:"tokenInQuery"` // Token in query string
 	ExtraHeaders *string `json:"extraHeaders"` // Extra headers JSON
+	Scopes       *string `json:"scopes"`       // OAuth scopes
+	PKCEEnabled  *bool   `json:"pkceEnabled"`  // PKCE enabled
 	LogoutURI    *string `json:"logoutUri"`    // Logout URI
 	Info         *string `json:"info"`         // Ext info
 }

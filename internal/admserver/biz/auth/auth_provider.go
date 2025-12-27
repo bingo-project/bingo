@@ -124,6 +124,24 @@ func (b *authProviderBiz) Update(ctx context.Context, ID uint, req *v1.UpdateAut
 	if req.Info != nil {
 		authProviderM.Info = *req.Info
 	}
+	if req.UserInfoURL != nil {
+		authProviderM.UserInfoURL = *req.UserInfoURL
+	}
+	if req.FieldMapping != nil {
+		authProviderM.FieldMapping = *req.FieldMapping
+	}
+	if req.TokenInQuery != nil {
+		authProviderM.TokenInQuery = *req.TokenInQuery
+	}
+	if req.ExtraHeaders != nil {
+		authProviderM.ExtraHeaders = *req.ExtraHeaders
+	}
+	if req.Scopes != nil {
+		authProviderM.Scopes = *req.Scopes
+	}
+	if req.PKCEEnabled != nil {
+		authProviderM.PKCEEnabled = *req.PKCEEnabled
+	}
 
 	if err := b.ds.AuthProvider().Update(ctx, authProviderM); err != nil {
 		return nil, err
