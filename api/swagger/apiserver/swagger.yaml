@@ -153,14 +153,6 @@ definitions:
     - account
     - scene
     type: object
-  v1.SendEmailRequest:
-    properties:
-      email:
-        example: peter@gmail.com
-        type: string
-    required:
-    - email
-    type: object
   v1.SetPayPasswordRequest:
     properties:
       code:
@@ -464,35 +456,6 @@ paths:
           schema:
             $ref: '#/definitions/core.ErrResponse'
       summary: Send verification code
-      tags:
-      - Auth
-  /v1/auth/code/email:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Param
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/v1.SendEmailRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Send email code
       tags:
       - Auth
   /v1/auth/login:

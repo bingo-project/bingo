@@ -90,7 +90,7 @@ func (b *securityBiz) SetPayPassword(ctx context.Context, uid string, req *v1.Se
 
 	user.PayPassword = encrypted
 
-	return b.ds.User().Update(ctx, user)
+	return b.ds.User().Update(ctx, user, "pay_password")
 }
 
 // VerifyPayPassword verifies the pay password.
@@ -167,7 +167,7 @@ func (b *securityBiz) SetupTOTP(ctx context.Context, uid string, email string) (
 	user.GoogleKey = encryptedSecret
 	user.GoogleStatus = GoogleStatusDisabled
 
-	if err := b.ds.User().Update(ctx, user); err != nil {
+	if err := b.ds.User().Update(ctx, user, "google_key", "google_status"); err != nil {
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (b *securityBiz) EnableTOTP(ctx context.Context, uid string, code string) e
 	// Enable TOTP
 	user.GoogleStatus = GoogleStatusEnabled
 
-	return b.ds.User().Update(ctx, user)
+	return b.ds.User().Update(ctx, user, "google_status")
 }
 
 // VerifyTOTP verifies a TOTP code.
@@ -272,7 +272,7 @@ func (b *securityBiz) DisableTOTP(ctx context.Context, uid string, verifyCode, t
 	user.GoogleKey = ""
 	user.GoogleStatus = GoogleStatusUnbind
 
-	return b.ds.User().Update(ctx, user)
+	return b.ds.User().Update(ctx, user, "google_key", "google_status")
 }
 
 // GetSecurityStatus returns combined security settings status.
