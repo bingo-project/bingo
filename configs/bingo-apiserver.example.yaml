@@ -1,6 +1,7 @@
 # Application
 app:
   name: bingo
+  url: http://localhost:8080
   timezone: UTC
   key: xEJwGVQXNuLQf4vzrTsVKx8gzB9GkLgx
 

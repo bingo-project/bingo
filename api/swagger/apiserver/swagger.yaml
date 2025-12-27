@@ -212,6 +212,9 @@ definitions:
     type: object
   v1.UpdateProfileRequest:
     properties:
+      avatar:
+        maxLength: 255
+        type: string
       code:
         type: string
       email:

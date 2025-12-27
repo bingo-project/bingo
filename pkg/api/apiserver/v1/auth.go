@@ -35,6 +35,7 @@ type UpdateProfileRequest struct {
 	Phone    *string `json:"phone" binding:"omitempty,min=11,max=11"`
 	Code     string  `json:"code"`
 	Nickname *string `json:"nickname" binding:"omitempty,min=2,max=255"`
+	Avatar   *string `json:"avatar" binding:"omitempty,max=255"`
 }
 
 // BindingInfo 社交账号绑定信息

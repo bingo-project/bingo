@@ -8,6 +8,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 	"github.com/bingo-project/bingo/pkg/contextx"
@@ -34,6 +35,7 @@ func (l *UserLoader) LoadUser(ctx context.Context, userID string) (context.Conte
 	var userInfo v1.UserInfo
 	_ = copier.Copy(&userInfo, user)
 	userInfo.PayPassword = user.PayPassword != ""
+	userInfo.Avatar = facade.Config.App.AssetURL(user.Avatar)
 
 	ctx = contextx.WithUserInfo(ctx, &userInfo)
 	ctx = contextx.WithUsername(ctx, userInfo.Username)

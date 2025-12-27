@@ -8,6 +8,7 @@ import (
 
 	"github.com/jinzhu/copier"
 
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/known"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -35,6 +36,7 @@ func (l *AdminLoader) LoadUser(ctx context.Context, userID string) (context.Cont
 
 	var adminInfo v1.AdminInfo
 	_ = copier.Copy(&adminInfo, admin)
+	adminInfo.Avatar = facade.Config.App.AssetURL(admin.Avatar)
 
 	// Root user gets virtual root role + all real roles
 	if userID == known.UserRoot {

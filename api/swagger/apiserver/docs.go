@@ -1493,6 +1493,10 @@ const docTemplate = `{
         "v1.UpdateProfileRequest": {
             "type": "object",
             "properties": {
+                "avatar": {
+                    "type": "string",
+                    "maxLength": 255
+                },
                 "code": {
                     "type": "string"
                 },

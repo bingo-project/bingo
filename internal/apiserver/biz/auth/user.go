@@ -30,6 +30,9 @@ func (b *userBiz) UpdateProfile(ctx context.Context, uid string, req *v1.UpdateP
 		return errno.ErrUserNotFound
 	}
 
+	// 记录需要更新的字段
+	var fields []string
+
 	// 更新 email
 	if req.Email != nil && *req.Email != user.Email {
 		// 检查是否被占用
@@ -41,6 +44,7 @@ func (b *userBiz) UpdateProfile(ctx context.Context, uid string, req *v1.UpdateP
 			return err
 		}
 		user.Email = *req.Email
+		fields = append(fields, "email")
 	}
 
 	// 更新 phone
@@ -54,12 +58,25 @@ func (b *userBiz) UpdateProfile(ctx context.Context, uid string, req *v1.UpdateP
 			return err
 		}
 		user.Phone = *req.Phone
+		fields = append(fields, "phone")
 	}
 
 	// 更新 nickname
 	if req.Nickname != nil {
 		user.Nickname = *req.Nickname
+		fields = append(fields, "nickname")
 	}
 
-	return b.ds.User().Update(ctx, user)
+	// 更新 avatar
+	if req.Avatar != nil {
+		user.Avatar = *req.Avatar
+		fields = append(fields, "avatar")
+	}
+
+	// 没有需要更新的字段
+	if len(fields) == 0 {
+		return nil
+	}
+
+	return b.ds.User().Update(ctx, user, fields...)
 }
