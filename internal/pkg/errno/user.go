@@ -136,4 +136,11 @@ var (
 		Reason:  "InvalidArgument.PasswordRequired",
 		Message: "Login password is required.",
 	}
+
+	// ErrInvalidState OAuth state无效或过期
+	ErrInvalidState = &errorsx.ErrorX{
+		Code:    http.StatusUnauthorized,
+		Reason:  "Unauthenticated.InvalidState",
+		Message: "Invalid or expired OAuth state.",
+	}
 )

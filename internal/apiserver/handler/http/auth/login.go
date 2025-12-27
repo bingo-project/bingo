@@ -42,28 +42,27 @@ func (ctrl *AuthHandler) Login(c *gin.Context) {
 }
 
 // GetAuthCode
-// @Summary	    Login by provider
+// @Summary	    Get OAuth authorization URL
 // @Security	Bearer
 // @Tags		Auth
 // @Accept		application/json
 // @Produce	    json
 // @Param		provider    path    string          true	"Auth provider name"
-// @Param		request     query	v1.LoginByProviderRequest	true	"Param"
-// @Success	    200		{object}	v1.LoginResponse
+// @Success	    200		{object}	v1.GetAuthCodeResponse
 // @Failure	    400		{object}	core.ErrResponse
 // @Failure	    500		{object}	core.ErrResponse
 // @Router		/v1/auth/login/{provider} [GET].
 func (ctrl *AuthHandler) GetAuthCode(c *gin.Context) {
-	log.C(c).Infow("LoginByProvider function called")
+	log.C(c).Infow("GetAuthCode function called")
 
-	var req v1.LoginByProviderRequest
-	if err := c.ShouldBind(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
-
+	provider := c.Param("provider")
+	resp, err := ctrl.b.Auth().GetAuthCode(c, provider)
+	if err != nil {
+		core.Response(c, nil, err)
 		return
 	}
 
-	core.Response(c, req, nil)
+	core.Response(c, resp, nil)
 }
 
 // LoginByProvider

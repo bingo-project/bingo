@@ -32,6 +32,7 @@ type AuthBiz interface {
 	Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error)
 	LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error)
 
+	GetAuthCode(ctx *gin.Context, provider string) (*v1.GetAuthCodeResponse, error)
 	LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error)
 	Bind(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest, user *v1.UserInfo) (ret *v1.UserAccountInfo, err error)
 
@@ -141,12 +142,17 @@ func (b *authBiz) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRes
 	}, nil
 }
 
-func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error) {
-	// Get provider
-	provider = strings.ToLower(provider)
-	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
+func (b *authBiz) GetAuthCode(ctx *gin.Context, providerName string) (*v1.GetAuthCodeResponse, error) {
+	providerName = strings.ToLower(providerName)
+	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, providerName)
 	if err != nil {
 		return nil, errno.ErrNotFound
+	}
+
+	// Parse scopes
+	scopes := strings.Split(oauthProvider.Scopes, " ")
+	if len(scopes) == 0 || scopes[0] == "" {
+		scopes = []string{"user"}
 	}
 
 	conf := oauth2.Config{
@@ -157,11 +163,86 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 			AuthURL:  oauthProvider.AuthURL,
 			TokenURL: oauthProvider.TokenURL,
 		},
-		Scopes: []string{"user"},
+		Scopes: scopes,
+	}
+
+	// Generate state
+	state, err := auth.GenerateState()
+	if err != nil {
+		return nil, err
+	}
+
+	// Save state to Redis
+	if err := auth.SaveState(ctx, facade.Redis, state); err != nil {
+		return nil, err
+	}
+
+	resp := &v1.GetAuthCodeResponse{
+		State: state,
+	}
+
+	// Build auth URL options
+	opts := []oauth2.AuthCodeOption{oauth2.SetAuthURLParam("state", state)}
+
+	// PKCE support
+	if oauthProvider.PKCEEnabled {
+		codeVerifier, err := auth.GenerateCodeVerifier()
+		if err != nil {
+			return nil, err
+		}
+		codeChallenge := auth.GenerateCodeChallenge(codeVerifier)
+		opts = append(opts,
+			oauth2.SetAuthURLParam("code_challenge", codeChallenge),
+			oauth2.SetAuthURLParam("code_challenge_method", "S256"),
+		)
+		resp.CodeVerifier = codeVerifier
+	}
+
+	resp.AuthURL = conf.AuthCodeURL(state, opts...)
+
+	return resp, nil
+}
+
+func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error) {
+	// Validate state
+	if req.State != "" {
+		if err := auth.ValidateAndDeleteState(ctx, facade.Redis, req.State); err != nil {
+			return nil, errno.ErrInvalidState
+		}
+	}
+
+	// Get provider
+	provider = strings.ToLower(provider)
+	oauthProvider, err := b.ds.AuthProvider().FirstEnabled(ctx, provider)
+	if err != nil {
+		return nil, errno.ErrNotFound
+	}
+
+	// Parse scopes
+	scopes := strings.Split(oauthProvider.Scopes, " ")
+	if len(scopes) == 0 || scopes[0] == "" {
+		scopes = []string{"user"}
+	}
+
+	conf := oauth2.Config{
+		ClientID:     oauthProvider.ClientID,
+		ClientSecret: oauthProvider.ClientSecret,
+		RedirectURL:  oauthProvider.RedirectURL,
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  oauthProvider.AuthURL,
+			TokenURL: oauthProvider.TokenURL,
+		},
+		Scopes: scopes,
+	}
+
+	// Exchange options
+	var opts []oauth2.AuthCodeOption
+	if oauthProvider.PKCEEnabled && req.CodeVerifier != "" {
+		opts = append(opts, oauth2.SetAuthURLParam("code_verifier", req.CodeVerifier))
 	}
 
 	// Get Access Token
-	oauthToken, err := conf.Exchange(ctx, req.Code)
+	oauthToken, err := conf.Exchange(ctx, req.Code, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -210,6 +291,12 @@ func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByPro
 		return nil, errno.ErrNotFound
 	}
 
+	// Parse scopes
+	scopes := strings.Split(oauthProvider.Scopes, " ")
+	if len(scopes) == 0 || scopes[0] == "" {
+		scopes = []string{"user"}
+	}
+
 	conf := oauth2.Config{
 		ClientID:     oauthProvider.ClientID,
 		ClientSecret: oauthProvider.ClientSecret,
@@ -218,7 +305,7 @@ func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByPro
 			AuthURL:  oauthProvider.AuthURL,
 			TokenURL: oauthProvider.TokenURL,
 		},
-		Scopes: []string{"user"},
+		Scopes: scopes,
 	}
 
 	// Get Access Token
