@@ -10,4 +10,7 @@ import (
 func Register(mux *asynq.ServeMux) {
 	// Send email.
 	mux.HandleFunc(task.EmailVerificationCode, HandleEmailVerificationTask)
+
+	// Publish announcement.
+	mux.HandleFunc(task.AnnouncementPublish, HandleAnnouncementPublishTask)
 }
