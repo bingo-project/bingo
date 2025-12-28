@@ -58,6 +58,13 @@ type IStore interface {
 	App() AppStore
 	// ApiKey returns the API key store.
 	ApiKey() ApiKeyStore
+
+	// NtfMessage returns the notification message store.
+	NtfMessage() NtfMessageStore
+	// NtfAnnouncement returns the notification announcement store.
+	NtfAnnouncement() NtfAnnouncementStore
+	// NtfPreference returns the notification preference store.
+	NtfPreference() NtfPreferenceStore
 }
 
 // transactionKey used for context.
@@ -187,4 +194,19 @@ func (ds *datastore) SysMenu() SysMenuStore {
 // SysRoleMenu returns the system role-menu store.
 func (ds *datastore) SysRoleMenu() SysRoleMenuStore {
 	return NewSysRoleMenuStore(ds)
+}
+
+// NtfMessage returns the notification message store.
+func (ds *datastore) NtfMessage() NtfMessageStore {
+	return NewNtfMessageStore(ds)
+}
+
+// NtfAnnouncement returns the notification announcement store.
+func (ds *datastore) NtfAnnouncement() NtfAnnouncementStore {
+	return NewNtfAnnouncementStore(ds)
+}
+
+// NtfPreference returns the notification preference store.
+func (ds *datastore) NtfPreference() NtfPreferenceStore {
+	return NewNtfPreferenceStore(ds)
 }
