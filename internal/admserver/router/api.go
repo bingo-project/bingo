@@ -9,6 +9,7 @@ import (
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
 	handlerauth "github.com/bingo-project/bingo/internal/admserver/handler/http/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/config"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/notification"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/system"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/user"
 	"github.com/bingo-project/bingo/internal/pkg/auth"
@@ -146,4 +147,15 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("api-keys/:id", apiKeyHandler.Get)
 	v1.PUT("api-keys/:id", apiKeyHandler.Update)
 	v1.DELETE("api-keys/:id", apiKeyHandler.Delete)
+
+	// Announcements
+	announcementHandler := notification.NewAnnouncementHandler(store.S, policyAuthz)
+	v1.GET("announcements", announcementHandler.List)
+	v1.POST("announcements", announcementHandler.Create)
+	v1.GET("announcements/:uuid", announcementHandler.Get)
+	v1.PUT("announcements/:uuid", announcementHandler.Update)
+	v1.DELETE("announcements/:uuid", announcementHandler.Delete)
+	v1.POST("announcements/:uuid/publish", announcementHandler.Publish)
+	v1.POST("announcements/:uuid/schedule", announcementHandler.Schedule)
+	v1.POST("announcements/:uuid/cancel", announcementHandler.Cancel)
 }
