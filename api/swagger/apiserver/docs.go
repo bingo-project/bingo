@@ -1153,6 +1153,284 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/notifications": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "List notifications",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter by category",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Filter by read status",
+                        "name": "is_read",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page size",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ListNotificationsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/preferences": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get notification preferences",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GetPreferencesResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Update notification preferences",
+                "parameters": [
+                    {
+                        "description": "Preferences",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdatePreferencesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/read-all": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Mark all notifications as read",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/unread-count": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get unread notification count",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.UnreadCountResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/{uuid}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Delete notification",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notification UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notifications/{uuid}/read": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Mark notification as read",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Notification UUID",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/version": {
             "get": {
                 "consumes": [
@@ -1266,6 +1544,17 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ChannelPreference": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "boolean"
+                },
+                "in_app": {
+                    "type": "boolean"
+                }
+            }
+        },
         "v1.GetAuthCodeResponse": {
             "type": "object",
             "properties": {
@@ -1283,11 +1572,33 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.GetPreferencesResponse": {
+            "type": "object",
+            "properties": {
+                "preferences": {
+                    "$ref": "#/definitions/v1.NotificationPreferences"
+                }
+            }
+        },
         "v1.HealthzResponse": {
             "type": "object",
             "properties": {
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.ListNotificationsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.NotificationItem"
+                    }
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -1324,6 +1635,10 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 18,
                     "minLength": 6
+                },
+                "platform": {
+                    "description": "WebSocket 登录时必填",
+                    "type": "string"
                 }
             }
         },
@@ -1352,6 +1667,56 @@ const docTemplate = `{
                 "nonce": {
                     "description": "Nonce",
                     "type": "string"
+                }
+            }
+        },
+        "v1.NotificationItem": {
+            "type": "object",
+            "properties": {
+                "actionUrl": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "isRead": {
+                    "type": "boolean"
+                },
+                "source": {
+                    "description": "\"message\" or \"announcement\"",
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.NotificationPreferences": {
+            "type": "object",
+            "properties": {
+                "security": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "social": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "system": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "transaction": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
                 }
             }
         },
@@ -1523,6 +1888,25 @@ const docTemplate = `{
                 "code": {
                     "type": "string",
                     "example": "123456"
+                }
+            }
+        },
+        "v1.UnreadCountResponse": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.UpdatePreferencesRequest": {
+            "type": "object",
+            "required": [
+                "preferences"
+            ],
+            "properties": {
+                "preferences": {
+                    "$ref": "#/definitions/v1.NotificationPreferences"
                 }
             }
         },

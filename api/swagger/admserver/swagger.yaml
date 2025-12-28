@@ -176,6 +176,29 @@ definitions:
       username:
         type: string
     type: object
+  v1.AnnouncementItem:
+    properties:
+      actionUrl:
+        type: string
+      content:
+        type: string
+      createdAt:
+        type: string
+      expiresAt:
+        type: string
+      publishedAt:
+        type: string
+      scheduledAt:
+        type: string
+      status:
+        type: string
+      title:
+        type: string
+      updatedAt:
+        type: string
+      uuid:
+        type: string
+    type: object
   v1.ApiInfo:
     properties:
       createdAt:
@@ -289,6 +312,21 @@ definitions:
     - nickname
     - password
     - username
+    type: object
+  v1.CreateAnnouncementRequest:
+    properties:
+      actionUrl:
+        type: string
+      content:
+        type: string
+      expiresAt:
+        type: string
+      title:
+        maxLength: 255
+        type: string
+    required:
+    - content
+    - title
     type: object
   v1.CreateApiKeyRequest:
     properties:
@@ -508,6 +546,15 @@ definitions:
       total:
         type: integer
     type: object
+  v1.ListAnnouncementsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AnnouncementItem'
+        type: array
+      total:
+        type: integer
+    type: object
   v1.ListApiKeyResponse:
     properties:
       data:
@@ -571,6 +618,9 @@ definitions:
       password:
         maxLength: 18
         minLength: 6
+        type: string
+      platform:
+        description: WebSocket 登录时必填
         type: string
     required:
     - account
@@ -649,6 +699,13 @@ definitions:
         type: string
       updatedAt:
         type: string
+    type: object
+  v1.ScheduleAnnouncementRequest:
+    properties:
+      scheduledAt:
+        type: string
+    required:
+    - scheduledAt
     type: object
   v1.SetApisRequest:
     properties:
@@ -756,6 +813,18 @@ definitions:
           type: string
         type: array
       status:
+        type: string
+    type: object
+  v1.UpdateAnnouncementRequest:
+    properties:
+      actionUrl:
+        type: string
+      content:
+        type: string
+      expiresAt:
+        type: string
+      title:
+        maxLength: 255
         type: string
     type: object
   v1.UpdateApiKeyRequest:
@@ -1248,6 +1317,250 @@ paths:
       summary: Set admin roles
       tags:
       - Admin
+  /v1/announcements:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      - in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAnnouncementsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List announcements
+      tags:
+      - Notification
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AnnouncementItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create announcement
+      tags:
+      - Notification
+  /v1/announcements/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete announcement
+      tags:
+      - Notification
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AnnouncementItem'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get announcement info
+      tags:
+      - Notification
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update announcement info
+      tags:
+      - Notification
+  /v1/announcements/{uuid}/cancel:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Cancel scheduled announcement
+      tags:
+      - Notification
+  /v1/announcements/{uuid}/publish:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Publish announcement immediately
+      tags:
+      - Notification
+  /v1/announcements/{uuid}/schedule:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ScheduleAnnouncementRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Schedule announcement for later publication
+      tags:
+      - Notification
   /v1/api-keys:
     get:
       consumes:

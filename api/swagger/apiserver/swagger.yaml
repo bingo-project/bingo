@@ -53,6 +53,13 @@ definitions:
     - passwordNew
     - passwordOld
     type: object
+  v1.ChannelPreference:
+    properties:
+      email:
+        type: boolean
+      in_app:
+        type: boolean
+    type: object
   v1.GetAuthCodeResponse:
     properties:
       authUrl:
@@ -65,10 +72,24 @@ definitions:
         description: State parameter
         type: string
     type: object
+  v1.GetPreferencesResponse:
+    properties:
+      preferences:
+        $ref: '#/definitions/v1.NotificationPreferences'
+    type: object
   v1.HealthzResponse:
     properties:
       status:
         type: string
+    type: object
+  v1.ListNotificationsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.NotificationItem'
+        type: array
+      total:
+        type: integer
     type: object
   v1.LoginByProviderRequest:
     properties:
@@ -92,6 +113,9 @@ definitions:
         maxLength: 18
         minLength: 6
         type: string
+      platform:
+        description: WebSocket 登录时必填
+        type: string
     required:
     - account
     - password
@@ -114,6 +138,39 @@ definitions:
       nonce:
         description: Nonce
         type: string
+    type: object
+  v1.NotificationItem:
+    properties:
+      actionUrl:
+        type: string
+      category:
+        type: string
+      content:
+        type: string
+      createdAt:
+        type: string
+      isRead:
+        type: boolean
+      source:
+        description: '"message" or "announcement"'
+        type: string
+      title:
+        type: string
+      type:
+        type: string
+      uuid:
+        type: string
+    type: object
+  v1.NotificationPreferences:
+    properties:
+      security:
+        $ref: '#/definitions/v1.ChannelPreference'
+      social:
+        $ref: '#/definitions/v1.ChannelPreference'
+      system:
+        $ref: '#/definitions/v1.ChannelPreference'
+      transaction:
+        $ref: '#/definitions/v1.ChannelPreference'
     type: object
   v1.RegisterRequest:
     properties:
@@ -235,6 +292,18 @@ definitions:
         type: string
     required:
     - code
+    type: object
+  v1.UnreadCountResponse:
+    properties:
+      count:
+        type: integer
+    type: object
+  v1.UpdatePreferencesRequest:
+    properties:
+      preferences:
+        $ref: '#/definitions/v1.NotificationPreferences'
+    required:
+    - preferences
     type: object
   v1.UpdateProfileRequest:
     properties:
@@ -1033,6 +1102,177 @@ paths:
       summary: Upload file
       tags:
       - File
+  /v1/notifications:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by category
+        in: query
+        name: category
+        type: string
+      - description: Filter by read status
+        in: query
+        name: is_read
+        type: boolean
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListNotificationsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List notifications
+      tags:
+      - Notification
+  /v1/notifications/{uuid}:
+    delete:
+      parameters:
+      - description: Notification UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete notification
+      tags:
+      - Notification
+  /v1/notifications/{uuid}/read:
+    put:
+      parameters:
+      - description: Notification UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Mark notification as read
+      tags:
+      - Notification
+  /v1/notifications/preferences:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GetPreferencesResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get notification preferences
+      tags:
+      - Notification
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Preferences
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdatePreferencesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update notification preferences
+      tags:
+      - Notification
+  /v1/notifications/read-all:
+    put:
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Mark all notifications as read
+      tags:
+      - Notification
+  /v1/notifications/unread-count:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.UnreadCountResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get unread notification count
+      tags:
+      - Notification
   /version:
     get:
       consumes:
