@@ -578,7 +578,7 @@ git commit -m "feat(auth): append wallet to providers when SIWE enabled"
 **Files:**
 - Modify: `internal/apiserver/biz/auth/auth.go` (接口定义)
 - Modify: `internal/apiserver/biz/auth/auth_address.go` (实现)
-- Modify: `internal/apiserver/handler/http/auth/auth.go` (Handler)
+- Modify: `internal/apiserver/handler/http/auth/address.go` (Handler)
 - Modify: `internal/apiserver/router/api.go` (路由)
 
 **Step 1: 在 AuthBiz 接口添加 BindWallet 方法**
@@ -656,7 +656,7 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 
 **Step 3: 添加 Handler 方法**
 
-在 `internal/apiserver/handler/http/auth/auth.go` 添加：
+在 `internal/apiserver/handler/http/auth/address.go` 添加（与 `Nonce`、`LoginByAddress` 放在同一文件保持一致）：
 
 ```go
 // BindWallet
@@ -685,7 +685,7 @@ func (h *AuthHandler) BindWallet(c *gin.Context) {
 
 需要添加 import：
 ```go
-import "github.com/bingo-project/bingo/internal/pkg/contextx"
+import "github.com/bingo-project/bingo/pkg/contextx"
 ```
 
 **Step 4: 添加路由**
@@ -712,15 +712,179 @@ make build
 **Step 7: Commit**
 
 ```bash
-git add internal/apiserver/biz/auth/auth.go internal/apiserver/biz/auth/auth_address.go internal/apiserver/handler/http/auth/auth.go internal/apiserver/router/api.go docs/apiserver/
+git add internal/apiserver/biz/auth/auth.go internal/apiserver/biz/auth/auth_address.go internal/apiserver/handler/http/auth/address.go internal/apiserver/router/api.go docs/apiserver/
 git commit -m "feat(auth): add wallet binding endpoint"
 ```
 
 ---
 
-## Phase 4: 测试与验证
+## Phase 4: 单元测试
 
-### Task 9: 手动测试
+### Task 9: SIWE 辅助函数测试
+
+**Files:**
+- Create: `internal/apiserver/biz/auth/auth_address_test.go`
+
+**Step 1: 创建测试文件**
+
+创建 `internal/apiserver/biz/auth/auth_address_test.go`：
+
+```go
+// ABOUTME: Unit tests for SIWE wallet authentication helpers.
+// ABOUTME: Tests domain validation and whitelist checking logic.
+
+package auth
+
+import (
+	"testing"
+)
+
+func Test_validateAndExtractDomain(t *testing.T) {
+	b := &authBiz{}
+
+	tests := []struct {
+		name           string
+		origin         string
+		allowedDomains []string
+		wantDomain     string
+		wantErr        bool
+	}{
+		{
+			name:           "valid origin in whitelist",
+			origin:         "http://localhost:3000",
+			allowedDomains: []string{"localhost:3000", "example.com"},
+			wantDomain:     "localhost:3000",
+			wantErr:        false,
+		},
+		{
+			name:           "valid https origin",
+			origin:         "https://example.com",
+			allowedDomains: []string{"localhost:3000", "example.com"},
+			wantDomain:     "example.com",
+			wantErr:        false,
+		},
+		{
+			name:           "case insensitive match",
+			origin:         "http://LOCALHOST:3000",
+			allowedDomains: []string{"localhost:3000"},
+			wantDomain:     "LOCALHOST:3000",
+			wantErr:        false,
+		},
+		{
+			name:           "origin not in whitelist",
+			origin:         "http://evil.com",
+			allowedDomains: []string{"localhost:3000", "example.com"},
+			wantDomain:     "",
+			wantErr:        true,
+		},
+		{
+			name:           "empty origin",
+			origin:         "",
+			allowedDomains: []string{"localhost:3000"},
+			wantDomain:     "",
+			wantErr:        true,
+		},
+		{
+			name:           "empty whitelist",
+			origin:         "http://localhost:3000",
+			allowedDomains: []string{},
+			wantDomain:     "",
+			wantErr:        true,
+		},
+		{
+			name:           "invalid url",
+			origin:         "not-a-valid-url",
+			allowedDomains: []string{"localhost:3000"},
+			wantDomain:     "",
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := b.validateAndExtractDomain(tt.origin, tt.allowedDomains)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validateAndExtractDomain() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !tt.wantErr && got != tt.wantDomain {
+				t.Errorf("validateAndExtractDomain() = %v, want %v", got, tt.wantDomain)
+			}
+		})
+	}
+}
+
+func Test_isDomainAllowed(t *testing.T) {
+	b := &authBiz{}
+
+	tests := []struct {
+		name           string
+		domain         string
+		allowedDomains []string
+		want           bool
+	}{
+		{
+			name:           "domain in whitelist",
+			domain:         "localhost:3000",
+			allowedDomains: []string{"localhost:3000", "example.com"},
+			want:           true,
+		},
+		{
+			name:           "domain not in whitelist",
+			domain:         "evil.com",
+			allowedDomains: []string{"localhost:3000", "example.com"},
+			want:           false,
+		},
+		{
+			name:           "case insensitive",
+			domain:         "LOCALHOST:3000",
+			allowedDomains: []string{"localhost:3000"},
+			want:           true,
+		},
+		{
+			name:           "empty whitelist",
+			domain:         "localhost:3000",
+			allowedDomains: []string{},
+			want:           false,
+		},
+		{
+			name:           "empty domain",
+			domain:         "",
+			allowedDomains: []string{"localhost:3000"},
+			want:           false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := b.isDomainAllowed(tt.domain, tt.allowedDomains); got != tt.want {
+				t.Errorf("isDomainAllowed() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+```
+
+**Step 2: 运行测试**
+
+```bash
+go test ./internal/apiserver/biz/auth/... -v -run "Test_validateAndExtractDomain|Test_isDomainAllowed"
+```
+
+Expected: 所有测试通过
+
+**Step 3: Commit**
+
+```bash
+git add internal/apiserver/biz/auth/auth_address_test.go
+git commit -m "test(auth): add unit tests for SIWE domain validation"
+```
+
+---
+
+## Phase 5: 手动测试
+
+### Task 10: 手动集成测试
 
 **Step 1: 启动服务**
 
@@ -780,9 +944,9 @@ git status
 
 ---
 
-## Phase 5: 清理
+## Phase 6: 清理
 
-### Task 10: 代码检查与清理
+### Task 11: 代码检查与清理
 
 **Step 1: 运行 lint**
 
@@ -819,8 +983,8 @@ git commit -m "chore: fix lint issues"
 | `internal/pkg/errno/code.go` | 添加 SIWE 错误码 |
 | `pkg/api/apiserver/v1/auth.go` | 更新请求/响应结构 |
 | `internal/apiserver/biz/auth/auth_address.go` | 重写 SIWE 逻辑 |
+| `internal/apiserver/biz/auth/auth_address_test.go` | 新增单元测试 |
 | `internal/apiserver/biz/auth/auth.go` | 添加 BindWallet 接口 |
 | `internal/apiserver/biz/auth/auth_provider.go` | FindEnabled 追加 wallet |
-| `internal/apiserver/handler/http/auth/address.go` | 更新 Handler |
-| `internal/apiserver/handler/http/auth/auth.go` | 添加 BindWallet Handler |
+| `internal/apiserver/handler/http/auth/address.go` | 更新 Handler，添加 BindWallet |
 | `internal/apiserver/router/api.go` | 添加绑定路由 |
