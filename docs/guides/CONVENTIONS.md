@@ -49,6 +49,7 @@
 6. [测试规范](#6-测试规范)
 7. [数据库迁移与初始化](#7-数据库迁移与初始化)
 8. [生成代码检查清单](#8-生成代码检查清单)
+9. [构建规范](#9-构建规范)
 
 ---
 
@@ -158,6 +159,8 @@ type IBiz interface {}
 
 ### 3.1 HTTP Handler 层模板
 
+**每个 HTTP Handler 方法必须编写 Swagger 注释**，用于生成 API 文档：
+
 ```go
 // ABOUTME: HTTP handlers for user management.
 // ABOUTME: Provides CRUD endpoints for user resources.
@@ -171,6 +174,17 @@ func New(biz biz.IBiz) *UserHandler {
     return &UserHandler{biz: biz}
 }
 
+// Create
+// @Summary    Create user
+// @Security   Bearer
+// @Tags       User
+// @Accept     application/json
+// @Produce    json
+// @Param      request  body      v1.CreateUserRequest  true  "Param"
+// @Success    200      {object}  v1.UserInfo
+// @Failure    400      {object}  core.ErrResponse
+// @Failure    500      {object}  core.ErrResponse
+// @Router     /v1/users [POST].
 func (h *UserHandler) Create(c *gin.Context) {
     // 1. 参数验证
     var req v1.CreateUserRequest
@@ -179,13 +193,29 @@ func (h *UserHandler) Create(c *gin.Context) {
         return
     }
 
-    // 2. 调用业务层
-    user, err := h.biz.Users().Create(c.Request.Context(), &req)
+    // 2. 调用业务层（直接传 c，不用 c.Request.Context()）
+    user, err := h.biz.Users().Create(c, &req)
 
     // 3. 返回响应
     core.Response(c, user, err)
 }
 ```
+
+**Swagger 注释说明：**
+
+| 注解 | 说明 | 示例 |
+|------|------|------|
+| `@Summary` | 接口简要描述 | `Create user` |
+| `@Security` | 认证方式（需要登录则加） | `Bearer` |
+| `@Tags` | 接口分组 | `User`, `Auth` |
+| `@Accept` | 请求格式 | `application/json` |
+| `@Produce` | 响应格式 | `application/json` |
+| `@Param` | 参数定义 | `request body v1.CreateUserRequest true "Param"` |
+| `@Success` | 成功响应 | `200 {object} v1.UserInfo` |
+| `@Failure` | 错误响应 | `400 {object} core.ErrResponse` |
+| `@Router` | 路由路径和方法 | `/v1/users [POST]` |
+
+**注意**：`@Router` 注解末尾需要加 `.` 以符合 golint 规范。
 
 ### 3.2 WebSocket Handler 层模板
 
@@ -294,7 +324,23 @@ func (h *Handler) Login(ctx context.Context, req *v1.LoginRequest) (*v1.LoginRep
 | 错误响应 | `core.Response(c, nil, err)` | `return c.Error(err)` | `return nil, err` |
 | 协议格式 | RESTful JSON | JSON-RPC 2.0 | Protobuf |
 
-### 3.5 Biz 层模板
+### 3.5 Context 传递规范
+
+**HTTP Handler 调用 Biz 层时，直接传 `c`，不需要 `c.Request.Context()`：**
+
+```go
+// ✅ 正确：直接传 c
+uid := contextx.UserID(c)
+user, err := h.biz.Users().Create(c, &req)
+
+// ❌ 错误：不必要的 c.Request.Context()
+uid := contextx.UserID(c.Request.Context())
+user, err := h.biz.Users().Create(c.Request.Context(), &req)
+```
+
+`*gin.Context` 实现了 `context.Context` 接口，直接传递即可。
+
+### 3.6 Biz 层模板
 
 ```go
 // ABOUTME: User business logic implementation.
@@ -334,7 +380,7 @@ func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (*model
 }
 ```
 
-### 3.6 Store 层模板
+### 3.7 Store 层模板
 
 ```go
 // ABOUTME: User data access layer.
@@ -593,6 +639,42 @@ bingo db seed --seeder=UserSeeder   # 执行指定 seeder
 - [ ] 表结构变更有对应的 migration 文件
 - [ ] migration 支持 rollback
 - [ ] 必要的初始化数据有 seeder
+
+---
+
+## 9. 构建规范
+
+### 9.1 代码修改后重新构建
+
+代码修改后需要重新构建，**使用 `make build`，不要用 `go build ./...`**：
+
+```bash
+# ✅ 正确
+make build
+
+# ❌ 错误
+go build ./...
+```
+
+### 9.2 修改 API 参数定义
+
+如果修改了请求/响应结构体（`pkg/api/` 下的定义），必须**先执行 `make swag` 再构建**：
+
+```bash
+# 修改了 v1.CreateUserRequest 等结构体后
+make swag   # 先更新 Swagger 文档
+make build  # 再构建
+```
+
+### 9.3 提交前检查
+
+**commit 前必须执行 `make lint`**，确保代码符合规范：
+
+```bash
+make lint   # 代码检查
+git add .
+git commit -m "feat: add feature"
+```
 
 ---
 

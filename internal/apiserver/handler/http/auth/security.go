@@ -23,6 +23,7 @@ type SecurityHandler struct {
 // NewSecurityHandler creates a new SecurityHandler.
 func NewSecurityHandler(ds store.IStore) *SecurityHandler {
 	codeBiz := bizauth.NewCodeBiz(ds)
+
 	return &SecurityHandler{
 		securityBiz: bizauth.NewSecurityBiz(ds, codeBiz),
 	}
@@ -41,8 +42,8 @@ func NewSecurityHandler(ds store.IStore) *SecurityHandler {
 func (h *SecurityHandler) GetSecurityStatus(c *gin.Context) {
 	log.C(c).Infow("GetSecurityStatus function called")
 
-	uid := contextx.UserID(c.Request.Context())
-	resp, err := h.securityBiz.GetSecurityStatus(c.Request.Context(), uid)
+	uid := contextx.UserID(c)
+	resp, err := h.securityBiz.GetSecurityStatus(c, uid)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -73,8 +74,8 @@ func (h *SecurityHandler) SetPayPassword(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := h.securityBiz.SetPayPassword(c.Request.Context(), uid, &req); err != nil {
+	uid := contextx.UserID(c)
+	if err := h.securityBiz.SetPayPassword(c, uid, &req); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -104,8 +105,8 @@ func (h *SecurityHandler) VerifyPayPassword(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := h.securityBiz.VerifyPayPassword(c.Request.Context(), uid, req.PayPassword); err != nil {
+	uid := contextx.UserID(c)
+	if err := h.securityBiz.VerifyPayPassword(c, uid, req.PayPassword); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -127,8 +128,8 @@ func (h *SecurityHandler) VerifyPayPassword(c *gin.Context) {
 func (h *SecurityHandler) GetTOTPStatus(c *gin.Context) {
 	log.C(c).Infow("GetTOTPStatus function called")
 
-	uid := contextx.UserID(c.Request.Context())
-	resp, err := h.securityBiz.GetTOTPStatus(c.Request.Context(), uid)
+	uid := contextx.UserID(c)
+	resp, err := h.securityBiz.GetTOTPStatus(c, uid)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -151,14 +152,14 @@ func (h *SecurityHandler) GetTOTPStatus(c *gin.Context) {
 func (h *SecurityHandler) SetupTOTP(c *gin.Context) {
 	log.C(c).Infow("SetupTOTP function called")
 
-	uid := contextx.UserID(c.Request.Context())
-	user, ok := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
+	uid := contextx.UserID(c)
+	user, ok := contextx.UserInfo[*v1.UserInfo](c)
 	email := ""
 	if ok && user != nil {
 		email = user.Email
 	}
 
-	resp, err := h.securityBiz.SetupTOTP(c.Request.Context(), uid, email)
+	resp, err := h.securityBiz.SetupTOTP(c, uid, email)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -189,8 +190,8 @@ func (h *SecurityHandler) EnableTOTP(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := h.securityBiz.EnableTOTP(c.Request.Context(), uid, req.Code); err != nil {
+	uid := contextx.UserID(c)
+	if err := h.securityBiz.EnableTOTP(c, uid, req.Code); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -220,8 +221,8 @@ func (h *SecurityHandler) VerifyTOTP(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := h.securityBiz.VerifyTOTP(c.Request.Context(), uid, req.Code); err != nil {
+	uid := contextx.UserID(c)
+	if err := h.securityBiz.VerifyTOTP(c, uid, req.Code); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -251,8 +252,8 @@ func (h *SecurityHandler) DisableTOTP(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := h.securityBiz.DisableTOTP(c.Request.Context(), uid, req.VerifyCode, req.TOTPCode); err != nil {
+	uid := contextx.UserID(c)
+	if err := h.securityBiz.DisableTOTP(c, uid, req.VerifyCode, req.TOTPCode); err != nil {
 		core.Response(c, nil, err)
 
 		return

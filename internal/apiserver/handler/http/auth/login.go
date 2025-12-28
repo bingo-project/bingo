@@ -59,6 +59,7 @@ func (ctrl *AuthHandler) GetAuthCode(c *gin.Context) {
 	resp, err := ctrl.b.Auth().GetAuthCode(c, provider)
 	if err != nil {
 		core.Response(c, nil, err)
+
 		return
 	}
 
@@ -120,7 +121,7 @@ func (ctrl *AuthHandler) BindProvider(c *gin.Context) {
 		return
 	}
 
-	user, _ := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
+	user, _ := contextx.UserInfo[*v1.UserInfo](c)
 
 	provider := c.Param("provider")
 	resp, err := ctrl.b.Auth().Bind(c, provider, &req, user)

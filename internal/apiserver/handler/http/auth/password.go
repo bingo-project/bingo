@@ -31,7 +31,7 @@ func (ctrl *AuthHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
+	uid := contextx.UserID(c)
 	err := ctrl.b.Auth().ChangePassword(c, uid, &req)
 	if err != nil {
 		core.Response(c, nil, err)

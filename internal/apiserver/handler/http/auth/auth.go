@@ -25,6 +25,7 @@ type AuthHandler struct {
 
 func NewAuthHandler(ds store.IStore, a *auth.Authorizer) *AuthHandler {
 	codeBiz := bizauth.NewCodeBiz(ds)
+
 	return &AuthHandler{
 		a:                a,
 		b:                biz.NewBiz(ds),
@@ -79,7 +80,7 @@ func (ctrl *AuthHandler) Register(c *gin.Context) {
 func (ctrl *AuthHandler) UserInfo(c *gin.Context) {
 	log.C(c).Infow("UserInfo function called")
 
-	user, ok := contextx.UserInfo[*v1.UserInfo](c.Request.Context())
+	user, ok := contextx.UserInfo[*v1.UserInfo](c)
 	if !ok {
 		core.Response(c, nil, errno.ErrNotFound)
 
@@ -109,7 +110,7 @@ func (ctrl *AuthHandler) SendCode(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.codeBiz.Send(c.Request.Context(), req.Account, bizauth.CodeScene(req.Scene)); err != nil {
+	if err := ctrl.codeBiz.Send(c, req.Account, bizauth.CodeScene(req.Scene)); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -138,7 +139,7 @@ func (ctrl *AuthHandler) ResetPassword(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.resetPasswordBiz.ResetPassword(c.Request.Context(), &req); err != nil {
+	if err := ctrl.resetPasswordBiz.ResetPassword(c, &req); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -168,8 +169,8 @@ func (ctrl *AuthHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	uid := contextx.UserID(c.Request.Context())
-	if err := ctrl.userBiz.UpdateProfile(c.Request.Context(), uid, &req); err != nil {
+	uid := contextx.UserID(c)
+	if err := ctrl.userBiz.UpdateProfile(c, uid, &req); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -191,8 +192,8 @@ func (ctrl *AuthHandler) UpdateProfile(c *gin.Context) {
 func (ctrl *AuthHandler) ListBindings(c *gin.Context) {
 	log.C(c).Infow("ListBindings function called")
 
-	uid := contextx.UserID(c.Request.Context())
-	resp, err := ctrl.bindingsBiz.ListBindings(c.Request.Context(), uid)
+	uid := contextx.UserID(c)
+	resp, err := ctrl.bindingsBiz.ListBindings(c, uid)
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -217,9 +218,9 @@ func (ctrl *AuthHandler) Unbind(c *gin.Context) {
 	log.C(c).Infow("Unbind function called")
 
 	provider := c.Param("provider")
-	uid := contextx.UserID(c.Request.Context())
+	uid := contextx.UserID(c)
 
-	if err := ctrl.bindingsBiz.Unbind(c.Request.Context(), uid, provider); err != nil {
+	if err := ctrl.bindingsBiz.Unbind(c, uid, provider); err != nil {
 		core.Response(c, nil, err)
 
 		return
