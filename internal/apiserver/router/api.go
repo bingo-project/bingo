@@ -5,6 +5,7 @@ import (
 
 	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
 	authhandler "github.com/bingo-project/bingo/internal/apiserver/handler/http/auth"
+	ntfhandler "github.com/bingo-project/bingo/internal/apiserver/handler/http/notification"
 	"github.com/bingo-project/bingo/internal/apiserver/middleware"
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -71,5 +72,20 @@ func MapApiRouters(g *gin.Engine) {
 		securityGroup.POST("/totp/enable", securityHandler.EnableTOTP)
 		securityGroup.POST("/totp/verify", securityHandler.VerifyTOTP)
 		securityGroup.POST("/totp/disable", securityHandler.DisableTOTP)
+	}
+
+	// Notification routes
+	ntfHandler := ntfhandler.NewNotificationHandler(store.S)
+	prefHandler := ntfhandler.NewPreferenceHandler(store.S)
+
+	ntf := v1.Group("/notifications")
+	{
+		ntf.GET("", ntfHandler.List)
+		ntf.GET("/unread-count", ntfHandler.UnreadCount)
+		ntf.PUT("/:uuid/read", ntfHandler.MarkAsRead)
+		ntf.PUT("/read-all", ntfHandler.MarkAllAsRead)
+		ntf.DELETE("/:uuid", ntfHandler.Delete)
+		ntf.GET("/preferences", prefHandler.Get)
+		ntf.PUT("/preferences", prefHandler.Update)
 	}
 }
