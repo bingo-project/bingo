@@ -8,6 +8,7 @@ import (
 	"github.com/bingo-project/bingo/internal/admserver/biz/bot"
 	"github.com/bingo-project/bingo/internal/admserver/biz/common"
 	"github.com/bingo-project/bingo/internal/admserver/biz/file"
+	"github.com/bingo-project/bingo/internal/admserver/biz/notification"
 	"github.com/bingo-project/bingo/internal/admserver/biz/syscfg"
 	"github.com/bingo-project/bingo/internal/admserver/biz/system"
 	"github.com/bingo-project/bingo/internal/admserver/biz/user"
@@ -36,6 +37,8 @@ type IBiz interface {
 	Channels() bot.ChannelBiz
 	Apps() app.AppBiz
 	ApiKeys() app.ApiKeyBiz
+
+	Announcements() notification.AnnouncementBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -116,4 +119,8 @@ func (b *biz) Apps() app.AppBiz {
 
 func (b *biz) ApiKeys() app.ApiKeyBiz {
 	return app.NewApiKey(b.ds)
+}
+
+func (b *biz) Announcements() notification.AnnouncementBiz {
+	return notification.NewAnnouncement(b.ds)
 }
