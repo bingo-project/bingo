@@ -56,8 +56,9 @@ func HandleAnnouncementPublishTask(ctx context.Context, t *asynq.Task) error {
 	}
 
 	// Publish to Redis for real-time notification
+	// Use same format as biz layer immediate publish
 	notifyPayload := map[string]any{
-		"type": "announcement",
+		"method": "ntf.announcement",
 		"data": map[string]any{
 			"uuid":      announcement.UUID,
 			"title":     announcement.Title,
@@ -73,7 +74,8 @@ func HandleAnnouncementPublishTask(ctx context.Context, t *asynq.Task) error {
 		return err
 	}
 
-	if err := facade.Redis.Publish(ctx, "notifications:broadcast", string(payloadBytes)).Err(); err != nil {
+	// Use same channel as biz layer: ntf:broadcast
+	if err := facade.Redis.Publish(ctx, "ntf:broadcast", string(payloadBytes)).Err(); err != nil {
 		log.C(ctx).Errorw("Failed to publish announcement notification", "err", err)
 
 		return err

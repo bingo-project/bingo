@@ -1,3 +1,6 @@
+// ABOUTME: Asynq task type constants and payload structures.
+// ABOUTME: Defines task names and data types for async job processing.
+
 package task
 
 const (

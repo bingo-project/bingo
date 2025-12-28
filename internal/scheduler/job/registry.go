@@ -1,3 +1,6 @@
+// ABOUTME: Asynq job handler registration.
+// ABOUTME: Maps task types to their handler functions.
+
 package job
 
 import (
