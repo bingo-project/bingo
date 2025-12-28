@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/bingo-project/bingo/internal/apiserver/subscriber"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/server"
 )
@@ -22,6 +23,11 @@ func run() error {
 	ginEngine := initGinEngine()
 	grpcServer := initGRPCServer(facade.Config.GRPC)
 	wsEngine, wsHub := initWebSocket()
+
+	// Start notification subscriber
+	ntfSubscriber := subscriber.NewNotificationSubscriber(wsHub)
+	ntfSubscriber.Start()
+	defer ntfSubscriber.Stop()
 
 	// Assemble servers based on configuration
 	runner := server.Assemble(
