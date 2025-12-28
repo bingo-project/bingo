@@ -86,6 +86,18 @@ definitions:
       total:
         type: integer
     type: object
+  v1.LoginByAddressRequest:
+    properties:
+      message:
+        description: SIWE message
+        type: string
+      signature:
+        description: Wallet signature
+        type: string
+    required:
+    - message
+    - signature
+    type: object
   v1.LoginByProviderRequest:
     properties:
       code:
@@ -130,6 +142,9 @@ definitions:
     type: object
   v1.NonceResponse:
     properties:
+      message:
+        description: SIWE message
+        type: string
       nonce:
         description: Nonce
         type: string
@@ -659,16 +674,12 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: ETH Address
-        in: query
-        name: address
+      - description: Param
+        in: body
+        name: request
         required: true
-        type: string
-      - description: Signature
-        in: query
-        name: sign
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/v1.LoginByAddressRequest'
       produces:
       - application/json
       responses:
@@ -680,13 +691,11 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/core.ErrResponse'
-        "500":
-          description: Internal Server Error
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Login by provider
+      summary: Wallet login with SIWE
       tags:
       - Auth
   /v1/auth/nonce:
@@ -714,9 +723,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/core.ErrResponse'
-      security:
-      - Bearer: []
-      summary: Get Address auth nonce
+      summary: Get SIWE nonce for wallet login
       tags:
       - Auth
   /v1/auth/providers:

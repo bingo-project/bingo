@@ -1,3 +1,6 @@
+// ABOUTME: HTTP handlers for wallet authentication.
+// ABOUTME: Provides SIWE nonce generation and wallet login endpoints.
+
 package auth
 
 import (
@@ -5,68 +8,47 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/core"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
-	"github.com/bingo-project/bingo/internal/pkg/log"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 // Nonce
-// @Summary	    Get Address auth nonce
-// @Security	Bearer
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	    json
-// @Param		request query       v1.AddressRequest    true	"ETH Address"
-// @Success	    200		{object}	v1.NonceResponse
-// @Failure	    400		{object}	core.ErrResponse
-// @Failure	    500		{object}	core.ErrResponse
-// @Router		/v1/auth/nonce [GET].
-func (ctrl *AuthHandler) Nonce(c *gin.Context) {
-	log.C(c).Infow("Nonce function called")
-
+// @Summary     Get SIWE nonce for wallet login
+// @Tags        Auth
+// @Accept      application/json
+// @Produce     json
+// @Param       request query       v1.AddressRequest    true  "ETH Address"
+// @Success     200     {object}    v1.NonceResponse
+// @Failure     400     {object}    core.ErrResponse
+// @Failure     500     {object}    core.ErrResponse
+// @Router      /v1/auth/nonce [GET].
+func (h *AuthHandler) Nonce(c *gin.Context) {
 	var req v1.AddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
-
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
 		return
 	}
 
-	resp, err := ctrl.b.Auth().Nonce(c, &req)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	core.Response(c, resp, nil)
+	resp, err := h.b.Auth().Nonce(c, &req)
+	core.Response(c, resp, err)
 }
 
 // LoginByAddress
-// @Summary	    Login by provider
-// @Security	Bearer
-// @Tags		Auth
-// @Accept		application/json
-// @Produce	    json
-// @Param		request     query	v1.LoginByAddressRequest	true	"Param"
-// @Success	    200		{object}	v1.LoginResponse
-// @Failure	    400		{object}	core.ErrResponse
-// @Failure	    500		{object}	core.ErrResponse
-// @Router		/v1/auth/login/address [POST].
-func (ctrl *AuthHandler) LoginByAddress(c *gin.Context) {
-	log.C(c).Infow("LoginByAddress function called")
-
+// @Summary     Wallet login with SIWE
+// @Tags        Auth
+// @Accept      application/json
+// @Produce     json
+// @Param       request  body      v1.LoginByAddressRequest  true  "Param"
+// @Success     200      {object}  v1.LoginResponse
+// @Failure     400      {object}  core.ErrResponse
+// @Failure     401      {object}  core.ErrResponse
+// @Router      /v1/auth/login/address [POST].
+func (h *AuthHandler) LoginByAddress(c *gin.Context) {
 	var req v1.LoginByAddressRequest
-	if err := c.ShouldBind(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
-
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
 		return
 	}
 
-	resp, err := ctrl.b.Auth().LoginByAddress(c, &req)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	core.Response(c, resp, nil)
+	resp, err := h.b.Auth().LoginByAddress(c, &req)
+	core.Response(c, resp, err)
 }

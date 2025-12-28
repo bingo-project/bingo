@@ -332,11 +332,6 @@ const docTemplate = `{
         },
         "/v1/auth/login/address": {
             "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -346,21 +341,16 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Login by provider",
+                "summary": "Wallet login with SIWE",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "ETH Address",
-                        "name": "address",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Signature",
-                        "name": "sign",
-                        "in": "query",
-                        "required": true
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginByAddressRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -376,8 +366,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/core.ErrResponse"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/core.ErrResponse"
                         }
@@ -490,11 +480,6 @@ const docTemplate = `{
         },
         "/v1/auth/nonce": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -504,7 +489,7 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Get Address auth nonce",
+                "summary": "Get SIWE nonce for wallet login",
                 "parameters": [
                     {
                         "type": "string",
@@ -1594,6 +1579,23 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.LoginByAddressRequest": {
+            "type": "object",
+            "required": [
+                "message",
+                "signature"
+            ],
+            "properties": {
+                "message": {
+                    "description": "SIWE message",
+                    "type": "string"
+                },
+                "signature": {
+                    "description": "Wallet signature",
+                    "type": "string"
+                }
+            }
+        },
         "v1.LoginByProviderRequest": {
             "type": "object",
             "properties": {
@@ -1656,6 +1658,10 @@ const docTemplate = `{
         "v1.NonceResponse": {
             "type": "object",
             "properties": {
+                "message": {
+                    "description": "SIWE message",
+                    "type": "string"
+                },
                 "nonce": {
                     "description": "Nonce",
                     "type": "string"
