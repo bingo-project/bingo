@@ -133,7 +133,29 @@ sys_config.go
 auth_middleware.go
 ```
 
-### 2.3 接口名
+### 2.3 表名
+
+- 统一使用**单数形式**
+- 使用**模块前缀**，避免命名冲突
+- 蛇形命名（snake_case）
+
+| 模块 | 前缀 | 示例 |
+|------|------|------|
+| 系统 | `sys_` | `sys_config`, `sys_menu` |
+| 通知 | `ntf_` | `ntf_message`, `ntf_announcement` |
+| 用户 | `user_` 或无前缀 | `user`, `user_address` |
+
+```sql
+-- ✅ 正确
+CREATE TABLE ntf_message (...);
+CREATE TABLE sys_config (...);
+
+-- ❌ 错误
+CREATE TABLE notifications (...);  -- 应该用单数 + 前缀
+CREATE TABLE message (...);        -- 缺少模块前缀
+```
+
+### 2.4 接口名
 
 - `I` 前缀（Interface）
 - 大驼峰命名
@@ -143,7 +165,7 @@ type IStore interface {}
 type IBiz interface {}
 ```
 
-### 2.4 Store 命名规范
+### 2.5 Store 命名规范
 
 | 元素 | 规范 | 示例 |
 |------|------|------|
