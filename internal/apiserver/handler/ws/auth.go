@@ -22,10 +22,22 @@ func (h *Handler) Login(c *websocket.Context) *jsonrpc.Response {
 		return c.Error(errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 	}
 
+	// Validate platform for WebSocket login
+	if !websocket.IsValidPlatform(req.Platform) {
+		return c.Error(errno.ErrInvalidArgument.WithMessage("invalid platform: %s", req.Platform))
+	}
+
 	resp, err := h.b.Auth().Login(c, &req)
 	if err != nil {
 		return c.Error(err)
 	}
+
+	// Parse token and set login info for middleware
+	tokenInfo, err := c.Client.ParseToken(resp.AccessToken)
+	if err != nil {
+		return c.Error(errno.ErrTokenInvalid)
+	}
+	c.SetLoginInfo(tokenInfo, req.Platform)
 
 	return c.JSON(resp)
 }

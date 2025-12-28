@@ -14,6 +14,7 @@ type RegisterRequest struct {
 type LoginRequest struct {
 	Account  string `json:"account" binding:"required,min=5,max=255"`
 	Password string `json:"password" binding:"required,min=6,max=18"`
+	Platform string `json:"platform"` // WebSocket 登录时必填
 }
 
 // SendCodeRequest 发送验证码请求

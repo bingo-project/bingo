@@ -120,8 +120,8 @@ github.com/bingo-project/bingoctl v1.6.3 h1:lipA7rm5TBQfDF0i5YF24AapKbWhxWJVFsnv
 github.com/bingo-project/bingoctl v1.6.3/go.mod h1:E8bhy/ZSlzwrfT3XAbK+xJWC/Eu8Jtmj/OpPvIi/7sc=
 github.com/bingo-project/component-base v0.5.1 h1:c79wwK5FiIrs67buOxHX71h383yWAx+ym0hUdNTlsHw=
 github.com/bingo-project/component-base v0.5.1/go.mod h1:zrfiSvqRDxtp1JqE2HEq7UFgq12jcWjr8+pLkm5ETtI=
-github.com/bingo-project/websocket v0.2.1 h1:HR1fpXm7E9SrSAzXwoGKseftSIqqf7OtJFR023ka22M=
-github.com/bingo-project/websocket v0.2.1/go.mod h1:RtJWtuMFDee8OLFgshv2+AaAPqeB+7IGBjsMYCsA7vc=
+github.com/bingo-project/websocket v0.2.2 h1:FBpoppGZxvglUBRbq7m/+OivaSZ58uTX1mFaRCdy/DY=
+github.com/bingo-project/websocket v0.2.2/go.mod h1:RtJWtuMFDee8OLFgshv2+AaAPqeB+7IGBjsMYCsA7vc=
 github.com/bits-and-blooms/bitset v1.24.4 h1:95H15Og1clikBrKr/DuzMXkQzECs1M6hhoGXLwLQOZE=
 github.com/bits-and-blooms/bitset v1.24.4/go.mod h1:7hO7Gc7Pp1vODcmWvKMRA9BNmbv6a/7QIWpPxHddWR8=
 github.com/bmatcuk/doublestar/v4 v4.6.1/go.mod h1:xBQ8jztBU6kakFMg+8WGxn0c6z1fTSPVIjEY1Wr7jzc=

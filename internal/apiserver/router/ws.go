@@ -33,9 +33,9 @@ func RegisterWSHandlers(router *websocket.Router, rateLimitStore *middleware.Rat
 	public.Handle("heartbeat", websocket.HeartbeatHandler)
 	public.Handle("system.healthz", h.Healthz)
 	public.Handle("system.version", h.Version)
-	// LoginStateUpdater runs after Login handler succeeds, parsing the returned
-	// access token to update client state and notify the hub of the login event.
+	// LoginStateUpdater runs after login handler succeeds to update client state.
 	public.Handle("auth.login", h.Login, middleware.LoginStateUpdater)
+	public.Handle("auth.loginByToken", websocket.TokenLoginHandler, middleware.LoginStateUpdater)
 
 	// Private methods (require auth)
 	private := router.Group(middleware.Auth)
