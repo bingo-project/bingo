@@ -47,11 +47,6 @@ type BindingInfo struct {
 	BindTime  string `json:"bindTime"`
 }
 
-// ListBindingsResponse 社交账号列表响应
-type ListBindingsResponse struct {
-	Data []BindingInfo `json:"data"`
-}
-
 type LoginByProviderRequest struct {
 	Code         string `json:"code" form:"code"`                 // Auth code
 	State        string `json:"state" form:"state"`               // State for CSRF protection

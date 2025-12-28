@@ -184,7 +184,7 @@ func (ctrl *AuthHandler) UpdateProfile(c *gin.Context) {
 // @Tags       Auth
 // @Accept     application/json
 // @Produce    json
-// @Success	   200		{object}	v1.ListBindingsResponse
+// @Success	   200		{array}		v1.BindingInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
 // @Router    /v1/auth/bindings [GET].

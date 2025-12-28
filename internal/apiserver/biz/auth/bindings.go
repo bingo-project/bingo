@@ -12,7 +12,7 @@ import (
 )
 
 type BindingsBiz interface {
-	ListBindings(ctx context.Context, uid string) (*v1.ListBindingsResponse, error)
+	ListBindings(ctx context.Context, uid string) ([]v1.BindingInfo, error)
 	Unbind(ctx context.Context, uid string, provider string) error
 }
 
@@ -24,7 +24,7 @@ func NewBindingsBiz(ds store.IStore) BindingsBiz {
 	return &bindingsBiz{ds: ds}
 }
 
-func (b *bindingsBiz) ListBindings(ctx context.Context, uid string) (*v1.ListBindingsResponse, error) {
+func (b *bindingsBiz) ListBindings(ctx context.Context, uid string) ([]v1.BindingInfo, error) {
 	accounts, err := b.ds.UserAccount().FindByUID(ctx, uid)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (b *bindingsBiz) ListBindings(ctx context.Context, uid string) (*v1.ListBin
 		})
 	}
 
-	return &v1.ListBindingsResponse{Data: data}, nil
+	return data, nil
 }
 
 func (b *bindingsBiz) Unbind(ctx context.Context, uid string, provider string) error {
