@@ -613,7 +613,7 @@ definitions:
     properties:
       account:
         maxLength: 255
-        minLength: 5
+        minLength: 4
         type: string
       password:
         maxLength: 18

@@ -12,7 +12,7 @@ type RegisterRequest struct {
 
 // LoginRequest 登录请求
 type LoginRequest struct {
-	Account  string `json:"account" binding:"required,min=5,max=255"`
+	Account  string `json:"account" binding:"required,min=4,max=255"`
 	Password string `json:"password" binding:"required,min=6,max=18"`
 	Platform string `json:"platform"` // WebSocket 登录时必填
 }

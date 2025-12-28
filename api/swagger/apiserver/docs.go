@@ -1621,7 +1621,7 @@ const docTemplate = `{
                 "account": {
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 5
+                    "minLength": 4
                 },
                 "password": {
                     "type": "string",
