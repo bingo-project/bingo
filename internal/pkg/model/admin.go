@@ -9,14 +9,16 @@ import (
 type AdminM struct {
 	Base
 
-	Username string      `gorm:"uniqueIndex:uk_username;type:varchar(255);not null"`
-	Password string      `gorm:"type:varchar(255);not null;default:''"`
-	Nickname string      `gorm:"type:varchar(255);not null;default:''"`
-	Email    *string     `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
-	Phone    *string     `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
-	Avatar   string      `gorm:"type:varchar(255);not null;default:''"`
-	Status   AdminStatus `gorm:"type:varchar(20);default:'enabled';comment:状态：enabled正常，disabled禁用"`
-	RoleName string      `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
+	Username     string      `gorm:"uniqueIndex:uk_username;type:varchar(255);not null"`
+	Password     string      `gorm:"type:varchar(255);not null;default:''"`
+	Nickname     string      `gorm:"type:varchar(255);not null;default:''"`
+	Email        *string     `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
+	Phone        *string     `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
+	Avatar       string      `gorm:"type:varchar(255);not null;default:''"`
+	Status       AdminStatus `gorm:"type:varchar(20);default:'enabled';comment:状态：enabled正常，disabled禁用"`
+	GoogleKey    string      `gorm:"column:google_key;type:varchar(255);not null;default:''"`
+	GoogleStatus string      `gorm:"column:google_status;type:enum('unbind','disabled','enabled');not null;default:'unbind'"`
+	RoleName     string      `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
 
 	// Relation
 	Role  *RoleM  `gorm:"foreignKey:role_name;references:name"`
@@ -32,6 +34,15 @@ type AdminStatus string
 const (
 	AdminStatusEnabled  AdminStatus = "enabled"
 	AdminStatusDisabled AdminStatus = "disabled"
+)
+
+// GoogleStatus TOTP 绑定状态
+type GoogleStatus string
+
+const (
+	GoogleStatusUnbind   GoogleStatus = "unbind"   // TOTP 未绑定
+	GoogleStatusDisabled GoogleStatus = "disabled" // TOTP 已绑定但禁用
+	GoogleStatusEnabled  GoogleStatus = "enabled"  // TOTP 已启用
 )
 
 func (u *AdminM) BeforeCreate(tx *gorm.DB) (err error) {

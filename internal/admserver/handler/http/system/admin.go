@@ -10,6 +10,7 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 type AdminHandler struct {
@@ -197,4 +198,29 @@ func (ctrl *AdminHandler) SetRoles(c *gin.Context) {
 	}
 
 	core.Response(c, resp, nil)
+}
+
+// ResetTOTP
+// @Summary    Reset admin TOTP
+// @Security   Bearer
+// @Tags       Admin
+// @Accept     application/json
+// @Produce    json
+// @Param      name	     path	    string     true  "Username"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/admins/{name}/reset-totp [PUT].
+func (ctrl *AdminHandler) ResetTOTP(c *gin.Context) {
+	log.C(c).Infow("ResetTOTP function called")
+
+	targetUser := c.Param("name")
+	currentUser := contextx.Username(c)
+	if err := ctrl.b.Admins().ResetTOTP(c, currentUser, targetUser); err != nil {
+		core.Response(c, nil, err)
+
+		return
+	}
+
+	core.Response(c, gin.H{"message": "TOTP 已重置"}, nil)
 }

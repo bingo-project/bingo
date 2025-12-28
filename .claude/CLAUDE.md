@@ -2,7 +2,7 @@
 
 ## 必读文档
 
-开发前必须阅读 [docs/guides/CONVENTIONS.md](../docs/guides/CONVENTIONS.md)，了解：
+制定实现计划、开发或 Review 代码前必须阅读 [docs/guides/CONVENTIONS.md](../docs/guides/CONVENTIONS.md)，了解：
 
 - 三层架构原则（Handler → Biz → Store）
 - 文件规范（ABOUTME 注释、目录结构）
@@ -11,6 +11,7 @@
 - 日志规范（结构化日志）
 - 测试规范（分层测试策略）
 - 生成代码检查清单
+- 构建规范
 
 ## 技术栈
 

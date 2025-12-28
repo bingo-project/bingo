@@ -7,6 +7,7 @@ import (
 
 	bizauth "github.com/bingo-project/bingo/internal/admserver/biz/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
+	handlerauth "github.com/bingo-project/bingo/internal/admserver/handler/http/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/config"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/system"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/user"
@@ -30,6 +31,7 @@ func MapApiRouters(g *gin.Engine) {
 
 	// Login
 	v1.POST("auth/login", adminHandler.Login)
+	v1.POST("auth/login/totp", adminHandler.LoginWithTOTP)
 
 	// Authentication middleware
 	loader := bizauth.NewAdminLoader(store.S)
@@ -41,6 +43,17 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("auth/menus", authHandler.Menus)                    // 获取登录账号菜单
 	v1.PUT("auth/change-password", authHandler.ChangePassword) // 修改密码
 	v1.PUT("auth/switch-role", authHandler.SwitchRole)         // 切换角色
+
+	// Security (TOTP)
+	securityHandler := handlerauth.NewSecurityHandler(store.S)
+	securityGroup := v1.Group("auth/security")
+	{
+		securityGroup.GET("/totp/status", securityHandler.GetTOTPStatus)
+		securityGroup.POST("/totp/setup", securityHandler.SetupTOTP)
+		securityGroup.POST("/totp/enable", securityHandler.EnableTOTP)
+		securityGroup.POST("/totp/verify", securityHandler.VerifyTOTP)
+		securityGroup.POST("/totp/disable", securityHandler.DisableTOTP)
+	}
 
 	// Authorization middleware
 	resolver := &bizauth.AdminSubjectResolver{}
@@ -58,6 +71,7 @@ func MapApiRouters(g *gin.Engine) {
 	v1.DELETE("admins/:name", adminHandler.Delete)                      // 删除管理员
 	v1.PUT("admins/:name/change-password", adminHandler.ChangePassword) // 修改密码
 	v1.PUT("admins/:name/roles", adminHandler.SetRoles)                 // 设置角色组
+	v1.PUT("admins/:name/reset-totp", adminHandler.ResetTOTP)           // 重置 TOTP
 
 	// Role
 	roleHandler := system.NewRoleHandler(store.S, policyAuthz)

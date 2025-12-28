@@ -477,6 +477,44 @@ core.Response(c, data, err)
 c.JSON(200, gin.H{"data": data})
 ```
 
+### 4.4 使用常量代替字面量
+
+状态值、类型值等必须定义为常量，禁止在代码中直接使用字符串字面量。
+
+**常量定义位置：**
+
+| 常量类型 | 定义位置 | 示例 |
+|---------|---------|------|
+| Model 状态/类型 | `internal/pkg/model/` | `model.AdminStatus`, `model.GoogleStatus` |
+| 错误码 | `internal/pkg/errno/` | `errno.ErrNotFound` |
+| 已知值（如角色名） | `internal/pkg/known/` | `known.UserRoot` |
+| 业务层专用常量 | 对应 biz 包 | `TOTPIssuer` |
+
+```go
+// ✅ 正确：在 model 包定义类型和常量
+// internal/pkg/model/admin.go
+type GoogleStatus string
+
+const (
+    GoogleStatusUnbind   GoogleStatus = "unbind"
+    GoogleStatusDisabled GoogleStatus = "disabled"
+    GoogleStatusEnabled  GoogleStatus = "enabled"
+)
+
+// ✅ 正确：在 biz 层使用 model 常量
+if user.GoogleStatus == string(model.GoogleStatusEnabled) {
+    // ...
+}
+
+// ❌ 错误：直接使用字符串字面量
+if user.GoogleStatus == "enabled" {
+    // ...
+}
+
+// ❌ 错误：在 biz 层重复定义常量
+const GoogleStatusEnabled = "enabled"  // 应该使用 model.GoogleStatusEnabled
+```
+
 ---
 
 ## 5. 日志规范
@@ -571,6 +609,8 @@ internal/pkg/database/
 ### 7.2 Migration（数据库迁移）
 
 新增或变更表结构时，必须编写 migration 文件。
+
+> **注意**：`bingo` 是全局安装的 CLI 工具，不是项目内的命令。
 
 ```bash
 bingo migrate up        # 执行迁移

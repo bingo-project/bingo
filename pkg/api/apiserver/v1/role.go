@@ -15,6 +15,7 @@ type RoleInfo struct {
 	Description string `json:"description"`
 	Status      string `json:"status"`
 	Remark      string `json:"remark"`
+	RequireTOTP bool   `json:"requireTotp"` // 是否强制要求 TOTP
 }
 
 type ListRoleRequest struct {
@@ -37,12 +38,14 @@ type CreateRoleRequest struct {
 	Description string `json:"description" binding:"omitempty,max=255"`
 	Status      string `json:"status" binding:"omitempty,oneof=enabled disabled"`
 	Remark      string `json:"remark" binding:"omitempty,max=255"`
+	RequireTOTP *bool  `json:"requireTotp"` // 是否强制要求 TOTP
 }
 
 type UpdateRoleRequest struct {
 	Description *string `json:"description" binding:"omitempty,min=1,max=255"`
 	Status      *string `json:"status" binding:"omitempty,oneof=enabled disabled"`
 	Remark      *string `json:"remark" binding:"omitempty,max=255"`
+	RequireTOTP *bool   `json:"requireTotp"` // 是否强制要求 TOTP
 }
 
 type SetApisRequest struct {

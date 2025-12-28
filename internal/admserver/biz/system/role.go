@@ -112,6 +112,9 @@ func (b *roleBiz) Update(ctx context.Context, roleName string, req *v1.UpdateRol
 	if req.Remark != nil {
 		roleM.Remark = *req.Remark
 	}
+	if req.RequireTOTP != nil {
+		roleM.RequireTOTP = *req.RequireTOTP
+	}
 
 	if err := b.ds.SysRole().Update(ctx, roleM); err != nil {
 		return nil, err

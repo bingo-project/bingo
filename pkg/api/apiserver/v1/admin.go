@@ -64,4 +64,5 @@ type SetRolesRequest struct {
 
 type SwitchRoleRequest struct {
 	RoleName string `json:"roleName" binding:"required"`
+	TOTPCode string `json:"totpCode,omitempty"` // TOTP 验证码（角色要求时必填）
 }

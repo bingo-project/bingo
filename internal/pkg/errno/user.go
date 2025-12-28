@@ -130,6 +130,20 @@ var (
 		Message: "TOTP code is required.",
 	}
 
+	// ErrTOTPRequired 该角色要求启用 TOTP
+	ErrTOTPRequired = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.TOTPRequired",
+		Message: "This role requires TOTP to be enabled.",
+	}
+
+	// ErrTOTPTokenInvalid TOTP Token 无效或过期
+	ErrTOTPTokenInvalid = &errorsx.ErrorX{
+		Code:    http.StatusUnauthorized,
+		Reason:  "Unauthenticated.TOTPTokenInvalid",
+		Message: "TOTP token is invalid or expired.",
+	}
+
 	// ErrPasswordRequired 登录密码必填
 	ErrPasswordRequired = &errorsx.ErrorX{
 		Code:    http.StatusBadRequest,

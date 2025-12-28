@@ -1335,6 +1335,14 @@ const docTemplate = `{
                 },
                 "expiresAt": {
                     "type": "string"
+                },
+                "requireTotp": {
+                    "description": "是否需要 TOTP 验证",
+                    "type": "boolean"
+                },
+                "totpToken": {
+                    "description": "两步登录临时 Token",
+                    "type": "string"
                 }
             }
         },

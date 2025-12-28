@@ -9,6 +9,7 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/known"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
@@ -18,6 +19,7 @@ import (
 
 type AdminBiz interface {
 	Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error)
+	LoginWithTOTP(ctx context.Context, r *v1.TOTPLoginRequest) (*v1.LoginResponse, error)
 	ChangePassword(ctx context.Context, username string, r *v1.ChangePasswordRequest) error
 
 	List(ctx context.Context, req *v1.ListAdminRequest) (*v1.ListAdminResponse, error)
@@ -28,6 +30,7 @@ type AdminBiz interface {
 
 	SetRoles(ctx context.Context, username string, req *v1.SetRolesRequest) (*v1.AdminInfo, error)
 	SwitchRole(ctx context.Context, username string, admin *v1.SwitchRoleRequest) (*v1.AdminInfo, error)
+	ResetTOTP(ctx context.Context, currentUser, targetUser string) error
 }
 
 type adminBiz struct {
@@ -252,6 +255,34 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 		return nil, errno.ErrNotFound
 	}
 
+	// Get target role
+	role, err := b.ds.SysRole().GetByName(ctx, req.RoleName)
+	if err != nil {
+		return nil, errno.ErrNotFound
+	}
+
+	// Check if role requires TOTP
+	if role.RequireTOTP {
+		// Check if admin has TOTP enabled
+		if adminM.GoogleStatus != string(model.GoogleStatusEnabled) {
+			return nil, errno.ErrTOTPRequired
+		}
+
+		// Verify TOTP code
+		if req.TOTPCode == "" {
+			return nil, errno.ErrTOTPCodeRequired
+		}
+
+		secret, err := facade.AES.DecryptString(adminM.GoogleKey)
+		if err != nil {
+			return nil, err
+		}
+
+		if !auth.ValidateTOTP(req.TOTPCode, secret) {
+			return nil, errno.ErrTOTPInvalid
+		}
+	}
+
 	// Update roles & current role
 	adminM.RoleName = req.RoleName
 	err = b.ds.Admin().Update(ctx, adminM, "role_name")
@@ -263,4 +294,23 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 	_ = copier.Copy(&resp, adminM)
 
 	return &resp, err
+}
+
+func (b *adminBiz) ResetTOTP(ctx context.Context, currentUser, targetUser string) error {
+	// Check if current user is root
+	if currentUser != known.UserRoot {
+		return errno.ErrPermissionDenied
+	}
+
+	// Get target admin
+	admin, err := b.ds.Admin().GetByUsername(ctx, targetUser)
+	if err != nil {
+		return errno.ErrNotFound
+	}
+
+	// Reset TOTP
+	admin.GoogleKey = ""
+	admin.GoogleStatus = string(model.GoogleStatusUnbind)
+
+	return b.ds.Admin().Update(ctx, admin, "google_key", "google_status")
 }

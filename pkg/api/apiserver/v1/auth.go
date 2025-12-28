@@ -62,6 +62,14 @@ type GetAuthCodeResponse struct {
 type LoginResponse struct {
 	AccessToken string    `json:"accessToken"`
 	ExpiresAt   time.Time `json:"expiresAt"`
+	RequireTOTP bool      `json:"requireTotp"`         // 是否需要 TOTP 验证
+	TOTPToken   string    `json:"totpToken,omitempty"` // 两步登录临时 Token
+}
+
+// TOTPLoginRequest TOTP 二次验证请求
+type TOTPLoginRequest struct {
+	TOTPToken string `json:"totpToken" binding:"required"`  // 临时 Token
+	Code      string `json:"code" binding:"required,len=6"` // TOTP 验证码
 }
 
 type AddressRequest struct {

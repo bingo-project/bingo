@@ -10,14 +10,16 @@ import (
 type CreateSysAuthAdminTable struct {
 	model.Base
 
-	Username string  `gorm:"uniqueIndex:uk_username;type:varchar(255);not null"`
-	Password string  `gorm:"type:varchar(255);not null;default:''"`
-	Nickname string  `gorm:"type:varchar(255);not null;default:''"`
-	Email    *string `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
-	Phone    *string `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
-	Avatar   string  `gorm:"type:varchar(255);not null;default:''"`
-	Status   string  `gorm:"type:varchar(20);not null;default:'enabled'"`
-	RoleName string  `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
+	Username     string  `gorm:"uniqueIndex:uk_username;type:varchar(255);not null"`
+	Password     string  `gorm:"type:varchar(255);not null;default:''"`
+	Nickname     string  `gorm:"type:varchar(255);not null;default:''"`
+	Email        *string `gorm:"uniqueIndex:uk_email;type:varchar(255);default:null"`
+	Phone        *string `gorm:"uniqueIndex:uk_phone;type:varchar(255);default:null"`
+	Avatar       string  `gorm:"type:varchar(255);not null;default:''"`
+	Status       string  `gorm:"type:varchar(20);not null;default:'enabled'"`
+	GoogleKey    string  `gorm:"column:google_key;type:varchar(255);not null;default:''"`
+	GoogleStatus string  `gorm:"column:google_status;type:enum('unbind','disabled','enabled');not null;default:'unbind'"`
+	RoleName     string  `gorm:"index:idx_role;type:varchar(255);not null;default:'';comment:当前角色"`
 }
 
 func (CreateSysAuthAdminTable) TableName() string {
