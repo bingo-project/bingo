@@ -757,6 +757,7 @@ package notification
 import (
 	"context"
 
+	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
@@ -791,7 +792,7 @@ func (b *notificationBiz) List(ctx context.Context, userID string, req *v1.ListN
 
 	msgTotal, messages, err := b.ds.NtfMessage().List(ctx, msgOpts)
 	if err != nil {
-		return nil, err
+		return nil, errno.ErrDBRead.WithMessage("list messages: %v", err)
 	}
 
 	// Query announcements (only system category or no filter)
@@ -801,7 +802,7 @@ func (b *notificationBiz) List(ctx context.Context, userID string, req *v1.ListN
 		annOpts := where.Page(req.Page, req.PageSize).Order("created_at DESC")
 		annTotal, announcements, err = b.ds.NtfAnnouncement().ListPublished(ctx, annOpts)
 		if err != nil {
-			return nil, err
+			return nil, errno.ErrDBRead.WithMessage("list announcements: %v", err)
 		}
 	}
 
@@ -852,12 +853,12 @@ func (b *notificationBiz) List(ctx context.Context, userID string, req *v1.ListN
 func (b *notificationBiz) UnreadCount(ctx context.Context, userID string) (*v1.UnreadCountResponse, error) {
 	msgCount, err := b.ds.NtfMessage().CountUnread(ctx, userID)
 	if err != nil {
-		return nil, err
+		return nil, errno.ErrDBRead.WithMessage("count unread messages: %v", err)
 	}
 
 	annCount, err := b.ds.NtfAnnouncement().CountUnreadForUser(ctx, userID)
 	if err != nil {
-		return nil, err
+		return nil, errno.ErrDBRead.WithMessage("count unread announcements: %v", err)
 	}
 
 	return &v1.UnreadCountResponse{Count: msgCount + annCount}, nil
@@ -867,13 +868,19 @@ func (b *notificationBiz) MarkAsRead(ctx context.Context, userID string, uuid st
 	// Try message first
 	msg, err := b.ds.NtfMessage().GetByUUID(ctx, uuid)
 	if err == nil && msg.UserID == userID {
-		return b.ds.NtfMessage().MarkAsRead(ctx, userID, uuid)
+		if err := b.ds.NtfMessage().MarkAsRead(ctx, userID, uuid); err != nil {
+			return errno.ErrDBWrite.WithMessage("mark message as read: %v", err)
+		}
+		return nil
 	}
 
 	// Try announcement
 	ann, err := b.ds.NtfAnnouncement().GetByUUID(ctx, uuid)
 	if err == nil {
-		return b.ds.NtfAnnouncement().MarkAsRead(ctx, userID, ann.ID)
+		if err := b.ds.NtfAnnouncement().MarkAsRead(ctx, userID, ann.ID); err != nil {
+			return errno.ErrDBWrite.WithMessage("mark announcement as read: %v", err)
+		}
+		return nil
 	}
 
 	return errno.ErrNotFound
@@ -882,13 +889,13 @@ func (b *notificationBiz) MarkAsRead(ctx context.Context, userID string, uuid st
 func (b *notificationBiz) MarkAllAsRead(ctx context.Context, userID string) error {
 	// Mark all messages as read
 	if err := b.ds.NtfMessage().MarkAllAsRead(ctx, userID); err != nil {
-		return err
+		return errno.ErrDBWrite.WithMessage("mark all messages as read: %v", err)
 	}
 
 	// Mark all announcements as read (get all published, mark each)
 	_, announcements, err := b.ds.NtfAnnouncement().ListPublished(ctx, where.New())
 	if err != nil {
-		return err
+		return errno.ErrDBRead.WithMessage("list published announcements: %v", err)
 	}
 
 	for _, ann := range announcements {
@@ -907,10 +914,14 @@ func (b *notificationBiz) Delete(ctx context.Context, userID string, uuid string
 		return errno.ErrNotFound
 	}
 	if msg.UserID != userID {
-		return errno.ErrForbidden
+		return errno.ErrPermissionDenied
 	}
 
-	return b.ds.NtfMessage().Delete(ctx, where.F("uuid", uuid))
+	if err := b.ds.NtfMessage().Delete(ctx, where.F("uuid", uuid)); err != nil {
+		return errno.ErrDBWrite.WithMessage("delete message: %v", err)
+	}
+
+	return nil
 }
 ```
 
@@ -925,6 +936,7 @@ package notification
 import (
 	"context"
 
+	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
@@ -977,7 +989,11 @@ func (b *preferenceBiz) Update(ctx context.Context, userID string, req *v1.Updat
 		Social:      model.ChannelPreference{InApp: req.Preferences.Social.InApp, Email: req.Preferences.Social.Email},
 	}
 
-	return b.ds.NtfPreference().Upsert(ctx, userID, prefs)
+	if err := b.ds.NtfPreference().Upsert(ctx, userID, prefs); err != nil {
+		return errno.ErrDBWrite.WithMessage("update preferences: %v", err)
+	}
+
+	return nil
 }
 ```
 
@@ -1400,7 +1416,7 @@ func (b *announcementBiz) List(ctx context.Context, req *v1.ListAnnouncementsReq
 
 	total, items, err := b.ds.NtfAnnouncement().List(ctx, opts)
 	if err != nil {
-		return nil, err
+		return nil, errno.ErrDBRead.WithMessage("list announcements: %v", err)
 	}
 
 	data := make([]v1.AnnouncementItem, 0, len(items))
@@ -1431,7 +1447,7 @@ func (b *announcementBiz) Create(ctx context.Context, req *v1.CreateAnnouncement
 	}
 
 	if err := b.ds.NtfAnnouncement().Create(ctx, ann); err != nil {
-		return nil, err
+		return nil, errno.ErrDBWrite.WithMessage("create announcement: %v", err)
 	}
 
 	item := b.toAnnouncementItem(ann)
@@ -1445,7 +1461,7 @@ func (b *announcementBiz) Update(ctx context.Context, uuid string, req *v1.Updat
 	}
 
 	if ann.Status == string(model.AnnouncementStatusPublished) {
-		return errno.ErrForbidden.WithMessage("cannot update published announcement")
+		return errno.ErrPermissionDenied.WithMessage("cannot update published announcement")
 	}
 
 	if req.Title != "" {
@@ -1457,7 +1473,11 @@ func (b *announcementBiz) Update(ctx context.Context, uuid string, req *v1.Updat
 	ann.ActionURL = req.ActionURL
 	ann.ExpiresAt = req.ExpiresAt
 
-	return b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid))
+	if err := b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid)); err != nil {
+		return errno.ErrDBWrite.WithMessage("update announcement: %v", err)
+	}
+
+	return nil
 }
 
 func (b *announcementBiz) Delete(ctx context.Context, uuid string) error {
@@ -1467,10 +1487,14 @@ func (b *announcementBiz) Delete(ctx context.Context, uuid string) error {
 	}
 
 	if ann.Status != string(model.AnnouncementStatusDraft) {
-		return errno.ErrForbidden.WithMessage("can only delete draft announcements")
+		return errno.ErrPermissionDenied.WithMessage("can only delete draft announcements")
 	}
 
-	return b.ds.NtfAnnouncement().Delete(ctx, where.F("uuid", uuid))
+	if err := b.ds.NtfAnnouncement().Delete(ctx, where.F("uuid", uuid)); err != nil {
+		return errno.ErrDBWrite.WithMessage("delete announcement: %v", err)
+	}
+
+	return nil
 }
 
 func (b *announcementBiz) Publish(ctx context.Context, uuid string) error {
@@ -1480,7 +1504,7 @@ func (b *announcementBiz) Publish(ctx context.Context, uuid string) error {
 	}
 
 	if ann.Status == string(model.AnnouncementStatusPublished) {
-		return errno.ErrForbidden.WithMessage("already published")
+		return errno.ErrPermissionDenied.WithMessage("already published")
 	}
 
 	now := time.Now()
@@ -1489,7 +1513,7 @@ func (b *announcementBiz) Publish(ctx context.Context, uuid string) error {
 	ann.ScheduledAt = nil
 
 	if err := b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid)); err != nil {
-		return err
+		return errno.ErrDBWrite.WithMessage("publish announcement: %v", err)
 	}
 
 	// Publish to Redis for real-time push
@@ -1503,23 +1527,25 @@ func (b *announcementBiz) Schedule(ctx context.Context, uuid string, req *v1.Sch
 	}
 
 	if ann.Status == string(model.AnnouncementStatusPublished) {
-		return errno.ErrForbidden.WithMessage("cannot schedule published announcement")
+		return errno.ErrPermissionDenied.WithMessage("cannot schedule published announcement")
 	}
 
 	ann.Status = string(model.AnnouncementStatusScheduled)
 	ann.ScheduledAt = &req.ScheduledAt
 
 	if err := b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid)); err != nil {
-		return err
+		return errno.ErrDBWrite.WithMessage("schedule announcement: %v", err)
 	}
 
 	// Enqueue Asynq task
 	payload, _ := json.Marshal(task.AnnouncementPublishPayload{AnnouncementID: ann.ID})
 	t := asynq.NewTask(task.AnnouncementPublish, payload)
 	delay := time.Until(req.ScheduledAt)
-	_, err = facade.Queue.Client.Enqueue(t, asynq.ProcessIn(delay))
+	if _, err := facade.Queue.Client.Enqueue(t, asynq.ProcessIn(delay)); err != nil {
+		return errno.ErrOperationFailed.WithMessage("enqueue task: %v", err)
+	}
 
-	return err
+	return nil
 }
 
 func (b *announcementBiz) Cancel(ctx context.Context, uuid string) error {
@@ -1529,13 +1555,17 @@ func (b *announcementBiz) Cancel(ctx context.Context, uuid string) error {
 	}
 
 	if ann.Status != string(model.AnnouncementStatusScheduled) {
-		return errno.ErrForbidden.WithMessage("can only cancel scheduled announcements")
+		return errno.ErrPermissionDenied.WithMessage("can only cancel scheduled announcements")
 	}
 
 	ann.Status = string(model.AnnouncementStatusDraft)
 	ann.ScheduledAt = nil
 
-	return b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid))
+	if err := b.ds.NtfAnnouncement().Update(ctx, ann, where.F("uuid", uuid)); err != nil {
+		return errno.ErrDBWrite.WithMessage("cancel announcement: %v", err)
+	}
+
+	return nil
 }
 
 func (b *announcementBiz) toAnnouncementItem(ann *model.NtfAnnouncementM) v1.AnnouncementItem {

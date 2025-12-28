@@ -457,8 +457,10 @@ var (
 | 层级 | 错误处理方式 |
 |------|-------------|
 | Store 层 | 返回原始 error（GORM/Redis 错误） |
-| Biz 层 | 转换为自定义错误码，用 `WithMessage` 附加上下文 |
+| Biz 层 | **必须**转换为自定义错误码，用 `WithMessage` 附加上下文 |
 | Handler 层 | 直接传递给 `core.Response()` |
+
+**重要**：Biz 层**禁止**直接返回 Store 层的错误，必须使用 `errno` 包装。
 
 ```go
 // Store 层 - 返回原始 error
@@ -475,11 +477,16 @@ func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (*model
 
     user := &model.UserM{Email: req.Email}
     if err := b.ds.Users().Create(ctx, user); err != nil {
-        // ✅ 正确：用 WithMessage 附加上下文
-        return nil, errno.ErrDatabase.WithMessage("create user failed: %v", err)
+        // ✅ 正确：写操作用 ErrDBWrite，读操作用 ErrDBRead
+        return nil, errno.ErrDBWrite.WithMessage("create user: %v", err)
     }
 
     return user, nil
+}
+
+// ❌ 错误：直接返回 Store 层的 error
+if err := b.ds.Users().Create(ctx, user); err != nil {
+    return nil, err  // 禁止！必须用 errno 包装
 }
 
 // ❌ 错误：用 fmt.Errorf 包装（丢失类型信息）
@@ -488,6 +495,16 @@ return nil, fmt.Errorf("failed to create user: %w", err)
 // ❌ 错误：直接返回字符串错误
 return nil, errors.New("用户不存在")
 ```
+
+**常用错误码：**
+
+| 场景 | 错误码 |
+|------|--------|
+| 数据库读操作失败 | `errno.ErrDBRead` |
+| 数据库写操作失败 | `errno.ErrDBWrite` |
+| 资源不存在 | `errno.ErrNotFound` |
+| 权限不足 | `errno.ErrPermissionDenied` |
+| 操作失败（如队列入队） | `errno.ErrOperationFailed` |
 
 ### 4.3 Handler 层统一响应
 
