@@ -44,6 +44,7 @@ func (m *NtfAnnouncementM) BeforeCreate(tx *gorm.DB) error {
 	if m.UUID == "" {
 		m.UUID = facade.Snowflake.Generate().String()
 	}
+
 	return nil
 }
 

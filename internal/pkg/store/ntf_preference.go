@@ -6,9 +6,8 @@ package store
 import (
 	"context"
 
-	genericstore "github.com/bingo-project/bingo/pkg/store"
-
 	"github.com/bingo-project/bingo/internal/pkg/model"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
 )
 

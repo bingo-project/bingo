@@ -7,9 +7,8 @@ import (
 	"context"
 	"time"
 
-	genericstore "github.com/bingo-project/bingo/pkg/store"
-
 	"github.com/bingo-project/bingo/internal/pkg/model"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
@@ -51,6 +50,7 @@ func (s *ntfMessageStore) CountUnread(ctx context.Context, userID string) (int64
 	err := s.DB(ctx).Model(&model.NtfMessageM{}).
 		Where("user_id = ? AND is_read = ?", userID, false).
 		Count(&count).Error
+
 	return count, err
 }
 

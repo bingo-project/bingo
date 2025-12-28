@@ -7,9 +7,8 @@ import (
 	"context"
 	"time"
 
-	genericstore "github.com/bingo-project/bingo/pkg/store"
-
 	"github.com/bingo-project/bingo/internal/pkg/model"
+	genericstore "github.com/bingo-project/bingo/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
 )
 
@@ -55,6 +54,7 @@ func (s *ntfAnnouncementStore) ListPublished(ctx context.Context, opts *where.Op
 	var ret []*model.NtfAnnouncementM
 	var count int64
 	err := db.Order("created_at desc").Find(&ret).Offset(-1).Limit(-1).Count(&count).Error
+
 	return count, ret, err
 }
 
@@ -63,6 +63,7 @@ func (s *ntfAnnouncementStore) IsRead(ctx context.Context, userID string, announ
 	err := s.DB(ctx).Model(&model.NtfAnnouncementReadM{}).
 		Where("user_id = ? AND announcement_id = ?", userID, announcementID).
 		Count(&count).Error
+
 	return count > 0, err
 }
 
@@ -72,6 +73,7 @@ func (s *ntfAnnouncementStore) MarkAsRead(ctx context.Context, userID string, an
 		AnnouncementID: announcementID,
 		ReadAt:         time.Now(),
 	}
+
 	return s.DB(ctx).Create(read).Error
 }
 
@@ -86,5 +88,6 @@ func (s *ntfAnnouncementStore) CountUnreadForUser(ctx context.Context, userID st
 				Where("user_id = ?", userID),
 		).
 		Count(&count).Error
+
 	return count, err
 }

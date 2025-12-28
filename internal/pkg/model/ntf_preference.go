@@ -54,6 +54,7 @@ func (m *NtfPreferenceM) GetPreferences() NotificationPreferences {
 	if err := json.Unmarshal([]byte(m.Preferences), &prefs); err != nil {
 		return DefaultPreferences()
 	}
+
 	return prefs
 }
 
@@ -64,5 +65,6 @@ func (m *NtfPreferenceM) SetPreferences(prefs NotificationPreferences) error {
 		return err
 	}
 	m.Preferences = string(data)
+
 	return nil
 }
