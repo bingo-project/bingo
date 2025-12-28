@@ -19,6 +19,7 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/known"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
@@ -174,8 +175,10 @@ func (b *authBiz) GetAuthCode(ctx *gin.Context, providerName string) (*v1.GetAut
 
 	// Save state to Redis
 	if err := auth.SaveState(ctx, facade.Redis, state); err != nil {
+		log.C(ctx).Errorw("Failed to save OAuth state to Redis", "state", state, "error", err)
 		return nil, err
 	}
+	log.C(ctx).Debugw("OAuth state saved", "state", state)
 
 	resp := &v1.GetAuthCodeResponse{
 		State: state,
@@ -207,6 +210,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	// Validate state
 	if req.State != "" {
 		if err := auth.ValidateAndDeleteState(ctx, facade.Redis, req.State); err != nil {
+			log.C(ctx).Warnw("OAuth state validation failed", "state", req.State, "error", err)
 			return nil, errno.ErrInvalidState
 		}
 	}
@@ -256,9 +260,16 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	}
 
 	// Get Access Token
+	log.C(ctx).Debugw("OAuth token exchange", "provider", provider, "redirect_url", oauthProvider.RedirectURL, "code", req.Code)
 	oauthToken, err := conf.Exchange(ctx, req.Code, opts...)
 	if err != nil {
-		return nil, err
+		log.C(ctx).Warnw("OAuth token exchange failed", "provider", provider, "redirect_url", oauthProvider.RedirectURL, "error", err)
+		// Parse OAuth error for user-friendly message
+		errMsg := err.Error()
+		if strings.Contains(errMsg, "bad_verification_code") {
+			return nil, errno.ErrOAuthCodeInvalid
+		}
+		return nil, errno.ErrOAuthProviderError.WithMessage("%s", errMsg)
 	}
 
 	account, err := b.GetUserInfo(ctx, oauthProvider, oauthToken.AccessToken)
@@ -339,7 +350,11 @@ func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByPro
 	// Get Access Token
 	oauthToken, err := conf.Exchange(ctx, req.Code)
 	if err != nil {
-		return nil, err
+		errMsg := err.Error()
+		if strings.Contains(errMsg, "bad_verification_code") {
+			return nil, errno.ErrOAuthCodeInvalid
+		}
+		return nil, errno.ErrOAuthProviderError.WithMessage("%s", errMsg)
 	}
 
 	account, err := b.GetUserInfo(ctx, oauthProvider, oauthToken.AccessToken)

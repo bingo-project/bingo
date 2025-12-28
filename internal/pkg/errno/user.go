@@ -143,4 +143,18 @@ var (
 		Reason:  "Unauthenticated.InvalidState",
 		Message: "Invalid or expired OAuth state.",
 	}
+
+	// ErrOAuthCodeInvalid OAuth授权码无效或已过期
+	ErrOAuthCodeInvalid = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.OAuthCodeInvalid",
+		Message: "Authorization code is invalid or expired.",
+	}
+
+	// ErrOAuthProviderError OAuth服务商返回错误
+	ErrOAuthProviderError = &errorsx.ErrorX{
+		Code:    http.StatusBadGateway,
+		Reason:  "ExternalError.OAuthProviderError",
+		Message: "OAuth provider returned an error.",
+	}
 )
