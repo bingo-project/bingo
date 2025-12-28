@@ -51,12 +51,6 @@ type NotificationPreferences struct {
 	Social      ChannelPreference `json:"social"`
 }
 
-// GetPreferencesResponse is the response for getting preferences.
-type GetPreferencesResponse struct {
-	Preferences NotificationPreferences `json:"preferences"`
-}
-
 // UpdatePreferencesRequest is the request for updating preferences.
-type UpdatePreferencesRequest struct {
-	Preferences NotificationPreferences `json:"preferences" binding:"required"`
-}
+// The request body is the NotificationPreferences directly, without wrapper.
+type UpdatePreferencesRequest = NotificationPreferences

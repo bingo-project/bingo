@@ -1236,7 +1236,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.GetPreferencesResponse"
+                            "$ref": "#/definitions/v1.NotificationPreferences"
                         }
                     },
                     "500": {
@@ -1572,14 +1572,6 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.GetPreferencesResponse": {
-            "type": "object",
-            "properties": {
-                "preferences": {
-                    "$ref": "#/definitions/v1.NotificationPreferences"
-                }
-            }
-        },
         "v1.HealthzResponse": {
             "type": "object",
             "properties": {
@@ -1901,12 +1893,18 @@ const docTemplate = `{
         },
         "v1.UpdatePreferencesRequest": {
             "type": "object",
-            "required": [
-                "preferences"
-            ],
             "properties": {
-                "preferences": {
-                    "$ref": "#/definitions/v1.NotificationPreferences"
+                "security": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "social": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "system": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
+                },
+                "transaction": {
+                    "$ref": "#/definitions/v1.ChannelPreference"
                 }
             }
         },

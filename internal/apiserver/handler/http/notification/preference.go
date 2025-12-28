@@ -31,7 +31,7 @@ func NewPreferenceHandler(ds store.IStore) *PreferenceHandler {
 // @Security   Bearer
 // @Tags       Notification
 // @Produce    json
-// @Success    200  {object}  v1.GetPreferencesResponse
+// @Success    200  {object}  v1.NotificationPreferences
 // @Failure    500  {object}  core.ErrResponse
 // @Router     /v1/notifications/preferences [GET].
 func (h *PreferenceHandler) Get(c *gin.Context) {
