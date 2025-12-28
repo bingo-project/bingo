@@ -6,6 +6,7 @@ import (
 	"github.com/bingo-project/bingo/internal/apiserver/biz/app"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/auth"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/file"
+	"github.com/bingo-project/bingo/internal/apiserver/biz/notification"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/syscfg"
 	"github.com/bingo-project/bingo/internal/apiserver/biz/user"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -25,6 +26,9 @@ type IBiz interface {
 
 	Apps() app.AppBiz
 	ApiKeys() app.ApiKeyBiz
+
+	Notifications() notification.NotificationBiz
+	NotificationPreferences() notification.PreferenceBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -75,4 +79,12 @@ func (b *biz) Apps() app.AppBiz {
 
 func (b *biz) ApiKeys() app.ApiKeyBiz {
 	return app.NewApiKey(b.ds)
+}
+
+func (b *biz) Notifications() notification.NotificationBiz {
+	return notification.New(b.ds)
+}
+
+func (b *biz) NotificationPreferences() notification.PreferenceBiz {
+	return notification.NewPreference(b.ds)
 }
