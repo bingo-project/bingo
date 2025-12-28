@@ -78,12 +78,13 @@ type AddressRequest struct {
 }
 
 type NonceResponse struct {
-	Nonce string `json:"nonce"` // Nonce
+	Message string `json:"message"` // SIWE message
+	Nonce   string `json:"nonce"`   // Nonce
 }
 
 type LoginByAddressRequest struct {
-	AddressRequest
-	Sign string `json:"sign" form:"sign" binding:"required"` // Signature
+	Message   string `json:"message" binding:"required"`   // SIWE message
+	Signature string `json:"signature" binding:"required"` // Wallet signature
 }
 
 type ChangePasswordRequest struct {
