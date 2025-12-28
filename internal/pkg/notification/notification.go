@@ -87,7 +87,7 @@ func sendInApp(ctx context.Context, msg *Message) error {
 		},
 	}
 	data, _ := json.Marshal(payload)
-	channel := "ntf:user:" + msg.UserID
+	channel := RedisUserChannelPrefix + msg.UserID
 
 	return facade.Redis.Publish(ctx, channel, data).Err()
 }

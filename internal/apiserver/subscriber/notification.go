@@ -13,11 +13,7 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
-)
-
-const (
-	ChannelBroadcast  = "ntf:broadcast"
-	ChannelUserPrefix = "ntf:user:"
+	"github.com/bingo-project/bingo/internal/pkg/notification"
 )
 
 type NotificationSubscriber struct {
@@ -47,7 +43,7 @@ func (s *NotificationSubscriber) Stop() {
 }
 
 func (s *NotificationSubscriber) subscribeBroadcast() {
-	pubsub := s.redis.Subscribe(s.ctx, ChannelBroadcast)
+	pubsub := s.redis.Subscribe(s.ctx, notification.RedisBroadcastChannel)
 	defer pubsub.Close()
 
 	ch := pubsub.Channel()

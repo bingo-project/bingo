@@ -1,5 +1,5 @@
 // ABOUTME: Notification channel constants.
-// ABOUTME: Defines in-app, email, SMS, and push channels.
+// ABOUTME: Defines delivery channels and Redis Pub/Sub channel names.
 
 package notification
 
@@ -10,4 +10,10 @@ const (
 	ChannelEmail Channel = "email"
 	ChannelSMS   Channel = "sms"  // Reserved
 	ChannelPush  Channel = "push" // Reserved
+)
+
+// Redis Pub/Sub channel names.
+const (
+	RedisBroadcastChannel = "ntf:broadcast"
+	RedisUserChannelPrefix = "ntf:user:"
 )
