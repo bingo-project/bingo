@@ -9,6 +9,7 @@ import (
 	"golang.org/x/oauth2"
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -183,6 +184,14 @@ func (b *authProviderBiz) FindEnabled(ctx context.Context) (ret []*v1.AuthProvid
 		authProvider.AuthURL = conf.AuthCodeURL(uuid.New().String())
 
 		data = append(data, &authProvider)
+	}
+
+	// Append wallet provider if SIWE is enabled
+	if facade.Config.Auth != nil && facade.Config.Auth.SIWE.Enabled {
+		data = append(data, &v1.AuthProviderBrief{
+			Name:      model.AuthProviderWallet,
+			IsDefault: 0,
+		})
 	}
 
 	return data, err
