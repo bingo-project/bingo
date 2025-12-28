@@ -77,6 +77,18 @@ definitions:
           $ref: '#/definitions/v1.BindingInfo'
         type: array
     type: object
+  v1.LoginByProviderRequest:
+    properties:
+      code:
+        description: Auth code
+        type: string
+      codeVerifier:
+        description: PKCE code verifier
+        type: string
+      state:
+        description: State for CSRF protection
+        type: string
+    type: object
   v1.LoginRequest:
     properties:
       account:
@@ -395,18 +407,12 @@ paths:
         name: provider
         required: true
         type: string
-      - description: Auth code
-        in: query
-        name: code
-        type: string
-      - description: PKCE code verifier
-        in: query
-        name: codeVerifier
-        type: string
-      - description: State for CSRF protection
-        in: query
-        name: state
-        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginByProviderRequest'
       produces:
       - application/json
       responses:
@@ -553,18 +559,12 @@ paths:
         name: provider
         required: true
         type: string
-      - description: Auth code
-        in: query
-        name: code
-        type: string
-      - description: PKCE code verifier
-        in: query
-        name: codeVerifier
-        type: string
-      - description: State for CSRF protection
-        in: query
-        name: state
-        type: string
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginByProviderRequest'
       produces:
       - application/json
       responses:

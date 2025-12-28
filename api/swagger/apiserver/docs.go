@@ -114,22 +114,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Auth code",
-                        "name": "code",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "PKCE code verifier",
-                        "name": "codeVerifier",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "State for CSRF protection",
-                        "name": "state",
-                        "in": "query"
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginByProviderRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -463,22 +454,13 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "Auth code",
-                        "name": "code",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "PKCE code verifier",
-                        "name": "codeVerifier",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "State for CSRF protection",
-                        "name": "state",
-                        "in": "query"
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginByProviderRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -1314,6 +1296,23 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v1.BindingInfo"
                     }
+                }
+            }
+        },
+        "v1.LoginByProviderRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Auth code",
+                    "type": "string"
+                },
+                "codeVerifier": {
+                    "description": "PKCE code verifier",
+                    "type": "string"
+                },
+                "state": {
+                    "description": "State for CSRF protection",
+                    "type": "string"
                 }
             }
         },
