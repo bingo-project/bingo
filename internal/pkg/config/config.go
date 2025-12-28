@@ -15,6 +15,7 @@ type Config struct {
 	GRPC      *GRPC            `mapstructure:"grpc" json:"grpc" yaml:"grpc"`
 	WebSocket *WebSocket       `mapstructure:"websocket" json:"websocket" yaml:"websocket"`
 	Bot       *Bot             `mapstructure:"bot" json:"bot" yaml:"bot"`
+	Auth      *Auth            `mapstructure:"auth" json:"auth" yaml:"auth"`
 	JWT       *JWT             `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 	Feature   *Feature         `mapstructure:"feature" json:"feature" yaml:"feature"`
 	Mysql     *db.MySQLOptions `mapstructure:"mysql" json:"mysql" yaml:"mysql"`

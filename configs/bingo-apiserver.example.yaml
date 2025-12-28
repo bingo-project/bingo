@@ -56,6 +56,14 @@ auth:
     - phone
   emailverification: true # 邮箱验证
   phoneverification: true # 手机验证
+  siwe:
+    enabled: true                    # 是否启用 Web3 钱包登录
+    domains:                         # 允许的域名白名单
+      - "localhost:3000"
+      - "localhost:5173"
+    statement: "Sign in to Bingo"    # 签名提示文案
+    chainId: 1                       # 链 ID (1=Ethereum mainnet)
+    nonceExpiration: 5m              # Nonce 有效期
 
 # JWT 配置
 jwt:
