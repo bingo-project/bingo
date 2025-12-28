@@ -29,4 +29,14 @@ var (
 	ErrAddRole                 = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.AddRole", Message: "Error occurred while adding the role."}
 	ErrRemoveRole              = &errorsx.ErrorX{Code: http.StatusInternalServerError, Reason: "InternalError.RemoveRole", Message: "Error occurred while removing the role."}
 	ErrServiceUnderMaintenance = &errorsx.ErrorX{Code: http.StatusServiceUnavailable, Reason: "InternalError.ServiceUnderMaintenance", Message: "Server under maintenance."}
+
+	// SIWE wallet login errors
+	ErrInvalidOrigin      = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.InvalidOrigin", Message: "Invalid request origin."}
+	ErrInvalidDomain      = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.InvalidDomain", Message: "Domain not allowed."}
+	ErrInvalidSIWEMessage = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.InvalidSIWEMessage", Message: "Invalid SIWE message format."}
+	ErrNonceExpired       = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.NonceExpired", Message: "Nonce has expired."}
+	ErrInvalidNonce       = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.InvalidNonce", Message: "Invalid or already used nonce."}
+	ErrSignatureInvalid   = &errorsx.ErrorX{Code: http.StatusUnauthorized, Reason: "Unauthenticated.SignatureInvalid", Message: "Signature verification failed."}
+	ErrWalletAlreadyBound = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.WalletAlreadyBound", Message: "Wallet already bound to this account."}
+	ErrWalletBoundToOther = &errorsx.ErrorX{Code: http.StatusBadRequest, Reason: "InvalidArgument.WalletBoundToOther", Message: "Wallet address already bound to another account."}
 )
