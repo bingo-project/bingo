@@ -235,24 +235,29 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 		return nil, errno.ErrNotFound
 	}
 
-	// Root user can switch back to root
-	if username == known.UserRoot && req.RoleName == known.UserRoot {
-		adminM.RoleName = known.UserRoot
-		err = b.ds.Admin().Update(ctx, adminM, "role_name")
-		if err != nil {
-			return nil, err
+	// Root user can switch to any role
+	isRoot := username == known.UserRoot
+	if isRoot {
+		// Switching back to root
+		if req.RoleName == known.UserRoot {
+			adminM.RoleName = known.UserRoot
+			err = b.ds.Admin().Update(ctx, adminM, "role_name")
+			if err != nil {
+				return nil, err
+			}
+
+			var resp v1.AdminInfo
+			_ = copier.Copy(&resp, adminM)
+
+			return &resp, nil
 		}
-
-		var resp v1.AdminInfo
-		_ = copier.Copy(&resp, adminM)
-
-		return &resp, nil
-	}
-
-	// Check if the user has the role
-	hasRole := b.ds.Admin().HasRole(ctx, adminM, req.RoleName)
-	if !hasRole {
-		return nil, errno.ErrNotFound
+		// Root switching to other roles - just verify role exists (checked below)
+	} else {
+		// Non-root users must have the role assigned
+		hasRole := b.ds.Admin().HasRole(ctx, adminM, req.RoleName)
+		if !hasRole {
+			return nil, errno.ErrNotFound
+		}
 	}
 
 	// Get target role
