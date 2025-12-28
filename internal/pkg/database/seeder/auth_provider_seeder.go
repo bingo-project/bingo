@@ -40,14 +40,14 @@ func (AuthProviderSeeder) Run() error {
 func getOAuthProviderTemplates() []*model.AuthProvider {
 	return []*model.AuthProvider{
 		{
-			Name:         model.AuthProviderGoogle,
-			Status:       model.AuthProviderStatusDisabled,
-			AuthURL:      "https://accounts.google.com/o/oauth2/v2/auth",
-			TokenURL:     "https://oauth2.googleapis.com/token",
-			UserInfoURL:  "https://www.googleapis.com/oauth2/v3/userinfo",
-			Scopes:       "openid email profile",
-			PKCEEnabled:  true,
-			Info:         "{}",
+			Name:        model.AuthProviderGoogle,
+			Status:      model.AuthProviderStatusDisabled,
+			AuthURL:     "https://accounts.google.com/o/oauth2/v2/auth",
+			TokenURL:    "https://oauth2.googleapis.com/token",
+			UserInfoURL: "https://www.googleapis.com/oauth2/v3/userinfo",
+			Scopes:      "openid email profile",
+			PKCEEnabled: true,
+			Info:        "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "sub",
 				"email":      "email",
@@ -56,12 +56,12 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			}),
 		},
 		{
-			Name:         model.AuthProviderApple,
-			Status:       model.AuthProviderStatusDisabled,
-			AuthURL:      "https://appleid.apple.com/auth/authorize",
-			TokenURL:     "https://appleid.apple.com/auth/token",
-			Scopes:       "name email",
-			PKCEEnabled:  true,
+			Name:        model.AuthProviderApple,
+			Status:      model.AuthProviderStatusDisabled,
+			AuthURL:     "https://appleid.apple.com/auth/authorize",
+			TokenURL:    "https://appleid.apple.com/auth/token",
+			Scopes:      "name email",
+			PKCEEnabled: true,
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "sub",
 				"email":      "email",
@@ -73,14 +73,14 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			}),
 		},
 		{
-			Name:         model.AuthProviderGithub,
-			Status:       model.AuthProviderStatusDisabled,
-			AuthURL:      "https://github.com/login/oauth/authorize",
-			TokenURL:     "https://github.com/login/oauth/access_token",
-			UserInfoURL:  "https://api.github.com/user",
-			Scopes:       "read:user user:email",
-			PKCEEnabled:  false,
-			Info:         "{}",
+			Name:        model.AuthProviderGithub,
+			Status:      model.AuthProviderStatusDisabled,
+			AuthURL:     "https://github.com/login/oauth/authorize",
+			TokenURL:    "https://github.com/login/oauth/access_token",
+			UserInfoURL: "https://api.github.com/user",
+			Scopes:      "read:user user:email",
+			PKCEEnabled: false,
+			Info:        "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "id",
 				"username":   "login",
@@ -91,14 +91,14 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			}),
 		},
 		{
-			Name:         model.AuthProviderDiscord,
-			Status:       model.AuthProviderStatusDisabled,
-			AuthURL:      "https://discord.com/api/oauth2/authorize",
-			TokenURL:     "https://discord.com/api/oauth2/token",
-			UserInfoURL:  "https://discord.com/api/users/@me",
-			Scopes:       "identify email",
-			PKCEEnabled:  true,
-			Info:         "{}",
+			Name:        model.AuthProviderDiscord,
+			Status:      model.AuthProviderStatusDisabled,
+			AuthURL:     "https://discord.com/api/oauth2/authorize",
+			TokenURL:    "https://discord.com/api/oauth2/token",
+			UserInfoURL: "https://discord.com/api/users/@me",
+			Scopes:      "identify email",
+			PKCEEnabled: true,
+			Info:        "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "id",
 				"username":   "username",
@@ -108,14 +108,14 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 			}),
 		},
 		{
-			Name:         model.AuthProviderTwitter,
-			Status:       model.AuthProviderStatusDisabled,
-			AuthURL:      "https://twitter.com/i/oauth2/authorize",
-			TokenURL:     "https://api.twitter.com/2/oauth2/token",
-			UserInfoURL:  "https://api.twitter.com/2/users/me",
-			Scopes:       "users.read tweet.read",
-			PKCEEnabled:  true,
-			Info:         "{}",
+			Name:        model.AuthProviderTwitter,
+			Status:      model.AuthProviderStatusDisabled,
+			AuthURL:     "https://twitter.com/i/oauth2/authorize",
+			TokenURL:    "https://api.twitter.com/2/oauth2/token",
+			UserInfoURL: "https://api.twitter.com/2/users/me",
+			Scopes:      "users.read tweet.read",
+			PKCEEnabled: true,
+			Info:        "{}",
 			FieldMapping: mustJSON(map[string]string{
 				"account_id": "data.id",
 				"username":   "data.username",
@@ -130,5 +130,6 @@ func getOAuthProviderTemplates() []*model.AuthProvider {
 
 func mustJSON(v any) string {
 	b, _ := json.Marshal(v)
+
 	return string(b)
 }

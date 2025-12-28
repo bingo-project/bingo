@@ -117,6 +117,7 @@ func (s *userAccountStore) FirstOrCreate(ctx context.Context, where model.UserAc
 func (s *userAccountStore) FindByUID(ctx context.Context, uid string) ([]*model.UserAccount, error) {
 	var ret []*model.UserAccount
 	err := s.DB(ctx).Where("uid = ?", uid).Find(&ret).Error
+
 	return ret, err
 }
 
@@ -124,6 +125,7 @@ func (s *userAccountStore) FindByUID(ctx context.Context, uid string) ([]*model.
 func (s *userAccountStore) FindByUIDAndProvider(ctx context.Context, uid, provider string) (*model.UserAccount, error) {
 	var ret model.UserAccount
 	err := s.DB(ctx).Where("uid = ?", uid).Where("provider = ?", provider).Take(&ret).Error
+
 	return &ret, err
 }
 
@@ -131,6 +133,7 @@ func (s *userAccountStore) FindByUIDAndProvider(ctx context.Context, uid, provid
 func (s *userAccountStore) CountByUID(ctx context.Context, uid string) (int64, error) {
 	var count int64
 	err := s.DB(ctx).Model(&model.UserAccount{}).Where("uid = ?", uid).Count(&count).Error
+
 	return count, err
 }
 

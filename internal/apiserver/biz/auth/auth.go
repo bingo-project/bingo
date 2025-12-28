@@ -87,6 +87,7 @@ func (b *authBiz) Register(ctx context.Context, req *v1.RegisterRequest) (*v1.Lo
 		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
 			return nil, errno.ErrUserAlreadyExist
 		}
+
 		return nil, err
 	}
 
@@ -176,6 +177,7 @@ func (b *authBiz) GetAuthCode(ctx *gin.Context, providerName string) (*v1.GetAut
 	// Save state to Redis
 	if err := auth.SaveState(ctx, facade.Redis, state); err != nil {
 		log.C(ctx).Errorw("Failed to save OAuth state to Redis", "state", state, "error", err)
+
 		return nil, err
 	}
 	log.C(ctx).Debugw("OAuth state saved", "state", state)
@@ -211,6 +213,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 	if req.State != "" {
 		if err := auth.ValidateAndDeleteState(ctx, facade.Redis, req.State); err != nil {
 			log.C(ctx).Warnw("OAuth state validation failed", "state", req.State, "error", err)
+
 			return nil, errno.ErrInvalidState
 		}
 	}
@@ -269,6 +272,7 @@ func (b *authBiz) LoginByProvider(ctx *gin.Context, provider string, req *v1.Log
 		if strings.Contains(errMsg, "bad_verification_code") {
 			return nil, errno.ErrOAuthCodeInvalid
 		}
+
 		return nil, errno.ErrOAuthProviderError.WithMessage("%s", errMsg)
 	}
 
@@ -354,6 +358,7 @@ func (b *authBiz) Bind(ctx *gin.Context, providerName string, req *v1.LoginByPro
 		if strings.Contains(errMsg, "bad_verification_code") {
 			return nil, errno.ErrOAuthCodeInvalid
 		}
+
 		return nil, errno.ErrOAuthProviderError.WithMessage("%s", errMsg)
 	}
 
@@ -456,6 +461,7 @@ func getNestedString(data map[string]any, path string) string {
 			return ""
 		}
 	}
+
 	return ""
 }
 

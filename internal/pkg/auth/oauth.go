@@ -25,12 +25,14 @@ func GenerateCodeVerifier() (string, error) {
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
+
 	return base64.RawURLEncoding.EncodeToString(b), nil
 }
 
 // GenerateCodeChallenge computes S256 code challenge from verifier.
 func GenerateCodeChallenge(verifier string) string {
 	h := sha256.Sum256([]byte(verifier))
+
 	return base64.RawURLEncoding.EncodeToString(h[:])
 }
 
@@ -40,12 +42,14 @@ func GenerateState() (string, error) {
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
+
 	return base64.RawURLEncoding.EncodeToString(b), nil
 }
 
 // SaveState stores state in Redis with TTL.
 func SaveState(ctx context.Context, rdb *redis.Client, state string) error {
 	key := stateKeyPrefix + state
+
 	return rdb.Set(ctx, key, "1", stateTTL).Err()
 }
 
@@ -59,5 +63,6 @@ func ValidateAndDeleteState(ctx context.Context, rdb *redis.Client, state string
 	if result == 0 {
 		return fmt.Errorf("invalid or expired state")
 	}
+
 	return nil
 }

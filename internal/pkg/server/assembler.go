@@ -4,10 +4,9 @@
 package server
 
 import (
+	"github.com/bingo-project/websocket"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
-
-	"github.com/bingo-project/websocket"
 
 	"github.com/bingo-project/bingo/internal/pkg/config"
 )

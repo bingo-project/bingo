@@ -8,9 +8,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/bingo-project/websocket"
+	"github.com/gin-gonic/gin"
 
 	"github.com/bingo-project/bingo/internal/pkg/config"
 	"github.com/bingo-project/bingo/internal/pkg/log"

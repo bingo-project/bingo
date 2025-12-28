@@ -225,6 +225,7 @@ func (s *sysMenuStore) FirstOrCreateWithApis(ctx context.Context, menu *model.Me
 	if result.RowsAffected > 0 {
 		// Menu exists, update ID for parent lookup
 		menu.ID = existing.ID
+
 		return nil
 	}
 

@@ -11,11 +11,11 @@ import (
 	"github.com/duke-git/lancet/v2/random"
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
-	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/i18n"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/sms"
+	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/internal/pkg/task"
 	"github.com/bingo-project/bingo/pkg/contextx"
 )
@@ -105,6 +105,7 @@ func (b *codeBiz) Verify(ctx context.Context, account string, scene CodeScene, c
 
 	// 验证成功后删除
 	facade.Cache.Forget(codeKey)
+
 	return nil
 }
 
@@ -129,10 +130,12 @@ func (b *codeBiz) sendEmail(ctx context.Context, email, code string, scene CodeS
 	_, err := task.T.Queue(ctx, task.EmailVerificationCode, payload).Dispatch()
 	if err != nil {
 		log.C(ctx).Errorw("enqueue email task failed", "err", err)
+
 		return err
 	}
 
 	log.C(ctx).Infow("sendEmail succeed", "email", email, "scene", scene, "lang", lang)
+
 	return nil
 }
 
@@ -151,6 +154,7 @@ func (b *codeBiz) sendSMS(ctx context.Context, phone, code string, scene CodeSce
 	// TODO: 实际发送短信，使用 msg 作为内容
 	_ = msg
 	log.C(ctx).Infow("sendSMS succeed", "phone", phone, "scene", scene, "lang", lang)
+
 	return nil
 }
 
@@ -161,13 +165,16 @@ func (b *codeBiz) checkUserExists(ctx context.Context, account string, accountTy
 		if err != nil {
 			return false, nil
 		}
+
 		return true, nil
 	case AccountTypePhone:
 		_, err := b.ds.User().FindByPhone(ctx, account)
 		if err != nil {
 			return false, nil
 		}
+
 		return true, nil
 	}
+
 	return false, nil
 }

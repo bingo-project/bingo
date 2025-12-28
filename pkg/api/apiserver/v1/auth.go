@@ -6,7 +6,7 @@ import "time"
 type RegisterRequest struct {
 	Account  string `json:"account" binding:"required,min=5,max=255"`
 	Password string `json:"password" binding:"required,min=6,max=18"`
-	Code     string `json:"code"`                                       // 验证码（验证开启时必填）
+	Code     string `json:"code"` // 验证码（验证开启时必填）
 	Nickname string `json:"nickname" binding:"omitempty,min=2,max=255"`
 }
 

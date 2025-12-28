@@ -242,6 +242,7 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 
 		var resp v1.AdminInfo
 		_ = copier.Copy(&resp, adminM)
+
 		return &resp, nil
 	}
 

@@ -6,9 +6,8 @@ package log
 import (
 	"context"
 
-	"go.uber.org/zap"
-
 	"github.com/bingo-project/websocket"
+	"go.uber.org/zap"
 )
 
 // callerSkip adjusts the caller frame to show the actual calling code instead of this wrapper.

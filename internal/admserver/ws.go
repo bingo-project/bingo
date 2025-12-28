@@ -8,11 +8,10 @@ import (
 	"net/http"
 
 	"github.com/bingo-project/component-base/web/token"
-	"github.com/gin-gonic/gin"
-	gorillaWS "github.com/gorilla/websocket"
-
 	"github.com/bingo-project/websocket"
 	"github.com/bingo-project/websocket/middleware"
+	"github.com/gin-gonic/gin"
+	gorillaWS "github.com/gorilla/websocket"
 
 	"github.com/bingo-project/bingo/internal/admserver/router"
 	"github.com/bingo-project/bingo/internal/pkg/bootstrap"

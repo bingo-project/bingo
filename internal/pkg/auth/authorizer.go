@@ -120,6 +120,7 @@ func AuthzMiddleware(a *Authorizer) gin.HandlerFunc {
 		admin, ok := contextx.UserInfo[*v1.AdminInfo](c.Request.Context())
 		if ok && known.IsRoot(admin.Username, admin.RoleName) {
 			c.Next()
+
 			return
 		}
 

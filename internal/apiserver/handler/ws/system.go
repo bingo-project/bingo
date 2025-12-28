@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/bingo-project/component-base/version"
-
 	"github.com/bingo-project/websocket"
 	"github.com/bingo-project/websocket/jsonrpc"
 )

@@ -60,5 +60,6 @@ func ParseAppleConfig(info string) (AppleConfig, error) {
 	if err := json.Unmarshal([]byte(info), &config); err != nil {
 		return config, err
 	}
+
 	return config, nil
 }

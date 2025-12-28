@@ -176,6 +176,7 @@ func (s *userStore) FindByEmail(ctx context.Context, email string) (*model.UserM
 	if err := s.DB(ctx).Where("email = ?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
+
 	return &user, nil
 }
 
@@ -185,6 +186,7 @@ func (s *userStore) FindByPhone(ctx context.Context, phone string) (*model.UserM
 	if err := s.DB(ctx).Where("phone = ?", phone).First(&user).Error; err != nil {
 		return nil, err
 	}
+
 	return &user, nil
 }
 

@@ -24,6 +24,7 @@ func (SystemSeeder) Run() error {
 		color.Infof("  Running %s...\n", s.Signature())
 		if err := s.Run(); err != nil {
 			color.Redf("  %s failed: %s\n", s.Signature(), err.Error())
+
 			return err
 		}
 		color.Successf("  %s done.\n", s.Signature())
