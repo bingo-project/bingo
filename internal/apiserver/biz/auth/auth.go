@@ -32,6 +32,7 @@ type AuthBiz interface {
 
 	Nonce(ctx *gin.Context, req *v1.AddressRequest) (ret *v1.NonceResponse, err error)
 	LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest) (ret *v1.LoginResponse, err error)
+	BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, uid string) error
 
 	GetAuthCode(ctx *gin.Context, provider string) (*v1.GetAuthCodeResponse, error)
 	LoginByProvider(ctx *gin.Context, provider string, req *v1.LoginByProviderRequest) (*v1.LoginResponse, error)

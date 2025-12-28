@@ -428,6 +428,39 @@ paths:
       summary: Heath check
       tags:
       - Common
+  /v1/auth/bind/wallet:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LoginByAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Bind wallet to current user
+      tags:
+      - Auth
   /v1/auth/bindings:
     get:
       consumes:

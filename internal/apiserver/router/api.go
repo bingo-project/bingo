@@ -54,6 +54,9 @@ func MapApiRouters(g *gin.Engine) {
 		authAuthed.GET("/bindings", authHandler.ListBindings)
 		authAuthed.POST("/bindings/:provider", authHandler.BindProvider)
 		authAuthed.DELETE("/bindings/:provider", authHandler.Unbind)
+
+		// Wallet binding
+		authAuthed.POST("/bind/wallet", authHandler.BindWallet)
 	}
 
 	// Security settings

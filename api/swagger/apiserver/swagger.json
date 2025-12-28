@@ -41,6 +41,59 @@
                 }
             }
         },
+        "/v1/auth/bind/wallet": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Bind wallet to current user",
+                "parameters": [
+                    {
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LoginByAddressRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/bindings": {
             "get": {
                 "security": [

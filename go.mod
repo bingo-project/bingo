@@ -43,6 +43,7 @@ require (
 	github.com/spf13/cast v1.10.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/viper v1.21.0
+	github.com/spruceid/siwe-go v0.2.1
 	github.com/stretchr/testify v1.11.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
@@ -89,6 +90,7 @@ require (
 	github.com/crate-crypto/go-eth-kzg v1.4.0 // indirect
 	github.com/crate-crypto/go-ipa v0.0.0-20240724233137-53bbb0ceb27a // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
+	github.com/dchest/uniuri v1.2.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -165,6 +167,7 @@ require (
 	github.com/prometheus/procfs v0.19.2 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.57.1 // indirect
+	github.com/relvacode/iso8601 v1.1.1-0.20210511065120-b30b151cc433 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/russross/blackfriday v1.6.0 // indirect

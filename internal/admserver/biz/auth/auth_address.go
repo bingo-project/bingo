@@ -5,7 +5,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	siwe "github.com/spruceid/siwe-go"
 
+	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/known"
@@ -33,7 +33,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (*v1.NonceResp
 
 	// 1. Validate Origin against whitelist
 	origin := ctx.GetHeader("Origin")
-	domain, err := b.validateAndExtractDomain(origin, cfg.SIWE.Domains)
+	domain, err := auth.ValidateOriginAndExtractDomain(origin, cfg.SIWE.Domains)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE invalid origin", "origin", origin, "allowed", cfg.SIWE.Domains)
 		return nil, errno.ErrInvalidOrigin
@@ -84,7 +84,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	}
 
 	// 2. Validate domain against whitelist
-	if !b.isDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
+	if !auth.IsDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
 		log.C(ctx).Warnw("SIWE domain not allowed", "domain", msg.GetDomain())
 		return nil, errno.ErrInvalidDomain
 	}
@@ -127,37 +127,6 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 		AccessToken: t.AccessToken,
 		ExpiresAt:   t.ExpiresAt,
 	}, nil
-}
-
-// validateAndExtractDomain validates origin against whitelist and extracts domain.
-func (b *authBiz) validateAndExtractDomain(origin string, allowedDomains []string) (string, error) {
-	if origin == "" {
-		return "", fmt.Errorf("empty origin")
-	}
-
-	parsed, err := url.Parse(origin)
-	if err != nil {
-		return "", err
-	}
-
-	domain := parsed.Host
-	for _, allowed := range allowedDomains {
-		if strings.EqualFold(domain, allowed) {
-			return domain, nil
-		}
-	}
-
-	return "", fmt.Errorf("domain not in whitelist")
-}
-
-// isDomainAllowed checks if domain is in the allowed list.
-func (b *authBiz) isDomainAllowed(domain string, allowedDomains []string) bool {
-	for _, allowed := range allowedDomains {
-		if strings.EqualFold(domain, allowed) {
-			return true
-		}
-	}
-	return false
 }
 
 // getOrCreateWalletUser finds or creates user by wallet address.

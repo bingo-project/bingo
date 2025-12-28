@@ -5,7 +5,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"net/url"
 	"strings"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	siwe "github.com/spruceid/siwe-go"
 
+	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/known"
@@ -33,7 +33,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (*v1.NonceResp
 
 	// 1. Validate Origin against whitelist
 	origin := ctx.GetHeader("Origin")
-	domain, err := b.validateAndExtractDomain(origin, cfg.SIWE.Domains)
+	domain, err := auth.ValidateOriginAndExtractDomain(origin, cfg.SIWE.Domains)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE invalid origin", "origin", origin, "allowed", cfg.SIWE.Domains)
 		return nil, errno.ErrInvalidOrigin
@@ -84,7 +84,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	}
 
 	// 2. Validate domain against whitelist
-	if !b.isDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
+	if !auth.IsDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
 		log.C(ctx).Warnw("SIWE domain not allowed", "domain", msg.GetDomain())
 		return nil, errno.ErrInvalidDomain
 	}
@@ -129,35 +129,64 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	}, nil
 }
 
-// validateAndExtractDomain validates origin against whitelist and extracts domain.
-func (b *authBiz) validateAndExtractDomain(origin string, allowedDomains []string) (string, error) {
-	if origin == "" {
-		return "", fmt.Errorf("empty origin")
+// BindWallet binds a wallet address to an existing user.
+func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, uid string) error {
+	cfg := facade.Config.Auth
+	if cfg == nil || !cfg.SIWE.Enabled {
+		return errno.ErrNotFound
 	}
 
-	parsed, err := url.Parse(origin)
+	// 1. Parse SIWE message
+	msg, err := siwe.ParseMessage(req.Message)
 	if err != nil {
-		return "", err
+		log.C(ctx).Warnw("SIWE parse message failed", "err", err)
+		return errno.ErrInvalidSIWEMessage
 	}
 
-	domain := parsed.Host
-	for _, allowed := range allowedDomains {
-		if strings.EqualFold(domain, allowed) {
-			return domain, nil
+	// 2. Validate domain against whitelist
+	if !auth.IsDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
+		log.C(ctx).Warnw("SIWE domain not allowed", "domain", msg.GetDomain())
+		return errno.ErrInvalidDomain
+	}
+
+	// 3. Validate nonce (get and delete to ensure one-time use)
+	key := siweNoncePrefix + msg.GetNonce()
+	storedAddress, err := facade.Redis.GetDel(ctx, key).Result()
+	if err != nil || !strings.EqualFold(storedAddress, msg.GetAddress().Hex()) {
+		log.C(ctx).Warnw("SIWE invalid nonce", "nonce", msg.GetNonce())
+		return errno.ErrInvalidNonce
+	}
+
+	// 4. Verify signature
+	_, err = msg.Verify(req.Signature, nil, nil, nil)
+	if err != nil {
+		log.C(ctx).Warnw("SIWE signature verification failed", "err", err)
+		return errno.ErrSignatureInvalid
+	}
+
+	// 5. Check if wallet already bound to another user
+	address := msg.GetAddress().Hex()
+	existingAccount, _ := b.ds.UserAccount().GetAccount(ctx, model.AuthProviderWallet, address)
+	if existingAccount != nil {
+		if existingAccount.UID == uid {
+			return errno.ErrWalletAlreadyBound
 		}
+		return errno.ErrWalletBoundToOther
 	}
 
-	return "", fmt.Errorf("domain not in whitelist")
-}
-
-// isDomainAllowed checks if domain is in the allowed list.
-func (b *authBiz) isDomainAllowed(domain string, allowedDomains []string) bool {
-	for _, allowed := range allowedDomains {
-		if strings.EqualFold(domain, allowed) {
-			return true
-		}
+	// 6. Create wallet account for user
+	account := &model.UserAccount{
+		UID:       uid,
+		Provider:  model.AuthProviderWallet,
+		AccountID: address,
 	}
-	return false
+
+	if err := b.ds.UserAccount().Create(ctx, account); err != nil {
+		log.C(ctx).Errorw("SIWE bind wallet failed", "uid", uid, "address", address, "err", err)
+		return errno.ErrDBWrite.WithMessage("bind wallet: %v", err)
+	}
+
+	return nil
 }
 
 // getOrCreateWalletUser finds or creates user by wallet address.

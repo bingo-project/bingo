@@ -8,6 +8,7 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/core"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/pkg/contextx"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
@@ -51,4 +52,28 @@ func (h *AuthHandler) LoginByAddress(c *gin.Context) {
 
 	resp, err := h.b.Auth().LoginByAddress(c, &req)
 	core.Response(c, resp, err)
+}
+
+// BindWallet
+// @Summary     Bind wallet to current user
+// @Tags        Auth
+// @Security    Bearer
+// @Accept      application/json
+// @Produce     json
+// @Param       request  body      v1.LoginByAddressRequest  true  "Param"
+// @Success     200      {object}  nil
+// @Failure     400      {object}  core.ErrResponse
+// @Failure     401      {object}  core.ErrResponse
+// @Failure     409      {object}  core.ErrResponse
+// @Router      /v1/auth/bind/wallet [POST].
+func (h *AuthHandler) BindWallet(c *gin.Context) {
+	var req v1.LoginByAddressRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		return
+	}
+
+	uid := contextx.UserID(c)
+	err := h.b.Auth().BindWallet(c, &req, uid)
+	core.Response(c, nil, err)
 }
