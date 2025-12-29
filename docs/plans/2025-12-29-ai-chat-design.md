@@ -10,9 +10,11 @@
 |--------|------|------|
 | 底层框架 | Eino (CloudWeGo) | 字节开源，Go 风格，类型安全，生产验证 |
 | API 风格 | OpenAI 兼容 + 扩展字段 | 行业标准，前端可用 openai SDK |
+| Provider 抽象 | Interface 封装 | 不强绑 Eino，可接入任意 SDK，扩展性好 |
 | Provider 配置 | 三层覆盖 | 系统默认 → 用户偏好 → 请求指定 |
 | 凭证管理 | 配置文件(环境变量) + DB | 敏感信息环境变量，业务配置存 DB |
 | 会话管理 | 后端存储 | 多端同步，可审计，Token 控制 |
+| 限流方案 | Redis + GCRA (ulule/limiter) | 分布式一致，支持按用户动态配额 |
 | BYOK | 预留扩展点，暂不实现 | 产品定位未定，符合 YAGNI |
 
 ## 整体架构
@@ -202,10 +204,9 @@ ai:
     max_tokens: 8000             # 历史消息最大 token 数
     ttl: 24h                     # 会话过期时间
 
-  # 限流配置（按用户）
-  rate_limit:
-    requests_per_minute: 20
-    tokens_per_day: 100000
+  # 默认配额（用户无自定义配额时使用，配合 ai_quota_tier 表）
+  quota:
+    default_tier: free
 ```
 
 ### Go 配置结构
@@ -217,7 +218,7 @@ type Config struct {
     DefaultModel string                       `mapstructure:"default_model"`
     Credentials  map[string]*CredentialConfig `mapstructure:"credentials"`
     Session      SessionConfig                `mapstructure:"session"`
-    RateLimit    RateLimitConfig              `mapstructure:"rate_limit"`
+    Quota        QuotaConfig                  `mapstructure:"quota"`
 }
 
 type CredentialConfig struct {
@@ -231,9 +232,8 @@ type SessionConfig struct {
     TTL        time.Duration `mapstructure:"ttl"`
 }
 
-type RateLimitConfig struct {
-    RequestsPerMinute int `mapstructure:"requests_per_minute"`
-    TokensPerDay      int `mapstructure:"tokens_per_day"`
+type QuotaConfig struct {
+    DefaultTier string `mapstructure:"default_tier"`
 }
 ```
 
@@ -298,6 +298,35 @@ CREATE TABLE ai_model (
     UNIQUE KEY uk_model (model),
     KEY idx_provider (provider_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI Model 配置';
+```
+
+### 配额管理表
+
+```sql
+-- 配额等级配置表
+CREATE TABLE ai_quota_tier (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    tier VARCHAR(16) NOT NULL,                 -- free/pro/enterprise
+    rpm INT NOT NULL DEFAULT 20,               -- 每分钟请求数 (Requests Per Minute)
+    tpd INT NOT NULL DEFAULT 10000,            -- 每日 Token 数 (Tokens Per Day)
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uk_tier (tier)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 配额等级';
+
+-- 用户配额表（覆盖等级默认值）
+CREATE TABLE ai_user_quota (
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    uid VARCHAR(64) NOT NULL,
+    tier VARCHAR(16) NOT NULL DEFAULT 'free',  -- 关联 ai_quota_tier
+    rpm INT,                                    -- 自定义 RPM（NULL 则用等级默认值）
+    tpd INT,                                    -- 自定义 TPD
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uk_uid (uid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户 AI 配额';
 ```
 
 ### 会话管理表
@@ -550,20 +579,32 @@ data: [DONE]
 | `internal/apiserver/biz/chat/session.go` | 会话管理逻辑 |
 | `internal/apiserver/biz/chat/resolver.go` | Model/Credential 解析 |
 | `internal/apiserver/biz/chat/history.go` | 历史消息处理、滑动窗口 |
-| `internal/apiserver/store/ai_session.go` | 会话 Store |
-| `internal/apiserver/store/ai_message.go` | 消息 Store |
-| `internal/apiserver/model/ai_session.go` | Session Model |
-| `internal/apiserver/model/ai_message.go` | Message Model |
-| `internal/apiserver/handler/chat/chat.go` | 对话 Handler |
-| `internal/apiserver/handler/chat/session.go` | 会话管理 Handler |
-| `internal/apiserver/handler/chat/stream.go` | SSE 流式响应处理 |
+| `internal/apiserver/biz/chat/quota.go` | Token 配额检查 |
+| `internal/apiserver/handler/http/chat/chat.go` | 对话 Handler |
+| `internal/apiserver/handler/http/chat/session.go` | 会话管理 Handler |
+| `internal/apiserver/handler/http/chat/stream.go` | SSE 流式响应处理 |
 | `internal/apiserver/router/chat.go` | 路由注册 |
+| **internal/pkg/store/** | |
+| `internal/pkg/store/ai_session.go` | 会话 Store |
+| `internal/pkg/store/ai_message.go` | 消息 Store |
+| `internal/pkg/store/ai_provider.go` | Provider Store |
+| `internal/pkg/store/ai_model.go` | Model Store |
+| `internal/pkg/store/ai_quota_tier.go` | 配额等级 Store |
+| `internal/pkg/store/ai_user_quota.go` | 用户配额 Store |
+| **internal/pkg/model/** | |
+| `internal/pkg/model/ai_session.go` | Session Model |
+| `internal/pkg/model/ai_message.go` | Message Model |
+| `internal/pkg/model/ai_provider.go` | Provider Model |
+| `internal/pkg/model/ai_model.go` | Model Model |
+| `internal/pkg/model/ai_quota.go` | Quota Models |
+| **internal/pkg/middleware/http/** | |
+| `internal/pkg/middleware/http/ai_limiter.go` | AI 限流中间件 |
 | **pkg/api/** | |
 | `pkg/api/apiserver/v1/chat.go` | Request/Response DTO |
 | **internal/pkg/errno/** | |
 | `internal/pkg/errno/ai.go` | AI 相关错误码 |
 | **数据库迁移** | |
-| `internal/pkg/database/migration/xxx_create_ai_tables.go` | ai_session、ai_message、ai_provider、ai_model 表 |
+| `internal/pkg/database/migration/xxx_create_ai_tables.go` | ai_session、ai_message、ai_provider、ai_model、ai_quota_tier、ai_user_quota 表 |
 
 ### 修改文件
 
@@ -571,9 +612,9 @@ data: [DONE]
 |------|------|
 | `configs/bingo-apiserver.example.yaml` | 新增 `ai` 配置块 |
 | `internal/apiserver/config/config.go` | 新增 AI 配置结构 |
-| `internal/apiserver/server.go` | 初始化 AI Registry、注册路由 |
+| `internal/apiserver/app.go` | 初始化 AI Registry |
 | `internal/apiserver/biz/biz.go` | 注入 ChatBiz |
-| `internal/apiserver/store/store.go` | 注入 SessionStore、MessageStore |
+| `internal/pkg/store/store.go` | 注入 AI 相关 Store |
 | `go.mod` | 新增 eino 依赖 |
 
 ### 依赖新增
@@ -581,6 +622,89 @@ data: [DONE]
 ```bash
 go get github.com/cloudwego/eino@latest
 go get github.com/cloudwego/eino-ext/components/model/openai@latest
+```
+
+## 限流设计
+
+### 限流策略
+
+采用 Redis + GCRA 算法（复用现有 `ulule/limiter`），支持按用户动态配额：
+
+| 限流维度 | 说明 | 实现位置 |
+|---------|------|---------|
+| RPM (Requests Per Minute) | 每用户每分钟请求数 | 中间件层 |
+| TPD (Tokens Per Day) | 每用户每日 Token 消耗 | Biz 层（调用后累加） |
+
+### 配额解析流程
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  1. 从 ai_user_quota 查用户配额                                  │
+│     - 有记录 → 用 tier + 自定义值                                │
+│     - 无记录 → 用配置的 default_tier                             │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  2. 从 ai_quota_tier 查等级默认值                               │
+│     - 用户自定义值 > 等级默认值                                  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  3. 应用限流                                                    │
+│     - RPM: Redis key = ai:rpm:{uid}                             │
+│     - TPD: Redis key = ai:tpd:{uid}:{date}                      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### 中间件实现
+
+```go
+// internal/pkg/middleware/http/ai_limiter.go
+
+func AIRateLimiter(quotaStore store.AIQuotaTierStore) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        userID := contextx.UserID(c)
+
+        // 1. 获取用户配额（缓存优先）
+        quota, _ := quotaStore.GetUserQuota(c, userID)
+
+        // 2. 检查 RPM
+        key := fmt.Sprintf("ai:rpm:%s", userID)
+        if ok := handleLimit(c, key, fmt.Sprintf("%d-M", quota.RPM)); !ok {
+            return
+        }
+
+        c.Next()
+    }
+}
+```
+
+### Token 配额检查（Biz 层）
+
+```go
+// internal/apiserver/biz/chat/quota.go
+
+func (b *chatBiz) CheckAndUpdateTokenQuota(ctx context.Context, userID string, tokens int) error {
+    // 1. 获取用户配额
+    quota, _ := b.quotaStore.GetUserQuota(ctx, userID)
+
+    // 2. 获取当日已用 token
+    key := fmt.Sprintf("ai:tpd:%s:%s", userID, time.Now().Format("2006-01-02"))
+    used, _ := facade.Redis.Get(ctx, key).Int()
+
+    // 3. 检查是否超限
+    if used+tokens > quota.TPD {
+        return errno.ErrAIQuotaExceeded
+    }
+
+    // 4. 累加使用量（设置当日过期）
+    facade.Redis.IncrBy(ctx, key, int64(tokens))
+    facade.Redis.ExpireAt(ctx, key, endOfDay())
+
+    return nil
+}
 ```
 
 ## 后续扩展
