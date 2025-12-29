@@ -99,3 +99,22 @@ code:
   length: 6 # 长度
   ttl: 5 # 有效期（分钟）
   waiting: 1 # 重发等待时间（分钟）
+
+# AI configuration
+ai:
+  default-model: "gpt-4o"
+  credentials:
+    openai:
+      api-key: "sk-xxx"
+      base-url: "https://api.openai.com/v1"
+    deepseek:
+      api-key: "sk-xxx"
+      base-url: "https://api.deepseek.com"
+  session:
+    max-messages: 100
+    max-tokens: 4096
+    context-window: 10
+  quota:
+    enabled: true
+    default-rpm: 10
+    default-tpd: 100000
