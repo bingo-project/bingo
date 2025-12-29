@@ -1,3 +1,6 @@
+// ABOUTME: Business layer interface aggregator.
+// ABOUTME: Defines IBiz interface that exposes all business services.
+
 package biz
 
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/apiserver/biz IBiz
