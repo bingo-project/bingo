@@ -65,6 +65,19 @@ type IStore interface {
 	NtfAnnouncement() NtfAnnouncementStore
 	// NtfPreference returns the notification preference store.
 	NtfPreference() NtfPreferenceStore
+
+	// AiProvider returns the AI provider store.
+	AiProvider() AiProviderStore
+	// AiModel returns the AI model store.
+	AiModel() AiModelStore
+	// AiQuotaTier returns the AI quota tier store.
+	AiQuotaTier() AiQuotaTierStore
+	// AiUserQuota returns the AI user quota store.
+	AiUserQuota() AiUserQuotaStore
+	// AiSession returns the AI session store.
+	AiSession() AiSessionStore
+	// AiMessage returns the AI message store.
+	AiMessage() AiMessageStore
 }
 
 // transactionKey used for context.
@@ -209,4 +222,34 @@ func (ds *datastore) NtfAnnouncement() NtfAnnouncementStore {
 // NtfPreference returns the notification preference store.
 func (ds *datastore) NtfPreference() NtfPreferenceStore {
 	return NewNtfPreferenceStore(ds)
+}
+
+// AiProvider returns the AI provider store.
+func (ds *datastore) AiProvider() AiProviderStore {
+	return NewAiProviderStore(ds)
+}
+
+// AiModel returns the AI model store.
+func (ds *datastore) AiModel() AiModelStore {
+	return NewAiModelStore(ds)
+}
+
+// AiQuotaTier returns the AI quota tier store.
+func (ds *datastore) AiQuotaTier() AiQuotaTierStore {
+	return NewAiQuotaTierStore(ds)
+}
+
+// AiUserQuota returns the AI user quota store.
+func (ds *datastore) AiUserQuota() AiUserQuotaStore {
+	return NewAiUserQuotaStore(ds)
+}
+
+// AiSession returns the AI session store.
+func (ds *datastore) AiSession() AiSessionStore {
+	return NewAiSessionStore(ds)
+}
+
+// AiMessage returns the AI message store.
+func (ds *datastore) AiMessage() AiMessageStore {
+	return NewAiMessageStore(ds)
 }
