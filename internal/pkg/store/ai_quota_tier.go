@@ -23,6 +23,7 @@ type AiQuotaTierStore interface {
 
 type AiQuotaTierExpansion interface {
 	GetByTier(ctx context.Context, tier string) (*model.AiQuotaTierM, error)
+	FirstOrCreate(ctx context.Context, where *model.AiQuotaTierM, obj *model.AiQuotaTierM) error
 }
 
 type aiQuotaTierStore struct {
@@ -42,4 +43,8 @@ func (s *aiQuotaTierStore) GetByTier(ctx context.Context, tier string) (*model.A
 	err := s.DB(ctx).Where("tier = ?", tier).First(&t).Error
 
 	return &t, err
+}
+
+func (s *aiQuotaTierStore) FirstOrCreate(ctx context.Context, where *model.AiQuotaTierM, obj *model.AiQuotaTierM) error {
+	return s.DB(ctx).Where(where).FirstOrCreate(obj).Error
 }

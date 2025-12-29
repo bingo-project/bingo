@@ -26,6 +26,7 @@ type AiModelExpansion interface {
 	ListByProvider(ctx context.Context, providerName string) ([]*model.AiModelM, error)
 	ListActive(ctx context.Context) ([]*model.AiModelM, error)
 	GetDefault(ctx context.Context) (*model.AiModelM, error)
+	FirstOrCreate(ctx context.Context, where *model.AiModelM, obj *model.AiModelM) error
 }
 
 type aiModelStore struct {
@@ -76,4 +77,8 @@ func (s *aiModelStore) GetDefault(ctx context.Context) (*model.AiModelM, error) 
 		First(&m).Error
 
 	return &m, err
+}
+
+func (s *aiModelStore) FirstOrCreate(ctx context.Context, where *model.AiModelM, obj *model.AiModelM) error {
+	return s.DB(ctx).Where(where).FirstOrCreate(obj).Error
 }
