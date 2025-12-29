@@ -1,3 +1,6 @@
+// ABOUTME: Central data store interface and implementation.
+// ABOUTME: Provides unified access to all domain-specific stores.
+
 package store
 
 import (
