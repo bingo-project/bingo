@@ -4,8 +4,8 @@
 package task
 
 const (
-	EmailVerificationCode   = "email:verification"
-	AnnouncementPublish     = "announcement:publish"
+	EmailVerificationCode = "email:verification"
+	AnnouncementPublish   = "announcement:publish"
 )
 
 type EmailVerificationCodePayload struct {

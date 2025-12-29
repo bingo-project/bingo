@@ -54,7 +54,7 @@ func (h *PreferenceHandler) Get(c *gin.Context) {
 func (h *PreferenceHandler) Update(c *gin.Context) {
 	var req v1.UpdatePreferencesRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}

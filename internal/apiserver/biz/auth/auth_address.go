@@ -36,6 +36,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (*v1.NonceResp
 	domain, err := auth.ValidateOriginAndExtractDomain(origin, cfg.SIWE.Domains)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE invalid origin", "origin", origin, "allowed", cfg.SIWE.Domains)
+
 		return nil, errno.ErrInvalidOrigin
 	}
 
@@ -54,6 +55,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (*v1.NonceResp
 	msg, err := siwe.InitMessage(domain, req.Address, uri.String(), nonce, options)
 	if err != nil {
 		log.C(ctx).Errorw("SIWE init message failed", "err", err)
+
 		return nil, errno.ErrInternal
 	}
 
@@ -61,6 +63,7 @@ func (b *authBiz) Nonce(ctx *gin.Context, req *v1.AddressRequest) (*v1.NonceResp
 	key := siweNoncePrefix + nonce
 	if err := facade.Redis.Set(ctx, key, req.Address, cfg.SIWE.NonceExpiration).Err(); err != nil {
 		log.C(ctx).Errorw("SIWE save nonce failed", "err", err)
+
 		return nil, errno.ErrInternal
 	}
 
@@ -80,12 +83,14 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	msg, err := siwe.ParseMessage(req.Message)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE parse message failed", "err", err)
+
 		return nil, errno.ErrInvalidSIWEMessage
 	}
 
 	// 2. Validate domain against whitelist
 	if !auth.IsDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
 		log.C(ctx).Warnw("SIWE domain not allowed", "domain", msg.GetDomain())
+
 		return nil, errno.ErrInvalidDomain
 	}
 
@@ -94,6 +99,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	storedAddress, err := facade.Redis.GetDel(ctx, key).Result()
 	if err != nil || !strings.EqualFold(storedAddress, msg.GetAddress().Hex()) {
 		log.C(ctx).Warnw("SIWE invalid nonce", "nonce", msg.GetNonce(), "stored", storedAddress, "msg_addr", msg.GetAddress().Hex())
+
 		return nil, errno.ErrInvalidNonce
 	}
 
@@ -101,6 +107,7 @@ func (b *authBiz) LoginByAddress(ctx *gin.Context, req *v1.LoginByAddressRequest
 	_, err = msg.Verify(req.Signature, nil, nil, nil)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE signature verification failed", "err", err)
+
 		return nil, errno.ErrSignatureInvalid
 	}
 
@@ -140,12 +147,14 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 	msg, err := siwe.ParseMessage(req.Message)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE parse message failed", "err", err)
+
 		return errno.ErrInvalidSIWEMessage
 	}
 
 	// 2. Validate domain against whitelist
 	if !auth.IsDomainAllowed(msg.GetDomain(), cfg.SIWE.Domains) {
 		log.C(ctx).Warnw("SIWE domain not allowed", "domain", msg.GetDomain())
+
 		return errno.ErrInvalidDomain
 	}
 
@@ -154,6 +163,7 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 	storedAddress, err := facade.Redis.GetDel(ctx, key).Result()
 	if err != nil || !strings.EqualFold(storedAddress, msg.GetAddress().Hex()) {
 		log.C(ctx).Warnw("SIWE invalid nonce", "nonce", msg.GetNonce())
+
 		return errno.ErrInvalidNonce
 	}
 
@@ -161,6 +171,7 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 	_, err = msg.Verify(req.Signature, nil, nil, nil)
 	if err != nil {
 		log.C(ctx).Warnw("SIWE signature verification failed", "err", err)
+
 		return errno.ErrSignatureInvalid
 	}
 
@@ -171,6 +182,7 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 		if existingAccount.UID == uid {
 			return errno.ErrWalletAlreadyBound
 		}
+
 		return errno.ErrWalletBoundToOther
 	}
 
@@ -183,6 +195,7 @@ func (b *authBiz) BindWallet(ctx *gin.Context, req *v1.LoginByAddressRequest, ui
 
 	if err := b.ds.UserAccount().Create(ctx, account); err != nil {
 		log.C(ctx).Errorw("SIWE bind wallet failed", "uid", uid, "address", address, "err", err)
+
 		return errno.ErrDBWrite.WithMessage("bind wallet: %v", err)
 	}
 
@@ -199,6 +212,7 @@ func (b *authBiz) getOrCreateWalletUser(ctx context.Context, address string) (*m
 		if err != nil {
 			return nil, nil, errno.ErrUserNotFound
 		}
+
 		return account, user, nil
 	}
 

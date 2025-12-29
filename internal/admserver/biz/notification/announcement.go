@@ -70,6 +70,7 @@ func (b *announcementBiz) Get(ctx context.Context, uuid string) (*v1.Announcemen
 	}
 
 	item := b.toAnnouncementItem(ann)
+
 	return &item, nil
 }
 
@@ -87,6 +88,7 @@ func (b *announcementBiz) Create(ctx context.Context, req *v1.CreateAnnouncement
 	}
 
 	item := b.toAnnouncementItem(ann)
+
 	return &item, nil
 }
 
@@ -229,5 +231,6 @@ func (b *announcementBiz) publishToRedis(ann *model.NtfAnnouncementM) error {
 		},
 	}
 	payload, _ := json.Marshal(msg)
+
 	return facade.Redis.Publish(context.Background(), RedisPubSubChannel, payload).Err()
 }

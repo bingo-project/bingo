@@ -64,6 +64,7 @@ func TestValidateOriginAndExtractDomain(t *testing.T) {
 			gotDomain, err := ValidateOriginAndExtractDomain(tt.origin, tt.allowedDomains)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ValidateOriginAndExtractDomain() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if gotDomain != tt.wantDomain {

@@ -119,6 +119,7 @@ func (b *notificationBiz) MarkAsRead(ctx context.Context, userID string, uuid st
 		if err := b.ds.NtfMessage().MarkAsRead(ctx, userID, uuid); err != nil {
 			return errno.ErrDBWrite.WithMessage("mark message as read: %v", err)
 		}
+
 		return nil
 	}
 
@@ -128,6 +129,7 @@ func (b *notificationBiz) MarkAsRead(ctx context.Context, userID string, uuid st
 		if err := b.ds.NtfAnnouncement().MarkAsRead(ctx, userID, ann.ID); err != nil {
 			return errno.ErrDBWrite.WithMessage("mark announcement as read: %v", err)
 		}
+
 		return nil
 	}
 

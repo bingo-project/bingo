@@ -14,6 +14,6 @@ const (
 
 // Redis Pub/Sub channel names.
 const (
-	RedisBroadcastChannel = "ntf:broadcast"
+	RedisBroadcastChannel  = "ntf:broadcast"
 	RedisUserChannelPrefix = "ntf:user:"
 )

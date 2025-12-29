@@ -8,8 +8,8 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/core"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
-	"github.com/bingo-project/bingo/pkg/contextx"
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
+	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
 // Nonce
@@ -25,7 +25,8 @@ import (
 func (h *AuthHandler) Nonce(c *gin.Context) {
 	var req v1.AddressRequest
 	if err := c.ShouldBind(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 
@@ -46,7 +47,8 @@ func (h *AuthHandler) Nonce(c *gin.Context) {
 func (h *AuthHandler) LoginByAddress(c *gin.Context) {
 	var req v1.LoginByAddressRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 
@@ -69,7 +71,8 @@ func (h *AuthHandler) LoginByAddress(c *gin.Context) {
 func (h *AuthHandler) BindWallet(c *gin.Context) {
 	var req v1.LoginByAddressRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 

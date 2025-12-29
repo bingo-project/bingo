@@ -43,7 +43,7 @@ func NewNotificationHandler(ds store.IStore) *NotificationHandler {
 func (h *NotificationHandler) List(c *gin.Context) {
 	var req v1.ListNotificationsRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
 
 		return
 	}

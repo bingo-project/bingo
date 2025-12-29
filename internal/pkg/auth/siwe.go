@@ -37,5 +37,6 @@ func IsDomainAllowed(domain string, allowedDomains []string) bool {
 			return true
 		}
 	}
+
 	return false
 }
