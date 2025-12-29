@@ -83,12 +83,17 @@ func init() {
 
 **Step 3: 运行迁移验证**
 
-Run: `bingo migrate up`
-Expected: 6 tables created successfully
+```bash
+bingo migrate up                    # 执行迁移
+bingo migrate rollback              # 验证回滚
+bingo migrate up                    # 重新执行
+```
+Expected: 6 tables created successfully, rollback 无报错
 
 **Step 4: Commit**
 
 ```bash
+make lint
 git add internal/pkg/database/migration/2025_12_29_*.go
 git commit -m "feat(ai): add database migrations for AI tables"
 ```
@@ -143,6 +148,7 @@ const (
 **Step 3: Commit**
 
 ```bash
+make lint
 git add internal/pkg/model/ai_*.go
 git commit -m "feat(ai): add AI model definitions"
 ```
@@ -218,6 +224,7 @@ var (
 **Step 2: Commit**
 
 ```bash
+make lint
 git add internal/pkg/errno/ai.go
 git commit -m "feat(ai): add AI error codes"
 ```
@@ -241,6 +248,7 @@ git commit -m "feat(ai): add AI error codes"
 **Step 3: Commit**
 
 ```bash
+make lint
 git add internal/apiserver/config/config.go configs/bingo-apiserver.example.yaml
 git commit -m "feat(ai): add AI configuration"
 ```
@@ -324,9 +332,15 @@ type ModelInfo struct {
 
 定义 pkg/ai 的配置结构（与 internal/apiserver/config 中的一致）。
 
-**Step 6: Commit**
+**Step 6: 写单元测试**
+
+Create: `pkg/ai/registry_test.go`
+测试 Registry 的 Register, Get, ListModels 方法。
+
+**Step 7: Commit**
 
 ```bash
+make lint
 git add pkg/ai/*.go
 git commit -m "feat(ai): add pkg/ai core types and interfaces"
 ```
@@ -338,26 +352,41 @@ git commit -m "feat(ai): add pkg/ai core types and interfaces"
 **Files:**
 - Create: `pkg/ai/providers/openai/provider.go`
 - Create: `pkg/ai/providers/openai/stream.go`
+- Create: `pkg/ai/providers/openai/provider_test.go`
 
 **Step 1: 添加 Eino 依赖**
 
 Run: `go get github.com/cloudwego/eino@latest && go get github.com/cloudwego/eino-ext/components/model/openai@latest`
 
-**Step 2: 实现 OpenAI Provider**
+**Step 2: 写单元测试（TDD）**
+
+Create: `pkg/ai/providers/openai/provider_test.go`
+先定义测试用例：
+- TestProvider_Name
+- TestProvider_Chat (mock HTTP)
+- TestProvider_ChatStream (mock HTTP)
+- TestProvider_Models
+
+Run: `go test ./pkg/ai/providers/openai/... -v`
+Expected: 测试失败（实现未完成）
+
+**Step 3: 实现 OpenAI Provider**
 
 使用 Eino 的 openai 组件实现 Provider 接口。支持 OpenAI 及兼容服务（DeepSeek、Moonshot）。
 
-**Step 3: 实现流式响应处理**
+**Step 4: 实现流式响应处理**
 
 封装 Eino 的 StreamReader 为 ChatStream。
 
-**Step 4: 写单元测试**
+**Step 5: 运行测试验证**
 
-Create: `pkg/ai/providers/openai/provider_test.go`
+Run: `go test ./pkg/ai/providers/openai/... -v`
+Expected: 所有测试通过
 
-**Step 5: Commit**
+**Step 6: Commit**
 
 ```bash
+make lint
 git add pkg/ai/providers/openai/*.go go.mod go.sum
 git commit -m "feat(ai): implement OpenAI provider with Eino"
 ```
@@ -375,6 +404,7 @@ git commit -m "feat(ai): implement OpenAI provider with Eino"
 - Create: `internal/pkg/store/ai_user_quota.go`
 - Create: `internal/pkg/store/ai_session.go`
 - Create: `internal/pkg/store/ai_message.go`
+- Create: `internal/pkg/store/ai_session_test.go`
 - Modify: `internal/pkg/store/store.go`
 
 **Step 1: 创建 ai_session.go**
@@ -447,9 +477,24 @@ func (s *aiSessionStore) ListByUID(ctx context.Context, uid string, status strin
 
 在 IStore 接口添加方法，在 datastore 实现。
 
-**Step 4: Commit**
+**Step 4: 写 Store 层测试（SQLite）**
+
+Create: `internal/pkg/store/ai_session_test.go`
+
+使用 SQLite 内存数据库测试：
+- TestAiSessionStore_Create
+- TestAiSessionStore_GetBySessionID
+- TestAiSessionStore_ListByUID
+- TestAiSessionStore_Update
+- TestAiSessionStore_Delete
+
+Run: `go test ./internal/pkg/store/... -run TestAiSession -v`
+Expected: 所有测试通过
+
+**Step 5: Commit**
 
 ```bash
+make lint
 git add internal/pkg/store/ai_*.go internal/pkg/store/store.go
 git commit -m "feat(ai): add AI store implementations"
 ```
@@ -461,36 +506,121 @@ git commit -m "feat(ai): add AI store implementations"
 ### Task 4.1: 创建 Chat Biz
 
 **Files:**
+- Modify: `internal/pkg/testing/mock/store/store.go` (扩展 AI Store mock)
 - Create: `internal/apiserver/biz/chat/chat.go`
 - Create: `internal/apiserver/biz/chat/session.go`
 - Create: `internal/apiserver/biz/chat/history.go`
 - Create: `internal/apiserver/biz/chat/quota.go`
+- Create: `internal/apiserver/biz/chat/chat_test.go`
 - Modify: `internal/apiserver/biz/biz.go`
 
-**Step 1: 创建 chat.go**
+**Step 1: 扩展 Mock Store**
 
-实现 ChatBiz 接口，包含 Chat, ChatStream 方法。
+Modify: `internal/pkg/testing/mock/store/store.go`
 
-**Step 2: 创建 session.go**
+为 IStore mock 添加 AI 相关方法：
+- `AiSessions() AiSessionStore`
+- `AiMessages() AiMessageStore`
+- `AiUserQuotas() AiUserQuotaStore`
+
+```go
+// 在 mock store 中添加
+type AiSessionStore struct {
+    CreateErr       error
+    GetErr          error
+    GetResult       *model.AiSessionM
+    ListByUIDResult []*model.AiSessionM
+    // ... 其他字段
+}
+```
+
+**Step 2: 定义 ChatBiz 接口**
+
+```go
+// internal/apiserver/biz/chat/chat.go
+
+// ABOUTME: Chat business logic interface and implementation.
+// ABOUTME: Orchestrates AI chat, session management, and quota control.
+
+package chat
+
+import (
+	"context"
+
+	"github.com/bingo-project/bingo/pkg/ai"
+)
+
+// ChatBiz defines the chat business interface.
+type ChatBiz interface {
+	// Chat performs a non-streaming chat completion.
+	Chat(ctx context.Context, req *ai.ChatRequest) (*ai.ChatResponse, error)
+
+	// ChatStream performs a streaming chat completion.
+	ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.ChatStream, error)
+
+	// Sessions returns the session management interface.
+	Sessions() SessionBiz
+}
+```
+
+**Step 3: 写 Biz 层测试（使用 mock/store）**
+
+Create: `internal/apiserver/biz/chat/chat_test.go`
+
+使用 `internal/pkg/testing/mock/store` 的 mock 实现：
+
+```go
+import mockstore "github.com/bingo-project/bingo/internal/pkg/testing/mock/store"
+
+func TestChatBiz_Chat_Success(t *testing.T) {
+    store := mockstore.NewStore()
+    // 配置 mock 返回值
+    store.AiSessionStore().GetResult = &model.AiSessionM{...}
+
+    biz := chat.New(store, registry)
+    // ...
+}
+```
+
+测试用例：
+- TestChatBiz_Chat_Success
+- TestChatBiz_Chat_QuotaExceeded
+- TestChatBiz_Chat_SessionNotFound
+- TestChatBiz_ChatStream_Success
+
+Run: `go test ./internal/apiserver/biz/chat/... -v`
+Expected: 测试失败（实现未完成）
+
+**Step 4: 创建 session.go**
 
 实现 SessionBiz 接口，包含会话 CRUD。
 
-**Step 3: 创建 history.go**
+**Step 5: 创建 history.go**
 
 实现消息历史拼装和滑动窗口裁剪。
 
-**Step 4: 创建 quota.go**
+**Step 6: 创建 quota.go**
 
 实现 Token 配额检查和更新。
 
-**Step 5: 修改 biz.go 注入**
+**Step 7: 实现 chat.go**
+
+实现 ChatBiz 接口。
+
+**Step 8: 修改 biz.go 注入**
 
 在 IBiz 接口添加 Chat() 方法。
 
-**Step 6: Commit**
+**Step 9: 运行测试验证**
+
+Run: `go test ./internal/apiserver/biz/chat/... -v`
+Expected: 所有测试通过
+
+**Step 10: Commit**
 
 ```bash
-git add internal/apiserver/biz/chat/*.go internal/apiserver/biz/biz.go
+make lint
+git add internal/pkg/testing/mock/store/store.go internal/apiserver/biz/chat/*.go internal/apiserver/biz/biz.go
 git commit -m "feat(ai): add chat business logic"
 ```
 
@@ -510,6 +640,7 @@ git commit -m "feat(ai): add chat business logic"
 **Step 2: Commit**
 
 ```bash
+make lint
 git add pkg/api/apiserver/v1/chat.go
 git commit -m "feat(ai): add chat API DTOs"
 ```
@@ -519,26 +650,79 @@ git commit -m "feat(ai): add chat API DTOs"
 ### Task 5.2: 创建 Chat Handler
 
 **Files:**
+- Modify: `internal/pkg/testing/mock/biz/biz.go` (扩展 Chat Biz mock)
 - Create: `internal/apiserver/handler/http/chat/chat.go`
 - Create: `internal/apiserver/handler/http/chat/session.go`
 - Create: `internal/apiserver/handler/http/chat/stream.go`
+- Create: `internal/apiserver/handler/http/chat/chat_test.go`
 
-**Step 1: 创建 chat.go**
+**Step 1: 扩展 Mock Biz**
+
+Modify: `internal/pkg/testing/mock/biz/biz.go`
+
+为 IBiz mock 添加 Chat 相关方法：
+- `Chat() ChatBiz`
+
+```go
+// 在 mock biz 中添加
+type ChatBiz struct {
+    ChatResult       *ai.ChatResponse
+    ChatErr          error
+    ChatStreamResult *ai.ChatStream
+    ChatStreamErr    error
+    // ... 其他字段
+}
+```
+
+**Step 2: 写 Handler 层测试（使用 mock/biz）**
+
+Create: `internal/apiserver/handler/http/chat/chat_test.go`
+
+使用 `internal/pkg/testing/mock/biz` 的 mock 实现：
+
+```go
+import mockbiz "github.com/bingo-project/bingo/internal/pkg/testing/mock/biz"
+
+func TestChatHandler_ChatCompletions_Success(t *testing.T) {
+    biz := mockbiz.NewBiz()
+    biz.ChatBiz().ChatResult = &ai.ChatResponse{...}
+
+    handler := chat.New(biz)
+    // ...
+}
+```
+
+测试用例：
+- TestChatHandler_ChatCompletions_Success
+- TestChatHandler_ChatCompletions_InvalidRequest
+- TestChatHandler_ListModels
+- TestChatHandler_ListSessions
+
+Run: `go test ./internal/apiserver/handler/http/chat/... -v`
+Expected: 测试失败（实现未完成）
+
+**Step 3: 创建 chat.go**
 
 实现 ChatCompletions, ListModels Handler，包含 Swagger 注释。
 
-**Step 2: 创建 session.go**
+**Step 4: 创建 session.go**
 
 实现会话 CRUD Handler。
 
-**Step 3: 创建 stream.go**
+**Step 5: 创建 stream.go**
 
 实现 SSE 流式响应。
 
-**Step 4: Commit**
+**Step 6: 运行测试验证**
+
+Run: `go test ./internal/apiserver/handler/http/chat/... -v`
+Expected: 所有测试通过
+
+**Step 7: Commit**
 
 ```bash
-git add internal/apiserver/handler/http/chat/*.go
+make lint
+git add internal/pkg/testing/mock/biz/biz.go internal/apiserver/handler/http/chat/*.go
 git commit -m "feat(ai): add chat HTTP handlers"
 ```
 
@@ -566,6 +750,7 @@ git commit -m "feat(ai): add chat HTTP handlers"
 **Step 4: Commit**
 
 ```bash
+make lint
 git add internal/apiserver/router/chat.go internal/pkg/middleware/http/ai_limiter.go internal/apiserver/router/api.go
 git commit -m "feat(ai): add chat router and rate limiter"
 ```
@@ -586,6 +771,7 @@ git commit -m "feat(ai): add chat router and rate limiter"
 **Step 2: Commit**
 
 ```bash
+make lint
 git add internal/apiserver/app.go
 git commit -m "feat(ai): initialize AI registry in app"
 ```
@@ -604,6 +790,7 @@ git commit -m "feat(ai): initialize AI registry in app"
 **Step 2: Commit**
 
 ```bash
+make lint
 git add internal/pkg/database/seeder/ai_seeder.go
 git commit -m "feat(ai): add AI data seeder"
 ```
@@ -625,6 +812,7 @@ Run: `make swag`
 **Step 3: Commit**
 
 ```bash
+make lint
 git add docs/swagger/*
 git commit -m "docs(ai): update swagger documentation"
 ```
