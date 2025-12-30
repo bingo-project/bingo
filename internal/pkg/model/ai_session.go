@@ -3,9 +3,10 @@
 
 package model
 
-type AiSessionM struct {
-	Base
+import "time"
 
+type AiSessionM struct {
+	ID           uint   `gorm:"primaryKey" json:"id"`
 	SessionID    string `gorm:"column:session_id;type:varchar(64);uniqueIndex:uk_session_id;not null" json:"sessionId"`
 	UID          string `gorm:"column:uid;type:varchar(64);index:idx_uid;not null" json:"uid"`
 	Title        string `gorm:"column:title;type:varchar(255);not null;default:''" json:"title"`
@@ -13,6 +14,9 @@ type AiSessionM struct {
 	MessageCount int    `gorm:"column:message_count;type:int;not null;default:0" json:"messageCount"`
 	TotalTokens  int    `gorm:"column:total_tokens;type:int;not null;default:0" json:"totalTokens"`
 	Status       string `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
+
+	CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" json:"createdAt"`
+	UpdatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)" json:"updatedAt"`
 }
 
 func (*AiSessionM) TableName() string {

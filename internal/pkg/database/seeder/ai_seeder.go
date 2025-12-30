@@ -17,7 +17,7 @@ var defaultQuotaTiers = []model.AiQuotaTierM{
 }
 
 var defaultProviders = []model.AiProviderM{
-	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusActive, IsDefault: true, Sort: 1},
+	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusActive, Models: "[]", IsDefault: true, Sort: 1},
 }
 
 var defaultModels = []model.AiModelM{

@@ -18,8 +18,8 @@ type CreateAIUserQuotaTable struct {
 	TPD             int        `gorm:"type:int;not null;default:0"`
 	UsedTokensToday int        `gorm:"type:int;not null;default:0"`
 	LastResetAt     *time.Time `gorm:"type:timestamp;default:null"`
-	CreatedAt       time.Time  `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
-	UpdatedAt       time.Time  `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+	CreatedAt       time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
+	UpdatedAt       time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 }
 
 func (CreateAIUserQuotaTable) TableName() string {
