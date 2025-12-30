@@ -13,6 +13,7 @@ import (
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
+	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 )
@@ -35,46 +36,23 @@ func newQuotaChecker(ds store.IStore) *quotaChecker {
 	return &quotaChecker{ds: ds}
 }
 
-// CheckTPD checks if user has remaining token quota for today.
-// Returns nil if quota is available or quota checking is disabled.
-func (q *quotaChecker) CheckTPD(ctx context.Context, uid string) error {
-	if !facade.Config.AI.Quota.Enabled {
-		return nil
-	}
-
+// ensureQuotaState ensures the user's daily quota is reset in DB if needed,
+// and returns the current used tokens from DB for Redis initialization.
+func (q *quotaChecker) ensureQuotaState(ctx context.Context, uid string) (int, int, error) {
 	quota, tpd, err := q.getUserQuota(ctx, uid)
 	if err != nil {
-		return err
+		return 0, 0, err
 	}
 
-	// Check if need to reset daily tokens
+	// Check reset
 	if q.shouldResetDaily(quota) {
 		if err := q.ds.AiUserQuota().ResetDailyTokens(ctx, uid); err != nil {
-			return errno.ErrOperationFailed.WithMessage("failed to reset daily quota: %v", err)
+			return 0, 0, errno.ErrOperationFailed.WithMessage("failed to reset daily quota: %v", err)
 		}
 		quota.UsedTokensToday = 0
 	}
 
-	if quota.UsedTokensToday >= tpd {
-		return errno.ErrAIQuotaExceeded.WithMessage("daily token quota exceeded (%d/%d)", quota.UsedTokensToday, tpd)
-	}
-
-	return nil
-}
-
-// UpdateTPD updates the user's token usage for today.
-// Deprecated: Use ReserveTPD and AdjustTPD for atomic quota management.
-func (q *quotaChecker) UpdateTPD(ctx context.Context, uid string, tokens int) error {
-	if !facade.Config.AI.Quota.Enabled || tokens <= 0 {
-		return nil
-	}
-
-	// Ensure user quota record exists
-	if _, _, err := q.getUserQuota(ctx, uid); err != nil {
-		return err
-	}
-
-	return q.ds.AiUserQuota().IncrementTokens(ctx, uid, tokens)
+	return quota.UsedTokensToday, tpd, nil
 }
 
 // ReserveTPD atomically reserves tokens before an API call.
@@ -90,28 +68,66 @@ func (q *quotaChecker) ReserveTPD(ctx context.Context, uid string, estimatedToke
 		estimatedTokens = defaultEstimatedTokens
 	}
 
-	// Get user's TPD limit
-	_, tpd, err := q.getUserQuota(ctx, uid)
-	if err != nil {
-		return 0, err
-	}
-
-	// Build Redis key for today's usage
 	key := q.buildQuotaKey(uid)
 
-	// Atomically increment and get new total
+	var tpd int
+	var err error
+
+	// 1. Check/Init Redis
+	exists, err := facade.Redis.Exists(ctx, key).Result()
+	if err != nil {
+		return 0, errno.ErrOperationFailed.WithMessage("redis error: %v", err)
+	}
+
+	if exists == 0 {
+		// Key missing: Initialize from DB
+		var usedInDB int
+		// Reuse tpd from this call
+		usedInDB, tpd, err = q.ensureQuotaState(ctx, uid)
+		if err != nil {
+			return 0, err
+		}
+
+		// Atomically set initial value if not exists (NX)
+		_, err := facade.Redis.SetNX(ctx, key, usedInDB, quotaKeyTTL).Result()
+		if err != nil {
+			return 0, errno.ErrOperationFailed.WithMessage("redis setnx error: %v", err)
+		}
+
+		// Optimistic check: if we just initialized, check limit immediately before incrementing
+		if usedInDB+estimatedTokens > tpd {
+			return 0, errno.ErrAIQuotaExceeded
+		}
+	}
+
+	// 2. Increment
 	newTotal, err := facade.Redis.IncrBy(ctx, key, int64(estimatedTokens)).Result()
 	if err != nil {
 		return 0, errno.ErrOperationFailed.WithMessage("failed to reserve quota: %v", err)
 	}
 
-	// Set TTL on first use (idempotent operation)
+	// Refresh TTL
 	facade.Redis.Expire(ctx, key, quotaKeyTTL)
 
-	// Check if exceeded after reservation
+	// 3. Check Limit
+	// Only fetch TPD if we haven't already (i.e., Redis key existed)
+	if tpd == 0 {
+		_, tpd, err = q.getUserQuota(ctx, uid)
+		if err != nil {
+			// Rollback
+			if err := facade.Redis.DecrBy(ctx, key, int64(estimatedTokens)).Err(); err != nil {
+				log.C(ctx).Errorw("Failed to rollback quota reservation", "uid", uid, "err", err)
+			}
+
+			return 0, err
+		}
+	}
+
 	if int(newTotal) > tpd {
 		// Rollback the reservation
-		facade.Redis.DecrBy(ctx, key, int64(estimatedTokens))
+		if err := facade.Redis.DecrBy(ctx, key, int64(estimatedTokens)).Err(); err != nil {
+			log.C(ctx).Errorw("Failed to rollback quota reservation", "uid", uid, "err", err)
+		}
 
 		return 0, errno.ErrAIQuotaExceeded.WithMessage("daily token quota exceeded (%d/%d)", int(newTotal)-estimatedTokens, tpd)
 	}
@@ -131,10 +147,15 @@ func (q *quotaChecker) AdjustTPD(ctx context.Context, uid string, actualTokens, 
 	diff := actualTokens - reservedTokens
 	if diff != 0 {
 		key := q.buildQuotaKey(uid)
+		var err error
 		if diff > 0 {
-			facade.Redis.IncrBy(ctx, key, int64(diff))
+			err = facade.Redis.IncrBy(ctx, key, int64(diff)).Err()
 		} else {
-			facade.Redis.DecrBy(ctx, key, int64(-diff))
+			err = facade.Redis.DecrBy(ctx, key, int64(-diff)).Err()
+		}
+		if err != nil {
+			log.C(ctx).Errorw("Failed to adjust Redis quota", "uid", uid, "diff", diff, "err", err)
+			// Continue to persist DB usage even if Redis fails, to ensure billing accuracy
 		}
 	}
 
