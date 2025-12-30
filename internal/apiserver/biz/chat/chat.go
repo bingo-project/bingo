@@ -5,9 +5,13 @@ package chat
 
 import (
 	"context"
+	"errors"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/bingo-project/bingo/internal/pkg/errno"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -56,6 +60,23 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 		return nil, errno.ErrAIEmptyMessages
 	}
 
+	// Validate session if provided
+	if req.SessionID != "" {
+		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
+			return nil, err
+		}
+	}
+
+	// Resolve model (request > session > default)
+	req.Model = b.resolveModel(ctx, req.Model, req.SessionID)
+
+	// Load and merge history messages
+	messages, err := b.loadAndMergeHistory(ctx, req.SessionID, req.Messages)
+	if err != nil {
+		return nil, err
+	}
+	req.Messages = messages
+
 	// Check TPD quota before calling provider
 	if err := b.quota.CheckTPD(ctx, uid); err != nil {
 		return nil, err
@@ -100,6 +121,23 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 	if len(req.Messages) == 0 {
 		return nil, errno.ErrAIEmptyMessages
 	}
+
+	// Validate session if provided
+	if req.SessionID != "" {
+		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
+			return nil, err
+		}
+	}
+
+	// Resolve model (request > session > default)
+	req.Model = b.resolveModel(ctx, req.Model, req.SessionID)
+
+	// Load and merge history messages
+	messages, err := b.loadAndMergeHistory(ctx, req.SessionID, req.Messages)
+	if err != nil {
+		return nil, err
+	}
+	req.Messages = messages
 
 	// Check TPD quota before calling provider
 	if err := b.quota.CheckTPD(ctx, uid); err != nil {
@@ -216,6 +254,105 @@ func (b *chatBiz) saveStreamToSession(ctx context.Context, uid string, req *ai.C
 
 func (b *chatBiz) Sessions() SessionBiz {
 	return NewSession(b.ds)
+}
+
+// validateSession checks if session exists and belongs to the user.
+func (b *chatBiz) validateSession(ctx context.Context, sessionID, uid string) error {
+	session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errno.ErrAISessionNotFound
+		}
+
+		return errno.ErrOperationFailed.WithMessage("failed to get session: %v", err)
+	}
+
+	if session.UID != uid {
+		return errno.ErrAISessionNotFound // Don't reveal session exists for other user
+	}
+
+	return nil
+}
+
+// resolveModel resolves the model to use based on priority:
+// Request specified > Session preference > System default
+func (b *chatBiz) resolveModel(ctx context.Context, reqModel, sessionID string) string {
+	// 1. Request specified
+	if reqModel != "" {
+		return reqModel
+	}
+
+	// 2. Session preference (if session has a model set)
+	if sessionID != "" {
+		session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
+		if err == nil && session.Model != "" {
+			return session.Model
+		}
+	}
+
+	// 3. System default
+	if facade.Config.AI.DefaultModel != "" {
+		return facade.Config.AI.DefaultModel
+	}
+
+	return "gpt-4o" // fallback
+}
+
+// loadAndMergeHistory loads session history and merges with new messages.
+// Returns merged messages with sliding window applied.
+func (b *chatBiz) loadAndMergeHistory(ctx context.Context, sessionID string, newMessages []ai.Message) ([]ai.Message, error) {
+	if sessionID == "" {
+		return newMessages, nil
+	}
+
+	// Get limit from config
+	limit := facade.Config.AI.Session.MaxMessages
+	if limit <= 0 {
+		limit = 50 // default
+	}
+
+	// Load history messages
+	history, err := b.ds.AiMessage().ListBySessionID(ctx, sessionID, limit)
+	if err != nil {
+		log.C(ctx).Warnw("Failed to load message history", "session_id", sessionID, "err", err)
+
+		return newMessages, nil // Continue without history on error
+	}
+
+	if len(history) == 0 {
+		return newMessages, nil
+	}
+
+	// Convert DB messages to ai.Message
+	messages := make([]ai.Message, 0, len(history)+len(newMessages))
+	for _, m := range history {
+		messages = append(messages, ai.Message{
+			Role:    m.Role,
+			Content: m.Content,
+		})
+	}
+
+	// Append new messages
+	messages = append(messages, newMessages...)
+
+	// Apply sliding window if configured
+	contextWindow := facade.Config.AI.Session.ContextWindow
+	if contextWindow > 0 && len(messages) > contextWindow {
+		// Keep system message if present, then last N-1 messages
+		var result []ai.Message
+		if len(messages) > 0 && messages[0].Role == ai.RoleSystem {
+			result = append(result, messages[0])
+			messages = messages[1:]
+			contextWindow--
+		}
+		if len(messages) > contextWindow {
+			messages = messages[len(messages)-contextWindow:]
+		}
+		result = append(result, messages...)
+		messages = result
+	}
+
+	return messages, nil
 }
 
 func (b *chatBiz) ListModels(ctx context.Context) ([]ai.ModelInfo, error) {

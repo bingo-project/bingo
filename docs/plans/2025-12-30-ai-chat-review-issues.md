@@ -20,26 +20,31 @@
   - `ChatStream()` 没有保存消息到 session
   - **修复**: 添加 `wrapStreamForSaving` 包装流，在流结束后保存消息和更新配额
 
-## Important (应该修复)
+## Important (应该修复) - 5/6 已修复
 
-- [ ] **5. 响应 ID 不唯一** - `pkg/ai/providers/openai/provider.go:177-180`
+- [x] **5. 响应 ID 不唯一** - `pkg/ai/providers/openai/provider.go`
   - `generateID()` 基于秒级时间戳，并发时会重复
+  - **修复**: 使用 crypto/rand 生成随机 hex 字符串
 
-- [ ] **6. 会话验证缺失** - `internal/apiserver/biz/chat/chat.go:45-68`
+- [x] **6. 会话验证缺失** - `internal/apiserver/biz/chat/chat.go`
   - 未校验 session 是否存在或属于当前用户
+  - **修复**: 添加 `validateSession` 方法，验证 session 存在且属于当前用户
 
-- [ ] **7. 历史消息未使用**
+- [x] **7. 历史消息未使用**
   - 设计的 `BuildMessages` 滑动窗口逻辑未实现
-  - 会话不是真正连续的对话
+  - **修复**: 添加 `loadAndMergeHistory` 方法，加载历史消息并应用滑动窗口
 
-- [ ] **8. Usage 统计空置** - `pkg/ai/providers/openai/provider.go:137-156`
+- [ ] **8. Usage 统计空置** - `pkg/ai/providers/openai/provider.go`
   - Eino 不直接暴露 token 计数，Usage 始终为空
+  - **待处理**: 需要调研 Eino 的 token 计数 API 或使用 tiktoken-go 估算
 
-- [ ] **9. Stream 缺少 FinishReason** - `pkg/ai/providers/openai/provider.go:159-175`
+- [x] **9. Stream 缺少 FinishReason** - `pkg/ai/providers/openai/provider.go`
   - 最后一个 chunk 没有设置 finish_reason
+  - **修复**: 在流结束时发送带有 finish_reason="stop" 的最终 chunk
 
-- [ ] **10. 三层 Model 解析未实现**
+- [x] **10. 三层 Model 解析未实现**
   - 设计的 Request > User Preference > System Default 逻辑缺失
+  - **修复**: 添加 `resolveModel` 方法实现 请求 > 会话 > 系统默认 的优先级
 
 ## Suggestions (可以改进)
 

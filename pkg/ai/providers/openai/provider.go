@@ -5,6 +5,8 @@ package openai
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"io"
 	"time"
 
@@ -97,17 +99,33 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 	go func() {
 		defer chatStream.Close()
 
+		id := generateID()
 		for {
 			chunk, err := stream.Recv()
 			if err != nil {
-				if err != io.EOF {
+				if err == io.EOF {
+					// Send final chunk with finish_reason
+					chatStream.Send(&ai.StreamChunk{
+						ID:      id,
+						Object:  "chat.completion.chunk",
+						Created: time.Now().Unix(),
+						Model:   req.Model,
+						Choices: []ai.Choice{
+							{
+								Index:        0,
+								Delta:        &ai.Message{},
+								FinishReason: "stop",
+							},
+						},
+					})
+				} else {
 					chatStream.CloseWithError(err)
 				}
 
 				return
 			}
 
-			chatStream.Send(convertStreamChunk(chunk, req.Model))
+			chatStream.Send(convertStreamChunk(chunk, req.Model, id))
 		}
 	}()
 
@@ -156,9 +174,9 @@ func convertResponse(resp *schema.Message, modelName string) *ai.ChatResponse {
 }
 
 // convertStreamChunk converts Eino stream message to ai.StreamChunk
-func convertStreamChunk(msg *schema.Message, modelName string) *ai.StreamChunk {
+func convertStreamChunk(msg *schema.Message, modelName string, id string) *ai.StreamChunk {
 	return &ai.StreamChunk{
-		ID:      generateID(),
+		ID:      id,
 		Object:  "chat.completion.chunk",
 		Created: time.Now().Unix(),
 		Model:   modelName,
@@ -176,5 +194,8 @@ func convertStreamChunk(msg *schema.Message, modelName string) *ai.StreamChunk {
 
 // generateID generates a unique ID for responses
 func generateID() string {
-	return "chatcmpl-" + time.Now().Format("20060102150405")
+	b := make([]byte, 12)
+	_, _ = rand.Read(b)
+
+	return "chatcmpl-" + hex.EncodeToString(b)
 }
