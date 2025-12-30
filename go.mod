@@ -16,6 +16,7 @@ require (
 	github.com/cloudwego/eino-ext/components/model/claude v0.1.12
 	github.com/cloudwego/eino-ext/components/model/gemini v0.1.21
 	github.com/cloudwego/eino-ext/components/model/openai v0.1.6
+	github.com/cloudwego/eino-ext/components/model/qwen v0.1.3
 	github.com/disintegration/imaging v1.6.2
 	github.com/dromara/carbon/v2 v2.6.15
 	github.com/duke-git/lancet/v2 v2.3.8
