@@ -26,6 +26,7 @@ func MapChatRouters(g *gin.RouterGroup, registry *ai.Registry) {
 		sessions.POST("", sessionHandler.CreateSession)
 		sessions.GET("", sessionHandler.ListSessions)
 		sessions.GET("/:session_id", sessionHandler.GetSession)
+		sessions.PUT("/:session_id", sessionHandler.UpdateSession)
 		sessions.DELETE("/:session_id", sessionHandler.DeleteSession)
 		sessions.GET("/:session_id/history", sessionHandler.GetSessionHistory)
 	}

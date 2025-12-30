@@ -70,6 +70,12 @@ type CreateSessionRequest struct {
 	Model string `json:"model" binding:"required"`
 }
 
+// UpdateSessionRequest represents session update request.
+type UpdateSessionRequest struct {
+	Title string `json:"title,omitempty"`
+	Model string `json:"model,omitempty"`
+}
+
 // SessionInfo represents session information.
 type SessionInfo struct {
 	SessionID    string    `json:"session_id"`

@@ -20,7 +20,7 @@
   - `ChatStream()` 没有保存消息到 session
   - **修复**: 添加 `wrapStreamForSaving` 包装流，在流结束后保存消息和更新配额
 
-## Important (应该修复) - 5/6 已修复
+## Important (应该修复) ✅ 已全部修复
 
 - [x] **5. 响应 ID 不唯一** - `pkg/ai/providers/openai/provider.go`
   - `generateID()` 基于秒级时间戳，并发时会重复
@@ -34,9 +34,12 @@
   - 设计的 `BuildMessages` 滑动窗口逻辑未实现
   - **修复**: 添加 `loadAndMergeHistory` 方法，加载历史消息并应用滑动窗口
 
-- [ ] **8. Usage 统计空置** - `pkg/ai/providers/openai/provider.go`
+- [x] **8. Usage 统计空置** - `pkg/ai/providers/openai/provider.go`
   - Eino 不直接暴露 token 计数，Usage 始终为空
-  - **待处理**: 需要调研 Eino 的 token 计数 API 或使用 tiktoken-go 估算
+  - **修复**: Eino 实际上在 `ResponseMeta.Usage` 中提供了 token 统计
+    - `convertResponse` 提取非流式响应的 Usage
+    - `convertStreamChunk` 提取流式 chunk 的 Usage
+    - 流式 goroutine 追踪 lastUsage 并在 final chunk 中返回
 
 - [x] **9. Stream 缺少 FinishReason** - `pkg/ai/providers/openai/provider.go`
   - 最后一个 chunk 没有设置 finish_reason
@@ -46,17 +49,20 @@
   - 设计的 Request > User Preference > System Default 逻辑缺失
   - **修复**: 添加 `resolveModel` 方法实现 请求 > 会话 > 系统默认 的优先级
 
-## Suggestions (可以改进)
+## Suggestions (可以改进) ✅ 已全部修复
 
-- [ ] **11. Provider name 硬编码** - `pkg/ai/providers/openai/provider.go:45`
+- [x] **11. Provider name 硬编码** - `pkg/ai/providers/openai/provider.go:45`
   - 始终返回 "openai"，不支持 DeepSeek 等兼容服务区分
+  - **修复**: Config 添加 Name 字段，Provider.Name() 使用 config.Name
 
-- [ ] **12. AILimiter 用内存存储** - `internal/pkg/middleware/http/ai_limiter.go:22`
+- [x] **12. AILimiter 用内存存储** - `internal/pkg/middleware/http/ai_limiter.go:22`
   - 分布式环境不工作，应用 Redis
+  - **修复**: 使用 GetLimiterContext 调用 Redis 存储
 
 - [x] **13. 设计中的文件未创建** - 评估后决定不拆分
   - `quota.go` 已创建；`resolveModel`/`loadAndMergeHistory` 保留在 `chat.go` 中
   - 理由：395 行是合理大小，高内聚，拆分会增加复杂度
 
-- [ ] **14. PUT sessions/:id 路由未注册**
+- [x] **14. PUT sessions/:id 路由未注册**
   - 设计文档要求但未实现
+  - **修复**: 添加 UpdateSession handler 和 PUT /:session_id 路由

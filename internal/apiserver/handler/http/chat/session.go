@@ -118,6 +118,44 @@ func (h *SessionHandler) GetSession(c *gin.Context) {
 	core.Response(c, resp, nil)
 }
 
+// UpdateSession
+// @Summary    Update chat session
+// @Security   Bearer
+// @Tags       AI
+// @Accept     application/json
+// @Produce    json
+// @Param      session_id  path      string                    true  "Session ID"
+// @Param      request     body      v1.UpdateSessionRequest   true  "Update request"
+// @Success    200         {object}  v1.SessionInfo
+// @Failure    400         {object}  core.ErrResponse
+// @Failure    404         {object}  core.ErrResponse
+// @Failure    500         {object}  core.ErrResponse
+// @Router     /v1/ai/sessions/{session_id} [PUT].
+func (h *SessionHandler) UpdateSession(c *gin.Context) {
+	var req v1.UpdateSessionRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
+		return
+	}
+
+	uid := contextx.UserID(c)
+	sessionID := c.Param("session_id")
+
+	session, err := h.b.Chat().Sessions().Update(c, uid, sessionID, req.Title, req.Model)
+	if err != nil {
+		core.Response(c, nil, err)
+
+		return
+	}
+
+	var resp v1.SessionInfo
+	_ = copier.Copy(&resp, session)
+	resp.SessionID = session.SessionID
+
+	core.Response(c, resp, nil)
+}
+
 // DeleteSession
 // @Summary    Delete chat session
 // @Security   Bearer

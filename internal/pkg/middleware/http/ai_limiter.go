@@ -1,26 +1,21 @@
 // ABOUTME: AI rate limiter middleware.
-// ABOUTME: Limits AI requests per user based on RPM quota.
+// ABOUTME: Limits AI requests per user based on RPM quota using Redis.
 
 package middleware
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ulule/limiter/v3"
-	"github.com/ulule/limiter/v3/drivers/store/memory"
 
 	"github.com/bingo-project/bingo/internal/pkg/core"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/pkg/contextx"
 )
 
-// AILimiter creates a rate limiter middleware for AI endpoints
+// AILimiter creates a rate limiter middleware for AI endpoints.
+// Uses Redis for distributed rate limiting.
 func AILimiter(defaultRPM int) gin.HandlerFunc {
-	// Use in-memory store for now; can switch to Redis for distributed
-	store := memory.NewStore()
-
 	return func(c *gin.Context) {
 		uid := contextx.UserID(c)
 		if uid == "" {
@@ -35,16 +30,11 @@ func AILimiter(defaultRPM int) gin.HandlerFunc {
 			rpm = 10 // fallback default
 		}
 
-		// Create rate with limit
-		rate := limiter.Rate{
-			Period: time.Minute,
-			Limit:  int64(rpm),
-		}
+		// Use Redis-based limiter via shared GetLimiterContext
+		key := fmt.Sprintf("ai:rpm:%s", uid)
+		limit := fmt.Sprintf("%d-M", rpm) // e.g., "20-M" = 20 per minute
 
-		limiterInstance := limiter.New(store, rate)
-		key := fmt.Sprintf("ai:%s", uid)
-
-		context, err := limiterInstance.Get(c, key)
+		ctx, err := GetLimiterContext(c, key, limit)
 		if err != nil {
 			core.Response(c, nil, errno.ErrOperationFailed.WithMessage("rate limiter error: %v", err))
 			c.Abort()
@@ -53,11 +43,11 @@ func AILimiter(defaultRPM int) gin.HandlerFunc {
 		}
 
 		// Set rate limit headers
-		c.Header("X-RateLimit-Limit", fmt.Sprintf("%d", context.Limit))
-		c.Header("X-RateLimit-Remaining", fmt.Sprintf("%d", context.Remaining))
-		c.Header("X-RateLimit-Reset", fmt.Sprintf("%d", context.Reset))
+		c.Header("X-RateLimit-Limit", fmt.Sprintf("%d", ctx.Limit))
+		c.Header("X-RateLimit-Remaining", fmt.Sprintf("%d", ctx.Remaining))
+		c.Header("X-RateLimit-Reset", fmt.Sprintf("%d", ctx.Reset))
 
-		if context.Reached {
+		if ctx.Reached {
 			core.Response(c, nil, errno.ErrAIQuotaExceeded)
 			c.Abort()
 

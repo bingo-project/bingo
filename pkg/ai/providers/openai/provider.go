@@ -44,6 +44,10 @@ func New(cfg *Config) (*Provider, error) {
 
 // Name returns the provider name
 func (p *Provider) Name() string {
+	if p.config.Name != "" {
+		return p.config.Name
+	}
+
 	return "openai"
 }
 
@@ -100,11 +104,13 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 		defer chatStream.Close()
 
 		id := generateID()
+		var lastUsage *ai.Usage
+
 		for {
 			chunk, err := stream.Recv()
 			if err != nil {
 				if err == io.EOF {
-					// Send final chunk with finish_reason
+					// Send final chunk with finish_reason and usage
 					chatStream.Send(&ai.StreamChunk{
 						ID:      id,
 						Object:  "chat.completion.chunk",
@@ -117,12 +123,22 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 								FinishReason: "stop",
 							},
 						},
+						Usage: lastUsage,
 					})
 				} else {
 					chatStream.CloseWithError(err)
 				}
 
 				return
+			}
+
+			// Track usage from chunks (Eino sends it in the last content chunk)
+			if chunk.ResponseMeta != nil && chunk.ResponseMeta.Usage != nil {
+				lastUsage = &ai.Usage{
+					PromptTokens:     chunk.ResponseMeta.Usage.PromptTokens,
+					CompletionTokens: chunk.ResponseMeta.Usage.CompletionTokens,
+					TotalTokens:      chunk.ResponseMeta.Usage.TotalTokens,
+				}
 			}
 
 			chatStream.Send(convertStreamChunk(chunk, req.Model, id))
@@ -154,6 +170,8 @@ func convertMessages(msgs []ai.Message) []*schema.Message {
 
 // convertResponse converts Eino response to ai.ChatResponse
 func convertResponse(resp *schema.Message, modelName string) *ai.ChatResponse {
+	usage := extractUsage(resp)
+
 	return &ai.ChatResponse{
 		ID:      generateID(),
 		Object:  "chat.completion",
@@ -169,13 +187,13 @@ func convertResponse(resp *schema.Message, modelName string) *ai.ChatResponse {
 				FinishReason: "stop",
 			},
 		},
-		Usage: ai.Usage{},
+		Usage: usage,
 	}
 }
 
 // convertStreamChunk converts Eino stream message to ai.StreamChunk
 func convertStreamChunk(msg *schema.Message, modelName string, id string) *ai.StreamChunk {
-	return &ai.StreamChunk{
+	chunk := &ai.StreamChunk{
 		ID:      id,
 		Object:  "chat.completion.chunk",
 		Created: time.Now().Unix(),
@@ -190,6 +208,17 @@ func convertStreamChunk(msg *schema.Message, modelName string, id string) *ai.St
 			},
 		},
 	}
+
+	// Extract usage if present (typically in the last chunk)
+	if msg.ResponseMeta != nil && msg.ResponseMeta.Usage != nil {
+		chunk.Usage = &ai.Usage{
+			PromptTokens:     msg.ResponseMeta.Usage.PromptTokens,
+			CompletionTokens: msg.ResponseMeta.Usage.CompletionTokens,
+			TotalTokens:      msg.ResponseMeta.Usage.TotalTokens,
+		}
+	}
+
+	return chunk
 }
 
 // generateID generates a unique ID for responses
@@ -198,4 +227,17 @@ func generateID() string {
 	_, _ = rand.Read(b)
 
 	return "chatcmpl-" + hex.EncodeToString(b)
+}
+
+// extractUsage extracts token usage from Eino message
+func extractUsage(msg *schema.Message) ai.Usage {
+	if msg.ResponseMeta != nil && msg.ResponseMeta.Usage != nil {
+		return ai.Usage{
+			PromptTokens:     msg.ResponseMeta.Usage.PromptTokens,
+			CompletionTokens: msg.ResponseMeta.Usage.CompletionTokens,
+			TotalTokens:      msg.ResponseMeta.Usage.TotalTokens,
+		}
+	}
+
+	return ai.Usage{}
 }

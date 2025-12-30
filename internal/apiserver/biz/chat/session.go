@@ -21,6 +21,7 @@ type SessionBiz interface {
 	Create(ctx context.Context, uid string, title string, model string) (*model.AiSessionM, error)
 	Get(ctx context.Context, uid string, sessionID string) (*model.AiSessionM, error)
 	List(ctx context.Context, uid string) ([]*model.AiSessionM, error)
+	Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*model.AiSessionM, error)
 	Delete(ctx context.Context, uid string, sessionID string) error
 	GetHistory(ctx context.Context, sessionID string, limit int) ([]ai.Message, error)
 }
@@ -76,6 +77,32 @@ func (b *sessionBiz) List(ctx context.Context, uid string) ([]*model.AiSessionM,
 	}
 
 	return sessions, nil
+}
+
+func (b *sessionBiz) Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*model.AiSessionM, error) {
+	session, err := b.Get(ctx, uid, sessionID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Update fields if provided
+	var fields []string
+	if title != "" {
+		session.Title = title
+		fields = append(fields, "title")
+	}
+	if modelName != "" {
+		session.Model = modelName
+		fields = append(fields, "model")
+	}
+
+	if len(fields) > 0 {
+		if err := b.ds.AiSession().Update(ctx, session, fields...); err != nil {
+			return nil, errno.ErrDBWrite.WithMessage("update session: %v", err)
+		}
+	}
+
+	return session, nil
 }
 
 func (b *sessionBiz) Delete(ctx context.Context, uid string, sessionID string) error {
