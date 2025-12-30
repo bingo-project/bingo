@@ -51,3 +51,17 @@ func MoonshotConfig() *Config {
 		},
 	}
 }
+
+// GLMConfig returns configuration for Zhipu GLM (OpenAI-compatible)
+func GLMConfig() *Config {
+	return &Config{
+		Name:    "glm",
+		BaseURL: "https://open.bigmodel.cn/api/paas/v4",
+		Models: []ai.ModelInfo{
+			{ID: "glm-4-plus", Name: "GLM-4 Plus", Provider: "glm", MaxTokens: 128000},
+			{ID: "glm-4-air", Name: "GLM-4 Air", Provider: "glm", MaxTokens: 128000},
+			{ID: "glm-4-airx", Name: "GLM-4 AirX", Provider: "glm", MaxTokens: 8000},
+			{ID: "glm-4-flash", Name: "GLM-4 Flash", Provider: "glm", MaxTokens: 128000},
+		},
+	}
+}
