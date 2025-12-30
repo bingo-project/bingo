@@ -1,0 +1,59 @@
+# AI Chat 实现 Review 问题清单
+
+> 2025-12-30 代码审查发现的问题
+
+## Critical (必须修复) ✅ 已全部修复
+
+- [x] **1. AI 限流中间件未应用** - `internal/apiserver/http.go:36-47`
+  - `AILimiter` 已定义但未应用到路由
+  - **修复**: 在 http.go 中添加 `httpmw.AILimiter(rpm)` 中间件
+
+- [x] **2. goroutine 可能泄漏** - `internal/apiserver/biz/chat/chat.go:63-65`
+  - `saveToSession` 用 `context.Background()` 没有超时
+  - **修复**: 使用 `context.WithTimeout(context.Background(), 30s)` 并添加错误日志
+
+- [x] **3. TPD Token 配额未实现**
+  - 设计文档要求的 `CheckAndUpdateTokenQuota` 完全缺失
+  - **修复**: 创建 `quota.go` 实现 CheckTPD/UpdateTPD，在 Chat/ChatStream 中调用
+
+- [x] **4. 流式响应不保存会话** - `internal/apiserver/biz/chat/chat.go:70-88`
+  - `ChatStream()` 没有保存消息到 session
+  - **修复**: 添加 `wrapStreamForSaving` 包装流，在流结束后保存消息和更新配额
+
+## Important (应该修复)
+
+- [ ] **5. 响应 ID 不唯一** - `pkg/ai/providers/openai/provider.go:177-180`
+  - `generateID()` 基于秒级时间戳，并发时会重复
+
+- [ ] **6. 会话验证缺失** - `internal/apiserver/biz/chat/chat.go:45-68`
+  - 未校验 session 是否存在或属于当前用户
+
+- [ ] **7. 历史消息未使用**
+  - 设计的 `BuildMessages` 滑动窗口逻辑未实现
+  - 会话不是真正连续的对话
+
+- [ ] **8. Usage 统计空置** - `pkg/ai/providers/openai/provider.go:137-156`
+  - Eino 不直接暴露 token 计数，Usage 始终为空
+
+- [ ] **9. Stream 缺少 FinishReason** - `pkg/ai/providers/openai/provider.go:159-175`
+  - 最后一个 chunk 没有设置 finish_reason
+
+- [ ] **10. 三层 Model 解析未实现**
+  - 设计的 Request > User Preference > System Default 逻辑缺失
+
+## Suggestions (可以改进)
+
+- [ ] **11. Provider name 硬编码** - `pkg/ai/providers/openai/provider.go:45`
+  - 始终返回 "openai"，不支持 DeepSeek 等兼容服务区分
+
+- [ ] **12. AILimiter 用内存存储** - `internal/pkg/middleware/http/ai_limiter.go:22`
+  - 分布式环境不工作，应用 Redis
+
+- [ ] **13. 设计中的文件未创建**
+  - `pkg/ai/client.go`
+  - `internal/apiserver/biz/chat/resolver.go`
+  - `internal/apiserver/biz/chat/history.go`
+  - `internal/apiserver/biz/chat/quota.go`
+
+- [ ] **14. PUT sessions/:id 路由未注册**
+  - 设计文档要求但未实现

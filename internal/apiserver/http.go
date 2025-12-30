@@ -13,6 +13,7 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
+	httpmw "github.com/bingo-project/bingo/internal/pkg/middleware/http"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/ai"
 	"github.com/bingo-project/bingo/pkg/ai/providers/openai"
@@ -42,6 +43,13 @@ func initGinEngine() *gin.Engine {
 		loader := bizauth.NewUserLoader(store.S)
 		authn := auth.New(loader)
 		v1.Use(auth.Middleware(authn))
+
+		// Apply AI rate limiter (RPM)
+		rpm := facade.Config.AI.Quota.DefaultRPM
+		if rpm <= 0 {
+			rpm = 20 // fallback default
+		}
+		v1.Use(httpmw.AILimiter(rpm))
 
 		router.MapChatRouters(v1, registry)
 	}
