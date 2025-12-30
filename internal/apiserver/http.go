@@ -142,6 +142,7 @@ func initAIRegistry() *ai.Registry {
 
 		if err != nil {
 			log.Errorw("Failed to initialize AI provider", "provider", name, "err", err)
+
 			continue
 		}
 
