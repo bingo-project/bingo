@@ -4,6 +4,8 @@
 package apiserver
 
 import (
+	"context"
+
 	"github.com/gin-gonic/gin"
 
 	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
@@ -16,7 +18,10 @@ import (
 	httpmw "github.com/bingo-project/bingo/internal/pkg/middleware/http"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/ai"
+	"github.com/bingo-project/bingo/pkg/ai/providers/claude"
+	"github.com/bingo-project/bingo/pkg/ai/providers/gemini"
 	"github.com/bingo-project/bingo/pkg/ai/providers/openai"
+	"github.com/bingo-project/bingo/pkg/ai/providers/qwen"
 )
 
 // initGinEngine initializes the Gin engine with routes.
@@ -65,33 +70,78 @@ func initAIRegistry() *ai.Registry {
 	}
 
 	registry := ai.NewRegistry()
+	ctx := context.Background()
 
 	for name, cred := range credentials {
-		var cfg *openai.Config
+		var provider ai.Provider
+		var err error
 
-		// Select preset config based on provider name
 		switch name {
+		// OpenAI-compatible providers
 		case "openai":
-			cfg = openai.DefaultConfig()
+			cfg := openai.DefaultConfig()
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = openai.New(cfg)
+
 		case "deepseek":
-			cfg = openai.DeepSeekConfig()
+			cfg := openai.DeepSeekConfig()
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = openai.New(cfg)
+
 		case "moonshot":
-			cfg = openai.MoonshotConfig()
+			cfg := openai.MoonshotConfig()
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = openai.New(cfg)
+
+		case "glm":
+			cfg := openai.GLMConfig()
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = openai.New(cfg)
+
+		// Native providers
+		case "claude":
+			cfg := claude.DefaultConfig()
+			cfg.APIKey = cred.APIKey
+			provider, err = claude.New(cfg)
+
+		case "gemini":
+			cfg := gemini.DefaultConfig()
+			cfg.APIKey = cred.APIKey
+			provider, err = gemini.New(ctx, cfg)
+
+		case "qwen":
+			cfg := qwen.DefaultConfig()
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = qwen.New(cfg)
+
 		default:
-			// For unknown providers, use default config with custom name
-			cfg = openai.DefaultConfig()
+			// Unknown provider - try as OpenAI-compatible
+			cfg := openai.DefaultConfig()
 			cfg.Name = name
+			cfg.APIKey = cred.APIKey
+			if cred.BaseURL != "" {
+				cfg.BaseURL = cred.BaseURL
+			}
+			provider, err = openai.New(cfg)
 		}
 
-		cfg.APIKey = cred.APIKey
-		if cred.BaseURL != "" {
-			cfg.BaseURL = cred.BaseURL
-		}
-
-		provider, err := openai.New(cfg)
 		if err != nil {
 			log.Errorw("Failed to initialize AI provider", "provider", name, "err", err)
-
 			continue
 		}
 
