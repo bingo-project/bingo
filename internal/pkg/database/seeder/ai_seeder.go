@@ -36,33 +36,33 @@ var defaultModels = []model.AiModelM{
 	{ProviderName: "openai", Model: "gpt-3.5-turbo", DisplayName: "GPT-3.5 Turbo", MaxTokens: 16385, Status: model.AiModelStatusActive, Sort: 4},
 
 	// DeepSeek
-	{ProviderName: "deepseek", Model: "deepseek-chat", DisplayName: "DeepSeek Chat", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "deepseek", Model: "deepseek-chat", DisplayName: "DeepSeek Chat", MaxTokens: 64000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "deepseek", Model: "deepseek-coder", DisplayName: "DeepSeek Coder", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 2},
 
 	// Moonshot
-	{ProviderName: "moonshot", Model: "moonshot-v1-8k", DisplayName: "Moonshot V1 8K", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "moonshot", Model: "moonshot-v1-8k", DisplayName: "Moonshot V1 8K", MaxTokens: 8000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "moonshot", Model: "moonshot-v1-32k", DisplayName: "Moonshot V1 32K", MaxTokens: 32000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "moonshot", Model: "moonshot-v1-128k", DisplayName: "Moonshot V1 128K", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 3},
 
 	// GLM (智谱)
-	{ProviderName: "glm", Model: "glm-4-plus", DisplayName: "GLM-4 Plus", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "glm", Model: "glm-4-plus", DisplayName: "GLM-4 Plus", MaxTokens: 128000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "glm", Model: "glm-4-air", DisplayName: "GLM-4 Air", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "glm", Model: "glm-4-airx", DisplayName: "GLM-4 AirX", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "glm", Model: "glm-4-flash", DisplayName: "GLM-4 Flash", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 4},
 
 	// Claude
-	{ProviderName: "claude", Model: "claude-sonnet-4-20250514", DisplayName: "Claude Sonnet 4", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "claude", Model: "claude-sonnet-4-20250514", DisplayName: "Claude Sonnet 4", MaxTokens: 200000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "claude", Model: "claude-3-5-sonnet-20241022", DisplayName: "Claude 3.5 Sonnet", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "claude", Model: "claude-3-5-haiku-20241022", DisplayName: "Claude 3.5 Haiku", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "claude", Model: "claude-3-opus-20240229", DisplayName: "Claude 3 Opus", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 4},
 
 	// Gemini
-	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "gemini", Model: "gemini-1.5-pro", DisplayName: "Gemini 1.5 Pro", MaxTokens: 2097152, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "gemini", Model: "gemini-1.5-flash", DisplayName: "Gemini 1.5 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 3},
 
 	// Qwen
-	{ProviderName: "qwen", Model: "qwen-max", DisplayName: "Qwen Max", MaxTokens: 32000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "qwen", Model: "qwen-max", DisplayName: "Qwen Max", MaxTokens: 32000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
 	{ProviderName: "qwen", Model: "qwen-plus", DisplayName: "Qwen Plus", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "qwen", Model: "qwen-turbo", DisplayName: "Qwen Turbo", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "qwen", Model: "qwen-long", DisplayName: "Qwen Long", MaxTokens: 10000000, Status: model.AiModelStatusActive, Sort: 4},
