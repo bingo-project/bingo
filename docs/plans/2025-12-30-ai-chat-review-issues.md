@@ -54,11 +54,9 @@
 - [ ] **12. AILimiter 用内存存储** - `internal/pkg/middleware/http/ai_limiter.go:22`
   - 分布式环境不工作，应用 Redis
 
-- [ ] **13. 设计中的文件未创建**
-  - `pkg/ai/client.go`
-  - `internal/apiserver/biz/chat/resolver.go`
-  - `internal/apiserver/biz/chat/history.go`
-  - `internal/apiserver/biz/chat/quota.go`
+- [x] **13. 设计中的文件未创建** - 评估后决定不拆分
+  - `quota.go` 已创建；`resolveModel`/`loadAndMergeHistory` 保留在 `chat.go` 中
+  - 理由：395 行是合理大小，高内聚，拆分会增加复杂度
 
 - [ ] **14. PUT sessions/:id 路由未注册**
   - 设计文档要求但未实现
