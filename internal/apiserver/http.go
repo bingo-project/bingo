@@ -67,24 +67,36 @@ func initAIRegistry() *ai.Registry {
 	registry := ai.NewRegistry()
 
 	for name, cred := range credentials {
+		var cfg *openai.Config
+
+		// Select preset config based on provider name
 		switch name {
 		case "openai":
-			cfg := openai.DefaultConfig()
-			cfg.APIKey = cred.APIKey
-			if cred.BaseURL != "" {
-				cfg.BaseURL = cred.BaseURL
-			}
-
-			provider, err := openai.New(cfg)
-			if err != nil {
-				log.Errorw("Failed to initialize OpenAI provider", "err", err)
-
-				continue
-			}
-
-			registry.Register(provider)
-			log.Infow("AI provider registered", "provider", name)
+			cfg = openai.DefaultConfig()
+		case "deepseek":
+			cfg = openai.DeepSeekConfig()
+		case "moonshot":
+			cfg = openai.MoonshotConfig()
+		default:
+			// For unknown providers, use default config with custom name
+			cfg = openai.DefaultConfig()
+			cfg.Name = name
 		}
+
+		cfg.APIKey = cred.APIKey
+		if cred.BaseURL != "" {
+			cfg.BaseURL = cred.BaseURL
+		}
+
+		provider, err := openai.New(cfg)
+		if err != nil {
+			log.Errorw("Failed to initialize AI provider", "provider", name, "err", err)
+
+			continue
+		}
+
+		registry.Register(provider)
+		log.Infow("AI provider registered", "provider", name)
 	}
 
 	return registry

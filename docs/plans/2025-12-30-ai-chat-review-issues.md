@@ -53,7 +53,9 @@
 
 - [x] **11. Provider name 硬编码** - `pkg/ai/providers/openai/provider.go:45`
   - 始终返回 "openai"，不支持 DeepSeek 等兼容服务区分
-  - **修复**: Config 添加 Name 字段，Provider.Name() 使用 config.Name
+  - **修复**:
+    - Config 添加 Name 字段，Provider.Name() 使用 config.Name
+    - http.go 根据 credential name 选择对应的预设配置 (DeepSeekConfig/MoonshotConfig)
 
 - [x] **12. AILimiter 用内存存储** - `internal/pkg/middleware/http/ai_limiter.go:22`
   - 分布式环境不工作，应用 Redis
@@ -66,3 +68,19 @@
 - [x] **14. PUT sessions/:id 路由未注册**
   - 设计文档要求但未实现
   - **修复**: 添加 UpdateSession handler 和 PUT /:session_id 路由
+
+---
+
+## 总结
+
+| 类别 | 数量 | 状态 |
+|------|------|------|
+| Critical | 4 | ✅ 全部修复 |
+| Important | 6 | ✅ 全部修复 |
+| Suggestions | 4 | ✅ 全部修复 |
+
+**相关提交**:
+- `1b62e0b` fix(ai): resolve critical issues from code review
+- `3d9fce6` fix(ai): resolve important issues from code review
+- `f3bc4ed` docs: mark #13 as evaluated - no file split needed
+- `40601df` fix(ai): resolve remaining review issues
