@@ -70,6 +70,9 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 	// Resolve model (request > session > default)
 	req.Model = b.resolveModel(ctx, req.Model, req.SessionID)
 
+	// Capture new messages BEFORE loading history
+	newMessages := req.Messages
+
 	// Load and merge history messages
 	messages, err := b.loadAndMergeHistory(ctx, req.SessionID, req.Messages)
 	if err != nil {
@@ -120,7 +123,8 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 		go func() {
 			ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
 			defer cancel()
-			b.saveToSession(ctx, uid, req, resp)
+			// Pass newMessages explicitly
+			b.saveToSession(ctx, uid, req.SessionID, newMessages, resp)
 		}()
 	}
 
@@ -141,6 +145,9 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 
 	// Resolve model (request > session > default)
 	req.Model = b.resolveModel(ctx, req.Model, req.SessionID)
+
+	// Capture new messages BEFORE loading history
+	newMessages := req.Messages
 
 	// Load and merge history messages
 	messages, err := b.loadAndMergeHistory(ctx, req.SessionID, req.Messages)
@@ -179,11 +186,11 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 	}
 
 	// Wrap stream to save messages and adjust quota after completion
-	return b.wrapStreamForSaving(stream, uid, req, reservedTokens), nil
+	return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens), nil
 }
 
 // wrapStreamForSaving wraps a stream to save messages and adjust quota after completion.
-func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai.ChatRequest, reservedTokens int) *ai.ChatStream {
+func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai.ChatRequest, newMessages []ai.Message, reservedTokens int) *ai.ChatStream {
 	wrapped := ai.NewChatStream(100)
 
 	go func() {
@@ -199,7 +206,8 @@ func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai
 					go func() {
 						ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
 						defer cancel()
-						b.saveStreamToSession(ctx, uid, req, string(contentBuilder), modelName, totalTokens)
+						// Pass newMessages explicitly
+						b.saveStreamToSession(ctx, uid, req.SessionID, newMessages, string(contentBuilder), modelName, totalTokens)
 					}()
 				}
 				// Adjust TPD quota with actual usage
@@ -234,17 +242,17 @@ func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai
 }
 
 // saveStreamToSession saves stream messages to session.
-func (b *chatBiz) saveStreamToSession(ctx context.Context, uid string, req *ai.ChatRequest, content string, modelName string, tokens int) {
-	// Save user message
-	for _, msg := range req.Messages {
+func (b *chatBiz) saveStreamToSession(ctx context.Context, uid string, sessionID string, newMessages []ai.Message, content string, modelName string, tokens int) {
+	// Save user message (iterate over newMessages)
+	for _, msg := range newMessages {
 		if msg.Role == ai.RoleUser {
 			if err := b.ds.AiMessage().Create(ctx, &model.AiMessageM{
-				SessionID: req.SessionID,
+				SessionID: sessionID,
 				Role:      msg.Role,
 				Content:   msg.Content,
-				Model:     req.Model,
+				Model:     modelName, // User message model matches used model
 			}); err != nil {
-				log.C(ctx).Errorw("Failed to save user message", "session_id", req.SessionID, "uid", uid, "err", err)
+				log.C(ctx).Errorw("Failed to save user message", "session_id", sessionID, "uid", uid, "err", err)
 			}
 		}
 	}
@@ -253,22 +261,23 @@ func (b *chatBiz) saveStreamToSession(ctx context.Context, uid string, req *ai.C
 	if content != "" {
 		usedModel := modelName
 		if usedModel == "" {
-			usedModel = req.Model
+			// Fallback if model name wasn't captured in stream
+			usedModel = "unknown"
 		}
 		if err := b.ds.AiMessage().Create(ctx, &model.AiMessageM{
-			SessionID: req.SessionID,
+			SessionID: sessionID,
 			Role:      ai.RoleAssistant,
 			Content:   content,
 			Tokens:    tokens,
 			Model:     usedModel,
 		}); err != nil {
-			log.C(ctx).Errorw("Failed to save assistant message", "session_id", req.SessionID, "uid", uid, "err", err)
+			log.C(ctx).Errorw("Failed to save assistant message", "session_id", sessionID, "uid", uid, "err", err)
 		}
 	}
 
 	// Update session stats
-	if err := b.ds.AiSession().IncrementMessageCount(ctx, req.SessionID, tokens); err != nil {
-		log.C(ctx).Errorw("Failed to update session stats", "session_id", req.SessionID, "uid", uid, "err", err)
+	if err := b.ds.AiSession().IncrementMessageCount(ctx, sessionID, tokens); err != nil {
+		log.C(ctx).Errorw("Failed to update session stats", "session_id", sessionID, "uid", uid, "err", err)
 	}
 }
 
@@ -380,17 +389,17 @@ func (b *chatBiz) ListModels(ctx context.Context) ([]ai.ModelInfo, error) {
 }
 
 // saveToSession saves request and response to session (background goroutine)
-func (b *chatBiz) saveToSession(ctx context.Context, uid string, req *ai.ChatRequest, resp *ai.ChatResponse) {
-	// Save user message
-	for _, msg := range req.Messages {
+func (b *chatBiz) saveToSession(ctx context.Context, uid string, sessionID string, newMessages []ai.Message, resp *ai.ChatResponse) {
+	// Save user message (only the new ones passed in)
+	for _, msg := range newMessages {
 		if msg.Role == ai.RoleUser {
 			if err := b.ds.AiMessage().Create(ctx, &model.AiMessageM{
-				SessionID: req.SessionID,
+				SessionID: sessionID,
 				Role:      msg.Role,
 				Content:   msg.Content,
-				Model:     req.Model,
+				Model:     resp.Model, // User message model matches response model
 			}); err != nil {
-				log.C(ctx).Errorw("Failed to save user message", "session_id", req.SessionID, "uid", uid, "err", err)
+				log.C(ctx).Errorw("Failed to save user message", "session_id", sessionID, "uid", uid, "err", err)
 			}
 		}
 	}
@@ -398,18 +407,18 @@ func (b *chatBiz) saveToSession(ctx context.Context, uid string, req *ai.ChatReq
 	// Save assistant response
 	if len(resp.Choices) > 0 {
 		if err := b.ds.AiMessage().Create(ctx, &model.AiMessageM{
-			SessionID: req.SessionID,
+			SessionID: sessionID,
 			Role:      ai.RoleAssistant,
 			Content:   resp.Choices[0].Message.Content,
 			Tokens:    resp.Usage.CompletionTokens,
 			Model:     resp.Model,
 		}); err != nil {
-			log.C(ctx).Errorw("Failed to save assistant message", "session_id", req.SessionID, "uid", uid, "err", err)
+			log.C(ctx).Errorw("Failed to save assistant message", "session_id", sessionID, "uid", uid, "err", err)
 		}
 	}
 
 	// Update session stats
-	if err := b.ds.AiSession().IncrementMessageCount(ctx, req.SessionID, resp.Usage.TotalTokens); err != nil {
-		log.C(ctx).Errorw("Failed to update session stats", "session_id", req.SessionID, "uid", uid, "err", err)
+	if err := b.ds.AiSession().IncrementMessageCount(ctx, sessionID, resp.Usage.TotalTokens); err != nil {
+		log.C(ctx).Errorw("Failed to update session stats", "session_id", sessionID, "uid", uid, "err", err)
 	}
 }
