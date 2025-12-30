@@ -404,7 +404,7 @@ var _ ai.Provider = (*Provider)(nil)
 func New(ctx context.Context, cfg *Config) (*Provider, error) {
 	genaiClient, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  cfg.APIKey,
-		Backend: genai.BackendGoogleAI,
+		Backend: genai.BackendGeminiAPI,
 	})
 	if err != nil {
 		return nil, err
