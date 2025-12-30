@@ -77,8 +77,9 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 	}
 	req.Messages = messages
 
-	// Check TPD quota before calling provider
-	if err := b.quota.CheckTPD(ctx, uid); err != nil {
+	// Reserve TPD quota atomically before calling provider
+	reservedTokens, err := b.quota.ReserveTPD(ctx, uid, req.MaxTokens)
+	if err != nil {
 		return nil, err
 	}
 
@@ -91,19 +92,28 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 	// Call provider
 	resp, err := provider.Chat(ctx, req)
 	if err != nil {
+		// Release reserved quota on provider error
+		if reservedTokens > 0 {
+			go func() {
+				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+				defer cancel()
+				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
+					log.C(ctx).Errorw("Failed to release reserved quota", "uid", uid, "reserved", reservedTokens, "err", err)
+				}
+			}()
+		}
+
 		return nil, errno.ErrAIProviderError.WithMessage("chat failed: %v", err)
 	}
 
-	// Update TPD quota after successful response (background)
-	if resp.Usage.TotalTokens > 0 {
-		go func() {
-			ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-			defer cancel()
-			if err := b.quota.UpdateTPD(ctx, uid, resp.Usage.TotalTokens); err != nil {
-				log.C(ctx).Errorw("Failed to update TPD quota", "uid", uid, "tokens", resp.Usage.TotalTokens, "err", err)
-			}
-		}()
-	}
+	// Adjust TPD quota with actual usage (background)
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+		defer cancel()
+		if err := b.quota.AdjustTPD(ctx, uid, resp.Usage.TotalTokens, reservedTokens); err != nil {
+			log.C(ctx).Errorw("Failed to adjust TPD quota", "uid", uid, "actual", resp.Usage.TotalTokens, "reserved", reservedTokens, "err", err)
+		}
+	}()
 
 	// Save to session if session ID provided (background with timeout)
 	if req.SessionID != "" {
@@ -139,8 +149,9 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 	}
 	req.Messages = messages
 
-	// Check TPD quota before calling provider
-	if err := b.quota.CheckTPD(ctx, uid); err != nil {
+	// Reserve TPD quota atomically before calling provider
+	reservedTokens, err := b.quota.ReserveTPD(ctx, uid, req.MaxTokens)
+	if err != nil {
 		return nil, err
 	}
 
@@ -153,15 +164,26 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 	// Call provider
 	stream, err := provider.ChatStream(ctx, req)
 	if err != nil {
+		// Release reserved quota on provider error
+		if reservedTokens > 0 {
+			go func() {
+				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+				defer cancel()
+				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
+					log.C(ctx).Errorw("Failed to release reserved quota", "uid", uid, "reserved", reservedTokens, "err", err)
+				}
+			}()
+		}
+
 		return nil, errno.ErrAIProviderError.WithMessage("stream failed: %v", err)
 	}
 
-	// Wrap stream to save messages after completion
-	return b.wrapStreamForSaving(stream, uid, req), nil
+	// Wrap stream to save messages and adjust quota after completion
+	return b.wrapStreamForSaving(stream, uid, req, reservedTokens), nil
 }
 
-// wrapStreamForSaving wraps a stream to save messages after completion.
-func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai.ChatRequest) *ai.ChatStream {
+// wrapStreamForSaving wraps a stream to save messages and adjust quota after completion.
+func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai.ChatRequest, reservedTokens int) *ai.ChatStream {
 	wrapped := ai.NewChatStream(100)
 
 	go func() {
@@ -180,16 +202,14 @@ func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai
 						b.saveStreamToSession(ctx, uid, req, string(contentBuilder), modelName, totalTokens)
 					}()
 				}
-				// Update TPD quota (estimate if not available)
-				if totalTokens > 0 {
-					go func() {
-						ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-						defer cancel()
-						if err := b.quota.UpdateTPD(ctx, uid, totalTokens); err != nil {
-							log.C(ctx).Errorw("Failed to update TPD quota", "uid", uid, "tokens", totalTokens, "err", err)
-						}
-					}()
-				}
+				// Adjust TPD quota with actual usage
+				go func() {
+					ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+					defer cancel()
+					if err := b.quota.AdjustTPD(ctx, uid, totalTokens, reservedTokens); err != nil {
+						log.C(ctx).Errorw("Failed to adjust TPD quota", "uid", uid, "actual", totalTokens, "reserved", reservedTokens, "err", err)
+					}
+				}()
 				wrapped.CloseWithError(err)
 
 				return

@@ -1,11 +1,12 @@
 // ABOUTME: Token quota management for AI chat.
-// ABOUTME: Provides TPD (Tokens Per Day) quota checking and tracking.
+// ABOUTME: Provides TPD (Tokens Per Day) quota checking and tracking with Redis atomic operations.
 
 package chat
 
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,6 +15,15 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
+)
+
+const (
+	// defaultEstimatedTokens is the default token estimate for quota reservation
+	// when MaxTokens is not specified in the request.
+	defaultEstimatedTokens = 4096
+
+	// quotaKeyTTL is the TTL for Redis quota keys (25 hours to cover full day + buffer)
+	quotaKeyTTL = 25 * time.Hour
 )
 
 // quotaChecker handles token quota validation and tracking.
@@ -53,6 +63,7 @@ func (q *quotaChecker) CheckTPD(ctx context.Context, uid string) error {
 }
 
 // UpdateTPD updates the user's token usage for today.
+// Deprecated: Use ReserveTPD and AdjustTPD for atomic quota management.
 func (q *quotaChecker) UpdateTPD(ctx context.Context, uid string, tokens int) error {
 	if !facade.Config.AI.Quota.Enabled || tokens <= 0 {
 		return nil
@@ -64,6 +75,87 @@ func (q *quotaChecker) UpdateTPD(ctx context.Context, uid string, tokens int) er
 	}
 
 	return q.ds.AiUserQuota().IncrementTokens(ctx, uid, tokens)
+}
+
+// ReserveTPD atomically reserves tokens before an API call.
+// Uses Redis INCRBY for atomic check-and-reserve to prevent race conditions.
+// Returns the number of tokens reserved.
+func (q *quotaChecker) ReserveTPD(ctx context.Context, uid string, estimatedTokens int) (int, error) {
+	if !facade.Config.AI.Quota.Enabled {
+		return 0, nil
+	}
+
+	// Use default estimate if not provided
+	if estimatedTokens <= 0 {
+		estimatedTokens = defaultEstimatedTokens
+	}
+
+	// Get user's TPD limit
+	_, tpd, err := q.getUserQuota(ctx, uid)
+	if err != nil {
+		return 0, err
+	}
+
+	// Build Redis key for today's usage
+	key := q.buildQuotaKey(uid)
+
+	// Atomically increment and get new total
+	newTotal, err := facade.Redis.IncrBy(ctx, key, int64(estimatedTokens)).Result()
+	if err != nil {
+		return 0, errno.ErrOperationFailed.WithMessage("failed to reserve quota: %v", err)
+	}
+
+	// Set TTL on first use (idempotent operation)
+	facade.Redis.Expire(ctx, key, quotaKeyTTL)
+
+	// Check if exceeded after reservation
+	if int(newTotal) > tpd {
+		// Rollback the reservation
+		facade.Redis.DecrBy(ctx, key, int64(estimatedTokens))
+
+		return 0, errno.ErrAIQuotaExceeded.WithMessage("daily token quota exceeded (%d/%d)", int(newTotal)-estimatedTokens, tpd)
+	}
+
+	return estimatedTokens, nil
+}
+
+// AdjustTPD adjusts the quota after API call completes with actual token usage.
+// It adjusts the difference between actual and reserved tokens in Redis,
+// and persists the actual usage to database.
+func (q *quotaChecker) AdjustTPD(ctx context.Context, uid string, actualTokens, reservedTokens int) error {
+	if !facade.Config.AI.Quota.Enabled {
+		return nil
+	}
+
+	// Adjust Redis count
+	diff := actualTokens - reservedTokens
+	if diff != 0 {
+		key := q.buildQuotaKey(uid)
+		if diff > 0 {
+			facade.Redis.IncrBy(ctx, key, int64(diff))
+		} else {
+			facade.Redis.DecrBy(ctx, key, int64(-diff))
+		}
+	}
+
+	// Persist to database for statistics (only actual tokens)
+	if actualTokens > 0 {
+		// Ensure user quota record exists
+		if _, _, err := q.getUserQuota(ctx, uid); err != nil {
+			return err
+		}
+
+		return q.ds.AiUserQuota().IncrementTokens(ctx, uid, actualTokens)
+	}
+
+	return nil
+}
+
+// buildQuotaKey builds the Redis key for daily quota tracking.
+func (q *quotaChecker) buildQuotaKey(uid string) string {
+	date := time.Now().Format("2006-01-02")
+
+	return fmt.Sprintf("%s:ai:tpd:%s:%s", facade.Config.App.Name, uid, date)
 }
 
 // getUserQuota retrieves user quota, creating default if not exists.

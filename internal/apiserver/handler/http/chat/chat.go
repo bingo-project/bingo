@@ -5,6 +5,7 @@ package chat
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"time"
@@ -100,7 +101,17 @@ func (h *ChatHandler) handleStream(c *gin.Context, uid string, req *ai.ChatReque
 	c.Stream(func(w io.Writer) bool {
 		chunk, err := stream.Recv()
 		if err != nil {
-			// Stream ended
+			if !errors.Is(err, ai.ErrStreamClosed) {
+				// Send error event before DONE for non-normal termination
+				errData := map[string]interface{}{
+					"error": map[string]string{
+						"message": "stream error occurred",
+						"type":    "stream_error",
+					},
+				}
+				data, _ := json.Marshal(errData)
+				fmt.Fprintf(w, "data: %s\n\n", data)
+			}
 			fmt.Fprintf(w, "data: [DONE]\n\n")
 
 			return false

@@ -19,7 +19,7 @@ type ChatCompletionRequest struct {
 // ChatMessage represents a single message.
 type ChatMessage struct {
 	Role    string `json:"role" binding:"required,oneof=system user assistant"`
-	Content string `json:"content" binding:"required"`
+	Content string `json:"content" binding:"required,max=32768"`
 }
 
 // ChatCompletionResponse represents a chat completion response (OpenAI-compatible).
