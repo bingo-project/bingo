@@ -233,32 +233,44 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 | `ai_role.go` | AiRoleM Model 定义 |
 | **internal/pkg/store/** | |
 | `ai_role.go` | AiRoleStore 接口和实现 |
-| **internal/apiserver/biz/role/** | |
-| `role.go` | RoleBiz 业务逻辑 |
-| **internal/apiserver/handler/http/role/** | |
-| `role.go` | Role HTTP Handler |
+| **internal/apiserver/biz/chat/** | |
+| `role.go` | AiRoleBiz 业务逻辑（放在 chat 子包中） |
+| **internal/apiserver/handler/http/chat/** | |
+| `role.go` | AI Role HTTP Handler |
 | **pkg/api/apiserver/v1/** | |
-| `role.go` | Role API DTO |
-| **internal/pkg/errno/** | |
-| `ai.go` (修改) | 新增角色相关错误码 |
+| `ai_role.go` | AI Role API DTO |
 | **数据库迁移** | |
-| `xxx_create_ai_role_table.go` | ai_role 表迁移 |
+| `20260101_create_ai_role_table.go` | ai_role 表迁移 |
 
 ### 修改文件
 
 | 文件 | 改动 |
 |------|------|
 | `internal/apiserver/biz/chat/chat.go` | 新增 `buildMessagesWithRole` 方法 |
-| `pkg/api/apiserver/v1/chat.go` | ChatRequest 新增 `role_id` 字段 |
-| `internal/apiserver/router/` | 新增角色相关路由 |
+| `internal/apiserver/biz/biz.go` | 新增 `AiRoles()` 方法 |
+| `pkg/api/apiserver/v1/chat.go` | ChatCompletionRequest 新增 `role_id` 字段 |
+| `internal/apiserver/router/chat.go` → `ai.go` | 重命名并新增角色相关路由 |
+| `internal/pkg/errno/ai.go` | 新增角色相关错误码 |
+| `internal/pkg/store/store.go` | 新增 `AiRoles()` 方法 |
 
 ### 新增错误码
 
 ```go
 // internal/pkg/errno/ai.go
 var (
-    ErrAIRoleNotFound    = NewError(20001, "AI role not found")
-    ErrAIRoleDisabled    = NewError(20002, "AI role is disabled")
+    // ErrAIRoleNotFound 角色不存在
+    ErrAIRoleNotFound = &errorsx.ErrorX{
+        Code:    http.StatusNotFound,
+        Reason:  "NotFound.AIRoleNotFound",
+        Message: "AI role not found.",
+    }
+
+    // ErrAIRoleDisabled 角色已禁用
+    ErrAIRoleDisabled = &errorsx.ErrorX{
+        Code:    http.StatusBadRequest,
+        Reason:  "InvalidArgument.AIRoleDisabled",
+        Message: "AI role is disabled.",
+    }
 )
 ```
 

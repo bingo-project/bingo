@@ -136,27 +136,32 @@ git commit -m "feat(ai): add AiRole model and store implementation"
 ### Task 2: Migration & Constants
 
 **Files:**
-- Create: `internal/pkg/database/migration/20251231120000_create_ai_role_table.go` (approx name)
+- Create: `internal/pkg/database/migration/20260101_create_ai_role_table.go`
 - Modify: `internal/pkg/errno/ai.go`
-- Modify: `pkg/api/apiserver/v1/chat.go` (Add RoleID to ChatRequest)
+- Modify: `pkg/api/apiserver/v1/chat.go` (Add RoleID to ChatCompletionRequest)
 
 **Step 1: Create Migration**
 
 Create the migration file using `gorm` auto-migrate or raw SQL as per project pattern. Use `AiRoleM` model if auto-migrate is used, or raw SQL from design doc.
 
-**Step 2: Add Constants & Errors**
+**Step 2: Add Error Codes**
 
-In `internal/pkg/errno/ai.go`, add error codes:
+In `internal/pkg/errno/ai.go`, add error codes (使用现有的 errorsx.ErrorX 格式):
 
 ```go
-// ABOUTME: AI module specific error codes.
-// ABOUTME: Defines errors for AI chat and role functionality.
-package errno
+	// ErrAIRoleNotFound 角色不存在
+	ErrAIRoleNotFound = &errorsx.ErrorX{
+		Code:    http.StatusNotFound,
+		Reason:  "NotFound.AIRoleNotFound",
+		Message: "AI role not found.",
+	}
 
-var (
-    ErrAIRoleNotFound = NewError(20101, "AI role not found")
-    ErrAIRoleDisabled = NewError(20102, "AI role is disabled")
-)
+	// ErrAIRoleDisabled 角色已禁用
+	ErrAIRoleDisabled = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AIRoleDisabled",
+		Message: "AI role is disabled.",
+	}
 ```
 
 **Note:** Status and Category constants are already defined in `model/ai_role.go` from Task 1. Do NOT redefine them elsewhere.
@@ -175,15 +180,15 @@ git commit -m "feat(ai): add database migration and error codes for AI roles"
 ### Task 3: Biz Layer (Role Management)
 
 **Files:**
-- Create: `internal/apiserver/biz/role/role.go`
+- Create: `internal/apiserver/biz/chat/role.go` (放在 chat 子包中)
 - Modify: `internal/apiserver/biz/biz.go`
-- Test: `internal/apiserver/biz/role/role_test.go`
+- Test: `internal/apiserver/biz/chat/role_test.go`
 
 **Step 1: Define Biz Interface**
 
-In `internal/apiserver/biz/role/role.go`, define `IBiz` subset or `RoleBiz` interface:
+In `internal/apiserver/biz/chat/role.go`, define `AiRoleBiz` interface:
 - `Create(ctx, req)`
-- `Get(ctx, id)`
+- `Get(ctx, roleID)` (使用 role_id 而非 id)
 - `List(ctx, req)`
 - `Update(ctx, id, req)`
 - `Delete(ctx, id)`
@@ -197,7 +202,7 @@ Implement `roleBiz` struct. Ensure it:
 ```go
 // ABOUTME: AI role business logic.
 // ABOUTME: Handles role CRUD operations and validations.
-package role
+package chat
 
 import (
     "context"
@@ -207,26 +212,26 @@ import (
     v1 "<module>/pkg/api/apiserver/v1"
 )
 
-type RoleBiz interface {
-    Create(ctx context.Context, req *v1.CreateRoleRequest) (*model.AiRoleM, error)
-    Get(ctx context.Context, id uint64) (*model.AiRoleM, error)
-    List(ctx context.Context, req *v1.ListRoleRequest) ([]*model.AiRoleM, int64, error)
-    Update(ctx context.Context, id uint64, req *v1.UpdateRoleRequest) (*model.AiRoleM, error)
-    Delete(ctx context.Context, id uint64) error
+type AiRoleBiz interface {
+    Create(ctx context.Context, req *v1.CreateAiRoleRequest) (*v1.AiRoleInfo, error)
+    Get(ctx context.Context, roleID string) (*v1.AiRoleInfo, error)
+    List(ctx context.Context, req *v1.ListAiRoleRequest) (*v1.ListAiRoleResponse, error)
+    Update(ctx context.Context, roleID string, req *v1.UpdateAiRoleRequest) (*v1.AiRoleInfo, error)
+    Delete(ctx context.Context, roleID string) error
 }
 
-type roleBiz struct {
+type aiRoleBiz struct {
     ds store.IStore
 }
 
-func New(ds store.IStore) RoleBiz {
-    return &roleBiz{ds: ds}
+func NewAiRole(ds store.IStore) AiRoleBiz {
+    return &aiRoleBiz{ds: ds}
 }
 
-func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*model.AiRoleM, error) {
+func (b *aiRoleBiz) Create(ctx context.Context, req *v1.CreateAiRoleRequest) (*v1.AiRoleInfo, error) {
     // 1. Business validation
     if exists, _ := b.ds.AiRoles().GetByRoleID(ctx, req.RoleID); exists != nil {
-        return nil, errno.ErrRoleAlreadyExist
+        return nil, errno.ErrAIRoleAlreadyExist
     }
 
     // 2. Create model
@@ -245,18 +250,18 @@ func (b *roleBiz) Create(ctx context.Context, req *v1.CreateRoleRequest) (*model
     }
 
     log.C(ctx).Infow("ai role created", "role_id", role.RoleID, "name", role.Name)
-    return role, nil
+    return b.toRoleInfo(role), nil
 }
 ```
 
 **Step 3: Register in IBiz**
 
-Modify `internal/apiserver/biz/biz.go` to include `AiRoles() role.RoleBiz`.
+Modify `internal/apiserver/biz/biz.go` to include `AiRoles() chat.AiRoleBiz`.
 
 **Step 4: Commit**
 
 ```bash
-git add internal/apiserver/biz/role/ internal/apiserver/biz/biz.go
+git add internal/apiserver/biz/chat/role.go internal/apiserver/biz/biz.go
 git commit -m "feat(ai): add AI role business logic"
 ```
 
@@ -330,25 +335,25 @@ git commit -m "feat(ai): integrate role presets into chat flow"
 ### Task 5: API & Handler Layer
 
 **Files:**
-- Create: `pkg/api/apiserver/v1/role.go`
-- Create: `internal/apiserver/handler/http/role/role.go`
-- Modify: `internal/apiserver/router/router.go`
+- Create: `pkg/api/apiserver/v1/ai_role.go`
+- Create: `internal/apiserver/handler/http/chat/role.go` (放在 chat handler 包中)
+- Rename: `internal/apiserver/router/chat.go` → `internal/apiserver/router/ai.go`
 
 **Step 1: Define DTOs**
 
-In `pkg/api/apiserver/v1/role.go`, define request/response structs for Role CRUD (Create, Update, List, Get).
+In `pkg/api/apiserver/v1/ai_role.go`, define request/response structs for AI Role CRUD (CreateAiRoleRequest, UpdateAiRoleRequest, ListAiRoleRequest, AiRoleInfo, ListAiRoleResponse).
 
 **Step 2: Implement HTTP Handler**
 
-Create `internal/apiserver/handler/http/role/role.go`:
+Create `internal/apiserver/handler/http/chat/role.go`:
 - Implement `Create`, `Get`, `List`, `Update`, `Delete` methods
 - **CRITICAL**: Each method MUST have Swagger comments
 - Use `core.Response()` for all responses
 
 ```go
-// ABOUTME: HTTP handlers for AI role management.
+// ABOUTME: HTTP handlers for AI role preset management.
 // ABOUTME: Provides CRUD endpoints for AI role preset resources.
-package role
+package chat
 
 import (
     "github.com/gin-gonic/gin"
@@ -361,7 +366,7 @@ type RoleHandler struct {
     biz biz.IBiz
 }
 
-func New(biz biz.IBiz) *RoleHandler {
+func NewRoleHandler(biz biz.IBiz) *RoleHandler {
     return &RoleHandler{biz: biz}
 }
 
@@ -371,13 +376,13 @@ func New(biz biz.IBiz) *RoleHandler {
 // @Tags       AI Role
 // @Accept     application/json
 // @Produce    json
-// @Param      request  body      v1.CreateRoleRequest  true  "Param"
-// @Success    200      {object}  v1.RoleInfo
+// @Param      request  body      v1.CreateAiRoleRequest  true  "Param"
+// @Success    200      {object}  v1.AiRoleInfo
 // @Failure    400      {object}  core.ErrResponse
 // @Failure    500      {object}  core.ErrResponse
 // @Router     /v1/ai/roles [POST].
 func (h *RoleHandler) Create(c *gin.Context) {
-    var req v1.CreateRoleRequest
+    var req v1.CreateAiRoleRequest
     if err := c.ShouldBindJSON(&req); err != nil {
         core.Response(c, nil, errno.ErrInvalidArgument.WithMessage(err.Error()))
         return
@@ -393,11 +398,11 @@ func (h *RoleHandler) Create(c *gin.Context) {
 // @Tags       AI Role
 // @Accept     application/json
 // @Produce    json
-// @Param      id   path      int  true  "Role ID"
-// @Success    200  {object}  v1.RoleInfo
-// @Failure    400  {object}  core.ErrResponse
-// @Failure    404  {object}  core.ErrResponse
-// @Router     /v1/ai/roles/{id} [GET].
+// @Param      role_id  path      string  true  "Role ID"
+// @Success    200      {object}  v1.AiRoleInfo
+// @Failure    400      {object}  core.ErrResponse
+// @Failure    404      {object}  core.ErrResponse
+// @Router     /v1/ai/roles/{role_id} [GET].
 func (h *RoleHandler) Get(c *gin.Context) {
     // ... implementation
 }
@@ -412,7 +417,7 @@ func (h *RoleHandler) Get(c *gin.Context) {
 // @Param      status    query     string  false  "Filter by status"
 // @Param      page      query     int     false  "Page number"
 // @Param      page_size query     int     false  "Page size"
-// @Success    200       {object}  v1.ListRoleResponse
+// @Success    200       {object}  v1.ListAiRoleResponse
 // @Failure    400       {object}  core.ErrResponse
 // @Router     /v1/ai/roles [GET].
 func (h *RoleHandler) List(c *gin.Context) {
@@ -422,17 +427,19 @@ func (h *RoleHandler) List(c *gin.Context) {
 // Similar for Update and Delete...
 ```
 
-**Step 3: Register Routes**
+**Step 3: Rename and Update Router**
 
-In `internal/apiserver/router/router.go`:
-- Register `/v1/ai/roles` group.
-- Add routes mapping to handler methods.
-- Apply auth middleware if needed (POST/PUT/DELETE usually admin only).
+Rename `internal/apiserver/router/chat.go` to `internal/apiserver/router/ai.go`:
+- Update ABOUTME comments
+- Register `/v1/ai/roles` group
+- Add routes mapping to handler methods
+- Apply auth middleware (POST/PUT/DELETE admin only, GET public)
 
 **Step 4: Commit**
 
 ```bash
-git add pkg/api/apiserver/v1/role.go internal/apiserver/handler/http/role/role.go internal/apiserver/router/router.go
+git add pkg/api/apiserver/v1/ai_role.go internal/apiserver/handler/http/chat/role.go
+git mv internal/apiserver/router/chat.go internal/apiserver/router/ai.go
 git commit -m "feat(ai): add AI role API handlers and routes"
 ```
 
