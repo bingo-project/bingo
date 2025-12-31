@@ -7,6 +7,7 @@ import "github.com/bingo-project/bingo/pkg/ai"
 
 // Config holds Claude provider configuration
 type Config struct {
+	Name   string // Provider name (e.g., "claude", "anthropic")
 	APIKey string
 	Models []ai.ModelInfo
 }

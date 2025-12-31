@@ -24,7 +24,8 @@ type Provider struct {
 var _ ai.Provider = (*Provider)(nil)
 
 // New creates a new Gemini provider
-func New(ctx context.Context, cfg *Config) (*Provider, error) {
+func New(cfg *Config) (*Provider, error) {
+	ctx := context.Background()
 	genaiClient, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  cfg.APIKey,
 		Backend: genai.BackendGeminiAPI,

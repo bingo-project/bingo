@@ -41,6 +41,9 @@ func New(cfg *Config) (*Provider, error) {
 
 // Name returns the provider name
 func (p *Provider) Name() string {
+	if p.config.Name != "" {
+		return p.config.Name
+	}
 	return "claude"
 }
 
