@@ -64,12 +64,14 @@ func (p *Provider) Chat(ctx context.Context, req *ai.ChatRequest) (*ai.ChatRespo
 		opts = append(opts, model.WithTemperature(float32(req.Temperature)))
 	}
 
-	resp, err := p.client.Generate(ctx, messages, opts...)
-	if err != nil {
-		return nil, err
-	}
+	return ai.Do(ctx, ai.DefaultRetryConfig, func(ctx context.Context) (*ai.ChatResponse, error) {
+		resp, err := p.client.Generate(ctx, messages, opts...)
+		if err != nil {
+			return nil, err
+		}
 
-	return ai.ConvertResponse(resp, req.Model), nil
+		return ai.ConvertResponse(resp, req.Model), nil
+	})
 }
 
 // ChatStream performs a streaming chat completion
@@ -100,39 +102,45 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 		var lastUsage *ai.Usage
 
 		for {
-			chunk, err := stream.Recv()
-			if err != nil {
-				if err == io.EOF {
-					chatStream.Send(&ai.StreamChunk{
-						ID:      id,
-						Object:  "chat.completion.chunk",
-						Created: time.Now().Unix(),
-						Model:   req.Model,
-						Choices: []ai.Choice{
-							{
-								Index:        0,
-								Delta:        &ai.Message{},
-								FinishReason: "stop",
-							},
-						},
-						Usage: lastUsage,
-					})
-				} else {
-					chatStream.CloseWithError(err)
-				}
-
+			select {
+			case <-ctx.Done():
+				chatStream.CloseWithError(ctx.Err())
 				return
-			}
+			default:
+				chunk, err := stream.Recv()
+				if err != nil {
+					if err == io.EOF {
+						chatStream.Send(&ai.StreamChunk{
+							ID:      id,
+							Object:  "chat.completion.chunk",
+							Created: time.Now().Unix(),
+							Model:   req.Model,
+							Choices: []ai.Choice{
+								{
+									Index:        0,
+									Delta:        &ai.Message{},
+									FinishReason: "stop",
+								},
+							},
+							Usage: lastUsage,
+						})
+					} else {
+						chatStream.CloseWithError(err)
+					}
 
-			if chunk.ResponseMeta != nil && chunk.ResponseMeta.Usage != nil {
-				lastUsage = &ai.Usage{
-					PromptTokens:     chunk.ResponseMeta.Usage.PromptTokens,
-					CompletionTokens: chunk.ResponseMeta.Usage.CompletionTokens,
-					TotalTokens:      chunk.ResponseMeta.Usage.TotalTokens,
+					return
 				}
-			}
 
-			chatStream.Send(ai.ConvertStreamChunk(chunk, req.Model, id))
+				if chunk.ResponseMeta != nil && chunk.ResponseMeta.Usage != nil {
+					lastUsage = &ai.Usage{
+						PromptTokens:     chunk.ResponseMeta.Usage.PromptTokens,
+						CompletionTokens: chunk.ResponseMeta.Usage.CompletionTokens,
+						TotalTokens:      chunk.ResponseMeta.Usage.TotalTokens,
+					}
+				}
+
+				chatStream.Send(ai.ConvertStreamChunk(chunk, req.Model, id))
+			}
 		}
 	}()
 
