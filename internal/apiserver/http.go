@@ -4,8 +4,6 @@
 package apiserver
 
 import (
-	"context"
-
 	"github.com/gin-gonic/gin"
 
 	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
@@ -70,7 +68,6 @@ func initAIRegistry() *ai.Registry {
 	}
 
 	registry := ai.NewRegistry()
-	ctx := context.Background()
 
 	for name, cred := range credentials {
 		var provider ai.Provider
@@ -119,7 +116,7 @@ func initAIRegistry() *ai.Registry {
 		case "gemini":
 			cfg := gemini.DefaultConfig()
 			cfg.APIKey = cred.APIKey
-			provider, err = gemini.New(ctx, cfg)
+			provider, err = gemini.New(cfg)
 
 		case "qwen":
 			cfg := qwen.DefaultConfig()
