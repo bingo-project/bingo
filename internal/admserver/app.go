@@ -7,7 +7,9 @@ import (
 	"github.com/bingo-project/component-base/version/verflag"
 	"github.com/spf13/cobra"
 
+	"github.com/bingo-project/bingo/internal/pkg/ai"
 	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 )
@@ -59,4 +61,14 @@ func initConfig() {
 
 	// Init store
 	_ = store.NewStore(bootstrap.InitDB())
+
+	// Init AI (optional, for future AI-assisted features)
+	creds := make(map[string]ai.Credential)
+	for name, cred := range facade.Config.AI.Credentials {
+		creds[name] = ai.Credential{
+			APIKey:  cred.APIKey,
+			BaseURL: cred.BaseURL,
+		}
+	}
+	_, _ = ai.InitAI(facade.Redis, store.S, creds)
 }
