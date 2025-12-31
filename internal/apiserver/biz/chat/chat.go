@@ -86,35 +86,47 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 		return nil, err
 	}
 
+	// Ensure quota is released if not consumed (defer pattern)
+	quotaConsumed := false
+	defer func() {
+		if !quotaConsumed && reservedTokens > 0 {
+			// Release in background to avoid blocking
+			go func() {
+				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+				defer cancel()
+				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
+					log.C(ctx).Errorw("Failed to release reserved quota",
+						"uid", uid, "reserved", reservedTokens, "err", err)
+				}
+			}()
+		}
+	}()
+
 	// Get provider for the model
 	provider, ok := b.registry.GetByModel(req.Model)
 	if !ok {
 		return nil, errno.ErrAIModelNotFound
+		// defer will automatically release quota
 	}
 
 	// Call provider
 	resp, err := provider.Chat(ctx, req)
 	if err != nil {
-		// Release reserved quota on provider error
-		if reservedTokens > 0 {
-			go func() {
-				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-				defer cancel()
-				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
-					log.C(ctx).Errorw("Failed to release reserved quota", "uid", uid, "reserved", reservedTokens, "err", err)
-				}
-			}()
-		}
-
 		return nil, errno.ErrAIProviderError.WithMessage("chat failed: %v", err)
+		// defer will automatically release quota
 	}
+
+	// Mark quota as consumed (will be adjusted with actual usage below)
+	quotaConsumed = true
 
 	// Adjust TPD quota with actual usage (background)
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
 		defer cancel()
 		if err := b.quota.AdjustTPD(ctx, uid, resp.Usage.TotalTokens, reservedTokens); err != nil {
-			log.C(ctx).Errorw("Failed to adjust TPD quota", "uid", uid, "actual", resp.Usage.TotalTokens, "reserved", reservedTokens, "err", err)
+			log.C(ctx).Errorw("Failed to adjust TPD quota",
+				"uid", uid, "actual", resp.Usage.TotalTokens,
+				"reserved", reservedTokens, "err", err)
 		}
 	}()
 
@@ -162,28 +174,38 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 		return nil, err
 	}
 
+	// Ensure quota is released if not consumed (defer pattern)
+	quotaConsumed := false
+	defer func() {
+		if !quotaConsumed && reservedTokens > 0 {
+			// Release in background to avoid blocking
+			go func() {
+				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
+				defer cancel()
+				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
+					log.C(ctx).Errorw("Failed to release reserved quota",
+						"uid", uid, "reserved", reservedTokens, "err", err)
+				}
+			}()
+		}
+	}()
+
 	// Get provider for the model
 	provider, ok := b.registry.GetByModel(req.Model)
 	if !ok {
 		return nil, errno.ErrAIModelNotFound
+		// defer will automatically release quota
 	}
 
 	// Call provider
 	stream, err := provider.ChatStream(ctx, req)
 	if err != nil {
-		// Release reserved quota on provider error
-		if reservedTokens > 0 {
-			go func() {
-				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-				defer cancel()
-				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
-					log.C(ctx).Errorw("Failed to release reserved quota", "uid", uid, "reserved", reservedTokens, "err", err)
-				}
-			}()
-		}
-
 		return nil, errno.ErrAIProviderError.WithMessage("stream failed: %v", err)
+		// defer will automatically release quota
 	}
+
+	// Mark quota as consumed (will be handled by wrapStreamForSaving)
+	quotaConsumed = true
 
 	// Wrap stream to save messages and adjust quota after completion
 	return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens), nil
