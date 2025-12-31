@@ -99,7 +99,7 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 		return nil, err
 	}
 
-	chatStream := ai.NewChatStream(100)
+	chatStream := ai.NewChatStream(ai.DefaultStreamBufferSize)
 
 	go func() {
 		defer chatStream.Close()

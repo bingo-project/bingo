@@ -6,6 +6,7 @@ package chat
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -213,10 +214,10 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 
 // wrapStreamForSaving wraps a stream to save messages and adjust quota after completion.
 func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai.ChatRequest, newMessages []ai.Message, reservedTokens int) *ai.ChatStream {
-	wrapped := ai.NewChatStream(100)
+	wrapped := ai.NewChatStream(ai.DefaultStreamBufferSize)
 
 	go func() {
-		var contentBuilder []byte
+		var contentBuilder strings.Builder
 		var modelName string
 		var totalTokens int
 
@@ -224,12 +225,13 @@ func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai
 			chunk, err := stream.Recv()
 			if err != nil {
 				// Stream ended, save accumulated content
-				if len(contentBuilder) > 0 && req.SessionID != "" {
+				if contentBuilder.Len() > 0 && req.SessionID != "" {
+					content := contentBuilder.String()
 					go func() {
 						ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
 						defer cancel()
 						// Pass newMessages explicitly
-						b.saveStreamToSession(ctx, uid, req.SessionID, newMessages, string(contentBuilder), modelName, totalTokens)
+						b.saveStreamToSession(ctx, uid, req.SessionID, newMessages, content, modelName, totalTokens)
 					}()
 				}
 				// Adjust TPD quota with actual usage
@@ -247,7 +249,7 @@ func (b *chatBiz) wrapStreamForSaving(stream *ai.ChatStream, uid string, req *ai
 
 			// Accumulate content
 			if len(chunk.Choices) > 0 && chunk.Choices[0].Delta != nil {
-				contentBuilder = append(contentBuilder, chunk.Choices[0].Delta.Content...)
+				contentBuilder.WriteString(chunk.Choices[0].Delta.Content)
 			}
 			if chunk.Model != "" {
 				modelName = chunk.Model

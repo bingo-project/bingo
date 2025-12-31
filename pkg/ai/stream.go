@@ -7,6 +7,11 @@ import (
 	"sync"
 )
 
+const (
+	// DefaultStreamBufferSize is the default buffer size for chat streams.
+	DefaultStreamBufferSize = 100
+)
+
 // ChatStream represents a streaming chat response
 type ChatStream struct {
 	chunks chan *StreamChunk
