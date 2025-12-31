@@ -8,20 +8,22 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/ai"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 // SessionBiz defines session management interface
 type SessionBiz interface {
-	Create(ctx context.Context, uid string, title string, model string) (*model.AiSessionM, error)
-	Get(ctx context.Context, uid string, sessionID string) (*model.AiSessionM, error)
-	List(ctx context.Context, uid string) ([]*model.AiSessionM, error)
-	Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*model.AiSessionM, error)
+	Create(ctx context.Context, uid string, title string, model string) (*v1.SessionInfo, error)
+	Get(ctx context.Context, uid string, sessionID string) (*v1.SessionInfo, error)
+	List(ctx context.Context, uid string) ([]v1.SessionInfo, error)
+	Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*v1.SessionInfo, error)
 	Delete(ctx context.Context, uid string, sessionID string) error
 	GetHistory(ctx context.Context, sessionID string, limit int) ([]ai.Message, error)
 }
@@ -36,7 +38,16 @@ func NewSession(ds store.IStore) *sessionBiz {
 	return &sessionBiz{ds: ds}
 }
 
-func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string) (*model.AiSessionM, error) {
+// toSessionInfo converts model.AiSessionM to v1.SessionInfo
+func toSessionInfo(m *model.AiSessionM) *v1.SessionInfo {
+	var info v1.SessionInfo
+	_ = copier.Copy(&info, m)
+	info.SessionID = m.SessionID
+
+	return &info
+}
+
+func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string) (*v1.SessionInfo, error) {
 	session := &model.AiSessionM{
 		SessionID: uuid.NewString(),
 		UID:       uid,
@@ -49,10 +60,10 @@ func (b *sessionBiz) Create(ctx context.Context, uid string, title string, model
 		return nil, errno.ErrDBWrite.WithMessage("create session: %v", err)
 	}
 
-	return session, nil
+	return toSessionInfo(session), nil
 }
 
-func (b *sessionBiz) Get(ctx context.Context, uid string, sessionID string) (*model.AiSessionM, error) {
+func (b *sessionBiz) Get(ctx context.Context, uid string, sessionID string) (*v1.SessionInfo, error) {
 	session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -67,22 +78,37 @@ func (b *sessionBiz) Get(ctx context.Context, uid string, sessionID string) (*mo
 		return nil, errno.ErrAISessionNotFound
 	}
 
-	return session, nil
+	return toSessionInfo(session), nil
 }
 
-func (b *sessionBiz) List(ctx context.Context, uid string) ([]*model.AiSessionM, error) {
+func (b *sessionBiz) List(ctx context.Context, uid string) ([]v1.SessionInfo, error) {
 	sessions, err := b.ds.AiSession().ListByUID(ctx, uid, model.AiSessionStatusActive)
 	if err != nil {
 		return nil, errno.ErrDBRead.WithMessage("list sessions: %v", err)
 	}
 
-	return sessions, nil
+	result := make([]v1.SessionInfo, len(sessions))
+	for i, s := range sessions {
+		result[i] = *toSessionInfo(s)
+	}
+
+	return result, nil
 }
 
-func (b *sessionBiz) Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*model.AiSessionM, error) {
-	session, err := b.Get(ctx, uid, sessionID)
+func (b *sessionBiz) Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*v1.SessionInfo, error) {
+	// Fetch model for update
+	session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
 	if err != nil {
-		return nil, err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errno.ErrAISessionNotFound
+		}
+
+		return nil, errno.ErrDBRead.WithMessage("get session: %v", err)
+	}
+
+	// Check ownership
+	if session.UID != uid {
+		return nil, errno.ErrAISessionNotFound
 	}
 
 	// Update fields if provided
@@ -102,13 +128,23 @@ func (b *sessionBiz) Update(ctx context.Context, uid string, sessionID string, t
 		}
 	}
 
-	return session, nil
+	return toSessionInfo(session), nil
 }
 
 func (b *sessionBiz) Delete(ctx context.Context, uid string, sessionID string) error {
-	session, err := b.Get(ctx, uid, sessionID)
+	// Fetch model for update
+	session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
 	if err != nil {
-		return err
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errno.ErrAISessionNotFound
+		}
+
+		return errno.ErrDBRead.WithMessage("get session: %v", err)
+	}
+
+	// Check ownership
+	if session.UID != uid {
+		return errno.ErrAISessionNotFound
 	}
 
 	session.Status = model.AiSessionStatusDeleted

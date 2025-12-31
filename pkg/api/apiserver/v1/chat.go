@@ -88,11 +88,6 @@ type SessionInfo struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-// ListSessionsResponse represents session list response.
-type ListSessionsResponse struct {
-	Data []SessionInfo `json:"data"`
-}
-
 // SessionHistoryResponse represents session history response.
 type SessionHistoryResponse struct {
 	SessionID string        `json:"session_id"`

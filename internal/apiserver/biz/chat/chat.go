@@ -17,6 +17,7 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/ai"
+	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
 const (
@@ -35,8 +36,8 @@ type ChatBiz interface {
 	// Sessions returns the session management interface
 	Sessions() SessionBiz
 
-	// ListModels returns available models
-	ListModels(ctx context.Context) ([]ai.ModelInfo, error)
+	// ListModels returns available models (OpenAI-compatible format)
+	ListModels(ctx context.Context) (*v1.ListModelsResponse, error)
 }
 
 type chatBiz struct {
@@ -426,8 +427,26 @@ func (b *chatBiz) loadAndMergeHistory(ctx context.Context, sessionID string, new
 	return messages, nil
 }
 
-func (b *chatBiz) ListModels(ctx context.Context) ([]ai.ModelInfo, error) {
-	return b.registry.ListModels(), nil
+func (b *chatBiz) ListModels(ctx context.Context) (*v1.ListModelsResponse, error) {
+	models := b.registry.ListModels()
+
+	data := make([]v1.ModelInfo, len(models))
+	for i, m := range models {
+		data[i] = v1.ModelInfo{
+			ID:          m.ID,
+			Object:      "model",
+			Created:     time.Now().Unix(),
+			OwnedBy:     m.Provider,
+			MaxTokens:   m.MaxTokens,
+			InputPrice:  m.InputPrice,
+			OutputPrice: m.OutputPrice,
+		}
+	}
+
+	return &v1.ListModelsResponse{
+		Object: "list",
+		Data:   data,
+	}, nil
 }
 
 // saveToSession saves request and response to session (background goroutine)

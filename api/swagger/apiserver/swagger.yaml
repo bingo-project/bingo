@@ -113,6 +113,7 @@ definitions:
   v1.ChatMessage:
     properties:
       content:
+        maxLength: 32768
         type: string
       role:
         enum:
@@ -176,13 +177,6 @@ definitions:
         type: array
       total:
         type: integer
-    type: object
-  v1.ListSessionsResponse:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/v1.SessionInfo'
-        type: array
     type: object
   v1.LoginByAddressRequest:
     properties:
@@ -480,6 +474,13 @@ definitions:
         minLength: 11
         type: string
     type: object
+  v1.UpdateSessionRequest:
+    properties:
+      model:
+        type: string
+      title:
+        type: string
+    type: object
   v1.UserInfo:
     properties:
       age:
@@ -581,7 +582,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.ListSessionsResponse'
+            items:
+              $ref: '#/definitions/v1.SessionInfo'
+            type: array
         "500":
           description: Internal Server Error
           schema:
@@ -676,6 +679,45 @@ paths:
       security:
       - Bearer: []
       summary: Get chat session
+      tags:
+      - AI
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Session ID
+        in: path
+        name: session_id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateSessionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.SessionInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update chat session
       tags:
       - AI
   /v1/ai/sessions/{session_id}/history:

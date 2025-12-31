@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
 
 	"github.com/bingo-project/bingo/internal/apiserver/biz"
 	"github.com/bingo-project/bingo/internal/pkg/core"
@@ -49,17 +48,7 @@ func (h *SessionHandler) CreateSession(c *gin.Context) {
 
 	uid := contextx.UserID(c)
 	session, err := h.b.Chat().Sessions().Create(c, uid, req.Title, req.Model)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	var resp v1.SessionInfo
-	_ = copier.Copy(&resp, session)
-	resp.SessionID = session.SessionID
-
-	core.Response(c, resp, nil)
+	core.Response(c, session, err)
 }
 
 // ListSessions
@@ -68,25 +57,13 @@ func (h *SessionHandler) CreateSession(c *gin.Context) {
 // @Tags       AI
 // @Accept     application/json
 // @Produce    json
-// @Success    200  {object}  v1.ListSessionsResponse
+// @Success    200  {object}  []v1.SessionInfo
 // @Failure    500  {object}  core.ErrResponse
 // @Router     /v1/ai/sessions [GET].
 func (h *SessionHandler) ListSessions(c *gin.Context) {
 	uid := contextx.UserID(c)
 	sessions, err := h.b.Chat().Sessions().List(c, uid)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	data := make([]v1.SessionInfo, len(sessions))
-	for i, s := range sessions {
-		_ = copier.Copy(&data[i], s)
-		data[i].SessionID = s.SessionID
-	}
-
-	core.Response(c, v1.ListSessionsResponse{Data: data}, nil)
+	core.Response(c, sessions, err)
 }
 
 // GetSession
@@ -105,17 +82,7 @@ func (h *SessionHandler) GetSession(c *gin.Context) {
 	sessionID := c.Param("session_id")
 
 	session, err := h.b.Chat().Sessions().Get(c, uid, sessionID)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	var resp v1.SessionInfo
-	_ = copier.Copy(&resp, session)
-	resp.SessionID = session.SessionID
-
-	core.Response(c, resp, nil)
+	core.Response(c, session, err)
 }
 
 // UpdateSession
@@ -143,17 +110,7 @@ func (h *SessionHandler) UpdateSession(c *gin.Context) {
 	sessionID := c.Param("session_id")
 
 	session, err := h.b.Chat().Sessions().Update(c, uid, sessionID, req.Title, req.Model)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	var resp v1.SessionInfo
-	_ = copier.Copy(&resp, session)
-	resp.SessionID = session.SessionID
-
-	core.Response(c, resp, nil)
+	core.Response(c, session, err)
 }
 
 // DeleteSession

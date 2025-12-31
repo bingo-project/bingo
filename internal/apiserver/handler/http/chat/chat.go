@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -134,30 +133,8 @@ func (h *ChatHandler) handleStream(c *gin.Context, uid string, req *ai.ChatReque
 // @Failure    500  {object}  core.ErrResponse
 // @Router     /v1/models [GET].
 func (h *ChatHandler) ListModels(c *gin.Context) {
-	models, err := h.b.Chat().ListModels(c)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	data := make([]v1.ModelInfo, len(models))
-	for i, m := range models {
-		data[i] = v1.ModelInfo{
-			ID:          m.ID,
-			Object:      "model",
-			Created:     time.Now().Unix(),
-			OwnedBy:     m.Provider,
-			MaxTokens:   m.MaxTokens,
-			InputPrice:  m.InputPrice,
-			OutputPrice: m.OutputPrice,
-		}
-	}
-
-	core.Response(c, v1.ListModelsResponse{
-		Object: "list",
-		Data:   data,
-	}, nil)
+	resp, err := h.b.Chat().ListModels(c)
+	core.Response(c, resp, err)
 }
 
 // convertToDTO converts ai.ChatResponse to v1.ChatCompletionResponse
