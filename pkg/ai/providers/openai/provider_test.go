@@ -61,7 +61,7 @@ func TestConvertMessages(t *testing.T) {
 		{Role: ai.RoleAssistant, Content: "Hi there"},
 	}
 
-	result := convertMessages(msgs)
+	result := ai.ConvertMessages(msgs)
 
 	assert.Len(t, result, 3)
 	assert.Equal(t, "You are helpful", result[0].Content)

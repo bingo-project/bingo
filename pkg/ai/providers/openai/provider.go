@@ -5,14 +5,11 @@ package openai
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"io"
 	"time"
 
 	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
-	"github.com/cloudwego/eino/schema"
 
 	"github.com/bingo-project/bingo/pkg/ai"
 )
@@ -58,7 +55,7 @@ func (p *Provider) Models() []ai.ModelInfo {
 
 // Chat performs a non-streaming chat completion
 func (p *Provider) Chat(ctx context.Context, req *ai.ChatRequest) (*ai.ChatResponse, error) {
-	messages := convertMessages(req.Messages)
+	messages := ai.ConvertMessages(req.Messages)
 
 	opts := []model.Option{
 		model.WithModel(req.Model),
@@ -75,12 +72,12 @@ func (p *Provider) Chat(ctx context.Context, req *ai.ChatRequest) (*ai.ChatRespo
 		return nil, err
 	}
 
-	return convertResponse(resp, req.Model), nil
+	return ai.ConvertResponse(resp, req.Model), nil
 }
 
 // ChatStream performs a streaming chat completion
 func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.ChatStream, error) {
-	messages := convertMessages(req.Messages)
+	messages := ai.ConvertMessages(req.Messages)
 
 	opts := []model.Option{
 		model.WithModel(req.Model),
@@ -103,7 +100,7 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 	go func() {
 		defer chatStream.Close()
 
-		id := generateID()
+		id := ai.GenerateID()
 		var lastUsage *ai.Usage
 
 		for {
@@ -141,103 +138,9 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 				}
 			}
 
-			chatStream.Send(convertStreamChunk(chunk, req.Model, id))
+			chatStream.Send(ai.ConvertStreamChunk(chunk, req.Model, id))
 		}
 	}()
 
 	return chatStream, nil
-}
-
-// convertMessages converts ai.Message to schema.Message
-func convertMessages(msgs []ai.Message) []*schema.Message {
-	result := make([]*schema.Message, len(msgs))
-	for i, m := range msgs {
-		role := schema.User
-		switch m.Role {
-		case ai.RoleSystem:
-			role = schema.System
-		case ai.RoleAssistant:
-			role = schema.Assistant
-		}
-		result[i] = &schema.Message{
-			Role:    role,
-			Content: m.Content,
-		}
-	}
-
-	return result
-}
-
-// convertResponse converts Eino response to ai.ChatResponse
-func convertResponse(resp *schema.Message, modelName string) *ai.ChatResponse {
-	usage := extractUsage(resp)
-
-	return &ai.ChatResponse{
-		ID:      generateID(),
-		Object:  "chat.completion",
-		Created: time.Now().Unix(),
-		Model:   modelName,
-		Choices: []ai.Choice{
-			{
-				Index: 0,
-				Message: ai.Message{
-					Role:    ai.RoleAssistant,
-					Content: resp.Content,
-				},
-				FinishReason: "stop",
-			},
-		},
-		Usage: usage,
-	}
-}
-
-// convertStreamChunk converts Eino stream message to ai.StreamChunk
-func convertStreamChunk(msg *schema.Message, modelName string, id string) *ai.StreamChunk {
-	chunk := &ai.StreamChunk{
-		ID:      id,
-		Object:  "chat.completion.chunk",
-		Created: time.Now().Unix(),
-		Model:   modelName,
-		Choices: []ai.Choice{
-			{
-				Index: 0,
-				Delta: &ai.Message{
-					Role:    ai.RoleAssistant,
-					Content: msg.Content,
-				},
-			},
-		},
-	}
-
-	// Extract usage if present (typically in the last chunk)
-	if msg.ResponseMeta != nil && msg.ResponseMeta.Usage != nil {
-		chunk.Usage = &ai.Usage{
-			PromptTokens:     msg.ResponseMeta.Usage.PromptTokens,
-			CompletionTokens: msg.ResponseMeta.Usage.CompletionTokens,
-			TotalTokens:      msg.ResponseMeta.Usage.TotalTokens,
-		}
-	}
-
-	return chunk
-}
-
-// generateID generates a unique ID for responses
-func generateID() string {
-	b := make([]byte, 12)
-	_, _ = rand.Read(b)
-
-	return "chatcmpl-" + hex.EncodeToString(b)
-}
-
-// extractUsage extracts token usage from Eino message
-func extractUsage(msg *schema.Message) ai.Usage {
-	if msg.ResponseMeta != nil && msg.ResponseMeta.Usage != nil {
-		return ai.Usage{
-			PromptTokens:     msg.ResponseMeta.Usage.PromptTokens,
-			CompletionTokens: msg.ResponseMeta.Usage.CompletionTokens,
-			TotalTokens:      msg.ResponseMeta.Usage.TotalTokens,
-		}
-	}
-
-	return ai.Usage{}
 }
