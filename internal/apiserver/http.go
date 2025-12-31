@@ -49,7 +49,7 @@ func initGinEngine() *gin.Engine {
 		}
 		v1.Use(httpmw.AILimiter(rpm))
 
-		router.MapChatRouters(v1, registry)
+		router.MapAiRouters(v1, registry)
 	}
 
 	return g

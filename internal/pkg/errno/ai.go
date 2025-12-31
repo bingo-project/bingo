@@ -72,4 +72,18 @@ var (
 		Reason:  "InvalidArgument.AIEmptyMessages",
 		Message: "Messages cannot be empty.",
 	}
+
+	// ErrAIRoleNotFound 角色不存在
+	ErrAIRoleNotFound = &errorsx.ErrorX{
+		Code:    http.StatusNotFound,
+		Reason:  "NotFound.AIRoleNotFound",
+		Message: "AI role not found.",
+	}
+
+	// ErrAIRoleDisabled 角色已禁用
+	ErrAIRoleDisabled = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AIRoleDisabled",
+		Message: "AI role is disabled.",
+	}
 )

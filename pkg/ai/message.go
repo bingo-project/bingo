@@ -25,6 +25,7 @@ type ChatRequest struct {
 	Stream      bool      `json:"stream,omitempty"`
 	// Extension fields
 	SessionID string `json:"session_id,omitempty"`
+	RoleID    string `json:"role_id,omitempty"`
 	UID       string `json:"-"` // Internal use only
 }
 

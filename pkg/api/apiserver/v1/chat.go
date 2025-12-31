@@ -14,6 +14,7 @@ type ChatCompletionRequest struct {
 	Stream      bool          `json:"stream,omitempty" example:"false"`
 	// Extension fields
 	SessionID string `json:"session_id,omitempty"`
+	RoleID    string `json:"role_id,omitempty"`
 }
 
 // ChatMessage represents a single message.

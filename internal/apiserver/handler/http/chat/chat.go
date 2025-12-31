@@ -59,6 +59,7 @@ func (h *ChatHandler) ChatCompletions(c *gin.Context) {
 		Temperature: req.Temperature,
 		Stream:      req.Stream,
 		SessionID:   req.SessionID,
+		RoleID:      req.RoleID,
 		UID:         uid,
 	}
 	for _, msg := range req.Messages {

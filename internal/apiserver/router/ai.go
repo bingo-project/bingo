@@ -1,5 +1,5 @@
-// ABOUTME: Chat router registration for AI endpoints.
-// ABOUTME: Registers chat completions, models, and session routes.
+// ABOUTME: AI router registration for chat, session, and role endpoints.
+// ABOUTME: Registers chat completions, models, sessions, and role preset routes.
 
 package router
 
@@ -11,10 +11,11 @@ import (
 	"github.com/bingo-project/bingo/pkg/ai"
 )
 
-// MapChatRouters registers AI chat routes
-func MapChatRouters(g *gin.RouterGroup, registry *ai.Registry) {
+// MapAiRouters registers AI-related routes (chat, sessions, roles)
+func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
 	chatHandler := chathandler.NewChatHandler(store.S, registry)
 	sessionHandler := chathandler.NewSessionHandler(store.S, registry)
+	roleHandler := chathandler.NewRoleHandler(store.S, registry)
 
 	// OpenAI-compatible endpoints
 	g.POST("/chat/completions", chatHandler.ChatCompletions)
@@ -29,5 +30,15 @@ func MapChatRouters(g *gin.RouterGroup, registry *ai.Registry) {
 		sessions.PUT("/:session_id", sessionHandler.UpdateSession)
 		sessions.DELETE("/:session_id", sessionHandler.DeleteSession)
 		sessions.GET("/:session_id/history", sessionHandler.GetSessionHistory)
+	}
+
+	// Role presets (public GET, admin-only mutations)
+	roles := g.Group("/ai/roles")
+	{
+		roles.GET("", roleHandler.List)
+		roles.GET("/:role_id", roleHandler.Get)
+		roles.POST("", roleHandler.Create)
+		roles.PUT("/:role_id", roleHandler.Update)
+		roles.DELETE("/:role_id", roleHandler.Delete)
 	}
 }

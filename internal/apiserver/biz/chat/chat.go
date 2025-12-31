@@ -69,6 +69,11 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 		}
 	}
 
+	// Apply role preset if specified
+	if err := b.buildMessagesWithRole(ctx, req); err != nil {
+		return nil, err
+	}
+
 	// Resolve model (request > session > default)
 	req.Model = b.resolveModel(ctx, req.Model, req.SessionID)
 
@@ -155,6 +160,11 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
 			return nil, err
 		}
+	}
+
+	// Apply role preset if specified
+	if err := b.buildMessagesWithRole(ctx, req); err != nil {
+		return nil, err
 	}
 
 	// Resolve model (request > session > default)
@@ -482,4 +492,58 @@ func (b *chatBiz) saveToSession(ctx context.Context, uid string, sessionID strin
 	if err := b.ds.AiSession().IncrementMessageCount(ctx, sessionID, resp.Usage.TotalTokens); err != nil {
 		log.C(ctx).Errorw("Failed to update session stats", "session_id", sessionID, "uid", uid, "err", err)
 	}
+}
+
+// buildMessagesWithRole injects system prompt from role preset if RoleID is provided.
+func (b *chatBiz) buildMessagesWithRole(ctx context.Context, req *ai.ChatRequest) error {
+	if req.RoleID == "" {
+		return nil
+	}
+
+	// Get role details
+	role, err := b.ds.AiRole().GetByRoleID(ctx, req.RoleID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errno.ErrAIRoleNotFound
+		}
+
+		return errno.ErrDBRead.WithMessage("get ai role: %v", err)
+	}
+
+	if role.Status == model.AiRoleStatusDisabled {
+		return errno.ErrAIRoleDisabled
+	}
+
+	// Use role model if request model is not specified or default
+	if req.Model == "" || req.Model == facade.Config.AI.DefaultModel {
+		if role.Model != "" {
+			req.Model = role.Model
+		}
+	}
+
+	// Apply temperature/max_tokens from role if not custom set
+	if req.Temperature == 0 && role.Temperature > 0 {
+		req.Temperature = role.Temperature
+	}
+	if req.MaxTokens == 0 && role.MaxTokens > 0 {
+		req.MaxTokens = role.MaxTokens
+	}
+
+	// Inject system prompt at the beginning
+	// Check if already has system prompt to avoid duplication
+	hasSystem := false
+	if len(req.Messages) > 0 && req.Messages[0].Role == ai.RoleSystem {
+		hasSystem = true
+	}
+
+	if !hasSystem && role.SystemPrompt != "" {
+		systemMsg := ai.Message{
+			Role:    ai.RoleSystem,
+			Content: role.SystemPrompt,
+		}
+		// Prepend system message
+		req.Messages = append([]ai.Message{systemMsg}, req.Messages...)
+	}
+
+	return nil
 }

@@ -162,3 +162,8 @@ func (m *Store) AiSession() store.AiSessionStore {
 func (m *Store) AiMessage() store.AiMessageStore {
 	return nil
 }
+
+// AiRole returns the AI role preset store.
+func (m *Store) AiRole() store.AiRoleStore {
+	return nil
+}
