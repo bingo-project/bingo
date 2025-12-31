@@ -383,8 +383,25 @@ func (b *chatBiz) loadAndMergeHistory(ctx context.Context, sessionID string, new
 		})
 	}
 
-	// Append new messages
-	messages = append(messages, newMessages...)
+	// FIX: When we have history, only append the NEW user message(s)
+	// Find the last user message in newMessages
+	if len(newMessages) > 0 {
+		lastUserMsgIdx := -1
+		for i := len(newMessages) - 1; i >= 0; i-- {
+			if newMessages[i].Role == ai.RoleUser {
+				lastUserMsgIdx = i
+				break
+			}
+		}
+
+		if lastUserMsgIdx >= 0 {
+			// Only include messages from the last user message onwards
+			messages = append(messages, newMessages[lastUserMsgIdx:]...)
+		} else {
+			// No user message in newMessages, append as-is (edge case)
+			messages = append(messages, newMessages...)
+		}
+	}
 
 	// Apply sliding window if configured
 	contextWindow := facade.Config.AI.Session.ContextWindow
