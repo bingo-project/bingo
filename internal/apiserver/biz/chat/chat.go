@@ -274,7 +274,7 @@ func (b *chatBiz) saveStreamToSession(ctx context.Context, uid string, sessionID
 				SessionID: sessionID,
 				Role:      msg.Role,
 				Content:   msg.Content,
-				Model:     modelName, // User message model matches used model
+				Model:     "", // User messages don't need a model
 			}); err != nil {
 				log.C(ctx).Errorw("Failed to save user message", "session_id", sessionID, "uid", uid, "err", err)
 			}
@@ -438,7 +438,7 @@ func (b *chatBiz) saveToSession(ctx context.Context, uid string, sessionID strin
 				SessionID: sessionID,
 				Role:      msg.Role,
 				Content:   msg.Content,
-				Model:     resp.Model, // User message model matches response model
+				Model:     "", // User messages don't need a model
 			}); err != nil {
 				log.C(ctx).Errorw("Failed to save user message", "session_id", sessionID, "uid", uid, "err", err)
 			}
