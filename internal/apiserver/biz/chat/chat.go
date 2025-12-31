@@ -392,6 +392,7 @@ func (b *chatBiz) loadAndMergeHistory(ctx context.Context, sessionID string, new
 		for i := len(newMessages) - 1; i >= 0; i-- {
 			if newMessages[i].Role == ai.RoleUser {
 				lastUserMsgIdx = i
+
 				break
 			}
 		}

@@ -36,6 +36,7 @@ func TestProvider_Models(t *testing.T) {
 	for _, m := range models {
 		if m.ID == "gemini-2.0-flash-exp" {
 			found = true
+
 			break
 		}
 	}

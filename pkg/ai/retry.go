@@ -73,18 +73,18 @@ func isRetriable(err error) bool {
 	// Network errors or specific HTTP status codes
 	errMsg := strings.ToLower(err.Error())
 	retriableMessages := []string{
-		"429",                      // Too Many Requests
-		"503",                      // Service Unavailable
-		"502",                      // Bad Gateway
-		"504",                      // Gateway Timeout
-		"timeout",                  // General timeout
-		"deadline exceeded",         // Context deadline exceeded
-		"connection refused",       // Network issue
-		"connection reset",         // Network issue
-		"request_timeout_error",    // Specific provider error
-		"rate_limit_reached",       // Specific provider error
-		"insufficient_quota",       // Sometimes transient if credit is added
-		"overloaded",               // Specific provider error (e.g. Claude)
+		"429",                   // Too Many Requests
+		"503",                   // Service Unavailable
+		"502",                   // Bad Gateway
+		"504",                   // Gateway Timeout
+		"timeout",               // General timeout
+		"deadline exceeded",     // Context deadline exceeded
+		"connection refused",    // Network issue
+		"connection reset",      // Network issue
+		"request_timeout_error", // Specific provider error
+		"rate_limit_reached",    // Specific provider error
+		"insufficient_quota",    // Sometimes transient if credit is added
+		"overloaded",            // Specific provider error (e.g. Claude)
 	}
 
 	for _, m := range retriableMessages {

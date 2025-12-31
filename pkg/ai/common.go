@@ -15,6 +15,7 @@ import (
 func GenerateID() string {
 	b := make([]byte, 12)
 	_, _ = rand.Read(b)
+
 	return "chatcmpl-" + hex.EncodeToString(b)
 }
 
@@ -34,6 +35,7 @@ func ConvertMessages(msgs []Message) []*schema.Message {
 			Content: m.Content,
 		}
 	}
+
 	return result
 }
 
@@ -99,5 +101,6 @@ func ExtractUsage(msg *schema.Message) Usage {
 			TotalTokens:      msg.ResponseMeta.Usage.TotalTokens,
 		}
 	}
+
 	return Usage{}
 }

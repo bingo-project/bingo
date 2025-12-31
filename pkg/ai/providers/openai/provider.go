@@ -109,6 +109,7 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 			select {
 			case <-ctx.Done():
 				chatStream.CloseWithError(ctx.Err())
+
 				return
 			default:
 				chunk, err := stream.Recv()

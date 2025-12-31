@@ -46,6 +46,7 @@ func TestProvider_Models(t *testing.T) {
 	for _, m := range models {
 		if m.ID == "claude-sonnet-4-20250514" {
 			found = true
+
 			break
 		}
 	}

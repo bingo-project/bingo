@@ -29,6 +29,7 @@ func TestDo_Retry(t *testing.T) {
 			if attempts < 2 {
 				return nil, errRetriable
 			}
+
 			return &ChatResponse{ID: "test-id"}, nil
 		})
 
@@ -44,6 +45,7 @@ func TestDo_Retry(t *testing.T) {
 
 		resp, err := Do(context.Background(), config, func(ctx context.Context) (*ChatResponse, error) {
 			attempts++
+
 			return nil, errRetriable
 		})
 
@@ -59,6 +61,7 @@ func TestDo_Retry(t *testing.T) {
 
 		resp, err := Do(context.Background(), config, func(ctx context.Context) (*ChatResponse, error) {
 			attempts++
+
 			return nil, errPermanent
 		})
 

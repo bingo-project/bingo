@@ -44,6 +44,7 @@ func (p *Provider) Name() string {
 	if p.config.Name != "" {
 		return p.config.Name
 	}
+
 	return "claude"
 }
 
@@ -107,6 +108,7 @@ func (p *Provider) ChatStream(ctx context.Context, req *ai.ChatRequest) (*ai.Cha
 			select {
 			case <-ctx.Done():
 				chatStream.CloseWithError(ctx.Err())
+
 				return
 			default:
 				chunk, err := stream.Recv()
