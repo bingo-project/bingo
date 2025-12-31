@@ -10,9 +10,9 @@ type AiProviderM struct {
 	Name        string `gorm:"column:name;type:varchar(32);uniqueIndex:uk_name;not null" json:"name"`
 	DisplayName string `gorm:"column:display_name;type:varchar(64)" json:"displayName"`
 	Status      string `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
-	Models      string `gorm:"column:models;type:json" json:"models"`
-	IsDefault   bool   `gorm:"column:is_default;type:tinyint(1);not null;default:0" json:"isDefault"`
-	Sort        int    `gorm:"column:sort;type:int;not null;default:0" json:"sort"`
+	// Models field removed - models are now stored in ai_model table
+	IsDefault bool `gorm:"column:is_default;type:tinyint(1);not null;default:0" json:"isDefault"`
+	Sort      int  `gorm:"column:sort;type:int;not null;default:0" json:"sort"`
 
 	CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)" json:"updatedAt"`

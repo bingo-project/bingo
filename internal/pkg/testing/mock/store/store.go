@@ -6,9 +6,10 @@ package store
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
-	"gorm.io/gorm"
 )
 
 // Store implements store.IStore for testing.

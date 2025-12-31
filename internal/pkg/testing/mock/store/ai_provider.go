@@ -6,32 +6,33 @@ package store
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
-	"gorm.io/gorm"
 )
 
 // AiProviderStore implements store.AiProviderStore for testing.
 type AiProviderStore struct {
 	// Configurable results for testing
-	ListActiveResult     []*model.AiProviderM
-	ListActiveErr        error
-	ListActiveCalled     bool
+	ListActiveResult []*model.AiProviderM
+	ListActiveErr    error
+	ListActiveCalled bool
 
 	GetByNameResult  *model.AiProviderM
 	GetByNameErr     error
 	GetByNameCalled  bool
 	GetByNameArgName string
 
-	GetDefaultResult  *model.AiProviderM
-	GetDefaultErr     error
-	GetDefaultCalled  bool
+	GetDefaultResult *model.AiProviderM
+	GetDefaultErr    error
+	GetDefaultCalled bool
 
-	FirstOrCreateResult  *model.AiProviderM
-	FirstOrCreateErr     error
-	FirstOrCreateCalled  bool
-	FirstOrCreateArg     *model.AiProviderM
+	FirstOrCreateResult *model.AiProviderM
+	FirstOrCreateErr    error
+	FirstOrCreateCalled bool
+	FirstOrCreateArg    *model.AiProviderM
 
 	// In-memory storage
 	providers map[uint]*model.AiProviderM
@@ -55,6 +56,7 @@ func (m *AiProviderStore) Create(ctx context.Context, obj *model.AiProviderM) er
 		m.nextID++
 	}
 	m.providers[obj.ID] = obj
+
 	return nil
 }
 
@@ -64,6 +66,7 @@ func (m *AiProviderStore) Update(ctx context.Context, obj *model.AiProviderM, fi
 		return gorm.ErrRecordNotFound
 	}
 	m.providers[obj.ID] = obj
+
 	return nil
 }
 
@@ -72,6 +75,7 @@ func (m *AiProviderStore) Delete(ctx context.Context, opts *where.Options) error
 	for id := range m.providers {
 		delete(m.providers, id)
 	}
+
 	return nil
 }
 
@@ -83,6 +87,7 @@ func (m *AiProviderStore) Get(ctx context.Context, opts *where.Options) (*model.
 	for _, p := range m.providers {
 		return p, nil
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -92,6 +97,7 @@ func (m *AiProviderStore) List(ctx context.Context, opts *where.Options) (int64,
 	for _, p := range m.providers {
 		providers = append(providers, p)
 	}
+
 	return int64(len(providers)), providers, nil
 }
 
@@ -109,6 +115,7 @@ func (m *AiProviderStore) GetByName(ctx context.Context, name string) (*model.Ai
 			return p, nil
 		}
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -126,6 +133,7 @@ func (m *AiProviderStore) ListActive(ctx context.Context) ([]*model.AiProviderM,
 			providers = append(providers, p)
 		}
 	}
+
 	return providers, nil
 }
 
@@ -142,6 +150,7 @@ func (m *AiProviderStore) GetDefault(ctx context.Context) (*model.AiProviderM, e
 			return p, nil
 		}
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -156,6 +165,7 @@ func (m *AiProviderStore) FirstOrCreate(ctx context.Context, whereClause *model.
 
 	if m.FirstOrCreateResult != nil {
 		*obj = *m.FirstOrCreateResult
+
 		return nil
 	}
 
@@ -163,6 +173,7 @@ func (m *AiProviderStore) FirstOrCreate(ctx context.Context, whereClause *model.
 	for _, p := range m.providers {
 		if p.Name == whereClause.Name {
 			*obj = *p
+
 			return nil
 		}
 	}
@@ -173,5 +184,6 @@ func (m *AiProviderStore) FirstOrCreate(ctx context.Context, whereClause *model.
 		m.nextID++
 	}
 	m.providers[obj.ID] = obj
+
 	return nil
 }

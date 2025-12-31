@@ -11,15 +11,15 @@ import (
 )
 
 type CreateAIProviderTable struct {
-	ID          uint64    `gorm:"primaryKey"`
-	Name        string    `gorm:"type:varchar(32);uniqueIndex:uk_name;not null"`
-	DisplayName string    `gorm:"type:varchar(64)"`
-	Status      string    `gorm:"type:varchar(16);not null;default:active"`
-	Models      string    `gorm:"type:json"`
-	IsDefault   bool      `gorm:"type:tinyint(1);not null;default:0"`
-	Sort        int       `gorm:"type:int;not null;default:0"`
-	CreatedAt   time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
-	UpdatedAt   time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+	ID          uint64 `gorm:"primaryKey"`
+	Name        string `gorm:"type:varchar(32);uniqueIndex:uk_name;not null"`
+	DisplayName string `gorm:"type:varchar(64)"`
+	Status      string `gorm:"type:varchar(16);not null;default:active"`
+	// Models field removed - models are now stored in ai_model table
+	IsDefault bool      `gorm:"type:tinyint(1);not null;default:0"`
+	Sort      int       `gorm:"type:int;not null;default:0"`
+	CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
+	UpdatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 }
 
 func (CreateAIProviderTable) TableName() string {

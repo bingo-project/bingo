@@ -18,14 +18,14 @@ var defaultQuotaTiers = []model.AiQuotaTierM{
 
 var defaultProviders = []model.AiProviderM{
 	// OpenAI-compatible
-	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusActive, Models: "[]", IsDefault: true, Sort: 1},
-	{Name: "deepseek", DisplayName: "DeepSeek", Status: model.AiProviderStatusActive, Models: "[]", Sort: 2},
-	{Name: "moonshot", DisplayName: "Moonshot", Status: model.AiProviderStatusActive, Models: "[]", Sort: 3},
-	{Name: "glm", DisplayName: "智谱 GLM", Status: model.AiProviderStatusActive, Models: "[]", Sort: 4},
+	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusActive, IsDefault: true, Sort: 1},
+	{Name: "deepseek", DisplayName: "DeepSeek", Status: model.AiProviderStatusActive, Sort: 2},
+	{Name: "moonshot", DisplayName: "Moonshot", Status: model.AiProviderStatusActive, Sort: 3},
+	{Name: "glm", DisplayName: "智谱 GLM", Status: model.AiProviderStatusActive, Sort: 4},
 	// Native providers
-	{Name: "claude", DisplayName: "Claude", Status: model.AiProviderStatusActive, Models: "[]", Sort: 5},
-	{Name: "gemini", DisplayName: "Gemini", Status: model.AiProviderStatusActive, Models: "[]", Sort: 6},
-	{Name: "qwen", DisplayName: "通义千问", Status: model.AiProviderStatusActive, Models: "[]", Sort: 7},
+	{Name: "claude", DisplayName: "Claude", Status: model.AiProviderStatusActive, Sort: 5},
+	{Name: "gemini", DisplayName: "Gemini", Status: model.AiProviderStatusActive, Sort: 6},
+	{Name: "qwen", DisplayName: "通义千问", Status: model.AiProviderStatusActive, Sort: 7},
 }
 
 var defaultModels = []model.AiModelM{

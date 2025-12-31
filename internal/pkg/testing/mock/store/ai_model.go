@@ -6,41 +6,42 @@ package store
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/bingo-project/bingo/internal/pkg/model"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/store/where"
-	"gorm.io/gorm"
 )
 
 // AiModelStore implements store.AiModelStore for testing.
 type AiModelStore struct {
 	// Configurable results for testing
-	ListActiveResult     []*model.AiModelM
-	ListActiveErr        error
-	ListActiveCalled     bool
+	ListActiveResult []*model.AiModelM
+	ListActiveErr    error
+	ListActiveCalled bool
 
 	ListByProviderResult  []*model.AiModelM
 	ListByProviderErr     error
 	ListByProviderCalled  bool
 	ListByProviderArgName string
 
-	GetByModelResult  *model.AiModelM
-	GetByModelErr     error
-	GetByModelCalled  bool
-	GetByModelArgID   string
+	GetByModelResult *model.AiModelM
+	GetByModelErr    error
+	GetByModelCalled bool
+	GetByModelArgID  string
 
-	GetDefaultResult  *model.AiModelM
-	GetDefaultErr     error
-	GetDefaultCalled  bool
+	GetDefaultResult *model.AiModelM
+	GetDefaultErr    error
+	GetDefaultCalled bool
 
-	FirstOrCreateResult  *model.AiModelM
-	FirstOrCreateErr     error
-	FirstOrCreateCalled  bool
-	FirstOrCreateArg     *model.AiModelM
+	FirstOrCreateResult *model.AiModelM
+	FirstOrCreateErr    error
+	FirstOrCreateCalled bool
+	FirstOrCreateArg    *model.AiModelM
 
 	// In-memory storage
-	models  map[uint]*model.AiModelM
-	nextID  uint
+	models map[uint]*model.AiModelM
+	nextID uint
 }
 
 var _ store.AiModelStore = (*AiModelStore)(nil)
@@ -60,6 +61,7 @@ func (m *AiModelStore) Create(ctx context.Context, obj *model.AiModelM) error {
 		m.nextID++
 	}
 	m.models[obj.ID] = obj
+
 	return nil
 }
 
@@ -69,6 +71,7 @@ func (m *AiModelStore) Update(ctx context.Context, obj *model.AiModelM, fields .
 		return gorm.ErrRecordNotFound
 	}
 	m.models[obj.ID] = obj
+
 	return nil
 }
 
@@ -77,6 +80,7 @@ func (m *AiModelStore) Delete(ctx context.Context, opts *where.Options) error {
 	for id := range m.models {
 		delete(m.models, id)
 	}
+
 	return nil
 }
 
@@ -88,6 +92,7 @@ func (m *AiModelStore) Get(ctx context.Context, opts *where.Options) (*model.AiM
 	for _, aiModel := range m.models {
 		return aiModel, nil
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -97,6 +102,7 @@ func (m *AiModelStore) List(ctx context.Context, opts *where.Options) (int64, []
 	for _, aiModel := range m.models {
 		models = append(models, aiModel)
 	}
+
 	return int64(len(models)), models, nil
 }
 
@@ -114,6 +120,7 @@ func (m *AiModelStore) GetByModel(ctx context.Context, modelID string) (*model.A
 			return aiModel, nil
 		}
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -132,6 +139,7 @@ func (m *AiModelStore) ListByProvider(ctx context.Context, providerName string) 
 			models = append(models, aiModel)
 		}
 	}
+
 	return models, nil
 }
 
@@ -149,6 +157,7 @@ func (m *AiModelStore) ListActive(ctx context.Context) ([]*model.AiModelM, error
 			models = append(models, aiModel)
 		}
 	}
+
 	return models, nil
 }
 
@@ -165,6 +174,7 @@ func (m *AiModelStore) GetDefault(ctx context.Context) (*model.AiModelM, error) 
 			return aiModel, nil
 		}
 	}
+
 	return nil, gorm.ErrRecordNotFound
 }
 
@@ -179,6 +189,7 @@ func (m *AiModelStore) FirstOrCreate(ctx context.Context, whereClause *model.AiM
 
 	if m.FirstOrCreateResult != nil {
 		*obj = *m.FirstOrCreateResult
+
 		return nil
 	}
 
@@ -186,6 +197,7 @@ func (m *AiModelStore) FirstOrCreate(ctx context.Context, whereClause *model.AiM
 	for _, aiModel := range m.models {
 		if aiModel.Model == whereClause.Model {
 			*obj = *aiModel
+
 			return nil
 		}
 	}
@@ -196,5 +208,6 @@ func (m *AiModelStore) FirstOrCreate(ctx context.Context, whereClause *model.AiM
 		m.nextID++
 	}
 	m.models[obj.ID] = obj
+
 	return nil
 }
