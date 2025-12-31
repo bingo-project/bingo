@@ -1997,7 +1997,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "max_tokens": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 2048
                 },
                 "messages": {
                     "type": "array",
@@ -2007,17 +2008,20 @@ const docTemplate = `{
                     }
                 },
                 "model": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "glm-4-flash"
                 },
                 "session_id": {
                     "description": "Extension fields",
                     "type": "string"
                 },
                 "stream": {
-                    "type": "boolean"
+                    "type": "boolean",
+                    "example": false
                 },
                 "temperature": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 0.7
                 }
             }
         },
@@ -2056,7 +2060,8 @@ const docTemplate = `{
             "properties": {
                 "content": {
                     "type": "string",
-                    "maxLength": 32768
+                    "maxLength": 32768,
+                    "example": "你好"
                 },
                 "role": {
                     "type": "string",
@@ -2064,7 +2069,8 @@ const docTemplate = `{
                         "system",
                         "user",
                         "assistant"
-                    ]
+                    ],
+                    "example": "user"
                 }
             }
         },

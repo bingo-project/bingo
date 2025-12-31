@@ -74,6 +74,7 @@ definitions:
   v1.ChatCompletionRequest:
     properties:
       max_tokens:
+        example: 2048
         type: integer
       messages:
         items:
@@ -81,13 +82,16 @@ definitions:
         minItems: 1
         type: array
       model:
+        example: glm-4-flash
         type: string
       session_id:
         description: Extension fields
         type: string
       stream:
+        example: false
         type: boolean
       temperature:
+        example: 0.7
         type: number
     required:
     - messages
@@ -113,6 +117,7 @@ definitions:
   v1.ChatMessage:
     properties:
       content:
+        example: 你好
         maxLength: 32768
         type: string
       role:
@@ -120,6 +125,7 @@ definitions:
         - system
         - user
         - assistant
+        example: user
         type: string
     required:
     - content

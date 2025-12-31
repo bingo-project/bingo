@@ -7,19 +7,19 @@ import "time"
 
 // ChatCompletionRequest represents a chat completion request (OpenAI-compatible).
 type ChatCompletionRequest struct {
-	Model       string        `json:"model" binding:"required"`
+	Model       string        `json:"model" binding:"required" example:"glm-4-flash"`
 	Messages    []ChatMessage `json:"messages" binding:"required,min=1"`
-	MaxTokens   int           `json:"max_tokens,omitempty"`
-	Temperature float64       `json:"temperature,omitempty"`
-	Stream      bool          `json:"stream,omitempty"`
+	MaxTokens   int           `json:"max_tokens,omitempty" example:"2048"`
+	Temperature float64       `json:"temperature,omitempty" example:"0.7"`
+	Stream      bool          `json:"stream,omitempty" example:"false"`
 	// Extension fields
 	SessionID string `json:"session_id,omitempty"`
 }
 
 // ChatMessage represents a single message.
 type ChatMessage struct {
-	Role    string `json:"role" binding:"required,oneof=system user assistant"`
-	Content string `json:"content" binding:"required,max=32768"`
+	Role    string `json:"role" binding:"required,oneof=system user assistant" example:"user"`
+	Content string `json:"content" binding:"required,max=32768" example:"你好"`
 }
 
 // ChatCompletionResponse represents a chat completion response (OpenAI-compatible).
