@@ -436,6 +436,103 @@ func (s *userStore) FindByEmail(ctx context.Context, email string) (*model.UserM
 }
 ```
 
+### 3.8 响应数据结构规范
+
+#### 3.8.1 数据拼装位置
+
+**响应数据结构由 Biz 层组装，Handler 层直接返回 Biz 层的响应：**
+
+```go
+// ✅ 正确：Biz 层组装响应
+func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserResponse, error) {
+    users, total, err := b.ds.Users().List(ctx, opts)
+    return &v1.ListUserResponse{
+        Total: total,
+        Data:  users,
+    }, err
+}
+
+// Handler 层直接返回
+func (h *UserHandler) List(c *gin.Context) {
+    resp, err := h.biz.Users().List(c, &req)
+    core.Response(c, resp, err)
+}
+
+// ❌ 错误：Handler 层组装数据结构
+func (h *UserHandler) List(c *gin.Context) {
+    users, total, err := h.biz.Users().List(c, &req)
+    core.Response(c, &v1.ListUserResponse{
+        Total: total,
+        Data:  users,
+    }, err)  // 禁止！拼装应在 Biz 层
+}
+```
+
+#### 3.8.2 分页列表查询
+
+分页列表查询必须返回包含 `Total` 和 `Data` 字段的结构体：
+
+```go
+// ✅ 正确：Biz 层返回分页响应结构体
+type ListUserResponse struct {
+    Total int64      `json:"total"`
+    Data  []UserInfo `json:"data"`
+}
+
+// @Success 200 {object} v1.ListUserResponse
+```
+
+#### 3.8.3 非分页列表查询
+
+非分页列表查询**直接返回切片**，**禁止嵌套 `data` 字段**：
+
+```go
+// ❌ 错误：非分页列表不应嵌套 data
+type ListSessionsResponse struct {
+    Data []SessionInfo `json:"data"`
+}
+
+// ✅ 正确：Biz 层直接返回切片
+func (b *sessionBiz) List(ctx context.Context) ([]SessionInfo, error) {
+    sessions, err := b.ds.Sessions().List(ctx)
+    return sessions, err
+}
+
+// Handler 层直接返回
+func (h *SessionHandler) List(c *gin.Context) {
+    sessions, err := h.biz.Sessions().List(c)
+    core.Response(c, sessions, err)
+}
+
+// ✅ Swagger 注解
+// @Success 200 {object} []v1.SessionInfo
+```
+
+#### 3.8.4 单对象查询
+
+单对象查询直接返回对象结构体：
+
+```go
+// ✅ 正确：Biz 层直接返回对象
+func (b *userBiz) Get(ctx context.Context, uid string) (*UserInfo, error) {
+    user, err := b.ds.Users().Get(ctx, uid)
+    return user, err
+}
+
+// ✅ Swagger 注解
+// @Success 200 {object} v1.UserInfo
+```
+
+#### 3.8.5 判断准则
+
+| 场景 | 响应类型 | Biz 层返回类型 | Handler 调用 |
+|------|----------|----------------|--------------|
+| 分页列表 | 带分页信息的结构体 | `*ListXxxResponse` | `core.Response(c, resp, err)` |
+| 非分页列表 | 直接返回切片 | `[]XxxInfo` | `core.Response(c, data, err)` |
+| 单对象 | 直接返回结构体 | `*XxxInfo` | `core.Response(c, data, err)` |
+| 创建/更新 | 返回创建后的对象 | `*XxxInfo` | `core.Response(c, data, err)` |
+| 删除 | 返回 nil | `error` | `core.Response(c, nil, err)` |
+
 ---
 
 ## 4. 错误处理
