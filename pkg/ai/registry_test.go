@@ -84,3 +84,31 @@ func TestRegistry_ListModels(t *testing.T) {
 	models := r.ListModels()
 	assert.Len(t, models, 2)
 }
+
+func TestRegistry_Clear(t *testing.T) {
+	r := NewRegistry()
+
+	// Register a mock provider
+	provider := &mockProvider{
+		name: "test",
+		models: []ModelInfo{
+			{ID: "test-model", Name: "Test Model", Provider: "test"},
+		},
+	}
+	r.Register(provider)
+
+	// Verify it's registered
+	_, ok := r.Get("test")
+	require.True(t, ok)
+
+	// Clear
+	r.Clear()
+
+	// Verify it's gone
+	_, ok = r.Get("test")
+	require.False(t, ok, "provider should be removed after Clear")
+
+	// Verify models are also cleared
+	_, ok = r.GetByModel("test-model")
+	require.False(t, ok, "model should be removed after Clear")
+}

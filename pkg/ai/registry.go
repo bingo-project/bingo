@@ -76,3 +76,11 @@ func (r *Registry) ListModels() []ModelInfo {
 
 	return models
 }
+
+// Clear removes all registered providers and models.
+func (r *Registry) Clear() {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.providers = make(map[string]Provider)
+	r.models = make(map[string]Provider)
+}
