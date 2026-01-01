@@ -6,15 +6,35 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
+	bizauth "github.com/bingo-project/bingo/internal/apiserver/biz/auth"
 	chathandler "github.com/bingo-project/bingo/internal/apiserver/handler/http/chat"
+	"github.com/bingo-project/bingo/internal/apiserver/middleware"
+	"github.com/bingo-project/bingo/internal/pkg/ai"
+	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
 	httpmw "github.com/bingo-project/bingo/internal/pkg/middleware/http"
 	"github.com/bingo-project/bingo/internal/pkg/store"
-	"github.com/bingo-project/bingo/pkg/ai"
 )
 
 // MapAiRouters registers AI-related routes (chat, sessions, roles)
-func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
+func MapAiRouters(g *gin.Engine) {
+	// Use global registry
+	registry := ai.GetRegistry()
+	if registry == nil {
+		return
+	}
+
+	// v1 group
+	v1 := g.Group("/v1")
+	v1.Use(middleware.Lang())
+	v1.Use(middleware.Maintenance())
+
+	// Authentication middleware
+	loader := bizauth.NewUserLoader(store.S)
+	authn := auth.New(loader)
+	v1.Use(auth.Middleware(authn))
+
+	// Initialize handlers
 	chatHandler := chathandler.NewChatHandler(store.S, registry)
 	sessionHandler := chathandler.NewSessionHandler(store.S, registry)
 	roleHandler := chathandler.NewRoleHandler(store.S, registry)
@@ -27,11 +47,11 @@ func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
 
 	// OpenAI-compatible endpoints
 	// Apply rate limiter only to chat completions (consumes quota)
-	g.POST("/chat/completions", httpmw.AILimiter(rpm), chatHandler.ChatCompletions)
-	g.GET("/models", chatHandler.ListModels)
+	v1.POST("/chat/completions", httpmw.AILimiter(rpm), chatHandler.ChatCompletions)
+	v1.GET("/models", chatHandler.ListModels)
 
 	// Session management
-	sessions := g.Group("/ai/sessions")
+	sessions := v1.Group("/ai/sessions")
 	{
 		sessions.POST("", sessionHandler.CreateSession)
 		sessions.GET("", sessionHandler.ListSessions)
@@ -42,7 +62,7 @@ func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
 	}
 
 	// Role presets (read-only for users)
-	roles := g.Group("/ai/roles")
+	roles := v1.Group("/ai/roles")
 	{
 		roles.GET("", roleHandler.List)
 		roles.GET("/:role_id", roleHandler.Get)
