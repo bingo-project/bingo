@@ -32,13 +32,10 @@ func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
 		sessions.GET("/:session_id/history", sessionHandler.GetSessionHistory)
 	}
 
-	// Role presets (public GET, admin-only mutations)
+	// Role presets (read-only for users)
 	roles := g.Group("/ai/roles")
 	{
 		roles.GET("", roleHandler.List)
 		roles.GET("/:role_id", roleHandler.Get)
-		roles.POST("", roleHandler.Create)
-		roles.PUT("/:role_id", roleHandler.Update)
-		roles.DELETE("/:role_id", roleHandler.Delete)
 	}
 }
