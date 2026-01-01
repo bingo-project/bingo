@@ -7,6 +7,7 @@ import (
 
 	bizauth "github.com/bingo-project/bingo/internal/admserver/biz/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/ai"
 	handlerauth "github.com/bingo-project/bingo/internal/admserver/handler/http/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/config"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/notification"
@@ -81,11 +82,19 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("roles/:name", roleHandler.Get)
 	v1.PUT("roles/:name", roleHandler.Update)
 	v1.DELETE("roles/:name", roleHandler.Delete)
-	v1.PUT("roles/:name/apis", roleHandler.SetApis)     // 设置权限（casbin)
+	v1.PUT("roles/:name/apis", roleHandler.SetApis)     // 设置权限（casbin）
 	v1.GET("roles/:name/apis", roleHandler.GetApiIDs)   // 获取权限 ID 集合（casbin）
 	v1.PUT("roles/:name/menus", roleHandler.SetMenus)   // 设置菜单权限
 	v1.GET("roles/:name/menus", roleHandler.GetMenuIDs) // 获取菜单 ID 集合
 	v1.GET("roles/all", roleHandler.All)
+
+	// AI Role
+	aiRoleHandler := ai.NewRoleHandler(store.S)
+	v1.GET("ai/roles", aiRoleHandler.List)
+	v1.POST("ai/roles", aiRoleHandler.Create)
+	v1.GET("ai/roles/:id", aiRoleHandler.Get)
+	v1.PUT("ai/roles/:id", aiRoleHandler.Update)
+	v1.DELETE("ai/roles/:id", aiRoleHandler.Delete)
 
 	// API
 	apiHandler := system.NewApiHandler(store.S, policyAuthz)
