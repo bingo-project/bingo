@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	bizauth "github.com/bingo-project/bingo/internal/admserver/biz/auth"
-	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/ai"
+	"github.com/bingo-project/bingo/internal/admserver/handler/http/app"
 	handlerauth "github.com/bingo-project/bingo/internal/admserver/handler/http/auth"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/config"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/notification"

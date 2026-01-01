@@ -35,6 +35,7 @@ func (h *RoleHandler) Create(c *gin.Context) {
 	var req v1.CreateAiRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 
@@ -74,6 +75,7 @@ func (h *RoleHandler) List(c *gin.Context) {
 	var req v1.ListAiRoleRequest
 	if err := c.ShouldBindQuery(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 
@@ -98,6 +100,7 @@ func (h *RoleHandler) Update(c *gin.Context) {
 	var req v1.UpdateAiRoleRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 

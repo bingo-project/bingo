@@ -94,6 +94,7 @@ func (b *aiRoleBiz) Get(ctx context.Context, roleID string) (*v1.AiRoleInfo, err
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.ErrAIRoleNotFound
 		}
+
 		return nil, errno.ErrDBRead.WithMessage("get ai role: %v", err)
 	}
 
@@ -134,6 +135,7 @@ func (b *aiRoleBiz) Update(ctx context.Context, roleID string, req *v1.UpdateAiR
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errno.ErrAIRoleNotFound
 		}
+
 		return nil, errno.ErrDBRead.WithMessage("get ai role: %v", err)
 	}
 
@@ -161,6 +163,7 @@ func (b *aiRoleBiz) Delete(ctx context.Context, roleID string) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errno.ErrAIRoleNotFound
 		}
+
 		return errno.ErrDBRead.WithMessage("get ai role: %v", err)
 	}
 

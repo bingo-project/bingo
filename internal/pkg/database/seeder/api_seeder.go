@@ -89,6 +89,13 @@ var coreAPIs = []model.ApiM{
 
 	// File management
 	{Method: "POST", Path: "/v1/file/upload", Group: "File", Description: "Upload file"},
+
+	// AI Role management
+	{Method: "GET", Path: "/v1/ai/roles", Group: "AI", Description: "List AI roles"},
+	{Method: "POST", Path: "/v1/ai/roles", Group: "AI", Description: "Create AI role"},
+	{Method: "GET", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Get AI role"},
+	{Method: "PUT", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Update AI role"},
+	{Method: "DELETE", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Delete AI role"},
 }
 
 type ApiSeeder struct{}
