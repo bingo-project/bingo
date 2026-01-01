@@ -7,6 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 
 	chathandler "github.com/bingo-project/bingo/internal/apiserver/handler/http/chat"
+	"github.com/bingo-project/bingo/internal/pkg/facade"
+	httpmw "github.com/bingo-project/bingo/internal/pkg/middleware/http"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 	"github.com/bingo-project/bingo/pkg/ai"
 )
@@ -17,8 +19,15 @@ func MapAiRouters(g *gin.RouterGroup, registry *ai.Registry) {
 	sessionHandler := chathandler.NewSessionHandler(store.S, registry)
 	roleHandler := chathandler.NewRoleHandler(store.S, registry)
 
+	// Get AI quota limit
+	rpm := facade.Config.AI.Quota.DefaultRPM
+	if rpm <= 0 {
+		rpm = 20 // fallback default
+	}
+
 	// OpenAI-compatible endpoints
-	g.POST("/chat/completions", chatHandler.ChatCompletions)
+	// Apply rate limiter only to chat completions (consumes quota)
+	g.POST("/chat/completions", httpmw.AILimiter(rpm), chatHandler.ChatCompletions)
 	g.GET("/models", chatHandler.ListModels)
 
 	// Session management

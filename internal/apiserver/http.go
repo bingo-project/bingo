@@ -13,7 +13,6 @@ import (
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/bootstrap"
 	"github.com/bingo-project/bingo/internal/pkg/facade"
-	httpmw "github.com/bingo-project/bingo/internal/pkg/middleware/http"
 	"github.com/bingo-project/bingo/internal/pkg/store"
 )
 
@@ -41,13 +40,6 @@ func initGinEngine() *gin.Engine {
 		loader := bizauth.NewUserLoader(store.S)
 		authn := auth.New(loader)
 		v1.Use(auth.Middleware(authn))
-
-		// Apply AI rate limiter (RPM)
-		rpm := facade.Config.AI.Quota.DefaultRPM
-		if rpm <= 0 {
-			rpm = 20 // fallback default
-		}
-		v1.Use(httpmw.AILimiter(rpm))
 
 		router.MapAiRouters(v1, registry)
 	}
