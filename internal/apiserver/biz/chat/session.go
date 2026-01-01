@@ -20,7 +20,7 @@ import (
 
 // SessionBiz defines session management interface
 type SessionBiz interface {
-	Create(ctx context.Context, uid string, title string, model string) (*v1.SessionInfo, error)
+	Create(ctx context.Context, uid string, title string, modelName string, roleID string) (*v1.SessionInfo, error)
 	Get(ctx context.Context, uid string, sessionID string) (*v1.SessionInfo, error)
 	List(ctx context.Context, uid string) ([]v1.SessionInfo, error)
 	Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*v1.SessionInfo, error)
@@ -47,12 +47,51 @@ func toSessionInfo(m *model.AiSessionM) *v1.SessionInfo {
 	return &info
 }
 
-func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string) (*v1.SessionInfo, error) {
+func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string, roleID string) (*v1.SessionInfo, error) {
+	var selectedModel string
+	var finalTitle string
+
+	// 如果指定了 role_id, 从角色获取默认配置
+	if roleID != "" {
+		role, err := b.ds.AiRole().GetByRoleID(ctx, roleID)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return nil, errno.ErrAIRoleNotFound
+			}
+			return nil, errno.ErrDBRead.WithMessage("get ai role: %v", err)
+		}
+		if role.Status == model.AiRoleStatusDisabled {
+			return nil, errno.ErrAIRoleDisabled
+		}
+		selectedModel = role.Model // 使用角色的模型
+		if title == "" {
+			finalTitle = role.Name // 默认标题使用角色名称
+		}
+	}
+
+	// 使用请求的模型覆盖角色模型(如果提供)
+	if modelName != "" {
+		selectedModel = modelName
+	}
+
+	// 回退到默认模型
+	if selectedModel == "" {
+		selectedModel = "gpt-4o" // TODO: 从配置读取
+	}
+	if finalTitle == "" {
+		if title != "" {
+			finalTitle = title
+		} else {
+			finalTitle = "新对话"
+		}
+	}
+
 	session := &model.AiSessionM{
 		SessionID: uuid.NewString(),
 		UID:       uid,
-		Title:     title,
-		Model:     modelName,
+		RoleID:    roleID, // 绑定角色
+		Title:     finalTitle,
+		Model:     selectedModel,
 		Status:    model.AiSessionStatusActive,
 	}
 

@@ -1,5 +1,5 @@
-// ABOUTME: Database migration for ai_session table.
-// ABOUTME: Creates table for AI chat sessions.
+// ABOUTME: Database migration for adding role_id to ai_session table.
+// ABOUTME: Adds foreign key to ai_role for session-role binding.
 
 package migration
 
@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type CreateAISessionTable struct {
+type AddRoleIDToAISession struct {
 	ID           uint64    `gorm:"primaryKey"`
 	SessionID    string    `gorm:"type:varchar(64);uniqueIndex:uk_session_id;not null"`
 	UID          string    `gorm:"type:varchar(64);index:idx_uid;not null"`
@@ -24,18 +24,19 @@ type CreateAISessionTable struct {
 	UpdatedAt    time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 }
 
-func (CreateAISessionTable) TableName() string {
+func (AddRoleIDToAISession) TableName() string {
 	return "ai_session"
 }
 
-func (CreateAISessionTable) Up(migrator gorm.Migrator) {
-	_ = migrator.AutoMigrate(&CreateAISessionTable{})
+func (AddRoleIDToAISession) Up(migrator gorm.Migrator) {
+	_ = migrator.AutoMigrate(&AddRoleIDToAISession{})
 }
 
-func (CreateAISessionTable) Down(migrator gorm.Migrator) {
-	_ = migrator.DropTable(&CreateAISessionTable{})
+func (AddRoleIDToAISession) Down(migrator gorm.Migrator) {
+	_ = migrator.DB().Exec("ALTER TABLE ai_session DROP COLUMN role_id")
+	_ = migrator.DB().Exec("ALTER TABLE ai_session DROP INDEX idx_role_id")
 }
 
 func init() {
-	migrate.Add("2025_12_29_100004_create_ai_session_table", CreateAISessionTable{}.Up, CreateAISessionTable{}.Down)
+	migrate.Add("2026_01_02_100000_add_role_id_to_ai_session", AddRoleIDToAISession{}.Up, AddRoleIDToAISession{}.Down)
 }

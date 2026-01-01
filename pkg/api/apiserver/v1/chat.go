@@ -14,7 +14,6 @@ type ChatCompletionRequest struct {
 	Stream      bool          `json:"stream,omitempty" example:"false"`
 	// Extension fields
 	SessionID string `json:"session_id,omitempty"`
-	RoleID    string `json:"role_id,omitempty"`
 }
 
 // ChatMessage represents a single message.
@@ -67,8 +66,9 @@ type ModelInfo struct {
 
 // CreateSessionRequest represents session creation request.
 type CreateSessionRequest struct {
-	Title string `json:"title"`
-	Model string `json:"model" binding:"required"`
+	RoleID string `json:"roleId,omitempty"` // Optional: bind role to session
+	Title  string `json:"title,omitempty"`  // Optional: defaults to role name or "新对话"
+	Model  string `json:"model,omitempty"`  // Optional: override role's default model
 }
 
 // UpdateSessionRequest represents session update request.
@@ -79,14 +79,16 @@ type UpdateSessionRequest struct {
 
 // SessionInfo represents session information.
 type SessionInfo struct {
-	SessionID    string    `json:"session_id"`
+	SessionID    string    `json:"sessionId"`
 	Title        string    `json:"title"`
+	RoleID       string    `json:"roleId,omitempty"`
+	RoleName     string    `json:"roleName,omitempty"`
 	Model        string    `json:"model"`
-	MessageCount int       `json:"message_count"`
-	TotalTokens  int       `json:"total_tokens"`
+	MessageCount int       `json:"messageCount"`
+	TotalTokens  int       `json:"totalTokens"`
 	Status       string    `json:"status"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
 }
 
 // SessionHistoryResponse represents session history response.
