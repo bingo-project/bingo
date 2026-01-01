@@ -25,6 +25,7 @@ type AiRoleExpansion interface {
 	GetByRoleID(ctx context.Context, roleID string) (*model.AiRoleM, error)
 	ListByCategory(ctx context.Context, category model.AiRoleCategory, status model.AiRoleStatus) ([]*model.AiRoleM, error)
 	ListActive(ctx context.Context) ([]*model.AiRoleM, error)
+	FirstOrCreate(ctx context.Context, where *model.AiRoleM, obj *model.AiRoleM) error
 }
 
 type aiRoleStore struct {
@@ -68,4 +69,8 @@ func (s *aiRoleStore) ListActive(ctx context.Context) ([]*model.AiRoleM, error) 
 		Find(&roles).Error
 
 	return roles, err
+}
+
+func (s *aiRoleStore) FirstOrCreate(ctx context.Context, where *model.AiRoleM, obj *model.AiRoleM) error {
+	return s.DB(ctx).Where(where).FirstOrCreate(obj).Error
 }
