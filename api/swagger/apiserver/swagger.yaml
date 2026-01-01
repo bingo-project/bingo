@@ -623,10 +623,6 @@ paths:
         in: query
         name: category
         type: string
-      - description: Filter by status
-        in: query
-        name: status
-        type: string
       produces:
       - application/json
       responses:

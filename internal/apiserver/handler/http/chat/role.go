@@ -48,7 +48,6 @@ func (h *RoleHandler) Get(c *gin.Context) {
 // @Accept     application/json
 // @Produce    json
 // @Param      category  query     string  false  "Filter by category"
-// @Param      status    query     string  false  "Filter by status"
 // @Success    200       {object}  v1.ListAiRoleResponse
 // @Failure    400       {object}  core.ErrResponse
 // @Router     /v1/ai/roles [GET].

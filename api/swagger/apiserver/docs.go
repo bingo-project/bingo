@@ -72,12 +72,6 @@ const docTemplate = `{
                         "description": "Filter by category",
                         "name": "category",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Filter by status",
-                        "name": "status",
-                        "in": "query"
                     }
                 ],
                 "responses": {
