@@ -50,6 +50,7 @@
 7. [数据库迁移与初始化](#7-数据库迁移与初始化)
 8. [生成代码检查清单](#8-生成代码检查清单)
 9. [构建规范](#9-构建规范)
+10. [API 规范](#10-api-规范)
 
 ---
 
@@ -155,7 +156,43 @@ CREATE TABLE notifications (...);  -- 应该用单数 + 前缀
 CREATE TABLE message (...);        -- 缺少模块前缀
 ```
 
-### 2.4 接口名
+### 2.4 API JSON 字段命名
+
+- **必须使用驼峰命名（camelCase）**
+- **禁止使用蛇形命名（snake_case）**
+
+```go
+// ✅ 正确：驼峰命名
+type UserInfo struct {
+    UserID      string    `json:"userId"`
+    Username    string    `json:"username"`
+    Nickname    string    `json:"nickname"`
+    CountryCode string    `json:"countryCode"`
+    CreatedAt   time.Time `json:"createdAt"`
+    UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+// ❌ 错误：蛇形命名
+type ChatRequest struct {
+    SessionID string `json:"session_id"`  // 应该是 sessionId
+    MaxTokens int    `json:"max_tokens"`  // 应该是 maxTokens
+    RoleID    string `json:"role_id"`     // 应该是 roleId
+}
+```
+
+**例外**: OpenAI 兼容接口保持原有 snake_case 命名以符合标准
+
+```go
+// ✅ OpenAI 兼容接口可以使用 snake_case
+type OpenAIRequest struct {
+    Model       string        `json:"model"`
+    Messages    []ChatMessage `json:"messages"`
+    MaxTokens   int           `json:"max_tokens"`   // OpenAI 标准
+    Temperature float64       `json:"temperature"`  // OpenAI 标准
+}
+```
+
+### 2.5 接口名
 
 - `I` 前缀（Interface）
 - 大驼峰命名
@@ -165,7 +202,7 @@ type IStore interface {}
 type IBiz interface {}
 ```
 
-### 2.5 Store 命名规范
+### 2.6 Store 命名规范
 
 | 元素 | 规范 | 示例 |
 |------|------|------|
@@ -887,5 +924,94 @@ log.C(ctx).Infow("message", "key", value)
 import "<module>/internal/pkg/core"
 core.Response(c, data, err)
 ```
+
+---
+
+## 10. API 规范
+
+### 10.1 JSON 字段命名
+
+**基本原则:**
+- **必须使用驼峰命名（camelCase）**
+- **禁止使用蛇形命名（snake_case）**
+- **唯一例外**: OpenAI 兼容接口可使用 snake_case 以符合标准
+
+```go
+// ✅ 正确：驼峰命名
+type UserInfo struct {
+    UserID      string    `json:"userId"`
+    Username    string    `json:"username"`
+    Nickname    string    `json:"nickname"`
+    CountryCode string    `json:"countryCode"`
+    CreatedAt   time.Time `json:"createdAt"`
+    UpdatedAt   time.Time `json:"updatedAt"`
+}
+
+// ✅ 正确：OpenAI 兼容接口
+type OpenAIRequest struct {
+    Model       string        `json:"model"`
+    Messages    []ChatMessage `json:"messages"`
+    MaxTokens   int           `json:"max_tokens"`   // OpenAI 标准
+    Temperature float64       `json:"temperature"`  // OpenAI 标准
+}
+
+// ❌ 错误：非 OpenAI 接口使用 snake_case
+type ChatRequest struct {
+    SessionID string `json:"session_id"`  // 应该是 sessionId
+    MaxTokens int    `json:"max_tokens"`  // 应该是 maxTokens
+    RoleID    string `json:"role_id"`     // 应该是 roleId
+}
+```
+
+### 10.2 Request/Response 结构
+
+**命名规范:**
+- 请求结构: `<Verb><Resource>Request`
+- 响应结构: `<Verb><Resource>Response` 或 `<Resource>Info`
+- 列表响应: `List<Resource>Response`
+
+```go
+// 请求
+type CreateUserRequest struct {}
+type UpdateUserRequest struct {}
+type DeleteUserRequest struct {}
+
+// 响应
+type UserInfo struct {}
+type ListUserResponse struct {
+    Total int64       `json:"total"`
+    Data  []UserInfo  `json:"data"`
+}
+```
+
+**字段顺序:**
+1. 资源标识字段 (ID, UID 等)
+2. 核心业务字段
+3. 状态字段
+4. 时间字段
+
+```go
+type UserInfo struct {
+    UID          string    `json:"uid"`           // 1. 标识
+    Username     string    `json:"username"`      // 2. 业务字段
+    Nickname     string    `json:"nickname"`
+    Status       int32     `json:"status"`        // 3. 状态
+    CreatedAt    time.Time `json:"createdAt"`     // 4. 时间
+    UpdatedAt    time.Time `json:"updatedAt"`
+}
+```
+
+### 10.3 HTTP 状态码使用
+
+| 场景 | 状态码 | 说明 |
+|------|--------|------|
+| 成功 | 200 | 统一使用 200，通过业务错误码区分具体状态 |
+| 参数错误 | 200 | 返回 errno.ErrInvalidArgument |
+| 未授权 | 200 | 返回 errno.ErrUnauthorized |
+| 资源不存在 | 200 | 返回 errno.ErrNotFound |
+| 服务器错误 | 200 | 返回 errno.ErrInternal |
+
+**原则**: HTTP 层始终返回 200，业务错误通过 `errno` 和 `core.Response` 处理
+
 
 > `<module>` = go.mod 模块名，`<server>` = 服务名（如 apiserver）
