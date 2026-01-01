@@ -62,10 +62,16 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 		return nil, errno.ErrAIEmptyMessages
 	}
 
-	// Validate session if provided
+	// Validate session if provided and get role_id from session
 	if req.SessionID != "" {
 		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
 			return nil, err
+		}
+
+		// Get role_id from session
+		session, err := b.ds.AiSession().GetBySessionID(ctx, req.SessionID)
+		if err == nil && session.RoleID != "" {
+			req.RoleID = session.RoleID // Use session's role
 		}
 	}
 
@@ -155,10 +161,16 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 		return nil, errno.ErrAIEmptyMessages
 	}
 
-	// Validate session if provided
+	// Validate session if provided and get role_id from session
 	if req.SessionID != "" {
 		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
 			return nil, err
+		}
+
+		// Get role_id from session
+		session, err := b.ds.AiSession().GetBySessionID(ctx, req.SessionID)
+		if err == nil && session.RoleID != "" {
+			req.RoleID = session.RoleID // Use session's role
 		}
 	}
 

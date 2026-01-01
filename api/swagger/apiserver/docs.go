@@ -2138,9 +2138,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "glm-4-flash"
                 },
-                "role_id": {
-                    "type": "string"
-                },
                 "session_id": {
                     "description": "Extension fields",
                     "type": "string"
@@ -2220,14 +2217,17 @@ const docTemplate = `{
         },
         "v1.CreateSessionRequest": {
             "type": "object",
-            "required": [
-                "model"
-            ],
             "properties": {
                 "model": {
+                    "description": "Optional: override role's default model",
+                    "type": "string"
+                },
+                "roleId": {
+                    "description": "Optional: bind role to session",
                     "type": "string"
                 },
                 "title": {
+                    "description": "Optional: defaults to role name or \"新对话\"",
                     "type": "string"
                 }
             }
@@ -2566,16 +2566,22 @@ const docTemplate = `{
         "v1.SessionInfo": {
             "type": "object",
             "properties": {
-                "created_at": {
+                "createdAt": {
                     "type": "string"
                 },
-                "message_count": {
+                "messageCount": {
                     "type": "integer"
                 },
                 "model": {
                     "type": "string"
                 },
-                "session_id": {
+                "roleId": {
+                    "type": "string"
+                },
+                "roleName": {
+                    "type": "string"
+                },
+                "sessionId": {
                     "type": "string"
                 },
                 "status": {
@@ -2584,10 +2590,10 @@ const docTemplate = `{
                 "title": {
                     "type": "string"
                 },
-                "total_tokens": {
+                "totalTokens": {
                     "type": "integer"
                 },
-                "updated_at": {
+                "updatedAt": {
                     "type": "string"
                 }
             }

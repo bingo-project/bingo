@@ -47,7 +47,7 @@ func (h *SessionHandler) CreateSession(c *gin.Context) {
 	}
 
 	uid := contextx.UserID(c)
-	session, err := h.b.Chat().Sessions().Create(c, uid, req.Title, req.Model)
+	session, err := h.b.Chat().Sessions().Create(c, uid, req.Title, req.Model, req.RoleID)
 	core.Response(c, session, err)
 }
 
