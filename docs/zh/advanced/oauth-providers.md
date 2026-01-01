@@ -345,45 +345,54 @@ PKCE (Proof Key for Code Exchange) 提供额外的安全层，防止授权码被
 
 所有平台都使用 `state` 参数防止 CSRF 攻击，由 Bingo 自动生成和验证（Redis 存储，5 分钟有效期）。
 
-## API 操作
+## API 操作流程
 
-### 获取已启用的平台
+### 1. 获取授权链接
 
-```bash
-GET /v1/auth/providers
+前端调用此接口获取带有 `state` 和 `pkce` 参数的授权链接。
+
+```http
+GET /v1/auth/login/{provider}
 ```
 
 响应：
 
 ```json
 {
-  "code": 0,
-  "data": {
-    "providers": [
-      {
-        "name": "google",
-        "auth_url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=...&state=..."
-      },
-      {
-        "name": "github",
-        "auth_url": "https://github.com/login/oauth/authorize?client_id=...&state=..."
-      }
-    ]
-  }
+  "auth_url": "https://accounts.google.com/...?state=xyz&code_challenge=...",
+  "state": "xyz",
+  "code_verifier": "abc... (如果启用了 PKCE)"
 }
 ```
 
-### 通过 OAuth 登录
+- **state**: 后端生成的随机字符串，已存入 Redis（5分钟有效期）。
+- **code_verifier**: PKCE 验证码，**前端需要临时存储**（如 sessionStorage），后续登录时提交。
 
-```bash
+### 2. 用户授权
+
+前端将用户重定向到 `auth_url`。用户在第三方平台授权后，浏览器跳转回 `redirect_url`，并携带 `code` 和 `state` 参数。
+
+`https://api.example.com/check?code=...&state=...`
+
+### 3. 提交登录
+
+前端获取 URL 中的参数，结合之前存储的 `code_verifier`，提交登录。
+
+```http
 POST /v1/auth/login/{provider}
 Content-Type: application/json
 
 {
   "code": "授权码",
-  "code_verifier": "PKCE verifier（如果启用 PKCE）"
+  "state": "xyz",            // 必须与第一步获取的一致
+  "code_verifier": "abc..."  // 必须与第一步获取的一致
 }
 ```
+
+后端将执行：
+1. 验证 `state` 是否有效且未被使用。
+2. 使用 `code` + `code_verifier` 换取 token。
+3. 创建或登录用户。
 
 ## 常见问题
 
