@@ -51,6 +51,11 @@ const docTemplate = `{
         },
         "/v1/ai/roles": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],

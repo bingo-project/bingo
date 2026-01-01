@@ -722,6 +722,8 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
       summary: List AI roles
       tags:
       - AI Role

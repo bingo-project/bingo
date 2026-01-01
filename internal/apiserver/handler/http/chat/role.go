@@ -66,6 +66,7 @@ func (h *RoleHandler) Get(c *gin.Context) {
 
 // List
 // @Summary    List AI roles
+// @Security   Bearer
 // @Tags       AI Role
 // @Accept     application/json
 // @Produce    json
