@@ -3,6 +3,7 @@ package biz
 //go:generate mockgen -destination mock_biz.go -package biz bingo/internal/admserver/biz IBiz
 
 import (
+	"github.com/bingo-project/bingo/internal/admserver/biz/ai"
 	"github.com/bingo-project/bingo/internal/admserver/biz/app"
 	"github.com/bingo-project/bingo/internal/admserver/biz/auth"
 	"github.com/bingo-project/bingo/internal/admserver/biz/bot"
@@ -20,6 +21,8 @@ type IBiz interface {
 	Auth() auth.AuthBiz
 	AuthProviders() auth.AuthProviderBiz
 	Users() user.UserBiz
+
+	AiRoles() ai.AiRoleBiz
 
 	Servers() syscfg.ServerBiz
 	Email() common.EmailBiz
@@ -65,6 +68,10 @@ func (b *biz) AuthProviders() auth.AuthProviderBiz {
 // Users 返回一个实现了 UserBiz 接口的实例.
 func (b *biz) Users() user.UserBiz {
 	return user.New(b.ds)
+}
+
+func (b *biz) AiRoles() ai.AiRoleBiz {
+	return ai.NewAiRole(b.ds)
 }
 
 func (b *biz) Servers() syscfg.ServerBiz {
