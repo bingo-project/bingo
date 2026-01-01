@@ -176,6 +176,31 @@ definitions:
       username:
         type: string
     type: object
+  v1.AiRoleInfo:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      max_tokens:
+        type: integer
+      model:
+        type: string
+      name:
+        type: string
+      role_id:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: string
+      system_prompt:
+        type: string
+      temperature:
+        type: number
+    type: object
   v1.AnnouncementItem:
     properties:
       actionUrl:
@@ -312,6 +337,54 @@ definitions:
     - nickname
     - password
     - username
+    type: object
+  v1.CreateAiRoleRequest:
+    properties:
+      category:
+        enum:
+        - general
+        - education
+        - medical
+        - workplace
+        - creative
+        example: education
+        type: string
+      description:
+        example: 擅长小学数学辅导
+        maxLength: 255
+        type: string
+      icon:
+        example: https://example.com/icon.png
+        maxLength: 255
+        type: string
+      max_tokens:
+        example: 2000
+        type: integer
+      model:
+        example: gpt-4o
+        maxLength: 64
+        type: string
+      name:
+        example: 数学老师
+        maxLength: 64
+        type: string
+      role_id:
+        example: math_teacher
+        maxLength: 32
+        type: string
+      sort:
+        example: 1
+        type: integer
+      system_prompt:
+        example: 你是一位经验丰富的小学数学老师...
+        type: string
+      temperature:
+        example: 0.7
+        type: number
+    required:
+    - name
+    - role_id
+    - system_prompt
     type: object
   v1.CreateAnnouncementRequest:
     properties:
@@ -542,6 +615,15 @@ definitions:
       data:
         items:
           $ref: '#/definitions/v1.AdminInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListAiRoleResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AiRoleInfo'
         type: array
       total:
         type: integer
@@ -814,6 +896,42 @@ definitions:
         type: array
       status:
         type: string
+    type: object
+  v1.UpdateAiRoleRequest:
+    properties:
+      category:
+        enum:
+        - general
+        - education
+        - medical
+        - workplace
+        - creative
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      icon:
+        maxLength: 255
+        type: string
+      max_tokens:
+        type: integer
+      model:
+        maxLength: 64
+        type: string
+      name:
+        maxLength: 64
+        type: string
+      sort:
+        type: integer
+      status:
+        enum:
+        - active
+        - disabled
+        type: string
+      system_prompt:
+        type: string
+      temperature:
+        type: number
     type: object
   v1.UpdateAnnouncementRequest:
     properties:
@@ -1317,6 +1435,161 @@ paths:
       summary: Set admin roles
       tags:
       - Admin
+  /v1/ai/roles:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by category
+        in: query
+        name: category
+        type: string
+      - description: Filter by status
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAiRoleResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List AI roles
+      tags:
+      - AI Role
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAiRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiRoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create AI role
+      tags:
+      - AI Role
+  /v1/ai/roles/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete AI role
+      tags:
+      - AI Role
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiRoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get AI role by role_id
+      tags:
+      - AI Role
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAiRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiRoleInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update AI role
+      tags:
+      - AI Role
   /v1/announcements:
     get:
       consumes:
