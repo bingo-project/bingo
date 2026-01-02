@@ -57,7 +57,7 @@ func Logger() gin.HandlerFunc {
 		if c.Request.Method != http.MethodGet {
 			requestBody, _ := c.GetRawData()
 			logFields = append(logFields, zap.String("params", string(requestBody)))
-			logFields = append(logFields, zap.String("response", w.body.String()))
+			// logFields = append(logFields, zap.String("response", w.body.String()))
 		}
 
 		log.C(c).Info("http", logFields...)
