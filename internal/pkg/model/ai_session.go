@@ -9,7 +9,7 @@ type AiSessionM struct {
 	ID           uint   `gorm:"primaryKey" json:"id"`
 	SessionID    string `gorm:"column:session_id;type:varchar(64);uniqueIndex:uk_session_id;not null" json:"sessionId"`
 	UID          string `gorm:"column:uid;type:varchar(64);index:idx_uid;not null" json:"uid"`
-	RoleID       string `gorm:"column:role_id;type:varchar(64);index:idx_role_id" json:"roleId"`
+	AgentID      string `gorm:"column:agent_id;type:varchar(64);index:idx_agent_id" json:"agentId"`
 	Title        string `gorm:"column:title;type:varchar(255);not null;default:''" json:"title"`
 	Model        string `gorm:"column:model;type:varchar(64);not null;default:''" json:"model"`
 	MessageCount int    `gorm:"column:message_count;type:int;not null;default:0" json:"messageCount"`

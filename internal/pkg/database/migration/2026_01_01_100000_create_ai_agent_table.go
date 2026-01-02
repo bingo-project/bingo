@@ -1,5 +1,5 @@
-// ABOUTME: Database migration for ai_role table.
-// ABOUTME: Creates table for AI role presets.
+// ABOUTME: Database migration for ai_agents table.
+// ABOUTME: Creates table for AI agent presets.
 
 package migration
 
@@ -10,9 +10,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type CreateAIRoleTable struct {
+type CreateAiAgentTable struct {
 	ID           uint64    `gorm:"primaryKey"`
-	RoleID       string    `gorm:"type:varchar(32);uniqueIndex:uk_role_id;not null"`
+	AgentID      string    `gorm:"type:varchar(32);uniqueIndex:uk_agent_id;not null"`
 	Name         string    `gorm:"type:varchar(64);not null"`
 	Description  string    `gorm:"type:varchar(255)"`
 	Icon         string    `gorm:"type:varchar(255)"`
@@ -27,18 +27,18 @@ type CreateAIRoleTable struct {
 	UpdatedAt    time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 }
 
-func (CreateAIRoleTable) TableName() string {
-	return "ai_role"
+func (CreateAiAgentTable) TableName() string {
+	return "ai_agent"
 }
 
-func (CreateAIRoleTable) Up(migrator gorm.Migrator) {
-	_ = migrator.AutoMigrate(&CreateAIRoleTable{})
+func (CreateAiAgentTable) Up(migrator gorm.Migrator) {
+	_ = migrator.AutoMigrate(&CreateAiAgentTable{})
 }
 
-func (CreateAIRoleTable) Down(migrator gorm.Migrator) {
-	_ = migrator.DropTable(&CreateAIRoleTable{})
+func (CreateAiAgentTable) Down(migrator gorm.Migrator) {
+	_ = migrator.DropTable(&CreateAiAgentTable{})
 }
 
 func init() {
-	migrate.Add("2026_01_01_100000_create_ai_role_table", CreateAIRoleTable{}.Up, CreateAIRoleTable{}.Down)
+	migrate.Add("2026_01_01_100000_create_ai_agent_table", CreateAiAgentTable{}.Up, CreateAiAgentTable{}.Down)
 }

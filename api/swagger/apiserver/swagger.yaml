@@ -11,8 +11,10 @@ definitions:
       reason:
         type: string
     type: object
-  v1.AiRoleInfo:
+  v1.AiAgentInfo:
     properties:
+      agentId:
+        type: string
       category:
         type: string
       description:
@@ -24,8 +26,6 @@ definitions:
       model:
         type: string
       name:
-        type: string
-      roleId:
         type: string
       sort:
         type: integer
@@ -120,7 +120,6 @@ definitions:
         type: number
     required:
     - messages
-    - model
     type: object
   v1.ChatCompletionResponse:
     properties:
@@ -167,14 +166,14 @@ definitions:
     type: object
   v1.CreateSessionRequest:
     properties:
-      model:
-        description: 'Optional: override role''s default model'
+      agentId:
+        description: 'Optional: bind agent to session'
         type: string
-      roleId:
-        description: 'Optional: bind role to session'
+      model:
+        description: 'Optional: override agent''s default model'
         type: string
       title:
-        description: 'Optional: defaults to role name or "新对话"'
+        description: 'Optional: defaults to agent name or "新对话"'
         type: string
     type: object
   v1.GetAuthCodeResponse:
@@ -194,11 +193,11 @@ definitions:
       status:
         type: string
     type: object
-  v1.ListAiRoleResponse:
+  v1.ListAiAgentResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/v1.AiRoleInfo'
+          $ref: '#/definitions/v1.AiAgentInfo'
         type: array
       total:
         type: integer
@@ -407,15 +406,15 @@ definitions:
     type: object
   v1.SessionInfo:
     properties:
+      agentId:
+        type: string
+      agentName:
+        type: string
       createdAt:
         type: string
       messageCount:
         type: integer
       model:
-        type: string
-      roleId:
-        type: string
-      roleName:
         type: string
       sessionId:
         type: string
@@ -619,7 +618,7 @@ paths:
       summary: Heath check
       tags:
       - Common
-  /v1/ai/roles:
+  /v1/ai/agents:
     get:
       consumes:
       - application/json
@@ -634,24 +633,24 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.ListAiRoleResponse'
-        "400":
-          description: Bad Request
+            $ref: '#/definitions/v1.ListAiAgentResponse'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: List AI roles
+      summary: List available AI agents
       tags:
-      - AI Role
-  /v1/ai/roles/{role_id}:
+      - AI
+  /v1/ai/agents/{id}:
     get:
       consumes:
       - application/json
       parameters:
-      - description: Role ID
+      - description: Agent ID
         in: path
-        name: role_id
+        name: id
         required: true
         type: string
       produces:
@@ -660,20 +659,20 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.AiRoleInfo'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/core.ErrResponse'
+            $ref: '#/definitions/v1.AiAgentInfo'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Get AI role by role_id
+      summary: Get AI agent details
       tags:
-      - AI Role
+      - AI
   /v1/ai/sessions:
     get:
       consumes:

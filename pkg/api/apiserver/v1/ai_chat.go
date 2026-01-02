@@ -7,7 +7,7 @@ import "time"
 
 // ChatCompletionRequest represents a chat completion request (OpenAI-compatible).
 type ChatCompletionRequest struct {
-	Model       string        `json:"model" binding:"required" example:"glm-4-flash"`
+	Model       string        `json:"model,omitempty" example:"glm-4-flash"`
 	Messages    []ChatMessage `json:"messages" binding:"required,min=1"`
 	MaxTokens   int           `json:"max_tokens,omitempty" example:"2048"`
 	Temperature float64       `json:"temperature,omitempty" example:"0.7"`
@@ -66,9 +66,9 @@ type ModelInfo struct {
 
 // CreateSessionRequest represents session creation request.
 type CreateSessionRequest struct {
-	RoleID string `json:"roleId,omitempty"` // Optional: bind role to session
-	Title  string `json:"title,omitempty"`  // Optional: defaults to role name or "新对话"
-	Model  string `json:"model,omitempty"`  // Optional: override role's default model
+	AgentID string `json:"agentId,omitempty"` // Optional: bind agent to session
+	Title   string `json:"title,omitempty"`   // Optional: defaults to agent name or "新对话"
+	Model   string `json:"model,omitempty"`   // Optional: override agent's default model
 }
 
 // UpdateSessionRequest represents session update request.
@@ -81,8 +81,8 @@ type UpdateSessionRequest struct {
 type SessionInfo struct {
 	SessionID    string    `json:"sessionId"`
 	Title        string    `json:"title"`
-	RoleID       string    `json:"roleId,omitempty"`
-	RoleName     string    `json:"roleName,omitempty"`
+	AgentID      string    `json:"agentId,omitempty"`
+	AgentName    string    `json:"agentName,omitempty"`
 	Model        string    `json:"model"`
 	MessageCount int       `json:"messageCount"`
 	TotalTokens  int       `json:"totalTokens"`

@@ -53,3 +53,8 @@ make test                     # 测试
 make lint                     # 代码检查
 make swag                     # 生成 Swagger 文档
 ```
+
+## 开发偏好
+
+- **执行计划时**：使用 Subagent-Driven 方式执行计划, 按阶段（而非每个任务）进行代码审查，提高效率
+- **Worktree 目录**：使用 `.worktrees/` 存放隔离开发环境

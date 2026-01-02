@@ -20,7 +20,7 @@ import (
 
 // SessionBiz defines session management interface
 type SessionBiz interface {
-	Create(ctx context.Context, uid string, title string, modelName string, roleID string) (*v1.SessionInfo, error)
+	Create(ctx context.Context, uid string, title string, modelName string, agentID string) (*v1.SessionInfo, error)
 	Get(ctx context.Context, uid string, sessionID string) (*v1.SessionInfo, error)
 	List(ctx context.Context, uid string) ([]v1.SessionInfo, error)
 	Update(ctx context.Context, uid string, sessionID string, title string, modelName string) (*v1.SessionInfo, error)
@@ -47,25 +47,25 @@ func toSessionInfo(m *model.AiSessionM) *v1.SessionInfo {
 	return &info
 }
 
-func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string, roleID string) (*v1.SessionInfo, error) {
+func (b *sessionBiz) Create(ctx context.Context, uid string, title string, modelName string, agentID string) (*v1.SessionInfo, error) {
 	var selectedModel string
 	var finalTitle string
 
-	// 如果指定了 role_id, 从角色获取默认配置
-	if roleID != "" {
-		role, err := b.ds.AiRole().GetByRoleID(ctx, roleID)
+	// 如果指定了 agent_id, 从角色获取默认配置
+	if agentID != "" {
+		agent, err := b.ds.AiAgents().GetByAgentID(ctx, agentID)
 		if err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errno.ErrAIRoleNotFound
 			}
-			return nil, errno.ErrDBRead.WithMessage("get ai role: %v", err)
+			return nil, errno.ErrDBRead.WithMessage("get ai agent: %v", err)
 		}
-		if role.Status == model.AiRoleStatusDisabled {
+		if agent.Status == model.AiAgentStatusDisabled {
 			return nil, errno.ErrAIRoleDisabled
 		}
-		selectedModel = role.Model // 使用角色的模型
+		selectedModel = agent.Model // 使用角色的模型
 		if title == "" {
-			finalTitle = role.Name // 默认标题使用角色名称
+			finalTitle = agent.Name // 默认标题使用角色名称
 		}
 	}
 
@@ -89,7 +89,7 @@ func (b *sessionBiz) Create(ctx context.Context, uid string, title string, model
 	session := &model.AiSessionM{
 		SessionID: uuid.NewString(),
 		UID:       uid,
-		RoleID:    roleID, // 绑定角色
+		AgentID:   agentID, // 绑定角色
 		Title:     finalTitle,
 		Model:     selectedModel,
 		Status:    model.AiSessionStatusActive,

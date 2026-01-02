@@ -49,7 +49,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/ai/roles": {
+        "/v1/ai/agents": {
             "get": {
                 "security": [
                     {
@@ -63,9 +63,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI"
                 ],
-                "summary": "List AI roles",
+                "summary": "List available AI agents",
                 "parameters": [
                     {
                         "type": "string",
@@ -78,11 +78,11 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListAiRoleResponse"
+                            "$ref": "#/definitions/v1.ListAiAgentResponse"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/core.ErrResponse"
                         }
@@ -90,7 +90,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/ai/roles/{role_id}": {
+        "/v1/ai/agents/{id}": {
             "get": {
                 "security": [
                     {
@@ -104,14 +104,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI"
                 ],
-                "summary": "Get AI role by role_id",
+                "summary": "Get AI agent details",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role ID",
-                        "name": "role_id",
+                        "description": "Agent ID",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -120,17 +120,17 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AiRoleInfo"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/core.ErrResponse"
+                            "$ref": "#/definitions/v1.AiAgentInfo"
                         }
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/core.ErrResponse"
                         }
@@ -1990,9 +1990,12 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.AiRoleInfo": {
+        "v1.AiAgentInfo": {
             "type": "object",
             "properties": {
+                "agentId": {
+                    "type": "string"
+                },
                 "category": {
                     "type": "string"
                 },
@@ -2009,9 +2012,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -2119,8 +2119,7 @@ const docTemplate = `{
         "v1.ChatCompletionRequest": {
             "type": "object",
             "required": [
-                "messages",
-                "model"
+                "messages"
             ],
             "properties": {
                 "max_tokens": {
@@ -2218,16 +2217,16 @@ const docTemplate = `{
         "v1.CreateSessionRequest": {
             "type": "object",
             "properties": {
-                "model": {
-                    "description": "Optional: override role's default model",
+                "agentId": {
+                    "description": "Optional: bind agent to session",
                     "type": "string"
                 },
-                "roleId": {
-                    "description": "Optional: bind role to session",
+                "model": {
+                    "description": "Optional: override agent's default model",
                     "type": "string"
                 },
                 "title": {
-                    "description": "Optional: defaults to role name or \"新对话\"",
+                    "description": "Optional: defaults to agent name or \"新对话\"",
                     "type": "string"
                 }
             }
@@ -2257,13 +2256,13 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ListAiRoleResponse": {
+        "v1.ListAiAgentResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.AiRoleInfo"
+                        "$ref": "#/definitions/v1.AiAgentInfo"
                     }
                 },
                 "total": {
@@ -2566,6 +2565,12 @@ const docTemplate = `{
         "v1.SessionInfo": {
             "type": "object",
             "properties": {
+                "agentId": {
+                    "type": "string"
+                },
+                "agentName": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2573,12 +2578,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "model": {
-                    "type": "string"
-                },
-                "roleId": {
-                    "type": "string"
-                },
-                "roleName": {
                     "type": "string"
                 },
                 "sessionId": {

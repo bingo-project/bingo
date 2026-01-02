@@ -91,4 +91,6 @@ func MapApiRouters(g *gin.Engine) {
 		ntf.GET("/preferences", prefHandler.Get)
 		ntf.PUT("/preferences", prefHandler.Update)
 	}
+
+
 }

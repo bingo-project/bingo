@@ -3,9 +3,9 @@
 
 package v1
 
-// CreateAiRoleRequest represents a request to create an AI role.
-type CreateAiRoleRequest struct {
-	RoleID       string  `json:"roleId" binding:"required,max=32" example:"math_teacher"`
+// CreateAiAgentRequest represents a request to create an AI agent.
+type CreateAiAgentRequest struct {
+	AgentID      string  `json:"agentId" binding:"required,max=32" example:"math_teacher"`
 	Name         string  `json:"name" binding:"required,max=64" example:"数学老师"`
 	Description  string  `json:"description,omitempty" binding:"max=255" example:"擅长小学数学辅导"`
 	Icon         string  `json:"icon,omitempty" binding:"max=255" example:"https://example.com/icon.png"`
@@ -17,8 +17,8 @@ type CreateAiRoleRequest struct {
 	Sort         int     `json:"sort,omitempty" example:"1"`
 }
 
-// UpdateAiRoleRequest represents a request to update an AI role.
-type UpdateAiRoleRequest struct {
+// UpdateAiAgentRequest represents a request to update an AI agent.
+type UpdateAiAgentRequest struct {
 	Name         string  `json:"name,omitempty" binding:"max=64"`
 	Description  string  `json:"description,omitempty" binding:"max=255"`
 	Icon         string  `json:"icon,omitempty" binding:"max=255"`
@@ -31,15 +31,15 @@ type UpdateAiRoleRequest struct {
 	Status       string  `json:"status,omitempty" binding:"omitempty,oneof=active disabled"`
 }
 
-// ListAiRoleRequest represents a request to list AI roles.
-type ListAiRoleRequest struct {
+// ListAiAgentRequest represents a request to list AI agents.
+type ListAiAgentRequest struct {
 	Category string `form:"category" binding:"omitempty,oneof=general education medical workplace creative"`
 	Status   string `form:"status" binding:"omitempty,oneof=active disabled"`
 }
 
-// AiRoleInfo represents AI role information.
-type AiRoleInfo struct {
-	RoleID       string  `json:"roleId"`
+// AiAgentInfo represents AI agent information.
+type AiAgentInfo struct {
+	AgentID      string  `json:"agentId"`
 	Name         string  `json:"name"`
 	Description  string  `json:"description"`
 	Icon         string  `json:"icon"`
@@ -52,8 +52,8 @@ type AiRoleInfo struct {
 	Status       string  `json:"status"`
 }
 
-// ListAiRoleResponse represents a response containing a list of AI roles.
-type ListAiRoleResponse struct {
+// ListAiAgentResponse represents a response containing a list of AI agents.
+type ListAiAgentResponse struct {
 	Total int64        `json:"total"`
-	Data  []AiRoleInfo `json:"data"`
+	Data  []AiAgentInfo `json:"data"`
 }

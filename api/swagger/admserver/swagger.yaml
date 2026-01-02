@@ -176,8 +176,10 @@ definitions:
       username:
         type: string
     type: object
-  v1.AiRoleInfo:
+  v1.AiAgentInfo:
     properties:
+      agentId:
+        type: string
       category:
         type: string
       description:
@@ -189,8 +191,6 @@ definitions:
       model:
         type: string
       name:
-        type: string
-      roleId:
         type: string
       sort:
         type: integer
@@ -338,8 +338,12 @@ definitions:
     - password
     - username
     type: object
-  v1.CreateAiRoleRequest:
+  v1.CreateAiAgentRequest:
     properties:
+      agentId:
+        example: math_teacher
+        maxLength: 32
+        type: string
       category:
         enum:
         - general
@@ -368,10 +372,6 @@ definitions:
         example: 数学老师
         maxLength: 64
         type: string
-      roleId:
-        example: math_teacher
-        maxLength: 32
-        type: string
       sort:
         example: 1
         type: integer
@@ -382,8 +382,8 @@ definitions:
         example: 0.7
         type: number
     required:
+    - agentId
     - name
-    - roleId
     - systemPrompt
     type: object
   v1.CreateAnnouncementRequest:
@@ -619,11 +619,11 @@ definitions:
       total:
         type: integer
     type: object
-  v1.ListAiRoleResponse:
+  v1.ListAiAgentResponse:
     properties:
       data:
         items:
-          $ref: '#/definitions/v1.AiRoleInfo'
+          $ref: '#/definitions/v1.AiAgentInfo'
         type: array
       total:
         type: integer
@@ -897,7 +897,7 @@ definitions:
       status:
         type: string
     type: object
-  v1.UpdateAiRoleRequest:
+  v1.UpdateAiAgentRequest:
     properties:
       category:
         enum:
@@ -1435,7 +1435,7 @@ paths:
       summary: Set admin roles
       tags:
       - Admin
-  /v1/ai/roles:
+  /v1/ai/agents:
     get:
       consumes:
       - application/json
@@ -1454,16 +1454,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.ListAiRoleResponse'
+            $ref: '#/definitions/v1.ListAiAgentResponse'
         "400":
           description: Bad Request
           schema:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: List AI roles
+      summary: List AI agents
       tags:
-      - AI Role
+      - AI Agent
     post:
       consumes:
       - application/json
@@ -1473,14 +1473,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.CreateAiRoleRequest'
+          $ref: '#/definitions/v1.CreateAiAgentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.AiRoleInfo'
+            $ref: '#/definitions/v1.AiAgentInfo'
         "400":
           description: Bad Request
           schema:
@@ -1491,15 +1491,15 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Create AI role
+      summary: Create AI agent
       tags:
-      - AI Role
-  /v1/ai/roles/{id}:
+      - AI Agent
+  /v1/ai/agents/{id}:
     delete:
       consumes:
       - application/json
       parameters:
-      - description: Role ID
+      - description: Agent ID
         in: path
         name: id
         required: true
@@ -1519,14 +1519,14 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Delete AI role
+      summary: Delete AI agent
       tags:
-      - AI Role
+      - AI Agent
     get:
       consumes:
       - application/json
       parameters:
-      - description: Role ID
+      - description: Agent ID
         in: path
         name: id
         required: true
@@ -1537,7 +1537,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.AiRoleInfo'
+            $ref: '#/definitions/v1.AiAgentInfo'
         "400":
           description: Bad Request
           schema:
@@ -1548,14 +1548,14 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Get AI role by role_id
+      summary: Get AI agent by agent_id
       tags:
-      - AI Role
+      - AI Agent
     put:
       consumes:
       - application/json
       parameters:
-      - description: Role ID
+      - description: Agent ID
         in: path
         name: id
         required: true
@@ -1565,14 +1565,14 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.UpdateAiRoleRequest'
+          $ref: '#/definitions/v1.UpdateAiAgentRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/v1.AiRoleInfo'
+            $ref: '#/definitions/v1.AiAgentInfo'
         "400":
           description: Bad Request
           schema:
@@ -1587,9 +1587,9 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Update AI role
+      summary: Update AI agent
       tags:
-      - AI Role
+      - AI Agent
   /v1/announcements:
     get:
       consumes:

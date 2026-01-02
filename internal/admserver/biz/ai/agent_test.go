@@ -14,16 +14,16 @@ import (
 	v1 "github.com/bingo-project/bingo/pkg/api/apiserver/v1"
 )
 
-func TestAiRoleBiz_Create(t *testing.T) {
+func TestAiAgentBiz_Create(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		db, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
 		require.NoError(t, err)
 
 		// Create the table manually to avoid SQLite migration issues
 		err = db.Exec(`
-			CREATE TABLE ai_role (
+			CREATE TABLE ai_agents (
 				id INTEGER PRIMARY KEY AUTOINCREMENT,
-				role_id TEXT(32) NOT NULL UNIQUE,
+				agent_id TEXT(32) NOT NULL UNIQUE,
 				name TEXT(64) NOT NULL,
 				description TEXT(255),
 				icon TEXT(255),
@@ -41,21 +41,21 @@ func TestAiRoleBiz_Create(t *testing.T) {
 		require.NoError(t, err)
 
 		ds := store.NewStore(db)
-		biz := NewAiRole(ds)
+		biz := NewAiAgent(ds)
 
-		req := &v1.CreateAiRoleRequest{
-			RoleID:       "test-role",
-			Name:         "Test Role",
+		req := &v1.CreateAiAgentRequest{
+			AgentID:      "test-agent",
+			Name:         "Test Agent",
 			Description:  "Test description",
-			SystemPrompt: "You are a test role",
+			SystemPrompt: "You are a test agent",
 			Model:        "gpt-4",
 		}
 
 		resp, err := biz.Create(context.Background(), req)
 
 		require.NoError(t, err)
-		assert.Equal(t, "test-role", resp.RoleID)
-		assert.Equal(t, "Test Role", resp.Name)
-		assert.Equal(t, string(model.AiRoleStatusActive), resp.Status)
+		assert.Equal(t, "test-agent", resp.AgentID)
+		assert.Equal(t, "Test Agent", resp.Name)
+		assert.Equal(t, string(model.AiAgentStatusActive), resp.Status)
 	})
 }

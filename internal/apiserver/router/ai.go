@@ -1,5 +1,5 @@
-// ABOUTME: AI router registration for chat, session, and role endpoints.
-// ABOUTME: Registers chat completions, models, sessions, and role preset routes.
+// ABOUTME: AI router registration for chat, session, and agent endpoints.
+// ABOUTME: Registers chat completions, models, sessions, and agent preset routes.
 
 package router
 
@@ -37,7 +37,7 @@ func MapAiRouters(g *gin.Engine) {
 	// Initialize handlers
 	chatHandler := chathandler.NewChatHandler(store.S, registry)
 	sessionHandler := chathandler.NewSessionHandler(store.S, registry)
-	roleHandler := chathandler.NewRoleHandler(store.S, registry)
+	agentHandler := chathandler.NewAgentHandler(store.S)
 
 	// Get AI quota limit
 	rpm := facade.Config.AI.Quota.DefaultRPM
@@ -61,10 +61,10 @@ func MapAiRouters(g *gin.Engine) {
 		sessions.GET("/:session_id/history", sessionHandler.GetSessionHistory)
 	}
 
-	// Role presets (read-only for users)
-	roles := v1.Group("/ai/roles")
+	// Agent presets (read-only for users)
+	agents := v1.Group("/ai/agents")
 	{
-		roles.GET("", roleHandler.List)
-		roles.GET("/:role_id", roleHandler.Get)
+		agents.GET("", agentHandler.List)
+		agents.GET("/:id", agentHandler.Get)
 	}
 }

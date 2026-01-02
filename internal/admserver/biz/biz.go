@@ -22,7 +22,7 @@ type IBiz interface {
 	AuthProviders() auth.AuthProviderBiz
 	Users() user.UserBiz
 
-	AiRoles() ai.AiRoleBiz
+	AiAgents() ai.AiAgentBiz
 
 	Servers() syscfg.ServerBiz
 	Email() common.EmailBiz
@@ -70,8 +70,8 @@ func (b *biz) Users() user.UserBiz {
 	return user.New(b.ds)
 }
 
-func (b *biz) AiRoles() ai.AiRoleBiz {
-	return ai.NewAiRole(b.ds)
+func (b *biz) AiAgents() ai.AiAgentBiz {
+	return ai.NewAiAgent(b.ds)
 }
 
 func (b *biz) Servers() syscfg.ServerBiz {

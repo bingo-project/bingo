@@ -88,13 +88,13 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("roles/:name/menus", roleHandler.GetMenuIDs) // 获取菜单 ID 集合
 	v1.GET("roles/all", roleHandler.All)
 
-	// AI Role
-	aiRoleHandler := ai.NewRoleHandler(store.S)
-	v1.GET("ai/roles", aiRoleHandler.List)
-	v1.POST("ai/roles", aiRoleHandler.Create)
-	v1.GET("ai/roles/:id", aiRoleHandler.Get)
-	v1.PUT("ai/roles/:id", aiRoleHandler.Update)
-	v1.DELETE("ai/roles/:id", aiRoleHandler.Delete)
+	// AI Agent
+	aiAgentHandler := ai.NewAgentHandler(store.S)
+	v1.GET("ai/agents", aiAgentHandler.List)
+	v1.POST("ai/agents", aiAgentHandler.Create)
+	v1.GET("ai/agents/:id", aiAgentHandler.Get)
+	v1.PUT("ai/agents/:id", aiAgentHandler.Update)
+	v1.DELETE("ai/agents/:id", aiAgentHandler.Delete)
 
 	// API
 	apiHandler := system.NewApiHandler(store.S, policyAuthz)

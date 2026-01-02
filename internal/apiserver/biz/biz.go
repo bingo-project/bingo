@@ -36,7 +36,7 @@ type IBiz interface {
 	NotificationPreferences() notification.PreferenceBiz
 
 	Chat() chat.ChatBiz
-	AiRoles() chat.AiRoleBiz
+	AiAgents() chat.AiAgentBiz
 }
 
 // biz 是 IBiz 的一个具体实现.
@@ -109,6 +109,6 @@ func (b *biz) Chat() chat.ChatBiz {
 	return chat.New(b.ds, b.registry)
 }
 
-func (b *biz) AiRoles() chat.AiRoleBiz {
-	return chat.NewAiRole(b.ds)
+func (b *biz) AiAgents() chat.AiAgentBiz {
+	return chat.NewAiAgent(b.ds)
 }

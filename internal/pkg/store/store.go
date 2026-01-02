@@ -81,8 +81,8 @@ type IStore interface {
 	AiSession() AiSessionStore
 	// AiMessage returns the AI message store.
 	AiMessage() AiMessageStore
-	// AiRole returns the AI role preset store.
-	AiRole() AiRoleStore
+	// AiAgents returns the AI agent preset store.
+	AiAgents() AiAgentStore
 }
 
 // transactionKey used for context.
@@ -259,7 +259,7 @@ func (ds *datastore) AiMessage() AiMessageStore {
 	return NewAiMessageStore(ds)
 }
 
-// AiRole returns the AI role preset store.
-func (ds *datastore) AiRole() AiRoleStore {
-	return NewAiRoleStore(ds)
+// AiAgents returns the AI agent preset store.
+func (ds *datastore) AiAgents() AiAgentStore {
+	return NewAiAgentStore(ds)
 }

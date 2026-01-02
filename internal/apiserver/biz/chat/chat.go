@@ -68,15 +68,15 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *ai.ChatRequest) (*a
 			return nil, err
 		}
 
-		// Get role_id from session
+		// Get agent_id from session
 		session, err := b.ds.AiSession().GetBySessionID(ctx, req.SessionID)
-		if err == nil && session.RoleID != "" {
-			req.RoleID = session.RoleID // Use session's role
+		if err == nil && session.AgentID != "" {
+			req.AgentID = session.AgentID // Use session's agent
 		}
 	}
 
-	// Apply role preset if specified
-	if err := b.buildMessagesWithRole(ctx, req); err != nil {
+	// Apply agent preset if specified
+	if err := b.buildMessagesWithAgent(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -167,15 +167,15 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *ai.ChatReques
 			return nil, err
 		}
 
-		// Get role_id from session
+		// Get agent_id from session
 		session, err := b.ds.AiSession().GetBySessionID(ctx, req.SessionID)
-		if err == nil && session.RoleID != "" {
-			req.RoleID = session.RoleID // Use session's role
+		if err == nil && session.AgentID != "" {
+			req.AgentID = session.AgentID // Use session's agent
 		}
 	}
 
-	// Apply role preset if specified
-	if err := b.buildMessagesWithRole(ctx, req); err != nil {
+	// Apply agent preset if specified
+	if err := b.buildMessagesWithAgent(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -506,39 +506,39 @@ func (b *chatBiz) saveToSession(ctx context.Context, uid string, sessionID strin
 	}
 }
 
-// buildMessagesWithRole injects system prompt from role preset if RoleID is provided.
-func (b *chatBiz) buildMessagesWithRole(ctx context.Context, req *ai.ChatRequest) error {
-	if req.RoleID == "" {
+// buildMessagesWithAgent injects system prompt from agent preset if AgentID is provided.
+func (b *chatBiz) buildMessagesWithAgent(ctx context.Context, req *ai.ChatRequest) error {
+	if req.AgentID == "" {
 		return nil
 	}
 
-	// Get role details
-	role, err := b.ds.AiRole().GetByRoleID(ctx, req.RoleID)
+	// Get agent details
+	agent, err := b.ds.AiAgents().GetByAgentID(ctx, req.AgentID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errno.ErrAIRoleNotFound
 		}
 
-		return errno.ErrDBRead.WithMessage("get ai role: %v", err)
+		return errno.ErrDBRead.WithMessage("get ai agent: %v", err)
 	}
 
-	if role.Status == model.AiRoleStatusDisabled {
+	if agent.Status == model.AiAgentStatusDisabled {
 		return errno.ErrAIRoleDisabled
 	}
 
-	// Use role model if request model is not specified or default
+	// Use agent model if request model is not specified or default
 	if req.Model == "" || req.Model == facade.Config.AI.DefaultModel {
-		if role.Model != "" {
-			req.Model = role.Model
+		if agent.Model != "" {
+			req.Model = agent.Model
 		}
 	}
 
-	// Apply temperature/max_tokens from role if not custom set
-	if req.Temperature == 0 && role.Temperature > 0 {
-		req.Temperature = role.Temperature
+	// Apply temperature/max_tokens from agent if not custom set
+	if req.Temperature == 0 && agent.Temperature > 0 {
+		req.Temperature = agent.Temperature
 	}
-	if req.MaxTokens == 0 && role.MaxTokens > 0 {
-		req.MaxTokens = role.MaxTokens
+	if req.MaxTokens == 0 && agent.MaxTokens > 0 {
+		req.MaxTokens = agent.MaxTokens
 	}
 
 	// Inject system prompt at the beginning
@@ -548,10 +548,10 @@ func (b *chatBiz) buildMessagesWithRole(ctx context.Context, req *ai.ChatRequest
 		hasSystem = true
 	}
 
-	if !hasSystem && role.SystemPrompt != "" {
+	if !hasSystem && agent.SystemPrompt != "" {
 		systemMsg := ai.Message{
 			Role:    ai.RoleSystem,
-			Content: role.SystemPrompt,
+			Content: agent.SystemPrompt,
 		}
 		// Prepend system message
 		req.Messages = append([]ai.Message{systemMsg}, req.Messages...)

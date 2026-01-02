@@ -14,7 +14,7 @@ type CreateAISessionTable struct {
 	ID           uint64    `gorm:"primaryKey"`
 	SessionID    string    `gorm:"type:varchar(64);uniqueIndex:uk_session_id;not null"`
 	UID          string    `gorm:"type:varchar(64);index:idx_uid;not null"`
-	RoleID       string    `gorm:"type:varchar(64);index:idx_role_id"`
+	AgentID      string    `gorm:"type:varchar(64);index:idx_agent_id"`
 	Title        string    `gorm:"type:varchar(255);not null;default:''"`
 	Model        string    `gorm:"type:varchar(64);not null;default:''"`
 	MessageCount int       `gorm:"type:int;not null;default:0"`

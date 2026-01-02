@@ -164,6 +164,6 @@ func (m *Store) AiMessage() store.AiMessageStore {
 }
 
 // AiRole returns the AI role preset store.
-func (m *Store) AiRole() store.AiRoleStore {
+func (m *Store) AiAgents() store.AiAgentStore {
 	return nil
 }

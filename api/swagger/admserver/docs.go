@@ -500,7 +500,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/ai/roles": {
+        "/v1/ai/agents": {
             "get": {
                 "security": [
                     {
@@ -514,9 +514,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI Agent"
                 ],
-                "summary": "List AI roles",
+                "summary": "List AI agents",
                 "parameters": [
                     {
                         "type": "string",
@@ -535,7 +535,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.ListAiRoleResponse"
+                            "$ref": "#/definitions/v1.ListAiAgentResponse"
                         }
                     },
                     "400": {
@@ -559,9 +559,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI Agent"
                 ],
-                "summary": "Create AI role",
+                "summary": "Create AI agent",
                 "parameters": [
                     {
                         "description": "Param",
@@ -569,7 +569,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.CreateAiRoleRequest"
+                            "$ref": "#/definitions/v1.CreateAiAgentRequest"
                         }
                     }
                 ],
@@ -577,7 +577,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AiRoleInfo"
+                            "$ref": "#/definitions/v1.AiAgentInfo"
                         }
                     },
                     "400": {
@@ -595,7 +595,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/ai/roles/{id}": {
+        "/v1/ai/agents/{id}": {
             "get": {
                 "security": [
                     {
@@ -609,13 +609,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI Agent"
                 ],
-                "summary": "Get AI role by role_id",
+                "summary": "Get AI agent by agent_id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role ID",
+                        "description": "Agent ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -625,7 +625,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AiRoleInfo"
+                            "$ref": "#/definitions/v1.AiAgentInfo"
                         }
                     },
                     "400": {
@@ -655,13 +655,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI Agent"
                 ],
-                "summary": "Update AI role",
+                "summary": "Update AI agent",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role ID",
+                        "description": "Agent ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -672,7 +672,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.UpdateAiRoleRequest"
+                            "$ref": "#/definitions/v1.UpdateAiAgentRequest"
                         }
                     }
                 ],
@@ -680,7 +680,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.AiRoleInfo"
+                            "$ref": "#/definitions/v1.AiAgentInfo"
                         }
                     },
                     "400": {
@@ -716,13 +716,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "AI Role"
+                    "AI Agent"
                 ],
-                "summary": "Delete AI role",
+                "summary": "Delete AI agent",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role ID",
+                        "description": "Agent ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -4743,9 +4743,12 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.AiRoleInfo": {
+        "v1.AiAgentInfo": {
             "type": "object",
             "properties": {
+                "agentId": {
+                    "type": "string"
+                },
                 "category": {
                     "type": "string"
                 },
@@ -4762,9 +4765,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
-                },
-                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -4982,14 +4982,19 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.CreateAiRoleRequest": {
+        "v1.CreateAiAgentRequest": {
             "type": "object",
             "required": [
+                "agentId",
                 "name",
-                "roleId",
                 "systemPrompt"
             ],
             "properties": {
+                "agentId": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "math_teacher"
+                },
                 "category": {
                     "type": "string",
                     "enum": [
@@ -5024,11 +5029,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 64,
                     "example": "数学老师"
-                },
-                "roleId": {
-                    "type": "string",
-                    "maxLength": 32,
-                    "example": "math_teacher"
                 },
                 "sort": {
                     "type": "integer",
@@ -5367,13 +5367,13 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.ListAiRoleResponse": {
+        "v1.ListAiAgentResponse": {
             "type": "object",
             "properties": {
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/v1.AiRoleInfo"
+                        "$ref": "#/definitions/v1.AiAgentInfo"
                     }
                 },
                 "total": {
@@ -5785,7 +5785,7 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.UpdateAiRoleRequest": {
+        "v1.UpdateAiAgentRequest": {
             "type": "object",
             "properties": {
                 "category": {
