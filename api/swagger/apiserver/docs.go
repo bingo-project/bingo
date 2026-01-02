@@ -2002,7 +2002,7 @@ const docTemplate = `{
                 "icon": {
                     "type": "string"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -2011,7 +2011,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -2020,7 +2020,7 @@ const docTemplate = `{
                 "status": {
                     "type": "string"
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {
@@ -2094,7 +2094,7 @@ const docTemplate = `{
                 "email": {
                     "type": "boolean"
                 },
-                "in_app": {
+                "inApp": {
                     "type": "boolean"
                 }
             }
@@ -2138,7 +2138,7 @@ const docTemplate = `{
                     "type": "string",
                     "example": "glm-4-flash"
                 },
-                "session_id": {
+                "sessionId": {
                     "description": "Extension fields",
                     "type": "string"
                 },
@@ -2384,19 +2384,19 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "input_price": {
+                "inputPrice": {
                     "type": "number"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "object": {
                     "type": "string"
                 },
-                "output_price": {
+                "outputPrice": {
                     "type": "number"
                 },
-                "owned_by": {
+                "ownedBy": {
                     "type": "string"
                 }
             }
@@ -2558,7 +2558,7 @@ const docTemplate = `{
                         "$ref": "#/definitions/v1.ChatMessage"
                     }
                 },
-                "session_id": {
+                "sessionId": {
                     "type": "string"
                 }
             }

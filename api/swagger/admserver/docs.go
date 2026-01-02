@@ -4755,7 +4755,7 @@ const docTemplate = `{
                 "icon": {
                     "type": "string"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -4764,7 +4764,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -4773,7 +4773,7 @@ const docTemplate = `{
                 "status": {
                     "type": "string"
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {
@@ -4986,8 +4986,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "role_id",
-                "system_prompt"
+                "roleId",
+                "systemPrompt"
             ],
             "properties": {
                 "category": {
@@ -5011,7 +5011,7 @@ const docTemplate = `{
                     "maxLength": 255,
                     "example": "https://example.com/icon.png"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer",
                     "example": 2000
                 },
@@ -5025,7 +5025,7 @@ const docTemplate = `{
                     "maxLength": 64,
                     "example": "数学老师"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string",
                     "maxLength": 32,
                     "example": "math_teacher"
@@ -5034,7 +5034,7 @@ const docTemplate = `{
                     "type": "integer",
                     "example": 1
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string",
                     "example": "你是一位经验丰富的小学数学老师..."
                 },
@@ -5806,7 +5806,7 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -5827,7 +5827,7 @@ const docTemplate = `{
                         "disabled"
                     ]
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {

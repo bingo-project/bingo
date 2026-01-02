@@ -1994,7 +1994,7 @@
                 "icon": {
                     "type": "string"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -2003,7 +2003,7 @@
                 "name": {
                     "type": "string"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -2012,7 +2012,7 @@
                 "status": {
                     "type": "string"
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {
@@ -2086,7 +2086,7 @@
                 "email": {
                     "type": "boolean"
                 },
-                "in_app": {
+                "inApp": {
                     "type": "boolean"
                 }
             }
@@ -2130,7 +2130,7 @@
                     "type": "string",
                     "example": "glm-4-flash"
                 },
-                "session_id": {
+                "sessionId": {
                     "description": "Extension fields",
                     "type": "string"
                 },
@@ -2376,19 +2376,19 @@
                 "id": {
                     "type": "string"
                 },
-                "input_price": {
+                "inputPrice": {
                     "type": "number"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "object": {
                     "type": "string"
                 },
-                "output_price": {
+                "outputPrice": {
                     "type": "number"
                 },
-                "owned_by": {
+                "ownedBy": {
                     "type": "string"
                 }
             }
@@ -2550,7 +2550,7 @@
                         "$ref": "#/definitions/v1.ChatMessage"
                     }
                 },
-                "session_id": {
+                "sessionId": {
                     "type": "string"
                 }
             }

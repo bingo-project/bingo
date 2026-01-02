@@ -4747,7 +4747,7 @@
                 "icon": {
                     "type": "string"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -4756,7 +4756,7 @@
                 "name": {
                     "type": "string"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string"
                 },
                 "sort": {
@@ -4765,7 +4765,7 @@
                 "status": {
                     "type": "string"
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {
@@ -4978,8 +4978,8 @@
             "type": "object",
             "required": [
                 "name",
-                "role_id",
-                "system_prompt"
+                "roleId",
+                "systemPrompt"
             ],
             "properties": {
                 "category": {
@@ -5003,7 +5003,7 @@
                     "maxLength": 255,
                     "example": "https://example.com/icon.png"
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer",
                     "example": 2000
                 },
@@ -5017,7 +5017,7 @@
                     "maxLength": 64,
                     "example": "数学老师"
                 },
-                "role_id": {
+                "roleId": {
                     "type": "string",
                     "maxLength": 32,
                     "example": "math_teacher"
@@ -5026,7 +5026,7 @@
                     "type": "integer",
                     "example": 1
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string",
                     "example": "你是一位经验丰富的小学数学老师..."
                 },
@@ -5798,7 +5798,7 @@
                     "type": "string",
                     "maxLength": 255
                 },
-                "max_tokens": {
+                "maxTokens": {
                     "type": "integer"
                 },
                 "model": {
@@ -5819,7 +5819,7 @@
                         "disabled"
                     ]
                 },
-                "system_prompt": {
+                "systemPrompt": {
                     "type": "string"
                 },
                 "temperature": {

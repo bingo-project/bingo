@@ -39,7 +39,7 @@ type UnreadCountResponse struct {
 
 // ChannelPreference defines per-channel settings.
 type ChannelPreference struct {
-	InApp bool `json:"in_app"`
+	InApp bool `json:"inApp"`
 	Email bool `json:"email"`
 }
 

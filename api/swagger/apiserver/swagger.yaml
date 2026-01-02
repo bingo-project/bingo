@@ -19,19 +19,19 @@ definitions:
         type: string
       icon:
         type: string
-      max_tokens:
+      maxTokens:
         type: integer
       model:
         type: string
       name:
         type: string
-      role_id:
+      roleId:
         type: string
       sort:
         type: integer
       status:
         type: string
-      system_prompt:
+      systemPrompt:
         type: string
       temperature:
         type: number
@@ -82,7 +82,7 @@ definitions:
     properties:
       email:
         type: boolean
-      in_app:
+      inApp:
         type: boolean
     type: object
   v1.ChatChoice:
@@ -109,7 +109,7 @@ definitions:
       model:
         example: glm-4-flash
         type: string
-      session_id:
+      sessionId:
         description: Extension fields
         type: string
       stream:
@@ -281,15 +281,15 @@ definitions:
         type: integer
       id:
         type: string
-      input_price:
+      inputPrice:
         type: number
-      max_tokens:
+      maxTokens:
         type: integer
       object:
         type: string
-      output_price:
+      outputPrice:
         type: number
-      owned_by:
+      ownedBy:
         type: string
     type: object
   v1.NonceResponse:
@@ -402,7 +402,7 @@ definitions:
         items:
           $ref: '#/definitions/v1.ChatMessage'
         type: array
-      session_id:
+      sessionId:
         type: string
     type: object
   v1.SessionInfo:

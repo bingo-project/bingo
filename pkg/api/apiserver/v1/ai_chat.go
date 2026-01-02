@@ -13,7 +13,7 @@ type ChatCompletionRequest struct {
 	Temperature float64       `json:"temperature,omitempty" example:"0.7"`
 	Stream      bool          `json:"stream,omitempty" example:"false"`
 	// Extension fields
-	SessionID string `json:"session_id,omitempty"`
+	SessionID string `json:"sessionId,omitempty"`
 }
 
 // ChatMessage represents a single message.
@@ -58,10 +58,10 @@ type ModelInfo struct {
 	ID          string  `json:"id"`
 	Object      string  `json:"object"`
 	Created     int64   `json:"created"`
-	OwnedBy     string  `json:"owned_by"`
-	MaxTokens   int     `json:"max_tokens,omitempty"`
-	InputPrice  float64 `json:"input_price,omitempty"`
-	OutputPrice float64 `json:"output_price,omitempty"`
+	OwnedBy     string  `json:"ownedBy"`
+	MaxTokens   int     `json:"maxTokens,omitempty"`
+	InputPrice  float64 `json:"inputPrice,omitempty"`
+	OutputPrice float64 `json:"outputPrice,omitempty"`
 }
 
 // CreateSessionRequest represents session creation request.
@@ -93,6 +93,6 @@ type SessionInfo struct {
 
 // SessionHistoryResponse represents session history response.
 type SessionHistoryResponse struct {
-	SessionID string        `json:"session_id"`
+	SessionID string        `json:"sessionId"`
 	Messages  []ChatMessage `json:"messages"`
 }

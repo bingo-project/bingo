@@ -184,19 +184,19 @@ definitions:
         type: string
       icon:
         type: string
-      max_tokens:
+      maxTokens:
         type: integer
       model:
         type: string
       name:
         type: string
-      role_id:
+      roleId:
         type: string
       sort:
         type: integer
       status:
         type: string
-      system_prompt:
+      systemPrompt:
         type: string
       temperature:
         type: number
@@ -357,7 +357,7 @@ definitions:
         example: https://example.com/icon.png
         maxLength: 255
         type: string
-      max_tokens:
+      maxTokens:
         example: 2000
         type: integer
       model:
@@ -368,14 +368,14 @@ definitions:
         example: 数学老师
         maxLength: 64
         type: string
-      role_id:
+      roleId:
         example: math_teacher
         maxLength: 32
         type: string
       sort:
         example: 1
         type: integer
-      system_prompt:
+      systemPrompt:
         example: 你是一位经验丰富的小学数学老师...
         type: string
       temperature:
@@ -383,8 +383,8 @@ definitions:
         type: number
     required:
     - name
-    - role_id
-    - system_prompt
+    - roleId
+    - systemPrompt
     type: object
   v1.CreateAnnouncementRequest:
     properties:
@@ -913,7 +913,7 @@ definitions:
       icon:
         maxLength: 255
         type: string
-      max_tokens:
+      maxTokens:
         type: integer
       model:
         maxLength: 64
@@ -928,7 +928,7 @@ definitions:
         - active
         - disabled
         type: string
-      system_prompt:
+      systemPrompt:
         type: string
       temperature:
         type: number
