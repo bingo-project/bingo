@@ -11,10 +11,10 @@ type AiSessionM struct {
 	UID          string `gorm:"column:uid;type:varchar(64);index:idx_uid;not null" json:"uid"`
 	RoleID       string `gorm:"column:role_id;type:varchar(64);index:idx_role_id" json:"roleId"`
 	Title        string `gorm:"column:title;type:varchar(255);not null;default:''" json:"title"`
-	Model        string `gorm:"column:model;type:varchar(64);not null" json:"model"`
+	Model        string `gorm:"column:model;type:varchar(64);not null;default:''" json:"model"`
 	MessageCount int    `gorm:"column:message_count;type:int;not null;default:0" json:"messageCount"`
 	TotalTokens  int    `gorm:"column:total_tokens;type:int;not null;default:0" json:"totalTokens"`
-	Status       string `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
+	Status       string `gorm:"column:status;type:varchar(16);not null;default:'active'" json:"status"`
 
 	CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)" json:"updatedAt"`

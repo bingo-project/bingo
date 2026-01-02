@@ -791,6 +791,73 @@ bingo migrate rollback  # 回滚上一次迁移
 bingo migrate reset     # 重置所有迁移（⚠️ 仅开发环境）
 ```
 
+#### 7.2.1 数据库字段规范
+
+**基本原则**：
+
+1. **仅允许必要的字段为 NULL**
+   - 可选字段（如 `description`, `icon`）可为 NULL
+   - 有明确业务含义的字段应设置 NOT NULL
+
+2. **使用默认值代替 NULL**
+   - 数值类型：使用 `0` 作为默认值（`default:0`）
+   - 字符串类型：使用空字符串 `''` 作为默认值（`default:''`）
+   - 布尔类型：使用 `false` 作为默认值
+   - 时间戳：使用 `CURRENT_TIMESTAMP` 作为默认值
+
+3. **有默认值的字段必须 NOT NULL**
+   - 如果字段有 `default` 约束，必须同时声明 `not null`
+   - 这确保默认值始终生效，避免 NULL 值
+
+**示例**：
+
+```go
+// ✅ 正确：可选字段允许 NULL
+Description string `gorm:"type:varchar(255)"`                          // 可选描述
+Icon        string `gorm:"type:varchar(255)"`                          // 可选图标
+
+// ✅ 正确：有默认值的字段必须 NOT NULL
+Status      string `gorm:"type:varchar(16);not null;default:'active'"`
+Sort        int    `gorm:"type:int;not null;default:0"`
+Temperature float64 `gorm:"type:decimal(3,2);not null;default:0.70"`
+
+// ✅ 正确：必填字段 NOT NULL
+Name        string `gorm:"type:varchar(64);not null"`
+Email       string `gorm:"type:varchar(128);not null"`
+
+// ❌ 错误：有默认值但允许 NULL
+Temperature float64 `gorm:"type:decimal(3,2);default:0.70"`  // 缺少 not null
+Sort        int    `gorm:"type:int;default:0"`               // 缺少 not null
+
+// ❌ 错误：能用默认值的不要用 NULL
+Count       int    `gorm:"type:int"`                          // 应该 default:0
+Enabled     bool   `gorm:"type:bool"`                         // 应该 default:false
+```
+
+**外键字段**：
+
+```go
+// ✅ 正确：可选关联允许 NULL
+RoleID      string `gorm:"type:varchar(64);index:idx_role_id"`
+ParentID    *uint  `gorm:"index:idx_parent_id"`  // 指针类型表示可空
+
+// ✅ 正确：必填关联 NOT NULL
+UserID      string `gorm:"type:varchar(64);not null;index:idx_user_id"`
+```
+
+**时间字段**：
+
+```go
+// ✅ 正确：创建和更新时间必须有默认值
+CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
+UpdatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
+
+// ✅ 正确：可选时间允许 NULL（使用指针）
+DeletedAt *time.Time `gorm:"type:DATETIME(3)"`
+LastLogin *time.Time `gorm:"type:DATETIME(3)"`
+```
+
+
 ### 7.3 Seeder（数据初始化）
 
 ```bash

@@ -16,10 +16,10 @@ type CreateAISessionTable struct {
 	UID          string    `gorm:"type:varchar(64);index:idx_uid;not null"`
 	RoleID       string    `gorm:"type:varchar(64);index:idx_role_id"`
 	Title        string    `gorm:"type:varchar(255);not null;default:''"`
-	Model        string    `gorm:"type:varchar(64);not null"`
+	Model        string    `gorm:"type:varchar(64);not null;default:''"`
 	MessageCount int       `gorm:"type:int;not null;default:0"`
 	TotalTokens  int       `gorm:"type:int;not null;default:0"`
-	Status       string    `gorm:"type:varchar(16);not null;default:active"`
+	Status       string    `gorm:"type:varchar(16);not null;default:'active'"`
 	CreatedAt    time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)"`
 	UpdatedAt    time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)"`
 }

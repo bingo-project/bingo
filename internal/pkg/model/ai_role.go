@@ -34,9 +34,9 @@ type AiRoleM struct {
 	Category     AiRoleCategory `gorm:"column:category;type:varchar(32);not null;default:'general'" json:"category"`
 	SystemPrompt string         `gorm:"column:system_prompt;type:text;not null" json:"systemPrompt"`
 	Model        string         `gorm:"column:model;type:varchar(64)" json:"model"`
-	Temperature  float64        `gorm:"column:temperature;type:decimal(3,2);default:0.70" json:"temperature"`
-	MaxTokens    int            `gorm:"column:max_tokens;type:int;default:2000" json:"maxTokens"`
-	Sort         int            `gorm:"column:sort;type:int;default:0" json:"sort"`
+	Temperature  float64        `gorm:"column:temperature;type:decimal(3,2);not null;default:0.70" json:"temperature"`
+	MaxTokens    int            `gorm:"column:max_tokens;type:int;not null;default:2000" json:"maxTokens"`
+	Sort         int            `gorm:"column:sort;type:int;not null;default:0" json:"sort"`
 	Status       AiRoleStatus   `gorm:"column:status;type:varchar(16);not null;default:'active'" json:"status"`
 
 	CreatedAt time.Time `gorm:"type:DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)" json:"createdAt"`
