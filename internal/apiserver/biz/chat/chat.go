@@ -133,12 +133,12 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 	if err != nil {
 		// Check if error is retriable and try fallback once
 		if b.isRetriableProviderError(err) {
-			fallbackModel := b.fallback.SelectFallback(ctx, modelUsed)
-			if fallbackModel != "" {
-				if provider2, ok := b.registry.GetByModel(fallbackModel); ok {
+			fallback := b.fallback.SelectFallback(ctx, modelUsed)
+			if fallback != nil {
+				if provider2, ok := b.registry.Get(fallback.ProviderName); ok {
 					log.C(ctx).Infow("AI provider error, using fallback",
-						"model", modelUsed, "fallback", fallbackModel, "err", err)
-					req.Model = fallbackModel
+						"model", modelUsed, "fallback", fallback.Model, "err", err)
+					req.Model = fallback.Model
 					resp, err = provider2.Chat(ctx, req)
 					if err == nil {
 						// Mark quota as consumed
@@ -236,12 +236,12 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 		// Check if error is retriable and try fallback once
 		// Only attempt fallback if initial call fails (no chunks sent yet)
 		if b.isRetriableProviderError(err) {
-			fallbackModel := b.fallback.SelectFallback(ctx, modelUsed)
-			if fallbackModel != "" {
-				if provider2, ok := b.registry.GetByModel(fallbackModel); ok {
+			fallback := b.fallback.SelectFallback(ctx, modelUsed)
+			if fallback != nil {
+				if provider2, ok := b.registry.Get(fallback.ProviderName); ok {
 					log.C(ctx).Infow("AI provider stream error, using fallback",
-						"model", modelUsed, "fallback", fallbackModel, "err", err)
-					req.Model = fallbackModel
+						"model", modelUsed, "fallback", fallback.Model, "err", err)
+					req.Model = fallback.Model
 					stream, err = provider2.ChatStream(ctx, req)
 					if err == nil {
 						// Fallback succeeded, proceed with stream
@@ -381,8 +381,12 @@ func (b *chatBiz) validateSession(ctx context.Context, sessionID, uid string) er
 // resolveModel resolves the model to use based on priority:
 // Request specified > Session preference > Database default > Config default > First available
 func (b *chatBiz) resolveModel(ctx context.Context, reqModel, sessionID string) string {
-	// 1. Request specified
+	// 1. Request specified - validate against active models
 	if reqModel != "" {
+		if m, err := b.ds.AiModel().FindActiveByModel(ctx, reqModel); err == nil && m != nil {
+			return m.Model
+		}
+
 		return reqModel
 	}
 
@@ -417,24 +421,25 @@ func (b *chatBiz) resolveModel(ctx context.Context, reqModel, sessionID string) 
 // getProviderWithFallback gets provider with fallback support.
 // Returns (provider, actualModelUsed, error).
 func (b *chatBiz) getProviderWithFallback(ctx context.Context, model string) (aipkg.Provider, string, error) {
-	// First attempt: get provider for requested model
-	provider, ok := b.registry.GetByModel(model)
-	if ok {
-		return provider, model, nil
+	// First attempt: query store for active model (supports composite key)
+	if m, err := b.ds.AiModel().FindActiveByModel(ctx, model); err == nil && m != nil {
+		if provider, ok := b.registry.Get(m.ProviderName); ok {
+			return provider, m.Model, nil
+		}
 	}
 
 	// Fallback attempt: model not registered, try fallback
-	fallbackModel := b.fallback.SelectFallback(ctx, model)
-	if fallbackModel == "" {
+	fallback := b.fallback.SelectFallback(ctx, model)
+	if fallback == nil {
 		return nil, "", errno.ErrAIModelNotFound
 	}
 
-	provider, ok = b.registry.GetByModel(fallbackModel)
+	provider, ok := b.registry.Get(fallback.ProviderName)
 	if !ok {
 		return nil, "", errno.ErrAIAllModelsFailed
 	}
 
-	return provider, fallbackModel, nil
+	return provider, fallback.Model, nil
 }
 
 // isRetriableProviderError checks if error should trigger fallback retry.

@@ -25,10 +25,16 @@ type AiModelStore struct {
 	ListByProviderCalled  bool
 	ListByProviderArgName string
 
-	GetByModelResult *model.AiModelM
-	GetByModelErr    error
-	GetByModelCalled bool
-	GetByModelArgID  string
+	GetByProviderAndModelResult   *model.AiModelM
+	GetByProviderAndModelErr      error
+	GetByProviderAndModelCalled   bool
+	GetByProviderAndModelArgName  string
+	GetByProviderAndModelArgModel string
+
+	FindActiveByModelResult *model.AiModelM
+	FindActiveByModelErr    error
+	FindActiveByModelCalled bool
+	FindActiveByModelArgID  string
 
 	GetDefaultResult *model.AiModelM
 	GetDefaultErr    error
@@ -106,17 +112,36 @@ func (m *AiModelStore) List(ctx context.Context, opts *where.Options) (int64, []
 	return int64(len(models)), models, nil
 }
 
-// GetByModel gets an AI model by model ID.
-func (m *AiModelStore) GetByModel(ctx context.Context, modelID string) (*model.AiModelM, error) {
-	m.GetByModelCalled = true
-	m.GetByModelArgID = modelID
+// GetByProviderAndModel gets an AI model by provider name and model ID.
+func (m *AiModelStore) GetByProviderAndModel(ctx context.Context, providerName, modelID string) (*model.AiModelM, error) {
+	m.GetByProviderAndModelCalled = true
+	m.GetByProviderAndModelArgName = providerName
+	m.GetByProviderAndModelArgModel = modelID
 
-	if m.GetByModelResult != nil || m.GetByModelErr != nil {
-		return m.GetByModelResult, m.GetByModelErr
+	if m.GetByProviderAndModelResult != nil || m.GetByProviderAndModelErr != nil {
+		return m.GetByProviderAndModelResult, m.GetByProviderAndModelErr
 	}
 
 	for _, aiModel := range m.models {
-		if aiModel.Model == modelID {
+		if aiModel.ProviderName == providerName && aiModel.Model == modelID {
+			return aiModel, nil
+		}
+	}
+
+	return nil, gorm.ErrRecordNotFound
+}
+
+// FindActiveByModel finds the first active AI model by model ID (sorted by priority).
+func (m *AiModelStore) FindActiveByModel(ctx context.Context, modelID string) (*model.AiModelM, error) {
+	m.FindActiveByModelCalled = true
+	m.FindActiveByModelArgID = modelID
+
+	if m.FindActiveByModelResult != nil || m.FindActiveByModelErr != nil {
+		return m.FindActiveByModelResult, m.FindActiveByModelErr
+	}
+
+	for _, aiModel := range m.models {
+		if aiModel.Model == modelID && aiModel.Status == model.AiModelStatusActive {
 			return aiModel, nil
 		}
 	}

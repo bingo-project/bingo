@@ -5,11 +5,11 @@ AI 模型降级机制：当请求的模型不可用或调用失败时，自动�
 ## 架构
 
 ```
-ChatBiz → Registry.GetByModel (优先)
+ChatBiz → Store.FindActiveByModel → Registry.Get (优先)
           ↓ (失败)
        FallbackSelector.SelectFallback (按 sort 顺序)
           ↓
-       Registry.GetByModel (降级模型)
+       Registry.Get (降级模型的 provider)
           ↓
        Provider.Chat/ChatStream
           ↓ (失败且可重试)

@@ -47,22 +47,6 @@ func TestRegistry_Register(t *testing.T) {
 	assert.Equal(t, "test", got.Name())
 }
 
-func TestRegistry_GetByModel(t *testing.T) {
-	r := NewRegistry()
-	p := &mockProvider{
-		name: "test",
-		models: []ModelInfo{
-			{ID: "test-model", Name: "Test Model", Provider: "test"},
-		},
-	}
-
-	r.Register(p)
-
-	got, ok := r.GetByModel("test-model")
-	require.True(t, ok)
-	assert.Equal(t, "test", got.Name())
-}
-
 func TestRegistry_ListModels(t *testing.T) {
 	r := NewRegistry()
 	p1 := &mockProvider{
@@ -107,8 +91,4 @@ func TestRegistry_Clear(t *testing.T) {
 	// Verify it's gone
 	_, ok = r.Get("test")
 	require.False(t, ok, "provider should be removed after Clear")
-
-	// Verify models are also cleared
-	_, ok = r.GetByModel("test-model")
-	require.False(t, ok, "model should be removed after Clear")
 }

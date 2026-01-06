@@ -40,7 +40,10 @@ func (m *mockModelStore) Get(ctx context.Context, opts *where.Options) (*model.A
 func (m *mockModelStore) List(ctx context.Context, opts *where.Options) (int64, []*model.AiModelM, error) {
 	return 0, nil, nil
 }
-func (m *mockModelStore) GetByModel(ctx context.Context, modelID string) (*model.AiModelM, error) {
+func (m *mockModelStore) GetByProviderAndModel(ctx context.Context, providerName, modelID string) (*model.AiModelM, error) {
+	return nil, nil
+}
+func (m *mockModelStore) FindActiveByModel(ctx context.Context, modelID string) (*model.AiModelM, error) {
 	return nil, nil
 }
 func (m *mockModelStore) ListByProvider(ctx context.Context, providerName string) ([]*model.AiModelM, error) {

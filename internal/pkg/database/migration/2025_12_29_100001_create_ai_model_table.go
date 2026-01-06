@@ -12,8 +12,8 @@ import (
 
 type CreateAIModelTable struct {
 	ID            uint64    `gorm:"primaryKey"`
-	ProviderName  string    `gorm:"type:varchar(32);index:idx_provider_name;not null"`
-	Model         string    `gorm:"type:varchar(64);uniqueIndex:uk_model;not null"`
+	ProviderName  string    `gorm:"type:varchar(32);uniqueIndex:uk_provider_model;not null"`
+	Model         string    `gorm:"type:varchar(64);uniqueIndex:uk_provider_model;not null"`
 	DisplayName   string    `gorm:"type:varchar(64)"`
 	MaxTokens     int       `gorm:"type:int;not null;default:4096"`
 	InputPrice    float64   `gorm:"type:decimal(10,6);not null;default:0"`

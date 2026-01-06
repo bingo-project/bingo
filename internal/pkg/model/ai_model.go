@@ -7,8 +7,8 @@ import "time"
 
 type AiModelM struct {
 	ID            uint    `gorm:"primaryKey" json:"id"`
-	ProviderName  string  `gorm:"column:provider_name;type:varchar(32);index:idx_provider_name;not null" json:"providerName"`
-	Model         string  `gorm:"column:model;type:varchar(64);uniqueIndex:uk_model;not null" json:"model"`
+	ProviderName  string  `gorm:"column:provider_name;type:varchar(32);uniqueIndex:uk_provider_model;not null" json:"providerName"`
+	Model         string  `gorm:"column:model;type:varchar(64);uniqueIndex:uk_provider_model;not null" json:"model"`
 	DisplayName   string  `gorm:"column:display_name;type:varchar(64)" json:"displayName"`
 	MaxTokens     int     `gorm:"column:max_tokens;type:int;not null;default:4096" json:"maxTokens"`
 	InputPrice    float64 `gorm:"column:input_price;type:decimal(10,6);not null;default:0" json:"inputPrice"`

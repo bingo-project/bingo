@@ -951,10 +951,12 @@ make build  # 再构建
 **commit 前必须执行 `make lint`**，确保代码符合规范：
 
 ```bash
-make lint   # 代码检查
-git add .
+make lint   # 代码检查（会自动格式化代码）
+git add .   # 必须将 lint 格式化的内容也加入提交
 git commit -m "feat: add feature"
 ```
+
+> ⚠️ **重要**：`make lint` 会自动格式化代码（如调整 import 顺序、修复格式问题）。格式化后的改动**必须一并提交**，否则下次 lint 会产生相同的格式化 diff。
 
 ---
 

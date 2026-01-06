@@ -10,7 +10,6 @@ import (
 // Registry manages registered providers
 type Registry struct {
 	providers map[string]Provider
-	models    map[string]Provider // model -> provider mapping
 	mu        sync.RWMutex
 }
 
@@ -18,7 +17,6 @@ type Registry struct {
 func NewRegistry() *Registry {
 	return &Registry{
 		providers: make(map[string]Provider),
-		models:    make(map[string]Provider),
 	}
 }
 
@@ -28,9 +26,6 @@ func (r *Registry) Register(p Provider) {
 	defer r.mu.Unlock()
 
 	r.providers[p.Name()] = p
-	for _, m := range p.Models() {
-		r.models[m.ID] = p
-	}
 }
 
 // Get returns a provider by name
@@ -38,15 +33,6 @@ func (r *Registry) Get(name string) (Provider, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	p, ok := r.providers[name]
-
-	return p, ok
-}
-
-// GetByModel returns a provider by model ID
-func (r *Registry) GetByModel(model string) (Provider, bool) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	p, ok := r.models[model]
 
 	return p, ok
 }
@@ -77,10 +63,9 @@ func (r *Registry) ListModels() []ModelInfo {
 	return models
 }
 
-// Clear removes all registered providers and models.
+// Clear removes all registered providers
 func (r *Registry) Clear() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.providers = make(map[string]Provider)
-	r.models = make(map[string]Provider)
 }
