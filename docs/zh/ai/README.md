@@ -1,13 +1,13 @@
 # AI 核心模块
 
-Bingo 框架内置了强大的 AI 对话模块，提供开箱即用的多厂商支持、流式响应、角色预设和高可用保障。
+Bingo 框架内置了强大的 AI 对话模块，提供开箱即用的多厂商支持、流式响应、智能体预设和高可用保障。
 
 ## 🌟 核心能力
 
 - **多厂商支持**：统一接口对接 OpenAI, Claude, Gemini, Qwen (通义千问) 等主流模型。
 - **流式响应 (SSE)**：支持打字机效果的实时流式输出，提升用户体验。
 - **动态配置**：无需重启服务，即可通过数据库动态开启/禁用模型或调整优先级。
-- **角色预设 (Personas)**：支持创建不同的 AI 角色（如翻译官、代码助手），定制 System Prompt 和参数。
+- **智能体预设 (Agents)**：支持创建不同的 AI 智能体（如翻译官、代码助手），定制 System Prompt 和参数。
 - **高可用机制**：内置自动重试（瞬时错误）和故障熔断保护。
 - **状态管理**：智能滑动窗口管理历史记录，自动持久化会话。
 
@@ -66,12 +66,12 @@ curl -X POST http://localhost:8080/v1/chat/completions \
   ...
 ```
 
-**使用特定角色:**
+**使用特定智能体:**
 
 ```bash
 curl -X POST http://localhost:8080/v1/chat/completions \
   -d '{
-    "role_id": "math_teacher",
+    "agentId": "math_teacher",
     "messages": [{"role": "user", "content": "1+1等于几？"}]
   }'
 ```
@@ -79,5 +79,5 @@ curl -X POST http://localhost:8080/v1/chat/completions \
 ## 📚 文档导航
 
 - [供应商与模型管理 (Provider & Models)](./provider.md): 了解如何动态管理 AI 厂商和模型。
-- [角色预设 (AI Roles)](./role.md): 了解如何创建和管理 AI 角色及其权限体系。
+- [智能体预设 (AI Agents)](./agent.md): 了解如何创建和管理 AI 智能体及其权限体系。
 - [架构与机制 (Architecture)](./architecture.md): 深入了解流式处理、重试机制、上下文管理等核心实现。

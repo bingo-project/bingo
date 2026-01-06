@@ -15,7 +15,7 @@ AI 组件遵循 Bingo 的三层架构（Handler -> Biz -> Provider/Store），�
        ▼                      ▼                    ▼
  Validate Request     1. Load History       Select Provider
                       2. Reserve Quota    (OpenAI/Claude/...)
-                      3. Load Role
+                      3. Load Agent
                       4. Save Session
 ```
 
