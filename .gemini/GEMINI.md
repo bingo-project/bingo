@@ -37,6 +37,8 @@ make lint
 
 ## 数据库命令
 
+> **注意**：`bingo` 是全局安装的 CLI 工具，不是项目内的命令。
+
 ```bash
 bingo migrate up        # 执行迁移
 bingo migrate rollback  # 回滚上一次迁移
