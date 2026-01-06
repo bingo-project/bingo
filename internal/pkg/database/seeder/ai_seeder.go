@@ -18,55 +18,53 @@ var defaultQuotaTiers = []model.AiQuotaTierM{
 
 var defaultProviders = []model.AiProviderM{
 	// OpenAI-compatible
-	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusActive, IsDefault: true, Sort: 1},
-	{Name: "deepseek", DisplayName: "DeepSeek", Status: model.AiProviderStatusActive, Sort: 2},
-	{Name: "moonshot", DisplayName: "Moonshot", Status: model.AiProviderStatusActive, Sort: 3},
-	{Name: "glm", DisplayName: "智谱 GLM", Status: model.AiProviderStatusActive, Sort: 4},
+	{Name: "openai", DisplayName: "OpenAI", Status: model.AiProviderStatusDisabled, IsDefault: false, Sort: 1},
+	{Name: "deepseek", DisplayName: "DeepSeek", Status: model.AiProviderStatusDisabled, Sort: 2},
+	{Name: "moonshot", DisplayName: "Moonshot", Status: model.AiProviderStatusDisabled, Sort: 3},
+	{Name: "glm", DisplayName: "智谱 GLM", Status: model.AiProviderStatusActive, IsDefault: true, Sort: 4},
 	// Native providers
-	{Name: "claude", DisplayName: "Claude", Status: model.AiProviderStatusActive, Sort: 5},
-	{Name: "gemini", DisplayName: "Gemini", Status: model.AiProviderStatusActive, Sort: 6},
-	{Name: "qwen", DisplayName: "通义千问", Status: model.AiProviderStatusActive, Sort: 7},
+	{Name: "claude", DisplayName: "Claude", Status: model.AiProviderStatusDisabled, Sort: 5},
+	{Name: "gemini", DisplayName: "Gemini", Status: model.AiProviderStatusDisabled, Sort: 6},
+	{Name: "qwen", DisplayName: "通义千问", Status: model.AiProviderStatusDisabled, Sort: 7},
 }
 
 var defaultModels = []model.AiModelM{
-	// OpenAI
-	{ProviderName: "openai", Model: "gpt-4o", DisplayName: "GPT-4o", MaxTokens: 128000, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "openai", Model: "gpt-4o-mini", DisplayName: "GPT-4o Mini", MaxTokens: 128000, Status: model.AiModelStatusDisabled, Sort: 2},
-	{ProviderName: "openai", Model: "gpt-4-turbo", DisplayName: "GPT-4 Turbo", MaxTokens: 128000, Status: model.AiModelStatusDisabled, Sort: 3},
-	{ProviderName: "openai", Model: "gpt-3.5-turbo", DisplayName: "GPT-3.5 Turbo", MaxTokens: 16385, Status: model.AiModelStatusDisabled, Sort: 4},
+	// OpenAI - GPT-5.2 (December 2025)
+	{ProviderName: "openai", Model: "gpt-5.2-pro", DisplayName: "GPT-5.2 Pro", MaxTokens: 400000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "openai", Model: "gpt-5.2-thinking", DisplayName: "GPT-5.2 Thinking", MaxTokens: 400000, Status: model.AiModelStatusActive, Sort: 2},
+	{ProviderName: "openai", Model: "gpt-5.2-instant", DisplayName: "GPT-5.2 Instant", MaxTokens: 400000, Status: model.AiModelStatusActive, Sort: 3},
+	{ProviderName: "openai", Model: "gpt-5", DisplayName: "GPT-5", MaxTokens: 400000, Status: model.AiModelStatusActive, Sort: 4},
 
-	// DeepSeek
-	{ProviderName: "deepseek", Model: "deepseek-chat", DisplayName: "DeepSeek Chat", MaxTokens: 64000, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "deepseek", Model: "deepseek-coder", DisplayName: "DeepSeek Coder", MaxTokens: 64000, Status: model.AiModelStatusDisabled, Sort: 2},
+	// DeepSeek - V3.2 (December 2025)
+	{ProviderName: "deepseek", Model: "deepseek-v3.2", DisplayName: "DeepSeek V3.2", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "deepseek", Model: "deepseek-v3.2-speciale", DisplayName: "DeepSeek V3.2 Speciale", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 2},
 
-	// Moonshot
-	{ProviderName: "moonshot", Model: "moonshot-v1-8k", DisplayName: "Moonshot V1 8K", MaxTokens: 8000, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "moonshot", Model: "moonshot-v1-32k", DisplayName: "Moonshot V1 32K", MaxTokens: 32000, Status: model.AiModelStatusDisabled, Sort: 2},
-	{ProviderName: "moonshot", Model: "moonshot-v1-128k", DisplayName: "Moonshot V1 128K", MaxTokens: 128000, Status: model.AiModelStatusDisabled, Sort: 3},
+	// Moonshot - K2 (September 2025)
+	{ProviderName: "moonshot", Model: "kimi-k2", DisplayName: "Kimi K2", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "moonshot", Model: "kimi-k2-thinking", DisplayName: "Kimi K2 Thinking", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
 
 	// GLM (智谱) - Active models
-	{ProviderName: "glm", Model: "glm-4.5-plus", DisplayName: "GLM-4.5 Plus", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "glm", Model: "glm-4.5-air", DisplayName: "GLM-4.5 Air", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "glm", Model: "glm-4.5-airx", DisplayName: "GLM-4.5 AirX", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "glm", Model: "glm-4.5-flash", DisplayName: "GLM-4.5 Flash", MaxTokens: 128000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 4},
 	{ProviderName: "glm", Model: "glm-4.7", DisplayName: "GLM-4.7", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 5},
 
-	// Claude
-	{ProviderName: "claude", Model: "claude-sonnet-4-20250514", DisplayName: "Claude Sonnet 4", MaxTokens: 200000, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "claude", Model: "claude-3-5-sonnet-20241022", DisplayName: "Claude 3.5 Sonnet", MaxTokens: 200000, Status: model.AiModelStatusDisabled, Sort: 2},
-	{ProviderName: "claude", Model: "claude-3-5-haiku-20241022", DisplayName: "Claude 3.5 Haiku", MaxTokens: 200000, Status: model.AiModelStatusDisabled, Sort: 3},
-	{ProviderName: "claude", Model: "claude-3-opus-20240229", DisplayName: "Claude 3 Opus", MaxTokens: 200000, Status: model.AiModelStatusDisabled, Sort: 4},
+	// Claude - Opus 4.5 & Sonnet 4.5 (November 2025)
+	{ProviderName: "claude", Model: "claude-opus-4.5", DisplayName: "Claude Opus 4.5", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "claude", Model: "claude-sonnet-4.5", DisplayName: "Claude Sonnet 4.5", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 2},
+	{ProviderName: "claude", Model: "claude-3-5-sonnet-20241022", DisplayName: "Claude 3.5 Sonnet", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 3},
+	{ProviderName: "claude", Model: "claude-3-5-haiku-20241022", DisplayName: "Claude 3.5 Haiku", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 4},
 
-	// Gemini
-	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "gemini", Model: "gemini-1.5-pro", DisplayName: "Gemini 1.5 Pro", MaxTokens: 2097152, Status: model.AiModelStatusDisabled, Sort: 2},
-	{ProviderName: "gemini", Model: "gemini-1.5-flash", DisplayName: "Gemini 1.5 Flash", MaxTokens: 1048576, Status: model.AiModelStatusDisabled, Sort: 3},
+	// Gemini - 3.0 & 3 Flash (November/December 2025)
+	{ProviderName: "gemini", Model: "gemini-3.0-pro", DisplayName: "Gemini 3.0 Pro", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "gemini", Model: "gemini-3-flash", DisplayName: "Gemini 3 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 2},
+	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 3},
 
-	// Qwen
-	{ProviderName: "qwen", Model: "qwen-max", DisplayName: "Qwen Max", MaxTokens: 32000, Status: model.AiModelStatusDisabled, Sort: 1},
-	{ProviderName: "qwen", Model: "qwen-plus", DisplayName: "Qwen Plus", MaxTokens: 131072, Status: model.AiModelStatusDisabled, Sort: 2},
-	{ProviderName: "qwen", Model: "qwen-turbo", DisplayName: "Qwen Turbo", MaxTokens: 131072, Status: model.AiModelStatusDisabled, Sort: 3},
-	{ProviderName: "qwen", Model: "qwen-long", DisplayName: "Qwen Long", MaxTokens: 10000000, Status: model.AiModelStatusDisabled, Sort: 4},
+	// Qwen - Qwen3 (2025)
+	{ProviderName: "qwen", Model: "qwen3-max", DisplayName: "Qwen3 Max", MaxTokens: 32000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "qwen", Model: "qwen3-plus", DisplayName: "Qwen3 Plus", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 2},
+	{ProviderName: "qwen", Model: "qwen3-flash", DisplayName: "Qwen3 Flash", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 3},
+	{ProviderName: "qwen", Model: "qwen3-vl", DisplayName: "Qwen3 VL", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 4},
 }
 
 var defaultAiAgents = []model.AiAgentM{

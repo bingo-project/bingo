@@ -25,7 +25,7 @@ type AiSessionStore interface {
 
 type AiSessionExpansion interface {
 	GetBySessionID(ctx context.Context, sessionID string) (*model.AiSessionM, error)
-	ListByUID(ctx context.Context, uid string, status string) ([]*model.AiSessionM, error)
+	ListByUID(ctx context.Context, uid string, status model.AiSessionStatus) ([]*model.AiSessionM, error)
 	IncrementMessageCount(ctx context.Context, sessionID string, tokens int) error
 }
 
@@ -48,7 +48,7 @@ func (s *aiSessionStore) GetBySessionID(ctx context.Context, sessionID string) (
 	return &session, err
 }
 
-func (s *aiSessionStore) ListByUID(ctx context.Context, uid string, status string) ([]*model.AiSessionM, error) {
+func (s *aiSessionStore) ListByUID(ctx context.Context, uid string, status model.AiSessionStatus) ([]*model.AiSessionM, error) {
 	var sessions []*model.AiSessionM
 	db := s.DB(ctx).Where("uid = ?", uid)
 	if status != "" {

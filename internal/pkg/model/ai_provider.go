@@ -5,11 +5,19 @@ package model
 
 import "time"
 
+// AiProviderStatus represents the status of an AI provider.
+type AiProviderStatus string
+
+const (
+	AiProviderStatusActive   AiProviderStatus = "active"
+	AiProviderStatusDisabled AiProviderStatus = "disabled"
+)
+
 type AiProviderM struct {
-	ID          uint   `gorm:"primaryKey" json:"id"`
-	Name        string `gorm:"column:name;type:varchar(32);uniqueIndex:uk_name;not null" json:"name"`
-	DisplayName string `gorm:"column:display_name;type:varchar(64)" json:"displayName"`
-	Status      string `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
+	ID          uint             `gorm:"primaryKey" json:"id"`
+	Name        string           `gorm:"column:name;type:varchar(32);uniqueIndex:uk_name;not null" json:"name"`
+	DisplayName string           `gorm:"column:display_name;type:varchar(64)" json:"displayName"`
+	Status      AiProviderStatus `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
 	// Models field removed - models are now stored in ai_model table
 	IsDefault bool `gorm:"column:is_default;type:tinyint(1);not null;default:0" json:"isDefault"`
 	Sort      int  `gorm:"column:sort;type:int;not null;default:0" json:"sort"`
@@ -21,9 +29,3 @@ type AiProviderM struct {
 func (*AiProviderM) TableName() string {
 	return "ai_provider"
 }
-
-// Provider status constants.
-const (
-	AiProviderStatusActive   = "active"
-	AiProviderStatusDisabled = "disabled"
-)
