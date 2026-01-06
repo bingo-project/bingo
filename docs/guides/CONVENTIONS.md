@@ -857,6 +857,35 @@ DeletedAt *time.Time `gorm:"type:DATETIME(3)"`
 LastLogin *time.Time `gorm:"type:DATETIME(3)"`
 ```
 
+**状态枚举字段**：
+
+所有表示状态的字段（如 `status`, `state`）必须使用自定义类型，而非普通字符串。
+
+```go
+// ✅ 正确：定义状态类型
+type AdminStatus string
+
+const (
+	AdminStatusEnabled  AdminStatus = "enabled"
+	AdminStatusDisabled AdminStatus = "disabled"
+)
+
+// ✅ 正确：在模型中使用状态类型
+type AdminM struct {
+	Status AdminStatus `gorm:"type:varchar(20);not null;default:'enabled';comment:状态：enabled正常，disabled禁用"`
+}
+
+// ❌ 错误：使用普通字符串
+type AdminM struct {
+	Status string `gorm:"type:varchar(20);not null;default:'enabled'"`
+}
+```
+
+**命名规范**：
+- 状态类型：`<Entity>Status`（如 `AdminStatus`, `AiModelStatus`）
+- 状态常量：`<Entity>Status<Value>`（如 `AdminStatusEnabled`, `AiModelStatusActive`）
+- 常见值：`active`/`inactive`, `enabled`/`disabled`, `pending`/`approved`/`rejected`
+
 
 ### 7.3 Seeder（数据初始化）
 

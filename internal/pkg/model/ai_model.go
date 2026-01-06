@@ -13,7 +13,7 @@ type AiModelM struct {
 	MaxTokens     int     `gorm:"column:max_tokens;type:int;not null;default:4096" json:"maxTokens"`
 	InputPrice    float64 `gorm:"column:input_price;type:decimal(10,6);not null;default:0" json:"inputPrice"`
 	OutputPrice   float64 `gorm:"column:output_price;type:decimal(10,6);not null;default:0" json:"outputPrice"`
-	Status        string  `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
+	Status        AiModelStatus `gorm:"column:status;type:varchar(16);not null;default:active" json:"status"`
 	IsDefault     bool    `gorm:"column:is_default;type:tinyint(1);not null;default:0" json:"isDefault"`
 	Sort          int     `gorm:"column:sort;type:int;not null;default:0" json:"sort"`
 	AllowFallback bool    `gorm:"column:allow_fallback;type:tinyint(1);not null;default:1" json:"allowFallback"`
@@ -26,8 +26,9 @@ func (*AiModelM) TableName() string {
 	return "ai_model"
 }
 
-// Model status constants.
+type AiModelStatus string
+
 const (
-	AiModelStatusActive   = "active"
-	AiModelStatusDisabled = "disabled"
+	AiModelStatusActive   AiModelStatus = "active"
+	AiModelStatusDisabled AiModelStatus = "disabled"
 )
