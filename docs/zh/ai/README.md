@@ -78,6 +78,4 @@ curl -X POST http://localhost:8080/v1/chat/completions \
 
 ## 📚 文档导航
 
-- [供应商与模型管理 (Provider & Models)](./provider.md): 了解如何动态管理 AI 厂商和模型。
-- [智能体预设 (AI Agents)](./agent.md): 了解如何创建和管理 AI 智能体及其权限体系。
-- [架构与机制 (Architecture)](./architecture.md): 深入了解流式处理、重试机制、上下文管理等核心实现。
+- [架构与核心机制](./architecture.md): 深入了解数据模型设计、流式处理、高可用机制、配额系统等核心实现。
