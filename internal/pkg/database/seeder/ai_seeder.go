@@ -30,39 +30,40 @@ var defaultProviders = []model.AiProviderM{
 
 var defaultModels = []model.AiModelM{
 	// OpenAI
-	{ProviderName: "openai", Model: "gpt-4o", DisplayName: "GPT-4o", MaxTokens: 128000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "openai", Model: "gpt-4o", DisplayName: "GPT-4o", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "openai", Model: "gpt-4o-mini", DisplayName: "GPT-4o Mini", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "openai", Model: "gpt-4-turbo", DisplayName: "GPT-4 Turbo", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "openai", Model: "gpt-3.5-turbo", DisplayName: "GPT-3.5 Turbo", MaxTokens: 16385, Status: model.AiModelStatusActive, Sort: 4},
 
 	// DeepSeek
-	{ProviderName: "deepseek", Model: "deepseek-chat", DisplayName: "DeepSeek Chat", MaxTokens: 64000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "deepseek", Model: "deepseek-chat", DisplayName: "DeepSeek Chat", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "deepseek", Model: "deepseek-coder", DisplayName: "DeepSeek Coder", MaxTokens: 64000, Status: model.AiModelStatusActive, Sort: 2},
 
 	// Moonshot
-	{ProviderName: "moonshot", Model: "moonshot-v1-8k", DisplayName: "Moonshot V1 8K", MaxTokens: 8000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "moonshot", Model: "moonshot-v1-8k", DisplayName: "Moonshot V1 8K", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "moonshot", Model: "moonshot-v1-32k", DisplayName: "Moonshot V1 32K", MaxTokens: 32000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "moonshot", Model: "moonshot-v1-128k", DisplayName: "Moonshot V1 128K", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 3},
 
 	// GLM (智谱)
-	{ProviderName: "glm", Model: "glm-4-plus", DisplayName: "GLM-4 Plus", MaxTokens: 128000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
-	{ProviderName: "glm", Model: "glm-4-air", DisplayName: "GLM-4 Air", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
-	{ProviderName: "glm", Model: "glm-4-airx", DisplayName: "GLM-4 AirX", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 3},
-	{ProviderName: "glm", Model: "glm-4-flash", DisplayName: "GLM-4 Flash", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 4},
+	{ProviderName: "glm", Model: "glm-4.5-plus", DisplayName: "GLM-4.5 Plus", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 1},
+	{ProviderName: "glm", Model: "glm-4.5-air", DisplayName: "GLM-4.5 Air", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 2},
+	{ProviderName: "glm", Model: "glm-4.5-airx", DisplayName: "GLM-4.5 AirX", MaxTokens: 8000, Status: model.AiModelStatusActive, Sort: 3},
+	{ProviderName: "glm", Model: "glm-4.5-flash", DisplayName: "GLM-4.5 Flash", MaxTokens: 128000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 4},
+	{ProviderName: "glm", Model: "glm-4.7", DisplayName: "GLM-4.7", MaxTokens: 128000, Status: model.AiModelStatusActive, Sort: 5},
 
 	// Claude
-	{ProviderName: "claude", Model: "claude-sonnet-4-20250514", DisplayName: "Claude Sonnet 4", MaxTokens: 200000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "claude", Model: "claude-sonnet-4-20250514", DisplayName: "Claude Sonnet 4", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "claude", Model: "claude-3-5-sonnet-20241022", DisplayName: "Claude 3.5 Sonnet", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "claude", Model: "claude-3-5-haiku-20241022", DisplayName: "Claude 3.5 Haiku", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "claude", Model: "claude-3-opus-20240229", DisplayName: "Claude 3 Opus", MaxTokens: 200000, Status: model.AiModelStatusActive, Sort: 4},
 
 	// Gemini
-	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "gemini", Model: "gemini-2.0-flash-exp", DisplayName: "Gemini 2.0 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "gemini", Model: "gemini-1.5-pro", DisplayName: "Gemini 1.5 Pro", MaxTokens: 2097152, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "gemini", Model: "gemini-1.5-flash", DisplayName: "Gemini 1.5 Flash", MaxTokens: 1048576, Status: model.AiModelStatusActive, Sort: 3},
 
 	// Qwen
-	{ProviderName: "qwen", Model: "qwen-max", DisplayName: "Qwen Max", MaxTokens: 32000, Status: model.AiModelStatusActive, IsDefault: true, Sort: 1},
+	{ProviderName: "qwen", Model: "qwen-max", DisplayName: "Qwen Max", MaxTokens: 32000, Status: model.AiModelStatusActive, Sort: 1},
 	{ProviderName: "qwen", Model: "qwen-plus", DisplayName: "Qwen Plus", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 2},
 	{ProviderName: "qwen", Model: "qwen-turbo", DisplayName: "Qwen Turbo", MaxTokens: 131072, Status: model.AiModelStatusActive, Sort: 3},
 	{ProviderName: "qwen", Model: "qwen-long", DisplayName: "Qwen Long", MaxTokens: 10000000, Status: model.AiModelStatusActive, Sort: 4},
@@ -73,6 +74,7 @@ var defaultAiAgents = []model.AiAgentM{
 		AgentID:     "coding_expert",
 		Name:        "全栈代码专家",
 		Description: "精通 Go/Python/Vue 的技术专家，代码优先，注释详细",
+		Model:       "glm-4.5-flash",
 		Category:    model.AiAgentCategoryWorkplace,
 		Status:      model.AiAgentStatusActive,
 		Sort:        1,
@@ -89,23 +91,25 @@ var defaultAiAgents = []model.AiAgentM{
 		AgentID:     "translator_pro",
 		Name:        "多语言翻译官",
 		Description: "沉浸式翻译体验，自动识别中英互译",
+		Model:       "glm-4.5-flash",
 		Category:    model.AiAgentCategoryGeneral,
 		Status:      model.AiAgentStatusActive,
 		Sort:        2,
 		SystemPrompt: `# 角色设定
-你是一位精通多国语言的专业翻译官，致力于提供“信、达、雅”的翻译服务。
+你是一位精通多国语言的专业翻译官，致力于提供"信、达、雅"的翻译服务。
 
 # 翻译规则
 1. **直接输出**：不要输出任何解释性文字，只输出翻译结果。
 2. **智能识别**：自动识别输入语言。如果是中文，则翻译成英文；如果是英文，则翻译成中文。
 3. **风格化**：
    - 默认风格：商务专业，适合邮件和文档。
-   - 如果用户指定“口语化”，则使用更自然的日常表达。`,
+   - 如果用户指定"口语化"，则使用更自然的日常表达。`,
 	},
 	{
 		AgentID:     "tech_writer",
 		Name:        "技术文档专家",
 		Description: "编写清晰、结构化且美观的 Markdown 技术文档",
+		Model:       "glm-4.5-flash",
 		Category:    model.AiAgentCategoryWorkplace,
 		Status:      model.AiAgentStatusActive,
 		Sort:        3,
@@ -123,6 +127,7 @@ var defaultAiAgents = []model.AiAgentM{
 		AgentID:     "prompt_optimizer",
 		Name:        "提示词优化师",
 		Description: "将模糊需求转化为高质量的结构化 System Prompt",
+		Model:       "glm-4.5-flash",
 		Category:    model.AiAgentCategoryCreative,
 		Status:      model.AiAgentStatusActive,
 		Sort:        4,
@@ -173,7 +178,7 @@ func (AiSeeder) Run() error {
 
 	// Seed models
 	for _, m := range defaultModels {
-		where := &model.AiModelM{Model: m.Model}
+		where := &model.AiModelM{ProviderName: m.ProviderName, Model: m.Model}
 		if err := store.S.AiModel().FirstOrCreate(ctx, where, &m); err != nil {
 			return err
 		}
