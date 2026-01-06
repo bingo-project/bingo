@@ -58,6 +58,7 @@ func (b *sessionBiz) Create(ctx context.Context, uid string, title string, model
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return nil, errno.ErrAIRoleNotFound
 			}
+
 			return nil, errno.ErrDBRead.WithMessage("get ai agent: %v", err)
 		}
 		if agent.Status == model.AiAgentStatusDisabled {

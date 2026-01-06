@@ -83,7 +83,6 @@ func isRetriable(err error) bool {
 		"connection reset",      // Network issue
 		"request_timeout_error", // Specific provider error
 		"rate_limit_reached",    // Specific provider error
-		"insufficient_quota",    // Sometimes transient if credit is added
 		"overloaded",            // Specific provider error (e.g. Claude)
 	}
 

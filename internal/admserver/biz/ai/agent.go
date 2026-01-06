@@ -25,10 +25,6 @@ type AiAgentBiz interface {
 	Delete(ctx context.Context, agentID string) error
 }
 
-type aiRoleBiz struct {
-	ds store.IStore
-}
-
 type aiAgentBiz struct {
 	ds store.IStore
 }

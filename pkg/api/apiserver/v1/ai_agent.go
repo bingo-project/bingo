@@ -54,6 +54,6 @@ type AiAgentInfo struct {
 
 // ListAiAgentResponse represents a response containing a list of AI agents.
 type ListAiAgentResponse struct {
-	Total int64        `json:"total"`
+	Total int64         `json:"total"`
 	Data  []AiAgentInfo `json:"data"`
 }

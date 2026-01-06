@@ -86,4 +86,11 @@ var (
 		Reason:  "InvalidArgument.AIRoleDisabled",
 		Message: "AI role is disabled.",
 	}
+
+	// ErrAIAllModelsFailed 所有模型（包括降级）都失败
+	ErrAIAllModelsFailed = &errorsx.ErrorX{
+		Code:    http.StatusServiceUnavailable,
+		Reason:  "ServiceUnavailable.AllModelsFailed",
+		Message: "AI service is temporarily unavailable, please try again later.",
+	}
 )

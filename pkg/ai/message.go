@@ -26,7 +26,7 @@ type ChatRequest struct {
 	// Extension fields
 	SessionID string `json:"session_id,omitempty"`
 	AgentID   string `json:"agent_id,omitempty"` // Renamed from RoleID
-	UID       string `json:"-"` // Internal use only
+	UID       string `json:"-"`                  // Internal use only
 }
 
 // ChatResponse represents a chat completion response
