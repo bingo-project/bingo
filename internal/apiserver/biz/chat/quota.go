@@ -25,6 +25,9 @@ const (
 
 	// quotaKeyTTL is the TTL for Redis quota keys (25 hours to cover full day + buffer)
 	quotaKeyTTL = 25 * time.Hour
+
+	// rpmKeyTTL is the TTL for Redis RPM keys (65 seconds to cover full minute + buffer)
+	rpmKeyTTL = 65 * time.Second
 )
 
 // quotaChecker handles token quota validation and tracking.
@@ -229,4 +232,51 @@ func (q *quotaChecker) shouldResetDaily(quota *model.AiUserQuotaM) bool {
 	// Reset if last reset was on a different day
 	return now.Year() != lastReset.Year() ||
 		now.YearDay() != lastReset.YearDay()
+}
+
+// CheckRPM checks if the user has exceeded their requests-per-minute limit.
+// Uses Redis INCR for atomic increment with automatic expiration.
+func (q *quotaChecker) CheckRPM(ctx context.Context, uid string) error {
+	if !facade.Config.AI.Quota.Enabled {
+		return nil
+	}
+
+	rpm := facade.Config.AI.Quota.DefaultRPM
+	if rpm <= 0 {
+		return nil // RPM limit disabled
+	}
+
+	key := q.buildRPMKey(uid)
+
+	// Increment counter
+	count, err := facade.Redis.Incr(ctx, key).Result()
+	if err != nil {
+		return errno.ErrOperationFailed.WithMessage("redis error: %v", err)
+	}
+
+	// Set expiration on first request (new key)
+	if count == 1 {
+		if err := facade.Redis.Expire(ctx, key, rpmKeyTTL).Err(); err != nil {
+			log.C(ctx).Errorw("Failed to set RPM key expiration", "uid", uid, "err", err)
+		}
+	}
+
+	if count > int64(rpm) {
+		// Rollback the increment
+		if err := facade.Redis.Decr(ctx, key).Err(); err != nil {
+			log.C(ctx).Errorw("Failed to rollback RPM increment", "uid", uid, "err", err)
+		}
+
+		return errno.ErrAIQuotaExceeded.WithMessage("rate limit exceeded (%d requests/minute)", rpm)
+	}
+
+	return nil
+}
+
+// buildRPMKey builds the Redis key for RPM tracking.
+// Format: {app}:ai:rpm:{uid}:{minute_timestamp}
+func (q *quotaChecker) buildRPMKey(uid string) string {
+	minute := time.Now().Unix() / 60 // Floor to current minute
+
+	return fmt.Sprintf("%s:ai:rpm:%s:%d", facade.Config.App.Name, uid, minute)
 }

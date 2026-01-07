@@ -73,6 +73,13 @@ var (
 		Message: "Messages cannot be empty.",
 	}
 
+	// ErrAIMessageTooLong 消息过长
+	ErrAIMessageTooLong = &errorsx.ErrorX{
+		Code:    http.StatusBadRequest,
+		Reason:  "InvalidArgument.AIMessageTooLong",
+		Message: "Message content is too long.",
+	}
+
 	// ErrAIRoleNotFound 角色不存在
 	ErrAIRoleNotFound = &errorsx.ErrorX{
 		Code:    http.StatusNotFound,

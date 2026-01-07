@@ -24,6 +24,10 @@ import (
 const (
 	// saveSessionTimeout is the timeout for background session save operations
 	saveSessionTimeout = 30 * time.Second
+
+	// maxMessageChars is the maximum total characters allowed in messages.
+	// Approximately 15K chars ≈ 4K tokens for Chinese text.
+	maxMessageChars = 15000
 )
 
 // ChatBiz defines the chat business interface
@@ -65,6 +69,11 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 		return nil, errno.ErrAIEmptyMessages
 	}
 
+	// Validate message length
+	if err := b.validateMessageLength(req.Messages); err != nil {
+		return nil, err
+	}
+
 	// Validate session if provided and get role_id from session
 	if req.SessionID != "" {
 		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
@@ -99,6 +108,11 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 	}
 	req.Messages = messages
 
+	// Check RPM limit before calling provider
+	if err := b.quota.CheckRPM(ctx, uid); err != nil {
+		return nil, err
+	}
+
 	// Reserve TPD quota atomically before calling provider
 	reservedTokens, err := b.quota.ReserveTPD(ctx, uid, req.MaxTokens)
 	if err != nil {
@@ -106,18 +120,18 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 	}
 
 	// Ensure quota is released if not consumed (defer pattern)
+	// Use synchronous release with timeout to ensure reliability.
+	// The 5s timeout is chosen to be fast enough for user experience
+	// while allowing enough time for Redis operation.
 	quotaConsumed := false
 	defer func() {
 		if !quotaConsumed && reservedTokens > 0 {
-			// Release in background to avoid blocking
-			go func() {
-				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-				defer cancel()
-				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
-					log.C(ctx).Errorw("Failed to release reserved quota",
-						"uid", uid, "reserved", reservedTokens, "err", err)
-				}
-			}()
+			releaseCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := b.quota.AdjustTPD(releaseCtx, uid, 0, reservedTokens); err != nil {
+				log.C(releaseCtx).Errorw("Failed to release reserved quota",
+					"uid", uid, "reserved", reservedTokens, "err", err)
+			}
 		}
 	}()
 
@@ -167,6 +181,11 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 		return nil, errno.ErrAIEmptyMessages
 	}
 
+	// Validate message length
+	if err := b.validateMessageLength(req.Messages); err != nil {
+		return nil, err
+	}
+
 	// Validate session if provided and get role_id from session
 	if req.SessionID != "" {
 		if err := b.validateSession(ctx, req.SessionID, uid); err != nil {
@@ -201,6 +220,11 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 	}
 	req.Messages = messages
 
+	// Check RPM limit before calling provider
+	if err := b.quota.CheckRPM(ctx, uid); err != nil {
+		return nil, err
+	}
+
 	// Reserve TPD quota atomically before calling provider
 	reservedTokens, err := b.quota.ReserveTPD(ctx, uid, req.MaxTokens)
 	if err != nil {
@@ -208,18 +232,18 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 	}
 
 	// Ensure quota is released if not consumed (defer pattern)
+	// Use synchronous release with timeout to ensure reliability.
+	// The 5s timeout is chosen to be fast enough for user experience
+	// while allowing enough time for Redis operation.
 	quotaConsumed := false
 	defer func() {
 		if !quotaConsumed && reservedTokens > 0 {
-			// Release in background to avoid blocking
-			go func() {
-				ctx, cancel := context.WithTimeout(context.Background(), saveSessionTimeout)
-				defer cancel()
-				if err := b.quota.AdjustTPD(ctx, uid, 0, reservedTokens); err != nil {
-					log.C(ctx).Errorw("Failed to release reserved quota",
-						"uid", uid, "reserved", reservedTokens, "err", err)
-				}
-			}()
+			releaseCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := b.quota.AdjustTPD(releaseCtx, uid, 0, reservedTokens); err != nil {
+				log.C(releaseCtx).Errorw("Failed to release reserved quota",
+					"uid", uid, "reserved", reservedTokens, "err", err)
+			}
 		}
 	}()
 
@@ -373,6 +397,20 @@ func (b *chatBiz) validateSession(ctx context.Context, sessionID, uid string) er
 
 	if session.UID != uid {
 		return errno.ErrAISessionNotFound // Don't reveal session exists for other user
+	}
+
+	return nil
+}
+
+// validateMessageLength checks if total message content length exceeds limit.
+func (b *chatBiz) validateMessageLength(messages []aipkg.Message) error {
+	totalChars := 0
+	for _, msg := range messages {
+		totalChars += len(msg.Content)
+	}
+
+	if totalChars > maxMessageChars {
+		return errno.ErrAIMessageTooLong.WithMessage("message content exceeds %d characters", maxMessageChars)
 	}
 
 	return nil
