@@ -66,6 +66,8 @@ func (q *quotaChecker) ReserveTPD(ctx context.Context, uid string, estimatedToke
 		return 0, nil
 	}
 
+	RecordQuotaOperation("reserve")
+
 	// Use default estimate if not provided
 	if estimatedTokens <= 0 {
 		estimatedTokens = defaultEstimatedTokens
@@ -145,6 +147,8 @@ func (q *quotaChecker) AdjustTPD(ctx context.Context, uid string, actualTokens, 
 	if !facade.Config.AI.Quota.Enabled {
 		return nil
 	}
+
+	RecordQuotaOperation("adjust")
 
 	// Adjust Redis count
 	diff := actualTokens - reservedTokens
@@ -262,6 +266,9 @@ func (q *quotaChecker) CheckRPM(ctx context.Context, uid string) error {
 	}
 
 	if count > int64(rpm) {
+		// Record RPM rejection
+		RecordRPMRejection()
+
 		// Rollback the increment
 		if err := facade.Redis.Decr(ctx, key).Err(); err != nil {
 			log.C(ctx).Errorw("Failed to rollback RPM increment", "uid", uid, "err", err)

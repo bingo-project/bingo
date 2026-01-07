@@ -43,28 +43,43 @@ type ChatBiz interface {
 
 	// ListModels returns available models (OpenAI-compatible format)
 	ListModels(ctx context.Context) (*v1.ListModelsResponse, error)
+
+	// HealthStatus returns the health status of AI providers
+	HealthStatus() map[string]*ProviderHealth
 }
 
 type chatBiz struct {
-	ds       store.IStore
-	registry *aipkg.Registry
-	quota    *quotaChecker
-	fallback *ai.FallbackSelector
+	ds            store.IStore
+	registry      *aipkg.Registry
+	quota         *quotaChecker
+	fallback      *ai.FallbackSelector
+	breakers      map[string]*CircuitBreaker
+	breakerConfig CircuitBreakerConfig
+	healthChecker *HealthChecker
 }
 
 var _ ChatBiz = (*chatBiz)(nil)
 
 // New creates a new ChatBiz instance
 func New(ds store.IStore, registry *aipkg.Registry) *chatBiz {
-	return &chatBiz{
-		ds:       ds,
-		registry: registry,
-		quota:    newQuotaChecker(ds),
-		fallback: ai.NewFallbackSelector(ds.AiModel(), registry),
+	biz := &chatBiz{
+		ds:            ds,
+		registry:      registry,
+		quota:         newQuotaChecker(ds),
+		fallback:      ai.NewFallbackSelector(ds.AiModel(), registry),
+		breakers:      make(map[string]*CircuitBreaker),
+		breakerConfig: DefaultCircuitBreakerConfig,
+		healthChecker: NewHealthChecker(registry),
 	}
+
+	// Start health checker in background
+	go biz.healthChecker.Start()
+
+	return biz
 }
 
 func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) (*aipkg.ChatResponse, error) {
+	start := time.Now()
 	if len(req.Messages) == 0 {
 		return nil, errno.ErrAIEmptyMessages
 	}
@@ -136,15 +151,18 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 	}()
 
 	// Get provider with fallback
-	provider, modelUsed, err := b.getProviderWithFallback(ctx, req.Model)
+	provider, providerName, modelUsed, err := b.getProviderWithFallback(ctx, req.Model)
 	if err != nil {
 		return nil, err
 	}
 	req.Model = modelUsed
+	breaker := b.getBreaker(providerName)
 
 	// Call provider
 	resp, err := provider.Chat(ctx, req)
 	if err != nil {
+		breaker.RecordFailure(ctx, err)
+
 		// Check if error is retriable and try fallback once
 		if b.isRetriableProviderError(err) {
 			fallback := b.fallback.SelectFallback(ctx, modelUsed)
@@ -159,8 +177,15 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 						quotaConsumed = true
 						b.handleChatSuccess(context.Background(), uid, req.SessionID, newMessages, resp, reservedTokens)
 
+						// Record fallback metrics
+						duration := time.Since(start).Seconds()
+						RecordRequest(fallback.ProviderName, req.Model, false, duration, "success")
+						RecordFallback(providerName, fallback.ProviderName)
+
 						return resp, nil
 					}
+					// Record fallback failure too
+					b.getBreaker(fallback.ProviderName).RecordFailure(ctx, err)
 				}
 			}
 		}
@@ -169,14 +194,21 @@ func (b *chatBiz) Chat(ctx context.Context, uid string, req *aipkg.ChatRequest) 
 		// defer will automatically release quota
 	}
 
+	breaker.RecordSuccess(ctx)
+
 	// Mark quota as consumed (will be adjusted with actual usage below)
 	quotaConsumed = true
 	b.handleChatSuccess(context.Background(), uid, req.SessionID, newMessages, resp, reservedTokens)
+
+	// Record metrics
+	duration := time.Since(start).Seconds()
+	RecordRequest(providerName, req.Model, false, duration, "success")
 
 	return resp, nil
 }
 
 func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatRequest) (*aipkg.ChatStream, error) {
+	start := time.Now()
 	if len(req.Messages) == 0 {
 		return nil, errno.ErrAIEmptyMessages
 	}
@@ -248,15 +280,18 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 	}()
 
 	// Get provider with fallback
-	provider, modelUsed, err := b.getProviderWithFallback(ctx, req.Model)
+	provider, providerName, modelUsed, err := b.getProviderWithFallback(ctx, req.Model)
 	if err != nil {
 		return nil, err
 	}
 	req.Model = modelUsed
+	breaker := b.getBreaker(providerName)
 
 	// Call provider
 	stream, err := provider.ChatStream(ctx, req)
 	if err != nil {
+		breaker.RecordFailure(ctx, err)
+
 		// Check if error is retriable and try fallback once
 		// Only attempt fallback if initial call fails (no chunks sent yet)
 		if b.isRetriableProviderError(err) {
@@ -268,11 +303,19 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 					req.Model = fallback.Model
 					stream, err = provider2.ChatStream(ctx, req)
 					if err == nil {
-						// Fallback succeeded, proceed with stream
+						// Fallback succeeded, record success and proceed with stream
+						b.getBreaker(fallback.ProviderName).RecordSuccess(ctx)
 						quotaConsumed = true
 
-						return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens), nil
+						// Record metrics for fallback
+						duration := time.Since(start).Seconds()
+						RecordRequest(fallback.ProviderName, req.Model, true, duration, "success")
+						RecordFallback(providerName, fallback.ProviderName)
+
+						return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens, fallback.ProviderName, start), nil
 					}
+					// Record fallback failure too
+					b.getBreaker(fallback.ProviderName).RecordFailure(ctx, err)
 				}
 			}
 		}
@@ -280,15 +323,21 @@ func (b *chatBiz) ChatStream(ctx context.Context, uid string, req *aipkg.ChatReq
 		return nil, errno.ErrAIProviderError.WithMessage("stream failed: %v", err)
 	}
 
+	breaker.RecordSuccess(ctx)
+
 	// Mark quota as consumed (will be handled by wrapStreamForSaving)
 	quotaConsumed = true
 
+	// Record metrics (stream request initiated)
+	duration := time.Since(start).Seconds()
+	RecordRequest(providerName, req.Model, true, duration, "success")
+
 	// Wrap stream to save messages and adjust quota after completion
-	return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens), nil
+	return b.wrapStreamForSaving(stream, uid, req, newMessages, reservedTokens, providerName, start), nil
 }
 
 // wrapStreamForSaving wraps a stream to save messages and adjust quota after completion.
-func (b *chatBiz) wrapStreamForSaving(stream *aipkg.ChatStream, uid string, req *aipkg.ChatRequest, newMessages []aipkg.Message, reservedTokens int) *aipkg.ChatStream {
+func (b *chatBiz) wrapStreamForSaving(stream *aipkg.ChatStream, uid string, req *aipkg.ChatRequest, newMessages []aipkg.Message, reservedTokens int, providerName string, startTime time.Time) *aipkg.ChatStream {
 	wrapped := aipkg.NewChatStream(aipkg.DefaultStreamBufferSize)
 
 	go func() {
@@ -299,6 +348,14 @@ func (b *chatBiz) wrapStreamForSaving(stream *aipkg.ChatStream, uid string, req 
 		for {
 			chunk, err := stream.Recv()
 			if err != nil {
+				// Stream ended, record final metrics
+				duration := time.Since(startTime).Seconds()
+				status := "success"
+				if err != nil && err != aipkg.ErrStreamClosed {
+					status = "error"
+				}
+				RecordRequest(providerName, req.Model, true, duration, status)
+
 				// Stream ended, save accumulated content
 				if contentBuilder.Len() > 0 && req.SessionID != "" {
 					content := contentBuilder.String()
@@ -384,6 +441,10 @@ func (b *chatBiz) Sessions() SessionBiz {
 	return NewSession(b.ds)
 }
 
+func (b *chatBiz) HealthStatus() map[string]*ProviderHealth {
+	return b.healthChecker.GetHealth()
+}
+
 // validateSession checks if session exists and belongs to the user.
 func (b *chatBiz) validateSession(ctx context.Context, sessionID, uid string) error {
 	session, err := b.ds.AiSession().GetBySessionID(ctx, sessionID)
@@ -457,27 +518,50 @@ func (b *chatBiz) resolveModel(ctx context.Context, reqModel, sessionID string) 
 }
 
 // getProviderWithFallback gets provider with fallback support.
-// Returns (provider, actualModelUsed, error).
-func (b *chatBiz) getProviderWithFallback(ctx context.Context, model string) (aipkg.Provider, string, error) {
+// Returns (provider, providerName, actualModelUsed, error).
+func (b *chatBiz) getProviderWithFallback(ctx context.Context, model string) (aipkg.Provider, string, string, error) {
 	// First attempt: query store for active model (supports composite key)
 	if m, err := b.ds.AiModel().FindActiveByModel(ctx, model); err == nil && m != nil {
-		if provider, ok := b.registry.Get(m.ProviderName); ok {
-			return provider, m.Model, nil
+		breaker := b.getBreaker(m.ProviderName)
+		if !breaker.Allow(ctx) {
+			log.C(ctx).Warnw("circuit breaker open, skipping provider",
+				"provider", m.ProviderName,
+				"model", m.Model)
+			// Try fallback instead
+		} else if provider, ok := b.registry.Get(m.ProviderName); ok {
+			return provider, m.ProviderName, m.Model, nil
 		}
 	}
 
-	// Fallback attempt: model not registered, try fallback
+	// Fallback attempt: model not registered or circuit open
 	fallback := b.fallback.SelectFallback(ctx, model)
 	if fallback == nil {
-		return nil, "", errno.ErrAIModelNotFound
+		return nil, "", "", errno.ErrAIModelNotFound
+	}
+
+	// Check circuit breaker for fallback provider
+	breaker := b.getBreaker(fallback.ProviderName)
+	if !breaker.Allow(ctx) {
+		return nil, "", "", errno.ErrAIAllModelsFailed.WithMessage("all providers circuit open")
 	}
 
 	provider, ok := b.registry.Get(fallback.ProviderName)
 	if !ok {
-		return nil, "", errno.ErrAIAllModelsFailed
+		return nil, "", "", errno.ErrAIAllModelsFailed
 	}
 
-	return provider, fallback.Model, nil
+	return provider, fallback.ProviderName, fallback.Model, nil
+}
+
+// getBreaker returns the circuit breaker for a provider, creating if needed.
+func (b *chatBiz) getBreaker(providerName string) *CircuitBreaker {
+	if breaker, exists := b.breakers[providerName]; exists {
+		return breaker
+	}
+	breaker := NewCircuitBreaker("provider:"+providerName, b.breakerConfig)
+	b.breakers[providerName] = breaker
+
+	return breaker
 }
 
 // isRetriableProviderError checks if error should trigger fallback retry.
