@@ -15,11 +15,22 @@ import (
 type CircuitBreakerState int
 
 const (
-	// CircuitClosed allows requests to pass through.
+	// CircuitClosed is the normal state where the circuit is "closed" (like a closed electrical circuit),
+	// meaning current can flow and requests are allowed through.
+	//
+	// Note: This follows the standard Circuit Breaker pattern terminology (Martin Fowler, 2002).
+	// The naming is based on electrical circuit analogy, not natural language.
+	// Closed circuit = connected = operational.
 	CircuitClosed CircuitBreakerState = iota
-	// CircuitOpen rejects requests immediately.
+
+	// CircuitOpen is the tripped state where the circuit is "open" (like an open electrical circuit),
+	// meaning current cannot flow and requests are immediately rejected.
+	//
+	// Open circuit = disconnected = not operational.
 	CircuitOpen
-	// CircuitHalfOpen allows a test request to check recovery.
+
+	// CircuitHalfOpen allows a test request to check if the service has recovered.
+	// Success transitions back to Closed, failure trips back to Open.
 	CircuitHalfOpen
 )
 
