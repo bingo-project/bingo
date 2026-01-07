@@ -143,15 +143,141 @@ Registry.Get(providerName)
 - quota 超限 - 需人工处理
 - 参数错误 - 用户问题
 
+#### 3.3.3 熔断器 (Circuit Breaker)
+
+为防止故障 Provider 持续调用导致雪崩，系统为每个 Provider 实现了熔断器机制。
+
+**三种状态**：
+
+| 状态 | 说明 | 行为 |
+|------|------|------|
+| Closed | 正常状态 | 请求正常通过 |
+| Open | 熔断状态 | 快速失败，触发降级 |
+| Half-Open | 探测状态 | 允许少量请求探测恢复 |
+
+**状态转换**：
+```
+Closed --[连续 5 次失败]--> Open
+   ↓                           |
+   <---[60 秒超时]-----------+
+
+Open --[60 秒超时]--> Half-Open --[连续 2 次成功]--> Closed
+                         ↓
+                    [任何失败]--> Open
+```
+
+**配置**：
+- `MaxFailures`: 5 - 触发熔断的连续失败次数
+- `OpenTimeout`: 60s - 熔断持续时间
+- `SuccessThreshold`: 2 - Half-Open 状态下恢复需要的连续成功次数
+
+#### 3.3.4 健康检查 (Health Check)
+
+系统后台定期对每个 Provider 进行健康检查，主动发现故障。
+
+**检查机制**：
+- **间隔**: 每 5 分钟
+- **超时**: 30 秒
+- **方式**: 发送最小测试请求（1 字符消息）
+- **状态**: healthy / unhealthy / unknown
+
+**查询接口**：
+```go
+chatBiz.HealthStatus() -> map[string]*ProviderHealth
+```
+
+---
+
 ### 3.4 配额系统 (Quota System)
 
 基于 Redis 的高性能配额控制，保护系统不被滥用，并控制成本。
 
-- **RPM (Requests Per Minute)**: 限制请求频率，防止刷接口。
-- **TPD (Tokens Per Day)**: 限制每日 Token 消耗量，控制总预算。
-- **自愈机制 (Self-Healing)**:
-  采用 `Reserve` (预扣) -> `Use` (实耗) -> `Adjust` (调整) 模式。
-  请求开始前先预扣估算的 Token，请求结束后根据真实消耗进行“多退少补”。配合 `defer` 机制，确保即使发生 Panic 或网络中断，预扣的配额也能最终被正确释放或修正。
+#### 3.4.1 RPM 限流
+
+Redis 分钟级计数器，防止用户高频请求。
+
+```go
+key := "{app}:ai:rpm:{uid}:{minute_timestamp}"
+count := Redis.Incr(key)
+if count > rpm_limit {
+    return ErrRateLimitExceeded
+}
+```
+
+**特点**：
+- 按分钟窗口计数，自动过期
+- 超限时自动回滚计数
+- 记录拒绝指标供监控
+
+#### 3.4.2 TPD 配额
+
+日级 Token 配额，支持用户级别和层级级别配置。
+
+- 配额按天重置（UTC 零点或用户最后重置时间）
+- Redis 缓存当天已用额度，减少 DB 查询
+- 超限后返回 429 错误
+
+#### 3.4.3 自愈机制
+
+采用 `Reserve` (预扣) -> `Use` (实耗) -> `Adjust` (调整) 模式：
+
+1. 请求开始前：预扣估算的 Token（默认 4096）
+2. 请求结束后：根据真实消耗进行"多退少补"
+3. 同步释放：配额未消耗时同步释放（5s 超时），确保可靠性
+
+---
+
+### 3.5 安全机制 (Security)
+
+#### 3.5.1 输入验证
+
+- **消息长度限制**: 单次请求总字符数不超过 15000（约 4000 tokens）
+- **空消息检查**: 拒绝空消息请求
+- **Session 验证**: 确保 Session 属于当前用户
+
+#### 3.5.2 凭证管理
+
+- API Key 支持环境变量配置（推荐生产环境）
+- 配置文件使用注释提示环境变量用法
+- 凭证不在日志中输出
+
+---
+
+### 3.6 可观测性 (Observability)
+
+#### 3.6.1 Prometheus Metrics
+
+系统暴露 8 个专用 AI Metrics，通过 `/metrics` 端点访问：
+
+| Metric | 说明 |
+|--------|------|
+| `ai_request_duration_seconds` | 请求耗时（按 provider/model/stream 分组） |
+| `ai_requests_total` | 请求总数（按状态分组：success/error） |
+| `ai_fallback_total` | 降级激活次数（按 from/to provider 分组） |
+| `ai_quota_reservation_total` | 配额操作计数（reserve/adjust/release） |
+| `ai_circuit_breaker_state` | 熔断器状态（0=Open, 0.5=Half-Open, 1=Closed） |
+| `ai_circuit_breaker_failures_total` | 熔断器拒绝次数 |
+| `ai_rpm_rejections_total` | RPM 限流拒绝次数 |
+
+#### 3.6.2 结构化日志
+
+所有关键操作使用 `log.C(ctx).Infow/Errorw` 记录：
+- 自动包含 TraceID（从 context 提取）
+- 降级事件、熔断器状态变化、配额操作失败等
+
+#### 3.6.3 健康状态 API
+
+```go
+chatBiz.HealthStatus() -> map[string]*ProviderHealth
+```
+
+返回每个 Provider 的健康状态：
+```json
+{
+  "openai": {"status": "healthy", "last_check": "2026-01-07T10:00:00Z"},
+  "claude": {"status": "unhealthy", "last_check": "2026-01-07T10:00:00Z", "last_error": "..."}
+}
+```
 
 ## 4. 技术选型与决策 (Technology Decisions)
 
