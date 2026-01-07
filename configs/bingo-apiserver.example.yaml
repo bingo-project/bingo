@@ -101,13 +101,17 @@ code:
   waiting: 1 # 重发等待时间（分钟）
 
 # AI configuration
+# Environment variables override config file values.
+# Example: BINGO_AI_CREDENTIALS_OPENAI_API_KEY=sk-xxx
 ai:
   default-model: "gpt-4o"
   credentials:
     openai:
+      # Override with: BINGO_AI_CREDENTIALS_OPENAI_API_KEY
       api-key: "sk-xxx"
       base-url: "https://api.openai.com/v1"
     deepseek:
+      # Override with: BINGO_AI_CREDENTIALS_DEEPSEEK_API_KEY
       api-key: "sk-xxx"
       base-url: "https://api.deepseek.com"
   session:
