@@ -96,6 +96,25 @@ var coreAPIs = []model.ApiM{
 	{Method: "GET", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Get AI role"},
 	{Method: "PUT", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Update AI role"},
 	{Method: "DELETE", Path: "/v1/ai/roles/:id", Group: "AI", Description: "Delete AI role"},
+
+	// AI Provider management
+	{Method: "GET", Path: "/v1/ai/providers", Group: "AI", Description: "List AI providers"},
+	{Method: "GET", Path: "/v1/ai/providers/:id", Group: "AI", Description: "Get AI provider"},
+	{Method: "PUT", Path: "/v1/ai/providers/:id", Group: "AI", Description: "Update AI provider"},
+
+	// AI Model management
+	{Method: "GET", Path: "/v1/ai/models", Group: "AI", Description: "List AI models"},
+	{Method: "GET", Path: "/v1/ai/models/:id", Group: "AI", Description: "Get AI model"},
+	{Method: "PUT", Path: "/v1/ai/models/:id", Group: "AI", Description: "Update AI model"},
+
+	// AI Quota management
+	{Method: "GET", Path: "/v1/ai/quotas", Group: "AI", Description: "List AI user quotas"},
+	{Method: "GET", Path: "/v1/ai/quotas/:uid", Group: "AI", Description: "Get AI user quota"},
+	{Method: "PUT", Path: "/v1/ai/quotas/:uid", Group: "AI", Description: "Update AI user quota"},
+	{Method: "POST", Path: "/v1/ai/quotas/:uid/reset-daily", Group: "AI", Description: "Reset AI user daily tokens"},
+
+	// AI Health monitoring
+	{Method: "GET", Path: "/v1/ai/health", Group: "AI", Description: "Get AI provider health"},
 }
 
 type ApiSeeder struct{}

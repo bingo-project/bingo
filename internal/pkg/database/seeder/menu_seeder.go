@@ -54,8 +54,21 @@ var defaultMenus = []menuSeedData{
 	{ParentPath: "/system/admin", Title: "common.delete", Name: "SystemAdminDelete", Type: "button", AuthCode: "System:Admin:Delete", ApiRefs: []string{"DELETE:/v1/admins/:name"}},
 	{ParentPath: "/system/admin", Title: "system.admin.setRoles", Name: "SystemAdminSetRoles", Type: "button", AuthCode: "System:Admin:SetRoles", ApiRefs: []string{"PUT:/v1/admins/:name/roles", "GET:/v1/roles/all"}},
 
-	// About
-	{Title: "demos.vben.about", Name: "About", Path: "/about", Icon: "lucide:copyright", Component: "/_core/about/index", Sort: 9999, Type: "menu"},
+	// AI management
+	{Title: "ai.title", Name: "AI", Path: "/ai", Icon: "lucide:sparkles", Sort: 100, Type: "catalog"},
+
+	// AI Provider management
+	{ParentPath: "/ai", Title: "ai.provider.title", Name: "AIProvider", Path: "/ai/provider", Icon: "lucide:server", Component: "/ai/provider/list", Sort: 1, Type: "menu", AuthCode: "AI:Provider:List", ApiRefs: []string{"GET:/v1/ai/providers"}},
+	{ParentPath: "/ai/provider", Title: "common.edit", Name: "AIProviderEdit", Type: "button", AuthCode: "AI:Provider:Edit", ApiRefs: []string{"PUT:/v1/ai/providers/:id", "GET:/v1/ai/providers/:id"}},
+
+	// AI Model management
+	{ParentPath: "/ai", Title: "ai.model.title", Name: "AIModel", Path: "/ai/model", Icon: "lucide:circuit-board", Component: "/ai/model/list", Sort: 2, Type: "menu", AuthCode: "AI:Model:List", ApiRefs: []string{"GET:/v1/ai/models"}},
+	{ParentPath: "/ai/model", Title: "common.edit", Name: "AIModelEdit", Type: "button", AuthCode: "AI:Model:Edit", ApiRefs: []string{"PUT:/v1/ai/models/:id", "GET:/v1/ai/models/:id"}},
+
+	// AI Quota management
+	{ParentPath: "/ai", Title: "ai.quota.title", Name: "AIQuota", Path: "/ai/quota", Icon: "lucide:sliders", Component: "/ai/quota/list", Sort: 3, Type: "menu", AuthCode: "AI:Quota:List", ApiRefs: []string{"GET:/v1/ai/quotas"}},
+	{ParentPath: "/ai/quota", Title: "common.edit", Name: "AIQuotaEdit", Type: "button", AuthCode: "AI:Quota:Edit", ApiRefs: []string{"PUT:/v1/ai/quotas/:uid", "GET:/v1/ai/quotas/:uid"}},
+	{ParentPath: "/ai/quota", Title: "ai.quota.resetDaily", Name: "AIQuotaResetDaily", Type: "button", AuthCode: "AI:Quota:ResetDaily", ApiRefs: []string{"POST:/v1/ai/quotas/:uid/reset-daily"}},
 }
 
 type MenuSeeder struct{}
