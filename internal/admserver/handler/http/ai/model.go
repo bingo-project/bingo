@@ -25,7 +25,7 @@ func NewModelHandler(ds store.IStore) *ModelHandler {
 // List
 // @Summary    List AI models
 // @Security   Bearer
-// @Tags       AI Model
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      providerName  query     string  false  "Filter by provider name"
@@ -49,7 +49,7 @@ func (h *ModelHandler) List(c *gin.Context) {
 // Get
 // @Summary    Get AI model by ID
 // @Security   Bearer
-// @Tags       AI Model
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id  path      int  true  "Model ID"
@@ -73,7 +73,7 @@ func (h *ModelHandler) Get(c *gin.Context) {
 // Update
 // @Summary    Update AI model
 // @Security   Bearer
-// @Tags       AI Model
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id        path      int                       true  "Model ID"

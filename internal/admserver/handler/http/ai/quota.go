@@ -23,7 +23,7 @@ func NewQuotaHandler(ds store.IStore) *QuotaHandler {
 // List
 // @Summary    List user quotas
 // @Security   Bearer
-// @Tags       AI Quota
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      tier      query     string  false  "Filter by tier" Enums(free, pro, enterprise)
@@ -49,7 +49,7 @@ func (h *QuotaHandler) List(c *gin.Context) {
 // Get
 // @Summary    Get user quota by UID
 // @Security   Bearer
-// @Tags       AI Quota
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      uid  path      string  true  "User UID"
@@ -72,7 +72,7 @@ func (h *QuotaHandler) Get(c *gin.Context) {
 // Update
 // @Summary    Update user quota
 // @Security   Bearer
-// @Tags       AI Quota
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      uid       path      string                       true  "User UID"
@@ -104,7 +104,7 @@ func (h *QuotaHandler) Update(c *gin.Context) {
 // ResetDailyTokens
 // @Summary    Reset user's daily token usage
 // @Security   Bearer
-// @Tags       AI Quota
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      uid  path      string  true  "User UID"

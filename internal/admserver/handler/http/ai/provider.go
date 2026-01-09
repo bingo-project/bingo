@@ -25,7 +25,7 @@ func NewProviderHandler(ds store.IStore) *ProviderHandler {
 // List
 // @Summary    List AI providers
 // @Security   Bearer
-// @Tags       AI Provider
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      status   query     string  false  "Filter by status" Enums(active, disabled)
@@ -48,7 +48,7 @@ func (h *ProviderHandler) List(c *gin.Context) {
 // Get
 // @Summary    Get AI provider by ID
 // @Security   Bearer
-// @Tags       AI Provider
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id  path      int  true  "Provider ID"
@@ -72,7 +72,7 @@ func (h *ProviderHandler) Get(c *gin.Context) {
 // Update
 // @Summary    Update AI provider
 // @Security   Bearer
-// @Tags       AI Provider
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id        path      int                           true  "Provider ID"

@@ -54,6 +54,12 @@ var defaultMenus = []menuSeedData{
 	{ParentPath: "/system/admin", Title: "common.delete", Name: "SystemAdminDelete", Type: "button", AuthCode: "System:Admin:Delete", ApiRefs: []string{"DELETE:/v1/admins/:name"}},
 	{ParentPath: "/system/admin", Title: "system.admin.setRoles", Name: "SystemAdminSetRoles", Type: "button", AuthCode: "System:Admin:SetRoles", ApiRefs: []string{"PUT:/v1/admins/:name/roles", "GET:/v1/roles/all"}},
 
+	// User management
+	{ParentPath: "/system", Title: "user.title", Name: "SystemUser", Path: "/system/user", Icon: "mdi:account-multiple", Component: "/system/user/list", Sort: 4, Type: "menu", AuthCode: "System:User:List", ApiRefs: []string{"GET:/v1/users"}},
+	{ParentPath: "/system/user", Title: "common.create", Name: "SystemUserCreate", Type: "button", AuthCode: "System:User:Create", ApiRefs: []string{"POST:/v1/users"}},
+	{ParentPath: "/system/user", Title: "common.edit", Name: "SystemUserEdit", Type: "button", AuthCode: "System:User:Edit", ApiRefs: []string{"PUT:/v1/users/:name", "GET:/v1/users/:name"}},
+	{ParentPath: "/system/user", Title: "common.delete", Name: "SystemUserDelete", Type: "button", AuthCode: "System:User:Delete", ApiRefs: []string{"DELETE:/v1/users/:name"}},
+
 	// AI management
 	{Title: "ai.title", Name: "AI", Path: "/ai", Icon: "lucide:sparkles", Sort: 100, Type: "catalog"},
 

@@ -201,6 +201,84 @@ definitions:
       temperature:
         type: number
     type: object
+  v1.AiModelInfo:
+    properties:
+      allowFallback:
+        type: boolean
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: integer
+      inputPrice:
+        type: number
+      isDefault:
+        type: boolean
+      maxTokens:
+        type: integer
+      model:
+        type: string
+      outputPrice:
+        type: number
+      providerName:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.AiProviderHealthInfo:
+    properties:
+      errorMessage:
+        type: string
+      lastCheck:
+        type: string
+      providerName:
+        type: string
+      status:
+        type: string
+    type: object
+  v1.AiProviderInfo:
+    properties:
+      createdAt:
+        type: string
+      displayName:
+        type: string
+      id:
+        type: integer
+      isDefault:
+        type: boolean
+      name:
+        type: string
+      sort:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  v1.AiUserQuotaInfo:
+    properties:
+      createdAt:
+        type: string
+      lastResetAt:
+        type: string
+      rpm:
+        type: integer
+      tier:
+        type: string
+      tpd:
+        type: integer
+      uid:
+        type: string
+      updatedAt:
+        type: string
+      usedTokensToday:
+        type: integer
+    type: object
   v1.AnnouncementItem:
     properties:
       actionUrl:
@@ -628,6 +706,42 @@ definitions:
       total:
         type: integer
     type: object
+  v1.ListAiModelResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AiModelInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListAiProviderHealthResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AiProviderHealthInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListAiProviderResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AiProviderInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  v1.ListAiUserQuotaResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/v1.AiUserQuotaInfo'
+        type: array
+      total:
+        type: integer
+    type: object
   v1.ListAnnouncementsResponse:
     properties:
       data:
@@ -932,6 +1046,62 @@ definitions:
         type: string
       temperature:
         type: number
+    type: object
+  v1.UpdateAiModelRequest:
+    properties:
+      allowFallback:
+        type: boolean
+      displayName:
+        maxLength: 64
+        type: string
+      inputPrice:
+        minimum: 0
+        type: number
+      isDefault:
+        type: boolean
+      maxTokens:
+        minimum: 1
+        type: integer
+      outputPrice:
+        minimum: 0
+        type: number
+      sort:
+        type: integer
+      status:
+        enum:
+        - active
+        - disabled
+        type: string
+    type: object
+  v1.UpdateAiProviderRequest:
+    properties:
+      displayName:
+        maxLength: 64
+        type: string
+      isDefault:
+        type: boolean
+      sort:
+        type: integer
+      status:
+        enum:
+        - active
+        - disabled
+        type: string
+    type: object
+  v1.UpdateAiUserQuotaRequest:
+    properties:
+      rpm:
+        minimum: 0
+        type: integer
+      tier:
+        enum:
+        - free
+        - pro
+        - enterprise
+        type: string
+      tpd:
+        minimum: 0
+        type: integer
     type: object
   v1.UpdateAnnouncementRequest:
     properties:
@@ -1463,7 +1633,7 @@ paths:
       - Bearer: []
       summary: List AI agents
       tags:
-      - AI Agent
+      - AI
     post:
       consumes:
       - application/json
@@ -1493,7 +1663,7 @@ paths:
       - Bearer: []
       summary: Create AI agent
       tags:
-      - AI Agent
+      - AI
   /v1/ai/agents/{id}:
     delete:
       consumes:
@@ -1521,7 +1691,7 @@ paths:
       - Bearer: []
       summary: Delete AI agent
       tags:
-      - AI Agent
+      - AI
     get:
       consumes:
       - application/json
@@ -1550,7 +1720,7 @@ paths:
       - Bearer: []
       summary: Get AI agent by agent_id
       tags:
-      - AI Agent
+      - AI
     put:
       consumes:
       - application/json
@@ -1589,7 +1759,382 @@ paths:
       - Bearer: []
       summary: Update AI agent
       tags:
-      - AI Agent
+      - AI
+  /v1/ai/health:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAiProviderHealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get AI provider health status
+      tags:
+      - AI
+  /v1/ai/models:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by provider name
+        in: query
+        name: providerName
+        type: string
+      - description: Filter by status
+        enum:
+        - active
+        - disabled
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAiModelResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List AI models
+      tags:
+      - AI
+  /v1/ai/models/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiModelInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get AI model by ID
+      tags:
+      - AI
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAiModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiModelInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update AI model
+      tags:
+      - AI
+  /v1/ai/providers:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by status
+        enum:
+        - active
+        - disabled
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAiProviderResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List AI providers
+      tags:
+      - AI
+  /v1/ai/providers/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiProviderInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get AI provider by ID
+      tags:
+      - AI
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Provider ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAiProviderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiProviderInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update AI provider
+      tags:
+      - AI
+  /v1/ai/quotas:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Filter by tier
+        enum:
+        - free
+        - pro
+        - enterprise
+        in: query
+        name: tier
+        type: string
+      - description: Filter by UID (prefix match)
+        in: query
+        name: uid
+        type: string
+      - description: Page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        maximum: 100
+        minimum: 1
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ListAiUserQuotaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: List user quotas
+      tags:
+      - AI
+  /v1/ai/quotas/{uid}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User UID
+        in: path
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiUserQuotaInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Get user quota by UID
+      tags:
+      - AI
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: User UID
+        in: path
+        name: uid
+        required: true
+        type: string
+      - description: Update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateAiUserQuotaRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiUserQuotaInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Update user quota
+      tags:
+      - AI
+  /v1/ai/quotas/{uid}/reset-daily:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User UID
+        in: path
+        name: uid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Reset user's daily token usage
+      tags:
+      - AI
   /v1/announcements:
     get:
       consumes:

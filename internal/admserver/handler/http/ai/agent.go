@@ -23,7 +23,7 @@ func NewAgentHandler(ds store.IStore) *AgentHandler {
 // Create
 // @Summary    Create AI agent
 // @Security   Bearer
-// @Tags       AI Agent
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      request  body      v1.CreateAiAgentRequest  true  "Param"
@@ -46,7 +46,7 @@ func (h *AgentHandler) Create(c *gin.Context) {
 // Get
 // @Summary    Get AI agent by agent_id
 // @Security   Bearer
-// @Tags       AI Agent
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id  path      string  true  "Agent ID"
@@ -63,7 +63,7 @@ func (h *AgentHandler) Get(c *gin.Context) {
 // List
 // @Summary    List AI agents
 // @Security   Bearer
-// @Tags       AI Agent
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      category  query     string  false  "Filter by category"
@@ -86,7 +86,7 @@ func (h *AgentHandler) List(c *gin.Context) {
 // Update
 // @Summary    Update AI agent
 // @Security   Bearer
-// @Tags       AI Agent
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id        path      string                   true  "Agent ID"
@@ -112,7 +112,7 @@ func (h *AgentHandler) Update(c *gin.Context) {
 // Delete
 // @Summary    Delete AI agent
 // @Security   Bearer
-// @Tags       AI Agent
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Param      id  path  string  true  "Agent ID"

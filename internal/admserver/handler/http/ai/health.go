@@ -27,7 +27,7 @@ type listProviderRegistry interface {
 // GetHealthStatus
 // @Summary    Get AI provider health status
 // @Security   Bearer
-// @Tags       AI Health
+// @Tags       AI
 // @Accept     application/json
 // @Produce    json
 // @Success    200  {object}  v1.ListAiProviderHealthResponse
