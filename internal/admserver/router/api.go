@@ -13,6 +13,7 @@ import (
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/notification"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/system"
 	"github.com/bingo-project/bingo/internal/admserver/handler/http/user"
+	aipkg "github.com/bingo-project/bingo/internal/pkg/ai"
 	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/store"
@@ -95,6 +96,30 @@ func MapApiRouters(g *gin.Engine) {
 	v1.GET("ai/agents/:id", aiAgentHandler.Get)
 	v1.PUT("ai/agents/:id", aiAgentHandler.Update)
 	v1.DELETE("ai/agents/:id", aiAgentHandler.Delete)
+
+	// AI Provider
+	aiProviderHandler := ai.NewProviderHandler(store.S)
+	v1.GET("ai/providers", aiProviderHandler.List)
+	v1.GET("ai/providers/:id", aiProviderHandler.Get)
+	v1.PUT("ai/providers/:id", aiProviderHandler.Update)
+
+	// AI Model
+	aiModelHandler := ai.NewModelHandler(store.S)
+	v1.GET("ai/models", aiModelHandler.List)
+	v1.GET("ai/models/:id", aiModelHandler.Get)
+	v1.PUT("ai/models/:id", aiModelHandler.Update)
+
+	// AI Quota
+	aiQuotaHandler := ai.NewQuotaHandler(store.S)
+	v1.GET("ai/quotas", aiQuotaHandler.List)
+	v1.GET("ai/quotas/:uid", aiQuotaHandler.Get)
+	v1.PUT("ai/quotas/:uid", aiQuotaHandler.Update)
+	v1.POST("ai/quotas/:uid/reset-daily", aiQuotaHandler.ResetDailyTokens)
+
+	// AI Health
+	registry := aipkg.GetRegistry()
+	aiHealthHandler := ai.NewHealthHandler(registry)
+	v1.GET("ai/health", aiHealthHandler.GetHealthStatus)
 
 	// API
 	apiHandler := system.NewApiHandler(store.S, policyAuthz)

@@ -23,6 +23,9 @@ type IBiz interface {
 	Users() user.UserBiz
 
 	AiAgents() ai.AiAgentBiz
+	AiProviders() ai.AiProviderBiz
+	AiModels() ai.AiModelBiz
+	AiQuotas() ai.AiQuotaBiz
 
 	Servers() syscfg.ServerBiz
 	Email() common.EmailBiz
@@ -72,6 +75,18 @@ func (b *biz) Users() user.UserBiz {
 
 func (b *biz) AiAgents() ai.AiAgentBiz {
 	return ai.NewAiAgent(b.ds)
+}
+
+func (b *biz) AiProviders() ai.AiProviderBiz {
+	return ai.NewAiProvider(b.ds)
+}
+
+func (b *biz) AiModels() ai.AiModelBiz {
+	return ai.NewAiModel(b.ds)
+}
+
+func (b *biz) AiQuotas() ai.AiQuotaBiz {
+	return ai.NewAiQuota(b.ds)
 }
 
 func (b *biz) Servers() syscfg.ServerBiz {
