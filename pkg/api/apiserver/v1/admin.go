@@ -46,7 +46,7 @@ type CreateAdminRequest struct {
 }
 
 type UpdateAdminRequest struct {
-	Nickname  *string  `json:"nickname" binding:"min=2,max=20"`
+	Nickname  *string  `json:"nickname" binding:"omitempty,min=2,max=20"`
 	Email     *string  `json:"email" binding:"omitempty,email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
