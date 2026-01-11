@@ -209,6 +209,7 @@ func (b *aiModelBiz) Delete(ctx context.Context, id uint) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return errno.ErrAIModelNotFound
 		}
+
 		return errno.ErrDBRead.WithMessage("get ai model: %v", err)
 	}
 

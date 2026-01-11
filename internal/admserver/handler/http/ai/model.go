@@ -37,6 +37,7 @@ func (h *ModelHandler) Create(c *gin.Context) {
 	var req v1.CreateAiModelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
 		return
 	}
 
@@ -142,6 +143,7 @@ func (h *ModelHandler) Delete(c *gin.Context) {
 	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
 		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("invalid model id"))
+
 		return
 	}
 
