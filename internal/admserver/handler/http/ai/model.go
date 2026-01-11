@@ -22,6 +22,28 @@ func NewModelHandler(ds store.IStore) *ModelHandler {
 	return &ModelHandler{b: biz.NewBiz(ds)}
 }
 
+// Create
+// @Summary    Create AI model
+// @Security   Bearer
+// @Tags       AI
+// @Accept     application/json
+// @Produce    json
+// @Param      request  body      v1.CreateAiModelRequest  true  "Create request"
+// @Success    200      {object}  v1.AiModelInfo
+// @Failure    400      {object}  core.ErrResponse
+// @Failure    500      {object}  core.ErrResponse
+// @Router     /v1/ai/models [POST].
+func (h *ModelHandler) Create(c *gin.Context) {
+	var req v1.CreateAiModelRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+		return
+	}
+
+	model, err := h.b.AiModels().Create(c, &req)
+	core.Response(c, model, err)
+}
+
 // List
 // @Summary    List AI models
 // @Security   Bearer
@@ -101,4 +123,28 @@ func (h *ModelHandler) Update(c *gin.Context) {
 
 	model, err := h.b.AiModels().Update(c, uint(id), &req)
 	core.Response(c, model, err)
+}
+
+// Delete
+// @Summary    Delete AI model
+// @Security   Bearer
+// @Tags       AI
+// @Accept     application/json
+// @Produce    json
+// @Param      id  path      int  true  "Model ID"
+// @Success    200  {object}  nil
+// @Failure    400  {object}  core.ErrResponse
+// @Failure    404  {object}  core.ErrResponse
+// @Failure    500  {object}  core.ErrResponse
+// @Router     /v1/ai/models/{id} [DELETE].
+func (h *ModelHandler) Delete(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("invalid model id"))
+		return
+	}
+
+	err = h.b.AiModels().Delete(c, uint(id))
+	core.Response(c, nil, err)
 }

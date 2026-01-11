@@ -106,8 +106,10 @@ func MapApiRouters(g *gin.Engine) {
 	// AI Model
 	aiModelHandler := ai.NewModelHandler(store.S)
 	v1.GET("ai/models", aiModelHandler.List)
+	v1.POST("ai/models", aiModelHandler.Create)
 	v1.GET("ai/models/:id", aiModelHandler.Get)
 	v1.PUT("ai/models/:id", aiModelHandler.Update)
+	v1.DELETE("ai/models/:id", aiModelHandler.Delete)
 
 	// AI Quota
 	aiQuotaHandler := ai.NewQuotaHandler(store.S)

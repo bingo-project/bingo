@@ -34,6 +34,20 @@ type ListAiModelResponse struct {
 	Data  []AiModelInfo `json:"data"`
 }
 
+// CreateAiModelRequest represents a request to create an AI model.
+type CreateAiModelRequest struct {
+	ProviderName  string  `json:"providerName" binding:"required,max=32" example:"openai"`
+	Model         string  `json:"model" binding:"required,max=64" example:"gpt-4o"`
+	DisplayName   string  `json:"displayName" binding:"required,max=64" example:"GPT-4 Omni"`
+	MaxTokens     int     `json:"maxTokens,omitempty" binding:"omitempty,min=1" example:"8192"`
+	InputPrice    float64 `json:"inputPrice,omitempty" binding:"omitempty,min=0" example:"0.005"`
+	OutputPrice   float64 `json:"outputPrice,omitempty" binding:"omitempty,min=0" example:"0.015"`
+	Status        string  `json:"status,omitempty" binding:"omitempty,oneof=active disabled" example:"active"`
+	IsDefault     bool    `json:"isDefault,omitempty" example:"false"`
+	Sort          int     `json:"sort,omitempty" example:"0"`
+	AllowFallback bool    `json:"allowFallback,omitempty" example:"true"`
+}
+
 // UpdateAiModelRequest represents a request to update an AI model.
 type UpdateAiModelRequest struct {
 	DisplayName   string   `json:"displayName,omitempty" binding:"omitempty,max=64"`

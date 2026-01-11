@@ -464,6 +464,52 @@ definitions:
     - name
     - systemPrompt
     type: object
+  v1.CreateAiModelRequest:
+    properties:
+      allowFallback:
+        example: true
+        type: boolean
+      displayName:
+        example: GPT-4 Omni
+        maxLength: 64
+        type: string
+      inputPrice:
+        example: 0.005
+        minimum: 0
+        type: number
+      isDefault:
+        example: false
+        type: boolean
+      maxTokens:
+        example: 8192
+        minimum: 1
+        type: integer
+      model:
+        example: gpt-4o
+        maxLength: 64
+        type: string
+      outputPrice:
+        example: 0.015
+        minimum: 0
+        type: number
+      providerName:
+        example: openai
+        maxLength: 32
+        type: string
+      sort:
+        example: 0
+        type: integer
+      status:
+        enum:
+        - active
+        - disabled
+        example: active
+        type: string
+    required:
+    - displayName
+    - model
+    - providerName
+    type: object
   v1.CreateAnnouncementRequest:
     properties:
       actionUrl:
@@ -1816,7 +1862,68 @@ paths:
       summary: List AI models
       tags:
       - AI
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.CreateAiModelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.AiModelInfo'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Create AI model
+      tags:
+      - AI
   /v1/ai/models/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Model ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/core.ErrResponse'
+      security:
+      - Bearer: []
+      summary: Delete AI model
+      tags:
+      - AI
     get:
       consumes:
       - application/json

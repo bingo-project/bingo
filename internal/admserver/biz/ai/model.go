@@ -18,9 +18,11 @@ import (
 
 // AiModelBiz defines AI model management interface for admin.
 type AiModelBiz interface {
-	List(ctx context.Context, req *v1.ListAiModelRequest) (*v1.ListAiModelResponse, error)
+	Create(ctx context.Context, req *v1.CreateAiModelRequest) (*v1.AiModelInfo, error)
 	Get(ctx context.Context, id uint) (*v1.AiModelInfo, error)
+	List(ctx context.Context, req *v1.ListAiModelRequest) (*v1.ListAiModelResponse, error)
 	Update(ctx context.Context, id uint, req *v1.UpdateAiModelRequest) (*v1.AiModelInfo, error)
+	Delete(ctx context.Context, id uint) error
 }
 
 type aiModelBiz struct {
@@ -50,6 +52,47 @@ func toModelInfo(m *model.AiModelM) *v1.AiModelInfo {
 		CreatedAt:     m.CreatedAt,
 		UpdatedAt:     m.UpdatedAt,
 	}
+}
+
+func (b *aiModelBiz) Create(ctx context.Context, req *v1.CreateAiModelRequest) (*v1.AiModelInfo, error) {
+	// Check if model already exists
+	existing, err := b.ds.AiModel().GetByProviderAndModel(ctx, req.ProviderName, req.Model)
+	if err == nil && existing != nil {
+		return nil, errno.ErrResourceAlreadyExists.WithMessage(
+			"ai model already exists: provider=%s, model=%s", req.ProviderName, req.Model)
+	}
+
+	// Set default values
+	status := model.AiModelStatusActive
+	if req.Status != "" {
+		status = model.AiModelStatus(req.Status)
+	}
+
+	maxTokens := 4096
+	if req.MaxTokens > 0 {
+		maxTokens = req.MaxTokens
+	}
+
+	aiModel := &model.AiModelM{
+		ProviderName:  req.ProviderName,
+		Model:         req.Model,
+		DisplayName:   req.DisplayName,
+		MaxTokens:     maxTokens,
+		InputPrice:    req.InputPrice,
+		OutputPrice:   req.OutputPrice,
+		Status:        status,
+		IsDefault:     req.IsDefault,
+		Sort:          req.Sort,
+		AllowFallback: req.AllowFallback,
+	}
+
+	if err := b.ds.AiModel().Create(ctx, aiModel); err != nil {
+		return nil, errno.ErrDBWrite.WithMessage("create ai model: %v", err)
+	}
+
+	log.C(ctx).Infow("ai model created", "id", aiModel.ID, "provider", aiModel.ProviderName, "model", aiModel.Model)
+
+	return toModelInfo(aiModel), nil
 }
 
 func (b *aiModelBiz) List(ctx context.Context, req *v1.ListAiModelRequest) (*v1.ListAiModelResponse, error) {
@@ -158,4 +201,24 @@ func (b *aiModelBiz) Update(ctx context.Context, id uint, req *v1.UpdateAiModelR
 	log.C(ctx).Infow("ai model updated", "id", aiModel.ID, "model", aiModel.Model)
 
 	return toModelInfo(aiModel), nil
+}
+
+func (b *aiModelBiz) Delete(ctx context.Context, id uint) error {
+	aiModel, err := b.ds.AiModel().Get(ctx, where.F("id", id))
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return errno.ErrAIModelNotFound
+		}
+		return errno.ErrDBRead.WithMessage("get ai model: %v", err)
+	}
+
+	// Soft delete: set status to disabled
+	aiModel.Status = model.AiModelStatusDisabled
+	if err := b.ds.AiModel().Update(ctx, aiModel, "status"); err != nil {
+		return errno.ErrDBWrite.WithMessage("delete ai model: %v", err)
+	}
+
+	log.C(ctx).Infow("ai model deleted", "id", aiModel.ID, "provider", aiModel.ProviderName, "model", aiModel.Model)
+
+	return nil
 }

@@ -835,6 +835,54 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AI"
+                ],
+                "summary": "Create AI model",
+                "parameters": [
+                    {
+                        "description": "Create request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.CreateAiModelRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.AiModelInfo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
             }
         },
         "/v1/ai/models/{id}": {
@@ -924,6 +972,55 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.AiModelInfo"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/core.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "AI"
+                ],
+                "summary": "Delete AI model",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Model ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -5752,6 +5849,66 @@ const docTemplate = `{
                 "temperature": {
                     "type": "number",
                     "example": 0.7
+                }
+            }
+        },
+        "v1.CreateAiModelRequest": {
+            "type": "object",
+            "required": [
+                "displayName",
+                "model",
+                "providerName"
+            ],
+            "properties": {
+                "allowFallback": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "displayName": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "GPT-4 Omni"
+                },
+                "inputPrice": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 0.005
+                },
+                "isDefault": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "maxTokens": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "example": 8192
+                },
+                "model": {
+                    "type": "string",
+                    "maxLength": 64,
+                    "example": "gpt-4o"
+                },
+                "outputPrice": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 0.015
+                },
+                "providerName": {
+                    "type": "string",
+                    "maxLength": 32,
+                    "example": "openai"
+                },
+                "sort": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "active",
+                        "disabled"
+                    ],
+                    "example": "active"
                 }
             }
         },
