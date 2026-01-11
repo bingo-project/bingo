@@ -28,6 +28,7 @@ type UserInfo struct {
 
 type ListUserRequest struct {
 	gormutil.ListOptions
+	Keyword string `json:"keyword" example:"user123"` // Search keyword for UID/Username/Email/Phone
 }
 
 type ListUserResponse struct {

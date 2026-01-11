@@ -4805,6 +4805,13 @@ const docTemplate = `{
                 "summary": "List users",
                 "parameters": [
                     {
+                        "type": "string",
+                        "example": "user123",
+                        "description": "Search keyword for UID/Username/Email/Phone",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
@@ -4832,6 +4839,12 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Sort field.",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search keyword for UID/Username/Email/Phone",
+                        "name": "keyword",
                         "in": "query"
                     }
                 ],
@@ -4905,7 +4918,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{name}": {
+        "/v1/users/{uid}": {
             "get": {
                 "security": [
                     {
@@ -4925,8 +4938,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Username",
-                        "name": "name",
+                        "description": "User UID",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -4971,52 +4984,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Username",
-                        "name": "name",
+                        "description": "User UID",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "name": "age",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "avatar",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "email",
-                        "in": "query"
-                    },
-                    {
-                        "enum": [
-                            "male",
-                            "female",
-                            "secret"
-                        ],
-                        "type": "string",
-                        "description": "Gender, male female secret",
-                        "name": "gender",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "nickname",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Status, 1-enabled, 2-disabled",
-                        "name": "status",
-                        "in": "query"
+                        "description": "Param",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UpdateUserRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -5056,8 +5036,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Username",
-                        "name": "name",
+                        "description": "User UID",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     }
@@ -5081,7 +5061,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{name}/change-password": {
+        "/v1/users/{uid}/change-password": {
             "put": {
                 "security": [
                     {
@@ -5101,8 +5081,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Username",
-                        "name": "name",
+                        "description": "User UID",
+                        "name": "uid",
                         "in": "path",
                         "required": true
                     },
@@ -7026,6 +7006,39 @@ const docTemplate = `{
                         "enabled",
                         "disabled"
                     ]
+                }
+            }
+        },
+        "v1.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "avatar": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gender": {
+                    "description": "Gender, male female secret",
+                    "type": "string",
+                    "enum": [
+                        "male",
+                        "female",
+                        "secret"
+                    ]
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "status": {
+                    "description": "Status, 1-enabled, 2-disabled",
+                    "type": "integer"
                 }
             }
         },

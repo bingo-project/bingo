@@ -1285,6 +1285,29 @@ definitions:
         - disabled
         type: string
     type: object
+  v1.UpdateUserRequest:
+    properties:
+      age:
+        type: integer
+      avatar:
+        type: string
+      email:
+        type: string
+      gender:
+        description: Gender, male female secret
+        enum:
+        - male
+        - female
+        - secret
+        type: string
+      nickname:
+        type: string
+      phone:
+        type: string
+      status:
+        description: Status, 1-enabled, 2-disabled
+        type: integer
+    type: object
   v1.UserInfo:
     properties:
       age:
@@ -4344,6 +4367,11 @@ paths:
       consumes:
       - application/json
       parameters:
+      - description: Search keyword for UID/Username/Email/Phone
+        example: user123
+        in: query
+        name: keyword
+        type: string
       - description: Limit
         in: query
         name: limit
@@ -4363,6 +4391,10 @@ paths:
       - description: Sort field.
         in: query
         name: sort
+        type: string
+      - description: Search keyword for UID/Username/Email/Phone
+        in: query
+        name: keyword
         type: string
       produces:
       - application/json
@@ -4414,14 +4446,14 @@ paths:
       summary: Create a user
       tags:
       - User
-  /v1/users/{name}:
+  /v1/users/{uid}:
     delete:
       consumes:
       - application/json
       parameters:
-      - description: Username
+      - description: User UID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
       produces:
@@ -4446,9 +4478,9 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Username
+      - description: User UID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
       produces:
@@ -4475,38 +4507,17 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Username
+      - description: User UID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
-      - in: query
-        name: age
-        type: integer
-      - in: query
-        name: avatar
-        type: string
-      - in: query
-        name: email
-        type: string
-      - description: Gender, male female secret
-        enum:
-        - male
-        - female
-        - secret
-        in: query
-        name: gender
-        type: string
-      - in: query
-        name: nickname
-        type: string
-      - in: query
-        name: phone
-        type: string
-      - description: Status, 1-enabled, 2-disabled
-        in: query
-        name: status
-        type: integer
+      - description: Param
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/v1.UpdateUserRequest'
       produces:
       - application/json
       responses:
@@ -4525,14 +4536,14 @@ paths:
       summary: Update user info
       tags:
       - User
-  /v1/users/{name}/change-password:
+  /v1/users/{uid}/change-password:
     put:
       consumes:
       - application/json
       parameters:
-      - description: Username
+      - description: User UID
         in: path
-        name: name
+        name: uid
         required: true
         type: string
       - description: Param

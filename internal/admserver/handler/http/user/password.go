@@ -15,12 +15,12 @@ import (
 // @Tags       User
 // @Accept     application/json
 // @Produce    json
-// @Param      name	     path	    string          	        true  "Username"
+// @Param      uid	     path	    string          	        true  "User UID"
 // @Param      request	 body	    v1.ChangePasswordRequest	true  "Param"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name}/change-password [PUT].
+// @Router    /v1/users/{uid}/change-password [PUT].
 func (ctrl *UserHandler) ChangePassword(c *gin.Context) {
 	log.C(c).Infow("Change password function called")
 
@@ -31,8 +31,8 @@ func (ctrl *UserHandler) ChangePassword(c *gin.Context) {
 		return
 	}
 
-	username := c.Param("name")
-	err := ctrl.b.Auth().ChangePassword(c, username, &req)
+	uid := c.Param("uid")
+	err := ctrl.b.Auth().ChangePassword(c, uid, &req)
 	if err != nil {
 		core.Response(c, nil, err)
 

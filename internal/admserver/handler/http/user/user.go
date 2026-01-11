@@ -28,6 +28,7 @@ func NewUserHandler(ds store.IStore, a *auth.Authorizer) *UserHandler {
 // @Accept     application/json
 // @Produce    json
 // @Param      request	 query	    v1.ListUserRequest	 true  "Param"
+// @Param      keyword	 query	    string	 false  "Search keyword for UID/Username/Email/Phone"
 // @Success	   200		{object}	v1.ListUserResponse
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
@@ -96,15 +97,15 @@ func (ctrl *UserHandler) Create(c *gin.Context) {
 // @Tags       User
 // @Accept     application/json
 // @Produce    json
-// @Param      name	     path	    string          	 true  "Username"
+// @Param      uid	     path	    string          	 true  "User UID"
 // @Success	   200		{object}	v1.UserInfo
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [GET].
+// @Router    /v1/users/{uid} [GET].
 func (ctrl *UserHandler) Get(c *gin.Context) {
 	log.C(c).Infow("Get user function called")
 
-	user, err := ctrl.b.Users().Get(c, c.Param("name"))
+	user, err := ctrl.b.Users().Get(c, c.Param("uid"))
 	if err != nil {
 		core.Response(c, nil, err)
 
@@ -120,12 +121,12 @@ func (ctrl *UserHandler) Get(c *gin.Context) {
 // @Tags       User
 // @Accept     application/json
 // @Produce    json
-// @Param      name	     path	    string          	 true  "Username"
-// @Param      request	 query	    v1.UpdateUserRequest	 true  "Param"
+// @Param      uid	     path	    string          	 true  "User UID"
+// @Param      request	 body	    v1.UpdateUserRequest	 true  "Param"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [PUT].
+// @Router    /v1/users/{uid} [PUT].
 func (ctrl *UserHandler) Update(c *gin.Context) {
 	log.C(c).Infow("Update user function called")
 
@@ -136,7 +137,7 @@ func (ctrl *UserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	if err := ctrl.b.Users().Update(c, c.Param("name"), &req); err != nil {
+	if err := ctrl.b.Users().Update(c, c.Param("uid"), &req); err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -151,23 +152,33 @@ func (ctrl *UserHandler) Update(c *gin.Context) {
 // @Tags       User
 // @Accept     application/json
 // @Produce    json
-// @Param      name	     path	    string          	 true  "Username"
+// @Param      uid	     path	    string          	 true  "User UID"
 // @Success	   200		{object}	nil
 // @Failure	   400		{object}	core.ErrResponse
 // @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/users/{name} [DELETE].
+// @Router    /v1/users/{uid} [DELETE].
 func (ctrl *UserHandler) Delete(c *gin.Context) {
 	log.C(c).Infow("Delete user function called")
 
-	username := c.Param("name")
+	uid := c.Param("uid")
 
-	if err := ctrl.b.Users().Delete(c, username); err != nil {
+	// Get user info first (need username for ACL cleanup)
+	user, err := ctrl.b.Users().Get(c, uid)
+	if err != nil {
 		core.Response(c, nil, err)
 
 		return
 	}
 
-	if _, err := ctrl.a.Enforcer().RemoveFilteredNamedPolicy("p", 0, username); err != nil {
+	// Delete user
+	if err := ctrl.b.Users().Delete(c, uid); err != nil {
+		core.Response(c, nil, err)
+
+		return
+	}
+
+	// Remove ACL policy
+	if _, err := ctrl.a.Enforcer().RemoveFilteredNamedPolicy("p", 0, user.Username); err != nil {
 		core.Response(c, nil, err)
 
 		return

@@ -161,12 +161,12 @@ func MapApiRouters(g *gin.Engine) {
 
 	// User
 	userHandler := user.NewUserHandler(store.S, policyAuthz)
-	v1.GET("users", userHandler.List)                                 // 列出用户列表，只有 root 用户才能访问
-	v1.POST("users", userHandler.Create)                              // 创建用户
-	v1.GET("users/:name", userHandler.Get)                            // 获取用户详情
-	v1.PUT("users/:name", userHandler.Update)                         // 更新用户
-	v1.DELETE("users/:name", userHandler.Delete)                      // 删除用户
-	v1.PUT("users/:name/change-password", userHandler.ChangePassword) // 修改用户密码
+	v1.GET("users", userHandler.List)                                // 列出用户列表，只有 root 用户才能访问
+	v1.POST("users", userHandler.Create)                             // 创建用户
+	v1.GET("users/:uid", userHandler.Get)                            // 获取用户详情
+	v1.PUT("users/:uid", userHandler.Update)                         // 更新用户
+	v1.DELETE("users/:uid", userHandler.Delete)                      // 删除用户
+	v1.PUT("users/:uid/change-password", userHandler.ChangePassword) // 修改用户密码
 
 	// App
 	appHandler := app.NewAppHandler(store.S, policyAuthz)

@@ -55,6 +55,14 @@ func NewUserStore(store *datastore) *userStore {
 // ListWithRequest lists users based on request parameters.
 func (s *userStore) ListWithRequest(ctx context.Context, req *v1.ListUserRequest) (int64, []*model.UserM, error) {
 	db := s.DB(ctx)
+
+	// Add keyword search
+	if req.Keyword != "" {
+		keyword := "%" + req.Keyword + "%"
+		db = db.Where("uid LIKE ? OR username LIKE ? OR email LIKE ? OR phone LIKE ?",
+			keyword, keyword, keyword, keyword)
+	}
+
 	var ret []*model.UserM
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 
