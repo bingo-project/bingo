@@ -25,12 +25,9 @@ type AdminInfo struct {
 type ListAdminRequest struct {
 	gormutil.ListOptions
 
-	Username string `form:"username"`
-	Nickname string `form:"nickname"`
+	Keyword  string `form:"keyword"`
 	Status   string `form:"status"`
 	RoleName string `form:"roleName"`
-	Email    string `form:"email"`
-	Phone    string `form:"phone"`
 }
 
 type ListAdminResponse struct {
@@ -50,12 +47,15 @@ type CreateAdminRequest struct {
 
 type UpdateAdminRequest struct {
 	Nickname  *string  `json:"nickname" binding:"min=2,max=20"`
-	Password  *string  `json:"password" binding:"omitempty,min=6,max=18"`
 	Email     *string  `json:"email" binding:"omitempty,email"`
 	Phone     *string  `json:"phone"`
 	Avatar    *string  `json:"avatar"`
 	Status    string   `json:"status"`
 	RoleNames []string `json:"roleNames"`
+}
+
+type ResetAdminPasswordRequest struct {
+	Password string `json:"password" binding:"required,min=6,max=18"`
 }
 
 type SetRolesRequest struct {

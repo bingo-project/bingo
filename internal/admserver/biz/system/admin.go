@@ -27,6 +27,7 @@ type AdminBiz interface {
 	Get(ctx context.Context, username string) (*v1.AdminInfo, error)
 	Update(ctx context.Context, username string, req *v1.UpdateAdminRequest) (*v1.AdminInfo, error)
 	Delete(ctx context.Context, username string) error
+	ResetPassword(ctx context.Context, username string, password string) error
 
 	SetRoles(ctx context.Context, username string, req *v1.SetRolesRequest) (*v1.AdminInfo, error)
 	SwitchRole(ctx context.Context, username string, admin *v1.SwitchRoleRequest) (*v1.AdminInfo, error)
@@ -159,9 +160,6 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	if req.Status != "" {
 		adminM.Status = model.AdminStatus(req.Status)
 	}
-	if req.Password != nil {
-		adminM.Password, _ = auth.Encrypt(*req.Password)
-	}
 
 	// Update roles (skip for root user - root role is virtual)
 	updateRoles := len(req.RoleNames) > 0 && username != known.UserRoot
@@ -188,6 +186,20 @@ func (b *adminBiz) Update(ctx context.Context, username string, req *v1.UpdateAd
 	_ = copier.Copy(&resp, adminM)
 
 	return &resp, nil
+}
+
+func (b *adminBiz) ResetPassword(ctx context.Context, username string, password string) error {
+	adminM, err := b.ds.Admin().GetByUsername(ctx, username)
+	if err != nil {
+		return errno.ErrNotFound
+	}
+
+	adminM.Password, err = auth.Encrypt(password)
+	if err != nil {
+		return err
+	}
+
+	return b.ds.Admin().Update(ctx, adminM, "password")
 }
 
 func (b *adminBiz) Delete(ctx context.Context, username string) error {
@@ -302,11 +314,6 @@ func (b *adminBiz) SwitchRole(ctx context.Context, username string, req *v1.Swit
 }
 
 func (b *adminBiz) ResetTOTP(ctx context.Context, currentUser, targetUser string) error {
-	// Check if current user is root
-	if currentUser != known.UserRoot {
-		return errno.ErrPermissionDenied
-	}
-
 	// Get target admin
 	admin, err := b.ds.Admin().GetByUsername(ctx, targetUser)
 	if err != nil {

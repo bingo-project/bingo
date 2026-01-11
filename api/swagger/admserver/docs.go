@@ -69,18 +69,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "email",
+                        "name": "keyword",
                         "in": "query"
                     },
                     {
                         "type": "integer",
                         "description": "Limit",
                         "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "nickname",
                         "in": "query"
                     },
                     {
@@ -103,11 +98,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "name": "phone",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "name": "roleName",
                         "in": "query"
                     },
@@ -120,11 +110,6 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "status",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "name": "username",
                         "in": "query"
                     }
                 ],
@@ -344,7 +329,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/admins/{name}/change-password": {
+        "/v1/admins/{name}/password": {
             "put": {
                 "security": [
                     {
@@ -360,7 +345,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Change password",
+                "summary": "Reset admin password",
                 "parameters": [
                     {
                         "type": "string",
@@ -375,7 +360,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/v1.ResetAdminPasswordRequest"
                         }
                     }
                 ],
@@ -4806,8 +4791,11 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "user123",
-                        "description": "Search keyword for UID/Username/Email/Phone",
+                        "name": "countryCode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "name": "keyword",
                         "in": "query"
                     },
@@ -4839,6 +4827,11 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Sort field.",
                         "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "status",
                         "in": "query"
                     },
                     {
@@ -5061,7 +5054,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/users/{uid}/change-password": {
+        "/v1/users/{uid}/password": {
             "put": {
                 "security": [
                     {
@@ -5077,7 +5070,7 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Change password",
+                "summary": "Reset user password",
                 "parameters": [
                     {
                         "type": "string",
@@ -5092,7 +5085,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.ChangePasswordRequest"
+                            "$ref": "#/definitions/v1.ResetUserPasswordRequest"
                         }
                     }
                 ],
@@ -6487,6 +6480,32 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.ResetAdminPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
+                }
+            }
+        },
+        "v1.ResetUserPasswordRequest": {
+            "type": "object",
+            "required": [
+                "password"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 6
+                }
+            }
+        },
         "v1.RoleInfo": {
             "type": "object",
             "properties": {
@@ -6669,11 +6688,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 2
-                },
-                "password": {
-                    "type": "string",
-                    "maxLength": 18,
-                    "minLength": 6
                 },
                 "phone": {
                     "type": "string"

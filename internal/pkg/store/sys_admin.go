@@ -53,26 +53,22 @@ func NewAdminStore(store *datastore) *adminStore {
 func (s *adminStore) ListWithRequest(ctx context.Context, req *v1.ListAdminRequest) (int64, []*model.AdminM, error) {
 	opts := where.NewWhere()
 
-	if req.Username != "" {
-		opts = opts.F("username", req.Username)
-	}
-	if req.Nickname != "" {
-		opts = opts.Q("nickname like ?", "%"+req.Nickname+"%")
-	}
 	if req.Status != "" {
 		opts = opts.F("status", req.Status)
 	}
 	if req.RoleName != "" {
 		opts = opts.F("role_name", req.RoleName)
 	}
-	if req.Email != "" {
-		opts = opts.F("email", req.Email)
-	}
-	if req.Phone != "" {
-		opts = opts.F("phone", req.Phone)
-	}
 
 	db := s.DB(ctx, opts).Preload("Role").Preload("Roles")
+
+	// Add keyword search
+	if req.Keyword != "" {
+		keyword := "%" + req.Keyword + "%"
+		db = db.Where("username LIKE ? OR nickname LIKE ? OR email LIKE ? OR phone LIKE ?",
+			keyword, keyword, keyword, keyword)
+	}
+
 	var ret []*model.AdminM
 	count, err := gormutil.Paginate(db, &req.ListOptions, &ret)
 

@@ -922,6 +922,24 @@ definitions:
       updatedAt:
         type: string
     type: object
+  v1.ResetAdminPasswordRequest:
+    properties:
+      password:
+        maxLength: 18
+        minLength: 6
+        type: string
+    required:
+    - password
+    type: object
+  v1.ResetUserPasswordRequest:
+    properties:
+      password:
+        maxLength: 18
+        minLength: 6
+        type: string
+    required:
+    - password
+    type: object
   v1.RoleInfo:
     properties:
       createdAt:
@@ -1043,10 +1061,6 @@ definitions:
       nickname:
         maxLength: 20
         minLength: 2
-        type: string
-      password:
-        maxLength: 18
-        minLength: 6
         type: string
       phone:
         type: string
@@ -1397,15 +1411,12 @@ paths:
       - application/json
       parameters:
       - in: query
-        name: email
+        name: keyword
         type: string
       - description: Limit
         in: query
         name: limit
         type: integer
-      - in: query
-        name: nickname
-        type: string
       - description: Offset
         in: query
         name: offset
@@ -1419,9 +1430,6 @@ paths:
         name: page
         type: integer
       - in: query
-        name: phone
-        type: string
-      - in: query
         name: roleName
         type: string
       - description: Sort field.
@@ -1430,9 +1438,6 @@ paths:
         type: string
       - in: query
         name: status
-        type: string
-      - in: query
-        name: username
         type: string
       produces:
       - application/json
@@ -1576,7 +1581,7 @@ paths:
       summary: Update admin info
       tags:
       - Admin
-  /v1/admins/{name}/change-password:
+  /v1/admins/{name}/password:
     put:
       consumes:
       - application/json
@@ -1591,7 +1596,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.ChangePasswordRequest'
+          $ref: '#/definitions/v1.ResetAdminPasswordRequest'
       produces:
       - application/json
       responses:
@@ -1607,7 +1612,7 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Change password
+      summary: Reset admin password
       tags:
       - Admin
   /v1/admins/{name}/reset-totp:
@@ -4367,9 +4372,10 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: Search keyword for UID/Username/Email/Phone
-        example: user123
-        in: query
+      - in: query
+        name: countryCode
+        type: string
+      - in: query
         name: keyword
         type: string
       - description: Limit
@@ -4392,6 +4398,9 @@ paths:
         in: query
         name: sort
         type: string
+      - in: query
+        name: status
+        type: integer
       - description: Search keyword for UID/Username/Email/Phone
         in: query
         name: keyword
@@ -4536,7 +4545,7 @@ paths:
       summary: Update user info
       tags:
       - User
-  /v1/users/{uid}/change-password:
+  /v1/users/{uid}/password:
     put:
       consumes:
       - application/json
@@ -4551,7 +4560,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/v1.ChangePasswordRequest'
+          $ref: '#/definitions/v1.ResetUserPasswordRequest'
       produces:
       - application/json
       responses:
@@ -4567,7 +4576,7 @@ paths:
             $ref: '#/definitions/core.ErrResponse'
       security:
       - Bearer: []
-      summary: Change password
+      summary: Reset user password
       tags:
       - User
   /version:

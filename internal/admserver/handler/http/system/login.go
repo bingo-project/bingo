@@ -70,36 +70,3 @@ func (ctrl *AdminHandler) LoginWithTOTP(c *gin.Context) {
 
 	core.Response(c, resp, nil)
 }
-
-// ChangePassword
-// @Summary    Change password
-// @Security   Bearer
-// @Tags       Admin
-// @Accept     application/json
-// @Produce    json
-// @Param      name	     path	    string          	        true  "Username"
-// @Param      request	 body	    v1.ChangePasswordRequest	true  "Param"
-// @Success	   200		{object}	nil
-// @Failure	   400		{object}	core.ErrResponse
-// @Failure	   500		{object}	core.ErrResponse
-// @Router    /v1/admins/{name}/change-password [PUT].
-func (ctrl *AdminHandler) ChangePassword(c *gin.Context) {
-	log.C(c).Infow("Change admin password function called")
-
-	var req v1.ChangePasswordRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
-
-		return
-	}
-
-	username := c.Param("name")
-	err := ctrl.b.Admins().ChangePassword(c, username, &req)
-	if err != nil {
-		core.Response(c, nil, err)
-
-		return
-	}
-
-	core.Response(c, nil, nil)
-}

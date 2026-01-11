@@ -54,12 +54,21 @@ func NewUserStore(store *datastore) *userStore {
 
 // ListWithRequest lists users based on request parameters.
 func (s *userStore) ListWithRequest(ctx context.Context, req *v1.ListUserRequest) (int64, []*model.UserM, error) {
-	db := s.DB(ctx)
+	opts := where.NewWhere()
+
+	if req.Status != 0 {
+		opts = opts.F("status", req.Status)
+	}
+	if req.CountryCode != "" {
+		opts = opts.F("country_code", req.CountryCode)
+	}
+
+	db := s.DB(ctx, opts)
 
 	// Add keyword search
 	if req.Keyword != "" {
 		keyword := "%" + req.Keyword + "%"
-		db = db.Where("uid LIKE ? OR username LIKE ? OR email LIKE ? OR phone LIKE ?",
+		db = db.Where("username LIKE ? OR nickname LIKE ? OR email LIKE ? OR phone LIKE ?",
 			keyword, keyword, keyword, keyword)
 	}
 

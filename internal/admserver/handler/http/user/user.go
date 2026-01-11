@@ -75,7 +75,8 @@ func (ctrl *UserHandler) Create(c *gin.Context) {
 	}
 
 	// Create user
-	if err := ctrl.b.Users().Create(c, &req); err != nil {
+	resp, err := ctrl.b.Users().Create(c, &req)
+	if err != nil {
 		core.Response(c, nil, err)
 
 		return
@@ -88,7 +89,7 @@ func (ctrl *UserHandler) Create(c *gin.Context) {
 		return
 	}
 
-	core.Response(c, nil, nil)
+	core.Response(c, resp, nil)
 }
 
 // Get
@@ -179,6 +180,38 @@ func (ctrl *UserHandler) Delete(c *gin.Context) {
 
 	// Remove ACL policy
 	if _, err := ctrl.a.Enforcer().RemoveFilteredNamedPolicy("p", 0, user.Username); err != nil {
+		core.Response(c, nil, err)
+
+		return
+	}
+
+	core.Response(c, nil, nil)
+}
+
+// ResetPassword
+// @Summary    Reset user password
+// @Security   Bearer
+// @Tags       User
+// @Accept     application/json
+// @Produce    json
+// @Param      uid	     path	    string                    true  "User UID"
+// @Param      request	 body	    v1.ResetUserPasswordRequest true  "Param"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/users/{uid}/password [PUT].
+func (ctrl *UserHandler) ResetPassword(c *gin.Context) {
+	log.C(c).Infow("ResetPassword function called")
+
+	uid := c.Param("uid")
+	var req v1.ResetUserPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
+		return
+	}
+
+	if err := ctrl.b.Users().ResetPassword(c, uid, req.Password); err != nil {
 		core.Response(c, nil, err)
 
 		return

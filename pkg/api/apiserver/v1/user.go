@@ -28,7 +28,9 @@ type UserInfo struct {
 
 type ListUserRequest struct {
 	gormutil.ListOptions
-	Keyword string `json:"keyword" example:"user123"` // Search keyword for UID/Username/Email/Phone
+	Keyword     string `form:"keyword"`
+	Status      int32  `form:"status"`
+	CountryCode string `form:"countryCode"`
 }
 
 type ListUserResponse struct {
@@ -58,4 +60,8 @@ type UpdateUserRequest struct {
 	Age      int32   `json:"age"`
 	Gender   string  `json:"gender" binding:"oneof=male female secret"` // Gender, male female secret
 	Avatar   string  `json:"avatar"`
+}
+
+type ResetUserPasswordRequest struct {
+	Password string `json:"password" binding:"required,min=6,max=18"`
 }

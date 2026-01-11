@@ -67,14 +67,14 @@ func MapApiRouters(g *gin.Engine) {
 	v1.Use(auth.AuthzMiddleware(authorizer))
 
 	// Admin
-	v1.GET("admins", adminHandler.List)                                 // 管理员列表
-	v1.POST("admins", adminHandler.Create)                              // 创建管理员
-	v1.GET("admins/:name", adminHandler.Get)                            // 获取管理员详情
-	v1.PUT("admins/:name", adminHandler.Update)                         // 更新管理员信息
-	v1.DELETE("admins/:name", adminHandler.Delete)                      // 删除管理员
-	v1.PUT("admins/:name/change-password", adminHandler.ChangePassword) // 修改密码
-	v1.PUT("admins/:name/roles", adminHandler.SetRoles)                 // 设置角色组
-	v1.PUT("admins/:name/reset-totp", adminHandler.ResetTOTP)           // 重置 TOTP
+	v1.GET("admins", adminHandler.List)                           // 管理员列表
+	v1.POST("admins", adminHandler.Create)                        // 创建管理员
+	v1.GET("admins/:name", adminHandler.Get)                      // 获取管理员详情
+	v1.PUT("admins/:name", adminHandler.Update)                   // 更新管理员信息
+	v1.DELETE("admins/:name", adminHandler.Delete)                // 删除管理员
+	v1.PUT("admins/:name/password", adminHandler.ResetPassword)   // 重置密码
+	v1.PUT("admins/:name/roles", adminHandler.SetRoles)           // 设置角色组
+	v1.PUT("admins/:name/reset-totp", adminHandler.ResetTOTP)     // 重置 TOTP
 
 	// Role
 	roleHandler := system.NewRoleHandler(store.S, policyAuthz)
@@ -161,12 +161,12 @@ func MapApiRouters(g *gin.Engine) {
 
 	// User
 	userHandler := user.NewUserHandler(store.S, policyAuthz)
-	v1.GET("users", userHandler.List)                                // 列出用户列表，只有 root 用户才能访问
-	v1.POST("users", userHandler.Create)                             // 创建用户
-	v1.GET("users/:uid", userHandler.Get)                            // 获取用户详情
-	v1.PUT("users/:uid", userHandler.Update)                         // 更新用户
-	v1.DELETE("users/:uid", userHandler.Delete)                      // 删除用户
-	v1.PUT("users/:uid/change-password", userHandler.ChangePassword) // 修改用户密码
+	v1.GET("users", userHandler.List)                    // 列出用户列表，只有 root 用户才能访问
+	v1.POST("users", userHandler.Create)                 // 创建用户
+	v1.GET("users/:uid", userHandler.Get)                // 获取用户详情
+	v1.PUT("users/:uid", userHandler.Update)             // 更新用户
+	v1.DELETE("users/:uid", userHandler.Delete)          // 删除用户
+	v1.PUT("users/:uid/password", userHandler.ResetPassword) // 重置用户密码
 
 	// App
 	appHandler := app.NewAppHandler(store.S, policyAuthz)

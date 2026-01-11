@@ -224,3 +224,35 @@ func (ctrl *AdminHandler) ResetTOTP(c *gin.Context) {
 
 	core.Response(c, gin.H{"message": "TOTP 已重置"}, nil)
 }
+
+// ResetPassword
+// @Summary    Reset admin password
+// @Security   Bearer
+// @Tags       Admin
+// @Accept     application/json
+// @Produce    json
+// @Param      name	     path	    string                     true  "Username"
+// @Param      request	 body	    v1.ResetAdminPasswordRequest true  "Param"
+// @Success	   200		{object}	nil
+// @Failure	   400		{object}	core.ErrResponse
+// @Failure	   500		{object}	core.ErrResponse
+// @Router    /v1/admins/{name}/password [PUT].
+func (ctrl *AdminHandler) ResetPassword(c *gin.Context) {
+	log.C(c).Infow("ResetPassword function called")
+
+	username := c.Param("name")
+	var req v1.ResetAdminPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		core.Response(c, nil, errno.ErrInvalidArgument.WithMessage("%s", err.Error()))
+
+		return
+	}
+
+	if err := ctrl.b.Admins().ResetPassword(c, username, req.Password); err != nil {
+		core.Response(c, nil, err)
+
+		return
+	}
+
+	core.Response(c, nil, nil)
+}

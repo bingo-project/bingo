@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/copier"
 	"gorm.io/gorm"
 
+	"github.com/bingo-project/bingo/internal/pkg/auth"
 	"github.com/bingo-project/bingo/internal/pkg/errno"
 	"github.com/bingo-project/bingo/internal/pkg/log"
 	"github.com/bingo-project/bingo/internal/pkg/model"
@@ -19,10 +20,11 @@ import (
 // UserBiz 定义了 user 模块在 biz 层所实现的方法.
 type UserBiz interface {
 	List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUserResponse, error)
-	Create(ctx context.Context, req *v1.CreateUserRequest) error
+	Create(ctx context.Context, req *v1.CreateUserRequest) (*v1.UserInfo, error)
 	Get(ctx context.Context, uid string) (*v1.UserInfo, error)
 	Update(ctx context.Context, uid string, req *v1.UpdateUserRequest) error
 	Delete(ctx context.Context, uid string) error
+	ResetPassword(ctx context.Context, uid string, password string) error
 }
 
 type userBiz struct {
@@ -54,21 +56,24 @@ func (b *userBiz) List(ctx context.Context, req *v1.ListUserRequest) (*v1.ListUs
 	return &v1.ListUserResponse{Total: count, Data: data}, nil
 }
 
-func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (err error) {
+func (b *userBiz) Create(ctx context.Context, req *v1.CreateUserRequest) (*v1.UserInfo, error) {
 	var userM model.UserM
 	_ = copier.Copy(&userM, req)
 
-	err = b.ds.User().Create(ctx, &userM)
-	if err == nil {
-		// User exists
+	err := b.ds.User().Create(ctx, &userM)
+	if err != nil {
+		// Check if user already exists
 		if match, _ := regexp.MatchString("Duplicate entry '.*'", err.Error()); match {
-			return errno.ErrUserAlreadyExist
+			return nil, errno.ErrUserAlreadyExist
 		}
 
-		return
+		return nil, err
 	}
 
-	return
+	var resp v1.UserInfo
+	_ = copier.Copy(&resp, &userM)
+
+	return &resp, nil
 }
 
 func (b *userBiz) Get(ctx context.Context, uid string) (*v1.UserInfo, error) {
@@ -110,11 +115,40 @@ func (b *userBiz) Update(ctx context.Context, uid string, req *v1.UpdateUserRequ
 		fields = append(fields, "phone")
 	}
 
+	if req.Avatar != "" {
+		userM.Avatar = req.Avatar
+		fields = append(fields, "avatar")
+	}
+
+	if req.Gender != "" {
+		userM.Gender = req.Gender
+		fields = append(fields, "gender")
+	}
+
+	if req.Age != 0 {
+		userM.Age = req.Age
+		fields = append(fields, "age")
+	}
+
 	if len(fields) == 0 {
 		return nil
 	}
 
 	return b.ds.User().Update(ctx, userM, fields...)
+}
+
+func (b *userBiz) ResetPassword(ctx context.Context, uid string, password string) error {
+	userM, err := b.ds.User().GetByUID(ctx, uid)
+	if err != nil {
+		return errno.ErrNotFound
+	}
+
+	userM.Password, err = auth.Encrypt(password)
+	if err != nil {
+		return err
+	}
+
+	return b.ds.User().Update(ctx, userM, "password")
 }
 
 func (b *userBiz) Delete(ctx context.Context, uid string) error {
