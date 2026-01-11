@@ -60,7 +60,7 @@ func (h *Handler) UserInfo(c *websocket.Context) *jsonrpc.Response {
 		Nickname:  user.Nickname,
 		Email:     user.Email,
 		Phone:     user.Phone,
-		Status:    int32(user.Status),
+		Status:    string(user.Status),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	})

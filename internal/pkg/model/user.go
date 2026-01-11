@@ -18,7 +18,7 @@ type UserM struct {
 	Username      string     `gorm:"column:username;type:varchar(255);uniqueIndex:uk_username,priority:1;default:null" json:"username"`
 	Email         string     `gorm:"column:email;type:varchar(255);uniqueIndex:uk_email,priority:1;default:null" json:"email"`
 	Phone         string     `gorm:"column:phone;type:varchar(255);uniqueIndex:uk_phone,priority:1;default:null" json:"phone"`
-	Status        UserStatus `gorm:"column:status;type:tinyint;not null;default:1;comment:Status, 1-enabled, 2-disabled" json:"status"`                          // Status, 1-enabled, 2-disabled
+	Status        UserStatus `gorm:"column:status;type:varchar(20);not null;default:'enabled';comment:状态：enabled正常，disabled禁用" json:"status"`
 	KycStatus     int32      `gorm:"column:kyc_status;type:tinyint;not null;comment:KYC status, 0-not verify, 1-pending, 2-verified, 3-failed" json:"kycStatus"` // KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
 	GoogleKey     string     `gorm:"column:google_key;type:varchar(255);not null" json:"googleKey"`
 	GoogleStatus  string     `gorm:"column:google_status;type:enum('unbind','disabled','enabled');not null;default:unbind" json:"googleStatus"`
@@ -39,12 +39,12 @@ func (*UserM) TableName() string {
 	return "uc_user"
 }
 
-// UserStatus 1-enabled, 2-disabled.
-type UserStatus int32
+// UserStatus 状态：enabled正常，disabled禁用.
+type UserStatus string
 
 const (
-	UserStatusEnabled  UserStatus = 1
-	UserStatusDisabled UserStatus = 2
+	UserStatusEnabled  UserStatus = "enabled"
+	UserStatusDisabled UserStatus = "disabled"
 )
 
 // BeforeCreate 在创建数据库记录之前加密明文密码.

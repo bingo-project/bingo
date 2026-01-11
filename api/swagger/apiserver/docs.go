@@ -2788,8 +2788,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer"
+                    "description": "Status: enabled, disabled",
+                    "type": "string"
                 },
                 "uid": {
                     "type": "string"

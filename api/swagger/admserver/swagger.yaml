@@ -705,12 +705,12 @@ definitions:
         example: "88888888"
         type: string
       status:
-        default: 1
-        description: Status, 1-enabled, 2-disabled
+        default: enabled
+        description: Status, enabled-disabled
         enum:
-        - 1
-        - 2
-        type: integer
+        - enabled
+        - disabled
+        type: string
       username:
         example: peter
         type: string
@@ -1314,8 +1314,8 @@ definitions:
       phone:
         type: string
       status:
-        description: Status, 1-enabled, 2-disabled
-        type: integer
+        description: 'Status: enabled, disabled'
+        type: string
     type: object
   v1.UserInfo:
     properties:
@@ -1347,8 +1347,8 @@ definitions:
       pid:
         type: integer
       status:
-        description: Status, 1-enabled, 2-disabled
-        type: integer
+        description: 'Status: enabled, disabled'
+        type: string
       uid:
         type: string
       updatedAt:
@@ -4395,7 +4395,7 @@ paths:
         type: string
       - in: query
         name: status
-        type: integer
+        type: string
       - description: Search keyword for UID/Username/Email/Phone
         in: query
         name: keyword

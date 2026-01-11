@@ -59,7 +59,7 @@ func (h *Handler) UserInfo(ctx context.Context, req *v1.UserInfoRequest) (*v1.Us
 		Nickname:  user.Nickname,
 		Email:     user.Email,
 		Phone:     user.Phone,
-		Status:    int32(user.Status),
+		Status:    string(user.Status),
 		CreatedAt: timestamppb.New(user.CreatedAt),
 		UpdatedAt: timestamppb.New(user.UpdatedAt),
 	}, nil

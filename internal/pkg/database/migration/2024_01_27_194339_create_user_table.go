@@ -18,7 +18,7 @@ type CreateUserTable struct {
 	Username      string     `gorm:"type:varchar(255);uniqueIndex:uk_username;default:null"`
 	Email         string     `gorm:"type:varchar(255);uniqueIndex:uk_email;default:null"`
 	Phone         string     `gorm:"type:varchar(255);uniqueIndex:uk_phone;default:null"`
-	Status        int64      `gorm:"type:tinyint;not null;default:1;comment:Status, 1-enabled, 2-disabled"`
+	Status        string     `gorm:"type:varchar(20);not null;default:'enabled';comment:状态：enabled正常，disabled禁用"`
 	KycStatus     int64      `gorm:"type:tinyint;not null;default:0;comment:KYC status, 0-not verify, 1-pending, 2-verified, 3-failed"`
 	GoogleKey     string     `gorm:"type:varchar(255);not null;default:''"`
 	GoogleStatus  string     `gorm:"type:enum('unbind','disabled','enabled');not null;default:unbind"`

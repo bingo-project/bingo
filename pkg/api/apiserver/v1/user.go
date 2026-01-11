@@ -15,7 +15,7 @@ type UserInfo struct {
 	Username     string    `json:"username"`
 	Email        string    `json:"email"`
 	Phone        string    `json:"phone"`
-	Status       int32     `json:"status"`    // Status, 1-enabled, 2-disabled
+	Status       string    `json:"status"`    // Status: enabled, disabled
 	KycStatus    int32     `json:"kycStatus"` // KYC status, 0-not verify, 1-pending, 2-verified, 3-failed
 	GoogleStatus string    `json:"googleStatus"`
 	Pid          int64     `json:"pid"`
@@ -29,7 +29,7 @@ type UserInfo struct {
 type ListUserRequest struct {
 	gormutil.ListOptions
 	Keyword     string `form:"keyword"`
-	Status      int32  `form:"status"`
+	Status      string `form:"status"`
 	CountryCode string `form:"countryCode"`
 }
 
@@ -44,7 +44,7 @@ type CreateUserRequest struct {
 	Username    string  `json:"username" binding:"required,alphanum" example:"peter"`
 	Email       *string `json:"email" binding:"omitempty,email" example:"peter@gmail.com"`
 	Phone       *string `json:"phone" example:"9999999999"`
-	Status      int32   `json:"status" binding:"oneof=1 2" default:"1"` // Status, 1-enabled, 2-disabled
+	Status      string  `json:"status" binding:"oneof=enabled disabled" default:"enabled"` // Status, enabled-disabled
 	Pid         string  `json:"pid" example:"88888888"`
 	Age         int32   `json:"age" binding:"gte=0,lte=130" example:"0"`
 	Gender      string  `json:"gender" binding:"oneof=male female secret" example:"male"` // Gender, male female secret
@@ -56,7 +56,7 @@ type UpdateUserRequest struct {
 	Nickname *string `json:"nickname"`
 	Email    *string `json:"email"`
 	Phone    *string `json:"phone"`
-	Status   *int32  `json:"status"` // Status, 1-enabled, 2-disabled
+	Status   *string `json:"status"` // Status: enabled, disabled
 	Age      *int32  `json:"age"`
 	Gender   *string `json:"gender"`
 	Avatar   *string `json:"avatar"`

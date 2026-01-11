@@ -151,8 +151,7 @@ definitions:
       phone:
         type: string
       status:
-        type: integer
-        format: int32
+        type: string
       createdAt:
         type: string
         format: date-time

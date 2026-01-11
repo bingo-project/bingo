@@ -56,7 +56,7 @@ func NewUserStore(store *datastore) *userStore {
 func (s *userStore) ListWithRequest(ctx context.Context, req *v1.ListUserRequest) (int64, []*model.UserM, error) {
 	opts := where.NewWhere()
 
-	if req.Status != 0 {
+	if req.Status != "" {
 		opts = opts.F("status", req.Status)
 	}
 	if req.CountryCode != "" {

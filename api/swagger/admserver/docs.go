@@ -4830,7 +4830,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "status",
                         "in": "query"
                     },
@@ -6158,12 +6158,12 @@ const docTemplate = `{
                     "example": "88888888"
                 },
                 "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer",
-                    "default": 1,
+                    "description": "Status, enabled-disabled",
+                    "type": "string",
+                    "default": "enabled",
                     "enum": [
-                        1,
-                        2
+                        "enabled",
+                        "disabled"
                     ]
                 },
                 "username": {
@@ -7045,8 +7045,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer"
+                    "description": "Status: enabled, disabled",
+                    "type": "string"
                 }
             }
         },
@@ -7094,8 +7094,8 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
-                    "description": "Status, 1-enabled, 2-disabled",
-                    "type": "integer"
+                    "description": "Status: enabled, disabled",
+                    "type": "string"
                 },
                 "uid": {
                     "type": "string"
