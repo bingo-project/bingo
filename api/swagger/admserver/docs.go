@@ -7036,13 +7036,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gender": {
-                    "description": "Gender, male female secret",
-                    "type": "string",
-                    "enum": [
-                        "male",
-                        "female",
-                        "secret"
-                    ]
+                    "type": "string"
                 },
                 "nickname": {
                     "type": "string"

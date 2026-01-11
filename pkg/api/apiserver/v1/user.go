@@ -57,9 +57,9 @@ type UpdateUserRequest struct {
 	Email    *string `json:"email"`
 	Phone    *string `json:"phone"`
 	Status   *int32  `json:"status"` // Status, 1-enabled, 2-disabled
-	Age      int32   `json:"age"`
-	Gender   string  `json:"gender" binding:"oneof=male female secret"` // Gender, male female secret
-	Avatar   string  `json:"avatar"`
+	Age      *int32  `json:"age"`
+	Gender   *string `json:"gender"`
+	Avatar   *string `json:"avatar"`
 }
 
 type ResetUserPasswordRequest struct {

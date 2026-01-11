@@ -1308,11 +1308,6 @@ definitions:
       email:
         type: string
       gender:
-        description: Gender, male female secret
-        enum:
-        - male
-        - female
-        - secret
         type: string
       nickname:
         type: string

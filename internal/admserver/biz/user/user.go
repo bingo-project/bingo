@@ -115,18 +115,23 @@ func (b *userBiz) Update(ctx context.Context, uid string, req *v1.UpdateUserRequ
 		fields = append(fields, "phone")
 	}
 
-	if req.Avatar != "" {
-		userM.Avatar = req.Avatar
+	if req.Status != nil {
+		userM.Status = model.UserStatus(*req.Status)
+		fields = append(fields, "status")
+	}
+
+	if req.Avatar != nil {
+		userM.Avatar = *req.Avatar
 		fields = append(fields, "avatar")
 	}
 
-	if req.Gender != "" {
-		userM.Gender = req.Gender
+	if req.Gender != nil {
+		userM.Gender = *req.Gender
 		fields = append(fields, "gender")
 	}
 
-	if req.Age != 0 {
-		userM.Age = req.Age
+	if req.Age != nil {
+		userM.Age = *req.Age
 		fields = append(fields, "age")
 	}
 
